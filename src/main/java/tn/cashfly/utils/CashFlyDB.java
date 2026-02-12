@@ -5,7 +5,7 @@ import java.sql.*;
 public class CashFlyDB {
 
     private static CashFlyDB instance;
-    final String URL = "jdbc:mysql://127.0.0.1:3306/cashfly_db";
+    final String URL = "jdbc:mysql://127.0.0.1:3306/cashflydb";
     final String USERNAME ="root";
     final String PASSWORD ="";
     private Connection connection;
