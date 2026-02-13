@@ -1,5 +1,6 @@
 package tn.cashfly.services;
 
+import tn.cashfly.interfaces.Service;
 import tn.cashfly.models.RendementInvestissement;
 import tn.cashfly.utils.CashFlyDB;
 
@@ -7,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServiceRendement {
+public class ServiceRendement implements Service<RendementInvestissement>{
     private Connection connection;
 
     public ServiceRendement() {
@@ -82,6 +83,17 @@ public class ServiceRendement {
             System.out.println("Rendement supprimé");
         } catch (SQLException e) {
             System.out.println("Erreur delete(): " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        String req = "DELETE FROM rendement_investissement";
+        try (Statement st = connection.createStatement()) {
+            int affectedRows = st.executeUpdate(req);
+            System.out.println("Tous les rendements supprimés, lignes affectées = " + affectedRows);
+        } catch (SQLException e) {
+            System.out.println("Erreur deleteAll(): " + e.getMessage());
         }
     }
 }

@@ -46,7 +46,7 @@ public class ServiceInvest implements Service<Investissement> {
                 }
             }
 
-            System.out.println("✅ Invest ajouté avec ID = " + i.getIdInvestissement());
+            System.out.println("Invest ajouté avec ID = " + i.getIdInvestissement());
 
         } catch (SQLException e) {
             System.out.println("Erreur add(): " + e.getMessage());
@@ -101,9 +101,9 @@ public class ServiceInvest implements Service<Investissement> {
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                System.out.println("⚠️ Aucune mise à jour effectuée pour l'ID " + i.getIdInvestissement());
+                System.out.println("Aucune mise à jour effectuée pour l'ID " + i.getIdInvestissement());
             } else {
-                System.out.println("🔄 Invest mis à jour avec ID = " + i.getIdInvestissement());
+                System.out.println("Invest mis à jour avec ID = " + i.getIdInvestissement());
             }
 
         } catch (SQLException e) {
@@ -122,13 +122,24 @@ public class ServiceInvest implements Service<Investissement> {
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows == 0) {
-                System.out.println("⚠️ Aucun investissement supprimé pour l'ID " + i.getIdInvestissement());
+                System.out.println("Aucun investissement supprimé pour l'ID " + i.getIdInvestissement());
             } else {
-                System.out.println("❌ Invest supprimé avec ID = " + i.getIdInvestissement());
+                System.out.println("Invest supprimé avec ID = " + i.getIdInvestissement());
             }
 
         } catch (SQLException e) {
             System.out.println("Erreur delete(): " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteAll() {
+        String req = "DELETE FROM investissement";
+        try (Statement st = connection.createStatement()) {
+            int affectedRows = st.executeUpdate(req);
+            System.out.println("Tous les investissements supprimés, lignes affectées = " + affectedRows);
+        } catch (SQLException e) {
+            System.out.println("Erreur deleteAll(): " + e.getMessage());
         }
     }
 }

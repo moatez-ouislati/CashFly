@@ -8,4 +8,5 @@ public interface Service<T> {
     void update (T t);
     void delete (T t);
 
+    void deleteAll();
 }
