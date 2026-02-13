@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.EntrepriseUIController"
+      spacing="16.0" style="-fx-background-color: #ffffff;">
+    <padding>
+        <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
+    </padding>
+
+    <HBox spacing="16.0" alignment="CENTER_LEFT">
+        <children>
+            <Label text="Entreprises" style="-fx-text-fill: #0f172a;">
+                <font>
+                    <Font name="System Bold" size="20.0"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <TextField fx:id="searchField" promptText="Recherche par nom..."
+                       prefWidth="220.0"/>
+            <Button text="Rechercher" onAction="#onSearch"/>
+            <TextField fx:id="secteurFilterField" promptText="Filtrer par secteur"
+                       prefWidth="180.0"/>
+            <Button text="Filtrer" onAction="#onFilterBySecteur"/>
+        </children>
+    </HBox>
+
+    <HBox spacing="16.0">
+        <children>
+            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                <children>
+                    <Label text="Gestion des entreprises" styleClass="panel-header"/>
+                    <ScrollPane prefHeight="380.0"
+                                fitToWidth="true"
+                                hbarPolicy="NEVER"
+                                style="-fx-background-color: transparent;">
+                        <content>
+                            <FlowPane fx:id="entrepriseCardsContainer"
+                                      hgap="12.0"
+                                      vgap="12.0"
+                                      prefWrapLength="600.0"
+                                      style="-fx-padding: 4 0 4 0;"/>
+                        </content>
+                    </ScrollPane>
+                </children>
+            </VBox>
+
+            <VBox spacing="8.0" prefWidth="260.0">
+                <children>
+                    <Label text="Formulaire" styleClass="panel-header"/>
+                    <TextField fx:id="nomField" promptText="Nom"/>
+                    <TextField fx:id="secteurField" promptText="Secteur"/>
+                    <TextField fx:id="formeField" promptText="Forme juridique"/>
+                    <TextField fx:id="dateCreationField" promptText="Date création (yyyy-MM-dd)"/>
+                    <TextField fx:id="capitalField" promptText="Capital"/>
+                    <TextField fx:id="proprietaireField" promptText="ID propriétaire"/>
+                    <HBox spacing="8.0">
+                        <children>
+                            <Button text="Ajouter" onAction="#onAdd"/>
+                            <Button text="Modifier" onAction="#onUpdate"/>
+                        </children>
+                    </HBox>
+                    <Button text="Supprimer sélection" onAction="#onDelete" style="-fx-text-fill: #dc2626;"/>
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</VBox>
+

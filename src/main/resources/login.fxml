@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.cashfly.LoginController"
+            style="-fx-background-color: linear-gradient(to bottom right, #0f172a, #1e293b);">
+
+    <center>
+        <VBox spacing="16.0" alignment="CENTER"
+              BorderPane.alignment="CENTER"
+              style="-fx-background-color: rgba(15,23,42,0.8); -fx-background-radius: 12;">
+            <padding>
+                <Insets top="32" right="40" bottom="32" left="40"/>
+            </padding>
+
+            <Label text="Cashfly" textFill="WHITE">
+                <font>
+                    <Font name="System Bold" size="24.0"/>
+                </font>
+            </Label>
+
+            <Label text="Connexion" textFill="#e5e7eb">
+                <font>
+                    <Font size="14.0"/>
+                </font>
+            </Label>
+
+            <TextField fx:id="usernameField"
+                       promptText="Email"
+                       maxWidth="260"
+                       style="-fx-background-radius: 8; -fx-background-color: #111827; -fx-text-fill: white; -fx-prompt-text-fill: #6b7280; -fx-border-color: #374151; -fx-border-radius: 8;"/>
+
+            <PasswordField fx:id="passwordField"
+                           promptText="Mot de passe"
+                           maxWidth="260"
+                           style="-fx-background-radius: 8; -fx-background-color: #111827; -fx-text-fill: white; -fx-prompt-text-fill: #6b7280; -fx-border-color: #374151; -fx-border-radius: 8;"/>
+
+            <Label fx:id="errorLabel"
+                   textFill="#f97316"
+                   visible="false"/>
+
+            <Button text="Se connecter"
+                    onAction="#onLogin"
+                    defaultButton="true"
+                    maxWidth="260"
+                    style="-fx-background-color: #13c8ec; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold;"/>
+        </VBox>
+    </center>
+
+    <padding>
+        <Insets top="80" right="80" bottom="80" left="80"/>
+    </padding>
+</BorderPane>
+

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.OperationUIController"
+      spacing="16.0" style="-fx-background-color: #ffffff;">
+    <padding>
+        <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
+    </padding>
+
+    <HBox spacing="12.0" alignment="CENTER_LEFT">
+        <children>
+            <Label text="Opérations" style="-fx-text-fill: #0f172a;">
+                <font>
+                    <Font name="System Bold" size="20.0"/>
+                </font>
+            </Label>
+            <Label fx:id="currentContextLabel" text="Aucune trésorerie sélectionnée" textFill="#6b7280">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="typeFilterBox" promptText="Type (revenu / depense)" prefWidth="180.0"/>
+            <Button text="Filtrer type" onAction="#onFilterByType"/>
+            <TextField fx:id="minMontantField" promptText="Montant min" prefWidth="100.0"/>
+            <TextField fx:id="maxMontantField" promptText="Montant max" prefWidth="100.0"/>
+            <Button text="Filtrer montant" onAction="#onFilterByMontant"/>
+            <TextField fx:id="keywordField" promptText="Catégorie / description" prefWidth="200.0"/>
+            <Button text="Rechercher" onAction="#onSearchByKeyword"/>
+        </children>
+    </HBox>
+
+    <HBox spacing="16.0">
+        <children>
+            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                <children>
+                    <Label text="Liste des opérations" styleClass="panel-header"/>
+                    <ScrollPane prefHeight="380.0"
+                                fitToWidth="true"
+                                hbarPolicy="NEVER"
+                                style="-fx-background-color: transparent;">
+                        <content>
+                            <FlowPane fx:id="operationCardsContainer"
+                                      hgap="12.0"
+                                      vgap="12.0"
+                                      prefWrapLength="600.0"
+                                      style="-fx-padding: 4 0 4 0;"/>
+                        </content>
+                    </ScrollPane>
+                </children>
+            </VBox>
+
+            <VBox spacing="8.0" prefWidth="280.0">
+                <children>
+                    <Label text="Formulaire" styleClass="panel-header"/>
+                    <ComboBox fx:id="typeBox" promptText="Type (revenu / depense)" prefWidth="200.0"/>
+                    <TextField fx:id="montantField" promptText="Montant"/>
+                    <TextField fx:id="categorieField" promptText="Catégorie"/>
+                    <TextField fx:id="descriptionField" promptText="Description"/>
+                    <HBox spacing="8.0">
+                        <children>
+                            <Button text="Ajouter" onAction="#onAdd"/>
+                            <Button text="Modifier" onAction="#onUpdate"/>
+                        </children>
+                    </HBox>
+                    <Button text="Supprimer sélection" onAction="#onDelete" style="-fx-text-fill: #dc2626;"/>
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</VBox>
+

@@ -1,0 +1,240 @@
+/* Variables & Root */
+.root-pane {
+    -fx-primary-color: #13c8ec;
+    -fx-sidebar-dark: #101f22;
+    -fx-bg-light: #f8fafc;
+    -fx-border-color: #e2e8f0;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    -fx-background-color: -fx-sidebar-dark;
+}
+
+.sidebar-logo-area {
+    -fx-padding: 24;
+}
+
+.logo-icon-bg {
+    -fx-background-color: -fx-primary-color;
+    -fx-background-radius: 8;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+}
+
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
+
+.nav-container {
+    -fx-padding: 0 16 0 16;
+}
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+}
+
+.nav-button-active {
+    -fx-background-color: rgba(19, 200, 236, 0.1);
+    -fx-text-fill: #13c8ec;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+.sidebar-profile {
+    -fx-background-color: rgba(26, 46, 50, 0.5);
+    -fx-padding: 16;
+}
+
+.profile-avatar {
+    -fx-fill: #2a3f43;
+}
+
+.profile-name {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.profile-role {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 10px;
+}
+
+/* Main Content & Header */
+.main-content {
+    -fx-background-color: white;
+}
+
+.top-header {
+    -fx-background-color: white;
+    -fx-border-color: -fx-border-color;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0 32 0 32;
+}
+
+.search-field {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 20;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 20;
+    -fx-padding: 6 12 6 35;
+}
+
+.btn-primary {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-font-weight: bold;
+    -fx-padding: 8 20;
+}
+
+/* ScrollPane & Inner Content */
+.content-scroll {
+    -fx-background-color: transparent;
+    -fx-background: white;
+}
+
+.inner-content {
+    -fx-padding: 32;
+}
+
+/* Stat Cards */
+.stat-card {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.stat-label {
+    -fx-text-fill: #64748b;
+    -fx-font-size: 12px;
+}
+
+.stat-value {
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-text-fill: #0f172a;
+}
+
+/* Generic cards (entreprises, trésorerie, opérations) */
+.card {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0.2, 0, 2);
+    -fx-cursor: hand;
+    -fx-transition: all 0.15s ease-in-out;
+}
+
+.card:hover {
+    -fx-border-color: #13c8ec;
+    -fx-effect: dropshadow(gaussian, rgba(19,200,236,0.35), 12, 0.4, 0, 4);
+    -fx-translate-y: -2;
+}
+
+.card-selected {
+    -fx-border-color: #13c8ec;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(19,200,236,0.45), 14, 0.5, 0, 5);
+}
+
+/* Tables */
+.table-container {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.panel-header {
+    -fx-padding: 15;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 11px;
+}
+
+.table-view {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f8fafc;
+}
+
+/* Material Icon Simulation (Optional) */
+.material-icon-sidebar {
+    -fx-font-family: "Material Icons";
+    -fx-font-size: 18px;
+    -fx-text-fill: #101f22;
+}
+/* --- Navigation Menu Animations --- */
+
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8;
+    /* Base transition state */
+}
+
+/* 1. Hover Animation: The "Slide & Glow" */
+.nav-button:hover {
+    -fx-background-color: rgba(19, 200, 236, 0.08); /* Soft primary glow */
+    -fx-text-fill: #13c8ec;
+    -fx-cursor: hand;
+    
+    /* Simulate a slide-right animation by shifting padding */
+    -fx-padding: 10 12 10 20; 
+}
+
+/* 2. Active State: Indicator Line */
+.nav-button-active {
+    -fx-background-color: rgba(19, 200, 236, 0.12);
+    -fx-text-fill: #13c8ec;
+    -fx-padding: 10 12;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0 8 8 0; /* Rounded on right side only */
+    
+    /* Modern accent line on the left */
+    -fx-border-color: #13c8ec;
+    -fx-border-width: 0 0 0 4;
+}
+
+.my-button {
+    -fx-background-color: #101f22;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-padding: 10 20 10 20;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 4, 0.5, 0, 2);
+    -fx-transition: all 0.15s ease-in-out;
+}
+
+.my-button:hover {
+    -fx-scale-x: 1.08;   /* pop forward */
+    -fx-scale-y: 1.08;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.55), 12, 0.5, 0, 6), 
+                innershadow(gaussian, rgba(255,255,255,0.1), 4, 0.0, 0, 2);
+}
+
+.my-button:pressed {
+    -fx-scale-x: 0.96;   /* tactile shrink */
+    -fx-scale-y: 0.96;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 8, 0.5, 0, 4);
+}
