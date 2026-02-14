@@ -8,5 +8,4 @@ public interface Service<T> {
     List<T> getAll() throws SQLException;
     void update (T t) throws SQLException;
     void delete (T t) throws SQLException;
-
 }

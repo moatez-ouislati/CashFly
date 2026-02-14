@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1100.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.ListJPOController">
+    <children>
+        <!-- Header -->
+        <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1100.0" spacing="20.0" styleClass="app-header" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets left="30.0" right="30.0" />
+            </padding>
+            <children>
+                <ImageView fx:id="cashflyLogoHeader" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@Images/Logo4.png" />
+                    </image>
+                </ImageView>
+                <Label fx:id="ManageJPOTitleHeader" text="Gestion des Journées Portes Ouvertes">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                    <textFill>
+                        <LinearGradient endX="1.0" endY="0.0">
+                            <stops>
+                                <Stop offset="0.0">
+                                    <color>
+                                        <Color red="0.0" green="0.5137254901960784" blue="1.0" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="0.0" green="1.0" blue="0.9921568627450981" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </textFill>
+                </Label>
+            </children>
+        </HBox>
+
+        <!-- Back Button -->
+        <Button fx:id="backButton" layoutX="30.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleBack" styleClass="btn-secondary" text="← Retour" />
+
+        <!-- Table Card -->
+        <VBox layoutX="50.0" layoutY="140.0" prefWidth="1000.0" spacing="15.0" styleClass="card" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="150.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+
+            <!-- Search/Filter -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <TextField fx:id="filterField" promptText="Filtrer par titre ou lieu" HBox.hgrow="ALWAYS" />
+                <Button onAction="#handleRefresh" styleClass="btn-primary" text="Actualiser" />
+            </HBox>
+
+            <!-- Table -->
+            <TableView fx:id="jpoTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idCol" prefWidth="80.0" text="ID" />
+                    <TableColumn fx:id="titreCol" prefWidth="250.0" text="Titre" />
+                    <TableColumn fx:id="dateCol" prefWidth="120.0" text="Date" />
+                    <TableColumn fx:id="lieuCol" prefWidth="200.0" text="Lieu" />
+                    <TableColumn fx:id="descCol" prefWidth="300.0" text="Description" />
+                </columns>
+            </TableView>
+
+            <!-- Status Bar -->
+            <HBox alignment="CENTER_LEFT">
+                <Label fx:id="statusLabel" styleClass="text-muted" text="0 JPO(s) trouvée(s)" />
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>

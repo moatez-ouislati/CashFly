@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="1100.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.UpdateJPOController">
+    <children>
+        <!-- Header -->
+        <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1100.0" spacing="20.0" styleClass="app-header" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding>
+                <Insets left="30.0" right="30.0" />
+            </padding>
+            <children>
+                <ImageView fx:id="cashflyLogoHeader" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@Images/Logo4.png" />
+                    </image>
+                </ImageView>
+                <Label fx:id="ManageJPOTitleHeader" text="Gestion des Journées Portes Ouvertes">
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                    <textFill>
+                        <LinearGradient endX="1.0" endY="0.0">
+                            <stops>
+                                <Stop offset="0.0">
+                                    <color>
+                                        <Color red="0.0" green="0.5137254901960784" blue="1.0" />
+                                    </color>
+                                </Stop>
+                                <Stop offset="1.0">
+                                    <color>
+                                        <Color red="0.0" green="1.0" blue="0.9921568627450981" />
+                                    </color>
+                                </Stop>
+                            </stops>
+                        </LinearGradient>
+                    </textFill>
+                </Label>
+            </children>
+        </HBox>
+
+        <!-- Back Button -->
+        <Button fx:id="backButton" layoutX="30.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleBack" styleClass="btn-secondary" text="← Retour" />
+
+        <!-- Search Section -->
+        <HBox alignment="CENTER" layoutX="250.0" layoutY="100.0" spacing="10.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="250.0">
+            <TextField fx:id="searchField" promptText="Rechercher par ID ou Titre" HBox.hgrow="ALWAYS" />
+            <Button onAction="#handleSearch" styleClass="btn-primary" text="Rechercher" />
+        </HBox>
+
+        <!-- Main Form Card (initially disabled) -->
+        <VBox fx:id="formContainer" disable="true" layoutX="250.0" layoutY="150.0" prefWidth="600.0" spacing="20.0" styleClass="card" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="250.0" AnchorPane.topAnchor="150.0">
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+
+            <!-- Hidden ID Field -->
+            <TextField fx:id="idField" managed="false" visible="false" />
+
+            <!-- Title Field -->
+            <VBox spacing="8.0">
+                <Label styleClass="form-label" text="Titre *" />
+                <TextField fx:id="titreField" promptText="Entrez le titre de l'événement" />
+                <Label fx:id="titreError" styleClass="message-error" text="Le titre est obligatoire" visible="false" />
+            </VBox>
+
+            <!-- Date Field -->
+            <VBox spacing="8.0">
+                <Label styleClass="form-label" text="Date de l'événement *" />
+                <DatePicker fx:id="dateField" prefWidth="Infinity" promptText="Sélectionnez une date" />
+                <Label fx:id="dateError" styleClass="message-error" text="La date est obligatoire" visible="false" />
+            </VBox>
+
+            <!-- Location Field -->
+            <VBox spacing="8.0">
+                <Label styleClass="form-label" text="Lieu *" />
+                <TextField fx:id="lieuField" promptText="Entrez le lieu de l'événement" />
+                <Label fx:id="lieuError" styleClass="message-error" text="Le lieu est obligatoire" visible="false" />
+            </VBox>
+
+            <!-- Description Field -->
+            <VBox spacing="8.0">
+                <Label styleClass="form-label" text="Description" />
+                <TextArea fx:id="descriptionField" prefHeight="100.0" promptText="Entrez une description détaillée (optionnel)" wrapText="true" />
+                <HBox alignment="CENTER_RIGHT">
+                    <Label fx:id="descriptionError" styleClass="message-error" text="Maximum 500 caractères" visible="false" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="charCount" styleClass="text-muted" text="0/500" />
+                </HBox>
+            </VBox>
+
+            <!-- Action Buttons -->
+            <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                <Button onAction="#handleClear" styleClass="btn-secondary" text="Réinitialiser" />
+                <Button fx:id="updateButton" onAction="#handleUpdate" styleClass="btn-primary" text="Mettre à jour" />
+            </HBox>
+        </VBox>
+    </children>
+</AnchorPane>
