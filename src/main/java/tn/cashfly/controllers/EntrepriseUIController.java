@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
@@ -245,16 +246,19 @@ public class EntrepriseUIController {
     }
 
     private VBox createCard(ENTREPRISE e) {
-        VBox card = new VBox(4);
-        card.setPadding(new Insets(10));
-        card.setSpacing(4);
-        card.setStyle("""
+        VBox card = new VBox(6);
+        card.setPadding(new Insets(12));
+        card.setSpacing(6);
+        String baseStyle = """
                 -fx-background-color: white;
-                -fx-border-color: #e2e8f0;
-                -fx-border-radius: 8;
-                -fx-background-radius: 8;
-                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0.2, 0, 2);
-                """);
+                -fx-border-color: #e5e7eb;
+                -fx-border-radius: 10;
+                -fx-background-radius: 10;
+                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 10, 0.25, 0, 2);
+                """;
+        String selectedStyle = baseStyle + "-fx-border-color: #0ea5e9; -fx-border-width: 2;";
+        card.setStyle(baseStyle);
+        card.setUserData(baseStyle);
         card.getStyleClass().add("card");
 
         Label title = new Label(e.getNom());
@@ -289,13 +293,72 @@ public class EntrepriseUIController {
         card.setOnMouseClicked(eClick -> {
             if (selectedEntrepriseCard != null) {
                 selectedEntrepriseCard.getStyleClass().remove("card-selected");
+                Object prev = selectedEntrepriseCard.getUserData();
+                if (prev instanceof String) {
+                    selectedEntrepriseCard.setStyle((String) prev);
+                }
             }
             card.getStyleClass().add("card-selected");
             selectedEntrepriseCard = card;
+            card.setStyle(selectedStyle);
 
             selectedEntreprise = e;
-            populateForm(e);
             UserSession.setCurrentEntreprise(e.getIdEntreprise(), e.getNom());
+        });
+
+        HBox actions = new HBox(8);
+        Button modifyBtn = new Button("Modifier");
+        Button deleteBtn = new Button("Supprimer");
+        modifyBtn.setStyle("-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 6;");
+        deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 6;");
+        actions.getChildren().addAll(modifyBtn, deleteBtn);
+        card.getChildren().add(actions);
+
+        modifyBtn.setOnAction(ev -> {
+            selectedEntreprise = e;
+            if (selectedEntrepriseCard != null) {
+                selectedEntrepriseCard.getStyleClass().remove("card-selected");
+                Object prev = selectedEntrepriseCard.getUserData();
+                if (prev instanceof String) {
+                    selectedEntrepriseCard.setStyle((String) prev);
+                }
+            }
+            card.getStyleClass().add("card-selected");
+            selectedEntrepriseCard = card;
+            card.setStyle(selectedStyle);
+            populateForm(e);
+            ev.consume();
+        });
+
+        deleteBtn.setOnAction(ev -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setHeaderText("Supprimer cette entreprise ?");
+            confirm.setContentText("Cette action est irréversible.");
+            confirm.showAndWait().ifPresent(result -> {
+                if (result.getButtonData().isDefaultButton()) {
+                    try {
+                        entrepriseController.deleteEntreprise(e.getIdEntreprise());
+                        if (selectedEntreprise != null && selectedEntreprise.getIdEntreprise() == e.getIdEntreprise()) {
+                            clearForm();
+                        }
+                        refreshTable();
+                    } catch (SQLException ex) {
+                        showError("Erreur lors de la suppression", ex);
+                    }
+                }
+            });
+            ev.consume();
+        });
+
+        card.setOnMouseEntered(evt -> {
+            if (card != selectedEntrepriseCard) {
+                card.setStyle(baseStyle + "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.16), 14, 0.3, 0, 3);");
+            }
+        });
+        card.setOnMouseExited(evt -> {
+            if (card != selectedEntrepriseCard) {
+                card.setStyle(baseStyle);
+            }
         });
 
         return card;

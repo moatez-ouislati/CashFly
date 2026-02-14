@@ -62,13 +62,11 @@
                     <HBox spacing="8.0">
                         <children>
                             <Button text="Ajouter" onAction="#onAdd"/>
-                            <Button text="Modifier" onAction="#onUpdate"/>
+                            <Button text="Enregistrer" onAction="#onUpdate"/>
                         </children>
                     </HBox>
-                    <Button text="Supprimer sélection" onAction="#onDelete" style="-fx-text-fill: #dc2626;"/>
                 </children>
             </VBox>
         </children>
     </HBox>
 </VBox>
-

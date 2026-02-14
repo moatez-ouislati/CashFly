@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
@@ -51,7 +52,41 @@ public class TresorerieUIController {
         } else {
             currentEntrepriseLabel.setText("Aucune entreprise sélectionnée");
         }
+
+        // Live filter: run directly when user types (no button click)
+        deviseFilterField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+        minSoldeField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+
         refreshTable();
+    }
+
+    /** Applies current devise + min solde filters and refreshes the cards (no button needed). */
+    private void applyFilters() {
+        String devise = deviseFilterField.getText();
+        String minStr = minSoldeField.getText();
+        try {
+            List<TRÉSORERIE> list = tresorerieController.getAllTresoreries();
+            if (devise != null && !devise.isBlank()) {
+                list = list.stream()
+                        .filter(t -> devise.equalsIgnoreCase(t.getDevise()))
+                        .collect(Collectors.toList());
+            }
+            if (minStr != null && !minStr.isBlank()) {
+                try {
+                    double min = Double.parseDouble(minStr);
+                    list = list.stream()
+                            .filter(t -> t.getSolde() >= min)
+                            .collect(Collectors.toList());
+                } catch (NumberFormatException ignored) {
+                    // keep current list if invalid number
+                }
+            }
+            List<TRÉSORERIE> filtered = filterForCurrentEntreprise(list);
+            data.setAll(filtered);
+            renderCards(filtered);
+        } catch (SQLException e) {
+            showError("Erreur lors du filtrage", e);
+        }
     }
 
     private void refreshTable() {
@@ -80,31 +115,12 @@ public class TresorerieUIController {
 
     @FXML
     private void onFilterByDevise() {
-        String devise = deviseFilterField.getText();
-        try {
-            List<TRÉSORERIE> list = tresorerieController.filterTresorerieByDevise(devise);
-            List<TRÉSORERIE> filtered = filterForCurrentEntreprise(list);
-            data.setAll(filtered);
-            renderCards(filtered);
-        } catch (SQLException e) {
-            showError("Erreur lors du filtrage par devise", e);
-        }
+        applyFilters();
     }
 
     @FXML
     private void onFilterByMinSolde() {
-        String minStr = minSoldeField.getText();
-        try {
-            double min = minStr == null || minStr.isBlank() ? 0.0 : Double.parseDouble(minStr);
-            List<TRÉSORERIE> list = tresorerieController.filterTresorerieByMinSolde(min);
-            List<TRÉSORERIE> filtered = filterForCurrentEntreprise(list);
-            data.setAll(filtered);
-            renderCards(filtered);
-        } catch (NumberFormatException e) {
-            showInfo("Le solde minimum doit être un nombre.");
-        } catch (SQLException e) {
-            showError("Erreur lors du filtrage par solde", e);
-        }
+        applyFilters();
     }
 
     @FXML
@@ -222,16 +238,19 @@ public class TresorerieUIController {
     }
 
     private VBox createCard(TRÉSORERIE t) {
-        VBox card = new VBox(4);
-        card.setPadding(new Insets(10));
-        card.setSpacing(4);
-        card.setStyle("""
+        VBox card = new VBox(6);
+        card.setPadding(new Insets(12));
+        card.setSpacing(6);
+        String baseStyle = """
                 -fx-background-color: white;
-                -fx-border-color: #e2e8f0;
-                -fx-border-radius: 8;
-                -fx-background-radius: 8;
-                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0.2, 0, 2);
-                """);
+                -fx-border-color: #e5e7eb;
+                -fx-border-radius: 10;
+                -fx-background-radius: 10;
+                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 10, 0.25, 0, 2);
+                """;
+        String selectedStyle = baseStyle + "-fx-border-color: #0ea5e9; -fx-border-width: 2;";
+        card.setStyle(baseStyle);
+        card.setUserData(baseStyle);
         card.getStyleClass().add("card");
 
         String titleText = "Compte #" + t.getIdTresorerie();
@@ -258,13 +277,72 @@ public class TresorerieUIController {
         card.setOnMouseClicked(eClick -> {
             if (selectedTresorerieCard != null) {
                 selectedTresorerieCard.getStyleClass().remove("card-selected");
+                Object prev = selectedTresorerieCard.getUserData();
+                if (prev instanceof String) {
+                    selectedTresorerieCard.setStyle((String) prev);
+                }
             }
             card.getStyleClass().add("card-selected");
             selectedTresorerieCard = card;
+            card.setStyle(selectedStyle);
 
             selectedTresorerie = t;
-            populateForm(t);
             UserSession.setCurrentTresorerie(t.getIdTresorerie());
+        });
+
+        HBox actions = new HBox(8);
+        Button modifyBtn = new Button("Modifier");
+        Button deleteBtn = new Button("Supprimer");
+        modifyBtn.setStyle("-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 6;");
+        deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 6;");
+        actions.getChildren().addAll(modifyBtn, deleteBtn);
+        card.getChildren().add(actions);
+
+        modifyBtn.setOnAction(ev -> {
+            selectedTresorerie = t;
+            if (selectedTresorerieCard != null) {
+                selectedTresorerieCard.getStyleClass().remove("card-selected");
+                Object prev = selectedTresorerieCard.getUserData();
+                if (prev instanceof String) {
+                    selectedTresorerieCard.setStyle((String) prev);
+                }
+            }
+            card.getStyleClass().add("card-selected");
+            selectedTresorerieCard = card;
+            card.setStyle(selectedStyle);
+            populateForm(t);
+            ev.consume();
+        });
+
+        deleteBtn.setOnAction(ev -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setHeaderText("Supprimer cette trésorerie ?");
+            confirm.setContentText("Cette action est irréversible.");
+            confirm.showAndWait().ifPresent(result -> {
+                if (result.getButtonData().isDefaultButton()) {
+                    try {
+                        tresorerieController.deleteTresorerie(t.getIdTresorerie());
+                        if (selectedTresorerie != null && selectedTresorerie.getIdTresorerie() == t.getIdTresorerie()) {
+                            clearForm();
+                        }
+                        refreshTable();
+                    } catch (SQLException e1) {
+                        showError("Erreur lors de la suppression", e1);
+                    }
+                }
+            });
+            ev.consume();
+        });
+
+        card.setOnMouseEntered(evt -> {
+            if (card != selectedTresorerieCard) {
+                card.setStyle(baseStyle + "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.16), 14, 0.3, 0, 3);");
+            }
+        });
+        card.setOnMouseExited(evt -> {
+            if (card != selectedTresorerieCard) {
+                card.setStyle(baseStyle);
+            }
         });
 
         return card;

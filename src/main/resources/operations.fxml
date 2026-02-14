@@ -27,12 +27,9 @@
             </Label>
             <Region HBox.hgrow="ALWAYS"/>
             <ComboBox fx:id="typeFilterBox" promptText="Type (revenu / depense)" prefWidth="180.0"/>
-            <Button text="Filtrer type" onAction="#onFilterByType"/>
             <TextField fx:id="minMontantField" promptText="Montant min" prefWidth="100.0"/>
             <TextField fx:id="maxMontantField" promptText="Montant max" prefWidth="100.0"/>
-            <Button text="Filtrer montant" onAction="#onFilterByMontant"/>
             <TextField fx:id="keywordField" promptText="Catégorie / description" prefWidth="200.0"/>
-            <Button text="Rechercher" onAction="#onSearchByKeyword"/>
         </children>
     </HBox>
 
@@ -66,13 +63,11 @@
                     <HBox spacing="8.0">
                         <children>
                             <Button text="Ajouter" onAction="#onAdd"/>
-                            <Button text="Modifier" onAction="#onUpdate"/>
+                            <Button text="Enregistrer" onAction="#onUpdate"/>
                         </children>
                     </HBox>
-                    <Button text="Supprimer sélection" onAction="#onDelete" style="-fx-text-fill: #dc2626;"/>
                 </children>
             </VBox>
         </children>
     </HBox>
 </VBox>
-

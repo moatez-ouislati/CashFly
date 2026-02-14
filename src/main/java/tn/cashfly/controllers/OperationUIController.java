@@ -70,7 +70,52 @@ public class OperationUIController {
             currentContextLabel.setText("Aucune trésorerie sélectionnée");
         }
 
+        // Live search/filter: run directly when user types or changes filters (no button click)
+        keywordField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+        typeFilterBox.valueProperty().addListener((o, oldVal, newVal) -> applyFilters());
+        minMontantField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+        maxMontantField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+
         refreshTable();
+    }
+
+    /** Applies current keyword + type + montant filters and refreshes the cards (no button needed). */
+    private void applyFilters() {
+        String keyword = keywordField.getText();
+        String type = typeFilterBox.getValue();
+        String minStr = minMontantField.getText();
+        String maxStr = maxMontantField.getText();
+        try {
+            List<OPÉRATIONS> all = operationController.getAllOperations();
+            double tmpMin = Double.NEGATIVE_INFINITY;
+            double tmpMax = Double.POSITIVE_INFINITY;
+            try {
+                if (minStr != null && !minStr.isBlank()) tmpMin = Double.parseDouble(minStr);
+            } catch (NumberFormatException ignored) {}
+            try {
+                if (maxStr != null && !maxStr.isBlank()) tmpMax = Double.parseDouble(maxStr);
+            } catch (NumberFormatException ignored) {}
+            final double minVal = tmpMin;
+            final double maxVal = tmpMax;
+            List<OPÉRATIONS> filtered = all.stream()
+                    .filter(op -> {
+                        if (keyword == null || keyword.isBlank()) return true;
+                        return containsIgnoreCase(op.getCategorie(), keyword)
+                                || containsIgnoreCase(op.getDescription(), keyword);
+                    })
+                    .filter(op -> {
+                        if (type == null || type.isBlank()) return true;
+                        String t = op.getType();
+                        return t != null && t.equalsIgnoreCase(type);
+                    })
+                    .filter(op -> op.getMontant() >= minVal && op.getMontant() <= maxVal)
+                    .collect(Collectors.toList());
+            List<OPÉRATIONS> byEntreprise = filterForCurrentEntreprise(filtered);
+            data.setAll(byEntreprise);
+            renderCards(byEntreprise);
+        } catch (SQLException e) {
+            showError("Erreur lors du filtrage", e);
+        }
     }
 
     private void refreshTable() {
@@ -101,48 +146,17 @@ public class OperationUIController {
 
     @FXML
     private void onFilterByType() {
-        String type = typeFilterBox.getValue();
-        try {
-            List<OPÉRATIONS> list = operationController.filterOperationsByType(type);
-            List<OPÉRATIONS> filtered = filterForCurrentEntreprise(list);
-            data.setAll(filtered);
-            renderCards(filtered);
-        } catch (SQLException e) {
-            showError("Erreur lors du filtrage par type", e);
-        }
+        applyFilters();
     }
 
     @FXML
     private void onFilterByMontant() {
-        try {
-            double min = (minMontantField.getText() == null || minMontantField.getText().isBlank())
-                    ? Double.MIN_VALUE
-                    : Double.parseDouble(minMontantField.getText());
-            double max = (maxMontantField.getText() == null || maxMontantField.getText().isBlank())
-                    ? Double.MAX_VALUE
-                    : Double.parseDouble(maxMontantField.getText());
-            List<OPÉRATIONS> list = operationController.filterOperationsByAmountRange(min, max);
-            List<OPÉRATIONS> filtered = filterForCurrentEntreprise(list);
-            data.setAll(filtered);
-            renderCards(filtered);
-        } catch (NumberFormatException e) {
-            showInfo("Montant min/max doivent être des nombres.");
-        } catch (SQLException e) {
-            showError("Erreur lors du filtrage par montant", e);
-        }
+        applyFilters();
     }
 
     @FXML
     private void onSearchByKeyword() {
-        String keyword = keywordField.getText();
-        try {
-            List<OPÉRATIONS> list = operationController.searchOperationsByKeyword(keyword);
-            List<OPÉRATIONS> filtered = filterForCurrentEntreprise(list);
-            data.setAll(filtered);
-            renderCards(filtered);
-        } catch (SQLException e) {
-            showError("Erreur lors de la recherche", e);
-        }
+        applyFilters();
     }
 
     @FXML
@@ -199,28 +213,61 @@ public class OperationUIController {
     }
 
     private OPÉRATIONS buildFromForm(Integer existingId) {
+        
+        //verif session entreprise 
+
         try {
             Integer fromSession = UserSession.getCurrentTresorerieId();
             if (fromSession == null) {
                 showInfo("Veuillez choisir une trésorerie dans l'onglet Trésorerie d'abord.");
                 return null;
             }
+            //creation de sesision tresorerie
             int idTres = fromSession;
+            // retrieve form values
             String type = typeBox.getValue();
             double montant = Double.parseDouble(montantField.getText());
             String categorie = categorieField.getText();
             String description = descriptionField.getText();
-
-            if (type == null || type.isBlank()) {
+            //control de saisieee
+            if (type == null ) {
                 showInfo("Le type (revenu/depense) est obligatoire.");
                 return null;
             }
-
-            TRÉSORERIE t = tresorerieController.getTresorerieById(idTres);
-            if (t == null) {
-                showInfo("Aucune trésorerie trouvée pour l'ID : " + idTres);
+            ////////////////////////////////////////////////////////////////////
+            if (montant == 0) {
+                showInfo("Le montant est obligatoire.");
                 return null;
             }
+            if (montant < 0) {
+                showInfo("Le montant ne peut pas être négatif.");
+                return null;
+            }
+           ///////////////////////////////////////////////////////////////////
+            if (description == null || description.isBlank()) {
+                showInfo("La description est obligatoire.");
+                return null;
+            }
+            if (description.length() > 255) {
+                showInfo("La description ne doit pas dépasser 255 caractères.");
+                return null;
+            }
+            ///////////////////////////////////////////////////////////////////
+             if (categorie == null || categorie.isBlank()) {
+                showInfo("La catégorie est obligatoire.");
+                return null;
+            }
+            if (categorie.length() > 15) {
+                showInfo("La catégorie ne doit pas dépasser 15 caractères.");
+                return null;
+            }
+
+
+            TRÉSORERIE t = tresorerieController.getTresorerieById(idTres);
+          //  if (t == null) {
+            //    showInfo("Aucune trésorerie trouvée pour l'ID : " + idTres);
+            //    return null;
+            //}
 
             OPÉRATIONS op;
             if (existingId == null) {
@@ -256,16 +303,19 @@ public class OperationUIController {
     }
 
     private VBox createCard(OPÉRATIONS op) {
-        VBox card = new VBox(4);
-        card.setPadding(new Insets(10));
-        card.setSpacing(4);
-        card.setStyle("""
+        VBox card = new VBox(6);
+        card.setPadding(new Insets(12));
+        card.setSpacing(6);
+        String baseStyle = """
                 -fx-background-color: white;
-                -fx-border-color: #e2e8f0;
-                -fx-border-radius: 8;
-                -fx-background-radius: 8;
-                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.08), 8, 0.2, 0, 2);
-                """);
+                -fx-border-color: #e5e7eb;
+                -fx-border-radius: 10;
+                -fx-background-radius: 10;
+                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 10, 0.25, 0, 2);
+                """;
+        String selectedStyle = baseStyle + "-fx-border-color: #0ea5e9; -fx-border-width: 2;";
+        card.setStyle(baseStyle);
+        card.setUserData(baseStyle);
         card.getStyleClass().add("card");
 
         String type = op.getType() != null ? op.getType() : "";
@@ -317,15 +367,79 @@ public class OperationUIController {
         card.setOnMouseClicked(e -> {
             if (selectedOperationCard != null) {
                 selectedOperationCard.getStyleClass().remove("card-selected");
+                Object prev = selectedOperationCard.getUserData();
+                if (prev instanceof String) {
+                    selectedOperationCard.setStyle((String) prev);
+                }
             }
             card.getStyleClass().add("card-selected");
             selectedOperationCard = card;
+            card.setStyle(selectedStyle);
 
             selectedOperation = op;
+        });
+
+        HBox actions = new HBox(8);
+        Button modifyBtn = new Button("Modifier");
+        Button deleteBtn = new Button("Supprimer");
+        modifyBtn.setStyle("-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 6;");
+        deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 6;");
+        actions.getChildren().addAll(modifyBtn, deleteBtn);
+        card.getChildren().add(actions);
+
+        modifyBtn.setOnAction(ev -> {
+            selectedOperation = op;
+            if (selectedOperationCard != null) {
+                selectedOperationCard.getStyleClass().remove("card-selected");
+                Object prev = selectedOperationCard.getUserData();
+                if (prev instanceof String) {
+                    selectedOperationCard.setStyle((String) prev);
+                }
+            }
+            card.getStyleClass().add("card-selected");
+            selectedOperationCard = card;
+            card.setStyle(selectedStyle);
             populateForm(op);
+            ev.consume();
+        });
+
+        deleteBtn.setOnAction(ev -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setHeaderText("Supprimer cette opération ?");
+            confirm.setContentText("Cette action est irréversible.");
+            confirm.showAndWait().ifPresent(result -> {
+                if (result.getButtonData().isDefaultButton()) {
+                    try {
+                        operationController.deleteOperation(op.getIdOperation());
+                        if (selectedOperation != null && selectedOperation.getIdOperation() == op.getIdOperation()) {
+                            clearForm();
+                        }
+                        refreshTable();
+                    } catch (SQLException e1) {
+                        showError("Erreur lors de la suppression", e1);
+                    }
+                }
+            });
+            ev.consume();
+        });
+
+        card.setOnMouseEntered(e -> {
+            if (card != selectedOperationCard) {
+                card.setStyle(baseStyle + "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.16), 14, 0.3, 0, 3);");
+            }
+        });
+        card.setOnMouseExited(e -> {
+            if (card != selectedOperationCard) {
+                card.setStyle(baseStyle);
+            }
         });
 
         return card;
+    }
+
+    private boolean containsIgnoreCase(String haystack, String needle) {
+        if (haystack == null || needle == null) return false;
+        return haystack.toLowerCase().contains(needle.toLowerCase());
     }
 
     private void showError(String message, Exception e) {
@@ -345,15 +459,15 @@ public class OperationUIController {
 
     private List<OPÉRATIONS> filterForCurrentEntreprise(List<OPÉRATIONS> input) {
         Integer entrepriseId = UserSession.getCurrentEntrepriseId();
-        if (entrepriseId == null) {
-            return input;
-        }
+        Integer tresId = UserSession.getCurrentTresorerieId();
         return input.stream()
                 .filter(op -> {
                     TRÉSORERIE t = op.getTresorerie();
-                    return t != null && t.getIdEntreprise() == entrepriseId;
+                    if (t == null) return false;
+                    if (entrepriseId != null && t.getIdEntreprise() != entrepriseId) return false;
+                    if (tresId != null && t.getIdTresorerie() != tresId) return false;
+                    return true;
                 })
                 .collect(Collectors.toList());
     }
 }
-
