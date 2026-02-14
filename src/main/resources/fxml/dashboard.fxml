@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.CheckBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.DashboardController">
+    <left>
+        <VBox prefHeight="800.0" prefWidth="260.0" styleClass="sidebar" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" spacing="10.0">
+                    <children>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/logo.png" />
+                            </image>
+                        </ImageView>
+                        <VBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label styleClass="logo-text" text="CASHFLY" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
+                                </Label>
+                                <Label text="PROPRIETAIRE PME" textFill="#a1a1a1">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                </HBox>
+                <Label text="MENU PRINCIPAL" textFill="#6c757d">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets left="20.0" top="20.0" />
+                    </VBox.margin>
+                </Label>
+                <VBox spacing="5.0">
+                    <children>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" text="Dashboard" onAction="#showDashboard">
+                            <styleClass>
+                                <String fx:value="nav-btn" />
+                                <String fx:value="active-nav-btn" />
+                            </styleClass>
+                            <graphic>
+                                <FontIcon iconLiteral="fas-tachometer-alt" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Investissements" onAction="#showInvestments">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-chart-line" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Rendements" onAction="#showRendements">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-hand-holding-usd" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Utilisateurs" onAction="#showUtilisateurs">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-users" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Rapports" onAction="#showRapports">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-file-alt" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Paramètres" onAction="#showParametres">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-cog" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+                <Label text="COMMUN" textFill="#6c757d">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets left="20.0" top="20.0" />
+                    </VBox.margin>
+                </Label>
+                <VBox spacing="5.0">
+                    <children>
+                        <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Notifications" onAction="#showNotifications">
+                            <graphic>
+                                <FontIcon iconLiteral="fas-bell" iconSize="18" styleClass="ikonli-font-icon" />
+                            </graphic>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+                <Pane VBox.vgrow="ALWAYS" />
+                <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Déconnexion" onAction="#handleLogout">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-sign-out-alt" iconSize="18" styleClass="ikonli-font-icon" />
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="10.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-content" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" styleClass="header">
+                    <children>
+                        <VBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label styleClass="page-title" text="Console de Pilotage" fx:id="pageTitle" />
+                                <Label styleClass="page-subtitle" text="Analyse en temps réel de votre écosystème financier." fx:id="pageSubtitle" />
+                            </children>
+                        </VBox>
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER" spacing="8.0" styleClass="status-badge">
+                            <children>
+                                <FontIcon iconColor="#2ecc71" iconLiteral="fas-shield-alt" iconSize="14" />
+                                <Label text="STATUS SÉCURISÉ" textFill="#2ecc71">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </HBox>
+                        <Circle fill="#e0e0e0" radius="16.0" stroke="WHITE" strokeType="INSIDE">
+                            <HBox.margin>
+                                <Insets left="20.0" />
+                            </HBox.margin>
+                        </Circle>
+                    </children>
+                    <padding>
+                        <Insets left="30.0" right="30.0" />
+                    </padding>
+                </HBox>
+                <StackPane VBox.vgrow="ALWAYS">
+                    <children>
+                        <!-- Dashboard View -->
+                        <ScrollPane fx:id="dashboardView" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" vbarPolicy="AS_NEEDED">
+                            <content>
+                                <VBox spacing="30.0">
+                                    <children>
+                                        <HBox spacing="30.0">
+                                            <children>
+                                                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <Pane styleClass="icon-container-green" />
+                                                                <Pane HBox.hgrow="ALWAYS" />
+                                                                <Label styleClass="percentage-green" text="+12.5%" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Label styleClass="card-label" text="Entrées Totales">
+                                                            <VBox.margin>
+                                                                <Insets top="15.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                        <Label styleClass="card-value" text="\$160 000" />
+                                                    </children>
+                                                </VBox>
+                                                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <Pane styleClass="icon-container-red" />
+                                                                <Pane HBox.hgrow="ALWAYS" />
+                                                                <Label styleClass="percentage-red" text="-4.2%" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Label styleClass="card-label" text="Sorties Totales">
+                                                            <VBox.margin>
+                                                                <Insets top="15.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                        <Label styleClass="card-value" text="\$47 400" />
+                                                    </children>
+                                                </VBox>
+                                                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <Pane styleClass="icon-container-blue" />
+                                                            </children>
+                                                        </HBox>
+                                                        <Label styleClass="card-label" text="Temps de Piste (Runway)">
+                                                            <VBox.margin>
+                                                                <Insets top="15.0" />
+                                                            </VBox.margin>
+                                                        </Label>
+                                                        <Label styleClass="card-value" text="14.2 Mois" />
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="30.0" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT">
+                                                            <children>
+                                                                <Label styleClass="section-title" text="Performances Trésorerie" />
+                                                                <Pane HBox.hgrow="ALWAYS" />
+                                                                <HBox alignment="CENTER" spacing="10.0">
+                                                                    <children>
+                                                                        <Circle fill="#5a5ce5" radius="4.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                                                                        <Label text="Inbound" textFill="#a1a1a1" />
+                                                                        <Circle fill="#2ecc71" radius="4.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                                                                        <Label text="Outbound" textFill="#a1a1a1" />
+                                                                    </children>
+                                                                </HBox>
+                                                            </children>
+                                                        </HBox>
+                                                        <Pane prefHeight="300.0" styleClass="chart-placeholder" />
+                                                    </children>
+                                                </VBox>
+                                                <VBox prefWidth="350.0" styleClass="card-dark">
+                                                    <children>
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Pane styleClass="icon-ai" />
+                                                                <Label styleClass="section-title-light" text="Conseils IA" />
+                                                            </children>
+                                                            <VBox.margin>
+                                                                <Insets bottom="20.0" />
+                                                            </VBox.margin>
+                                                        </HBox>
+                                                        <VBox spacing="15.0">
+                                                            <children>
+                                                                <Label styleClass="ai-text" text="The core recurring subscription revenue of $45,000 currently covers fixed costs like payroll and rent with a slim 1.12x coverage ratio, suggesting a need to scale the MRR..." wrapText="true" />
+                                                                <Separator opacity="0.1" />
+                                                                <Label styleClass="ai-text" text="Rent and Payroll represent over 84% of total outflows; exploring remote work options could reduce monthly office expense..." wrapText="true" />
+                                                                <Separator opacity="0.1" />
+                                                                <Label styleClass="ai-text" text="With a $5,000 marketing spend against $60,000 in total sales revenue, the current customer acquisition cost appears healthy..." wrapText="true" />
+                                                            </children>
+                                                        </VBox>
+                                                        <Pane VBox.vgrow="ALWAYS" />
+                                                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="action-btn" text="Générer Rapport PDF" />
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                    </padding>
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+
+                        <!-- Investments View -->
+                        <VBox fx:id="investmentsView" spacing="20.0" visible="false" styleClass="main-content">
+                            <children>
+                                <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                    <children>
+                                        <!-- Investment List -->
+                                        <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                            <children>
+                                                <Label styleClass="section-title" text="Liste des Investissements">
+                                                    <VBox.margin>
+                                                        <Insets bottom="15.0" />
+                                                    </VBox.margin>
+                                                </Label>
+                                                <TableView fx:id="investTable" VBox.vgrow="ALWAYS">
+                                                    <columns>
+                                                        <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
+                                                        <TableColumn fx:id="colDescription" text="Description" prefWidth="200.0" />
+                                                        <TableColumn fx:id="colMontant" text="Montant" prefWidth="100.0" />
+                                                        <TableColumn fx:id="colStatut" text="Statut" prefWidth="100.0" />
+                                                        <TableColumn fx:id="colDate" text="Date" prefWidth="100.0" />
+                                                        <TableColumn fx:id="colTaux" text="Taux %" prefWidth="80.0" />
+                                                        <TableColumn fx:id="colDuree" text="Durée (Mois)" prefWidth="100.0" />
+                                                    </columns>
+                                                    <columnResizePolicy>
+                                                        <javafx.scene.control.TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                    </columnResizePolicy>
+                                                </TableView>
+                                            </children>
+                                        </VBox>
+
+                                        <!-- Form -->
+                                        <VBox prefWidth="350.0" spacing="15.0" styleClass="card">
+                                            <children>
+                                                <Label styleClass="section-title" text="Détails de l'Investissement" />
+
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="Description" textFill="#6c757d" />
+                                                        <TextField fx:id="txtDescription" styleClass="form-field" />
+                                                    </children>
+                                                </VBox>
+
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Montant" textFill="#6c757d" />
+                                                                <TextField fx:id="txtMontant" styleClass="form-field" />
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Statut" textFill="#6c757d" />
+                                                                <TextField fx:id="txtStatut" styleClass="form-field" />
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
+
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Taux (%)" textFill="#6c757d" />
+                                                                <TextField fx:id="txtTaux" styleClass="form-field" />
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label text="Durée (Mois)" textFill="#6c757d" />
+                                                                <TextField fx:id="txtDuree" styleClass="form-field" />
+                                                            </children>
+                                                        </VBox>
+                                                    </children>
+                                                </HBox>
+
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="ID Entreprise" textFill="#6c757d" />
+                                                        <TextField fx:id="txtIdEntreprise" styleClass="form-field" />
+                                                    </children>
+                                                </VBox>
+                                                <VBox spacing="5.0">
+                                                    <children>
+                                                        <Label text="ID Investisseur" textFill="#6c757d" />
+                                                        <TextField fx:id="txtIdInvestisseur" styleClass="form-field" />
+                                                    </children>
+                                                </VBox>
+
+                                                <Pane VBox.vgrow="ALWAYS" />
+
+                                                <HBox spacing="10.0">
+                                                    <children>
+                                                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="action-btn" HBox.hgrow="ALWAYS" text="Ajouter" onAction="#handleAdd" />
+                                                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-warning" HBox.hgrow="ALWAYS" text="Modifier" onAction="#handleUpdate" />
+                                                    </children>
+                                                </HBox>
+                                                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-danger" text="Supprimer" onAction="#handleDelete" />
+                                                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text="Vider le formulaire" onAction="#handleClear" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                            </children>
+                            <padding>
+                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                            </padding>
+                        </VBox>
+
+                        <!-- 3. Rendements View -->
+                        <VBox fx:id="rendementsView" spacing="20.0" visible="false" styleClass="main-content">
+                            <padding>
+                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                            </padding>
+                            <children>
+                                <HBox alignment="CENTER_LEFT">
+                                    <Label styleClass="section-title" text="Analyse des Rendements" />
+                                    <Pane HBox.hgrow="ALWAYS" />
+                                    <Button text="Export CSV/PDF" styleClass="action-btn" />
+                                </HBox>
+
+                                <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                    <!-- List of Returns -->
+                                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <Label text="Liste des Rendements" styleClass="card-label">
+                                                <VBox.margin>
+                                                    <Insets bottom="10.0"/>
+                                                </VBox.margin>
+                                            </Label>
+                                            <TableView fx:id="returnsTable" VBox.vgrow="ALWAYS">
+                                                <columns>
+                                                    <TableColumn text="Inv. ID" prefWidth="60.0" />
+                                                    <TableColumn text="Date" prefWidth="100.0" />
+                                                    <TableColumn text="Montant Investi" prefWidth="100.0" />
+                                                    <TableColumn text="Rendement" prefWidth="100.0" />
+                                                    <TableColumn text="ROI %" prefWidth="80.0" />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- KPIs and Charts -->
+                                    <VBox spacing="20.0" prefWidth="400.0">
+                                        <VBox styleClass="card">
+                                            <children>
+                                                <Label text="Performance Globale" styleClass="card-label" />
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <Label text="+18.2%" styleClass="percentage-green" />
+                                                    <Label text="cette année" textFill="#a1a1a1" />
+                                                </HBox>
+                                                <Pane styleClass="chart-placeholder" prefHeight="200.0" />
+                                            </children>
+                                        </VBox>
+                                        <HBox spacing="10.0">
+                                            <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Gain Total" styleClass="card-label" />
+                                                    <Label text="\$12,450" styleClass="card-value" textFill="#2ecc71" />
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Valeur Portefeuille" styleClass="card-label" />
+                                                    <Label text="\$184,500" styleClass="card-value" />
+                                                </children>
+                                            </VBox>
+                                        </HBox>
+                                    </VBox>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- 4. Utilisateurs View -->
+                        <VBox fx:id="utilisateursView" spacing="20.0" visible="false" styleClass="main-content">
+                            <padding>
+                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-title" text="Gestion des Utilisateurs" />
+                                <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                    <!-- Users List -->
+                                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                        <children>
+                                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                <Label text="Investisseurs et Entreprises" styleClass="card-label" />
+                                                <Pane HBox.hgrow="ALWAYS" />
+                                                <TextField promptText="Rechercher..." styleClass="search-field" />
+                                            </HBox>
+                                            <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                                                <columns>
+                                                    <TableColumn text="ID" prefWidth="50.0" />
+                                                    <TableColumn text="Nom" prefWidth="150.0" />
+                                                    <TableColumn text="Type" prefWidth="100.0" />
+                                                    <TableColumn text="Email" prefWidth="150.0" />
+                                                    <TableColumn text="Statut" prefWidth="100.0" />
+                                                </columns>
+                                                <columnResizePolicy>
+                                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                </columnResizePolicy>
+                                            </TableView>
+                                        </children>
+                                    </VBox>
+
+                                    <!-- User Details -->
+                                    <VBox styleClass="card" prefWidth="350.0" spacing="15.0">
+                                        <children>
+                                            <Label text="Détails du Profil" styleClass="section-title" />
+                                            <HBox alignment="CENTER" spacing="15.0">
+                                                <Circle fill="#e0e0e0" radius="30.0" />
+                                                <VBox alignment="CENTER_LEFT">
+                                                    <Label text="Sélectionner un user" style="-fx-font-weight: bold;" />
+                                                    <Label text="--r" textFill="#a1a1a1" />
+                                                </VBox>
+                                            </HBox>
+                                            <Separator opacity="0.1" />
+                                            <VBox spacing="5.0">
+                                                <Label text="Contact" styleClass="card-label" />
+                                                <Label text="Email: -" textFill="#a1a1a1" />
+                                                <Label text="Tel: -" textFill="#a1a1a1" />
+                                            </VBox>
+                                            <Separator opacity="0.1" />
+                                            <Label text="Historique récent" styleClass="card-label" />
+                                            <Label text="Aucune activité récente." textFill="#a1a1a1" wrapText="true" />
+                                            <Pane VBox.vgrow="ALWAYS" />
+                                            <Button text="Contacter" styleClass="action-btn" maxWidth="Infinity" />
+                                        </children>
+                                    </VBox>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- 5. Rapports View -->
+                        <VBox fx:id="rapportsView" spacing="20.0" visible="false" styleClass="main-content">
+                            <padding>
+                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-title" text="Rapports &amp; Analytics" />
+                                <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                    <VBox spacing="20.0" HBox.hgrow="ALWAYS">
+                                        <HBox spacing="20.0" prefHeight="250.0">
+                                            <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Répartition par Secteur" styleClass="card-label" />
+                                                    <Pane styleClass="chart-placeholder" VBox.vgrow="ALWAYS" />
+                                                </children>
+                                            </VBox>
+                                            <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Evolution Mensuelle" styleClass="card-label" />
+                                                    <Pane styleClass="chart-placeholder" VBox.vgrow="ALWAYS" />
+                                                </children>
+                                            </VBox>
+                                        </HBox>
+                                        <VBox styleClass="card" VBox.vgrow="ALWAYS">
+                                            <children>
+                                                <Label text="Comparaison entre Projets" styleClass="card-label" />
+                                                <Pane styleClass="chart-placeholder" VBox.vgrow="ALWAYS" />
+                                            </children>
+                                        </VBox>
+                                    </VBox>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- 6. Paramètres View -->
+                        <VBox fx:id="parametresView" spacing="20.0" visible="false" styleClass="main-content">
+                            <padding>
+                                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-title" text="Paramètres Généraux" />
+                                <HBox spacing="30.0" VBox.vgrow="ALWAYS">
+                                    <VBox spacing="20.0" HBox.hgrow="ALWAYS">
+                                        <VBox styleClass="card">
+                                            <children>
+                                                <Label text="Configuration des Taux et Limites" styleClass="section-title" />
+                                                <VBox spacing="15.0">
+                                                    <VBox spacing="5.0">
+                                                        <Label text="Taux d'intérêt par défaut (%)" textFill="#6c757d" />
+                                                        <TextField text="5.0" styleClass="form-field" />
+                                                    </VBox>
+                                                    <VBox spacing="5.0">
+                                                        <Label text="Plafond d'investissement par défaut" textFill="#6c757d" />
+                                                        <TextField text="100000" styleClass="form-field" />
+                                                    </VBox>
+                                                    <Button text="Sauvegarder les taux" styleClass="action-btn" alignment="CENTER_LEFT" />
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox styleClass="card">
+                                            <children>
+                                                <Label text="Préférences du Dashboard" styleClass="section-title" />
+                                                <VBox spacing="10.0">
+                                                    <CheckBox text="Activer le mode sombre automatique" selected="true" />
+                                                    <CheckBox text="Afficher les notifications en temps réel" selected="true" />
+                                                    <CheckBox text="Masquer les montants sensibles" />
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+                                    </VBox>
+
+                                    <VBox styleClass="card" prefWidth="400.0">
+                                        <children>
+                                            <Label text="Gestion des Accès Administrateurs" styleClass="section-title" />
+                                            <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <Circle fill="#5a5ce5" radius="15.0" />
+                                                    <Label text="Admin Principal (Vous)" />
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Label text="Super Admin" textFill="#2ecc71" style="-fx-font-size: 10px;" />
+                                                </HBox>
+                                                <Separator opacity="0.1" />
+                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                    <Circle fill="#a1a1a1" radius="15.0" />
+                                                    <Label text="Support Technique" />
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Button text="Gérer" styleClass="btn-secondary" />
+                                                </HBox>
+                                                <Pane VBox.vgrow="ALWAYS" />
+                                                <Button text="Ajouter un administrateur" styleClass="btn-secondary" maxWidth="Infinity" />
+                                            </VBox>
+                                        </children>
+                                    </VBox>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- 7. Notifications View -->
+                        <VBox fx:id="notificationsView" spacing="20.0" visible="false" styleClass="main-content">
+                            <padding>
+                                <Insets bottom="30.0" left="100.0" right="100.0" top="30.0" />
+                            </padding>
+                            <children>
+                                <HBox alignment="BOTTOM_LEFT" styleClass="notif-header-container">
+                                    <children>
+                                        <VBox spacing="5.0">
+                                            <children>
+                                                <Label styleClass="section-title" text="Notifications" />
+                                                <Label text="Restez informé des activités de votre compte." textFill="#7f8c8d" />
+                                            </children>
+                                        </VBox>
+                                        <Pane HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" styleClass="mark-read-btn" text="Tout marquer comme lu" />
+                                    </children>
+                                </HBox>
+
+                                <VBox spacing="15.0">
+                                    <children>
+                                        <!-- Notif 1 -->
+                                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="notif-card">
+                                            <children>
+                                                <StackPane styleClass="icon-circle-success">
+                                                    <children>
+                                                        <FontIcon iconLiteral="fas-check-circle" iconSize="20" iconColor="#2ecc71" />
+                                                    </children>
+                                                </StackPane>
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label styleClass="notif-title" text="Nouvel Investisseur" />
+                                                        <Label styleClass="notif-text" text="L'entreprise SolarStream s'intéresse à votre profil." />
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Circle radius="3.0" styleClass="notif-dot" />
+                                                                <Label styleClass="continue-link" text="Voir plus" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <Label styleClass="notif-time" text="il y a 2h" />
+                                            </children>
+                                        </HBox>
+
+                                        <!-- Notif 2 -->
+                                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="notif-card">
+                                            <children>
+                                                <StackPane styleClass="icon-circle-alert">
+                                                    <children>
+                                                        <FontIcon iconLiteral="fas-exclamation-triangle" iconSize="20" iconColor="#e74c3c" />
+                                                    </children>
+                                                </StackPane>
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label styleClass="notif-title" text="Alerte CashFlow" />
+                                                        <Label styleClass="notif-text" text="Sortie inhabituelle détectée dans la catégorie Marketing." />
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Circle radius="3.0" styleClass="notif-dot" />
+                                                                <Label styleClass="continue-link" text="Voir plus" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <Label styleClass="notif-time" text="il y a 5h" />
+                                            </children>
+                                        </HBox>
+
+                                        <!-- Notif 3 -->
+                                        <HBox alignment="CENTER_LEFT" spacing="20.0" styleClass="notif-card">
+                                            <children>
+                                                <StackPane styleClass="icon-circle-info">
+                                                    <children>
+                                                        <FontIcon iconLiteral="fas-info-circle" iconSize="20" iconColor="#3498db" />
+                                                    </children>
+                                                </StackPane>
+                                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                                    <children>
+                                                        <Label styleClass="notif-title" text="Rapport Prêt" />
+                                                        <Label styleClass="notif-text" text="Votre analyse de risque hebdomadaire est disponible." />
+                                                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                            <children>
+                                                                <Label styleClass="continue-link" text="Voir plus" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                                <Label styleClass="notif-time" text="il y a 1j" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </StackPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

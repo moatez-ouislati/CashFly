@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane styleClass="login-root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.LoginController">
+    <children>
+        <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-card">
+            <children>
+                <VBox alignment="CENTER" spacing="10.0">
+                    <children>
+                        <ImageView fitHeight="139.0" fitWidth="143.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/logo.png" />
+                            </image>
+                            <VBox.margin>
+                                <Insets bottom="20.0" />
+                            </VBox.margin>
+                        </ImageView>
+                        <Label text="Connectez-vous à la performance financière." textFill="#a0a0a0">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="EMAIL PROFESSIONNEL" textFill="#6c757d">
+                            <font>
+                                <Font name="System Bold" size="10.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="emailField" promptText="name@company.com" styleClass="login-field" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="MOT DE PASSE" textFill="#6c757d">
+                            <font>
+                                <Font name="System Bold" size="10.0" />
+                            </font>
+                        </Label>
+                        <PasswordField fx:id="passwordField" promptText="........" styleClass="login-field" />
+                        <HBox alignment="CENTER_RIGHT">
+                            <children>
+                                <Label styleClass="link-text" text="Mot de passe oublié ?" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" styleClass="login-btn" text="Se connecter -&gt;" />
+
+                <HBox alignment="CENTER" spacing="10.0">
+                    <children>
+                        <Separator opacity="0.1" prefWidth="100.0" />
+                        <Label text="OU CONTINUER AVEC" textFill="#6c757d">
+                            <font>
+                                <Font size="10.0" />
+                            </font>
+                        </Label>
+                        <Separator opacity="0.1" prefWidth="100.0" />
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox spacing="10.0">
+                    <children>
+                        <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="GitHub" HBox.hgrow="ALWAYS">
+                            <graphic>
+                                <Pane prefHeight="16.0" prefWidth="16.0" styleClass="icon-github" />
+                            </graphic>
+                        </Button>
+                        <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="Google" HBox.hgrow="ALWAYS">
+                            <graphic>
+                                <Pane prefHeight="16.0" prefWidth="16.0" styleClass="icon-google" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER" spacing="5.0">
+                    <children>
+                        <Label text="Pas encore de compte ?" textFill="#6c757d">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
+                        <Label onMouseClicked="#showSignUp" styleClass="link-text-bold" text="S'inscrire" />
+                    </children>
+                    <VBox.margin>
+                        <Insets top="20.0" />
+                    </VBox.margin>
+                </HBox>
+
+            </children>
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+        </VBox>
+    </children>
+</StackPane>

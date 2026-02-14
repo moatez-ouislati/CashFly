@@ -47,6 +47,17 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-fontawesome5-pack</artifactId>
+            <version>12.3.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -57,7 +68,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>
-                        tn.esprit.tests.MainFX
+                        tn.cashfly.MainFX
                     </mainClass>
                 </configuration>
             </plugin>
