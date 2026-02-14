@@ -306,16 +306,6 @@ public class OperationUIController {
         VBox card = new VBox(6);
         card.setPadding(new Insets(12));
         card.setSpacing(6);
-        String baseStyle = """
-                -fx-background-color: white;
-                -fx-border-color: #e5e7eb;
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 10, 0.25, 0, 2);
-                """;
-        String selectedStyle = baseStyle + "-fx-border-color: #0ea5e9; -fx-border-width: 2;";
-        card.setStyle(baseStyle);
-        card.setUserData(baseStyle);
         card.getStyleClass().add("card");
 
         String type = op.getType() != null ? op.getType() : "";
@@ -367,14 +357,9 @@ public class OperationUIController {
         card.setOnMouseClicked(e -> {
             if (selectedOperationCard != null) {
                 selectedOperationCard.getStyleClass().remove("card-selected");
-                Object prev = selectedOperationCard.getUserData();
-                if (prev instanceof String) {
-                    selectedOperationCard.setStyle((String) prev);
-                }
             }
             card.getStyleClass().add("card-selected");
             selectedOperationCard = card;
-            card.setStyle(selectedStyle);
 
             selectedOperation = op;
         });
@@ -391,14 +376,9 @@ public class OperationUIController {
             selectedOperation = op;
             if (selectedOperationCard != null) {
                 selectedOperationCard.getStyleClass().remove("card-selected");
-                Object prev = selectedOperationCard.getUserData();
-                if (prev instanceof String) {
-                    selectedOperationCard.setStyle((String) prev);
-                }
             }
             card.getStyleClass().add("card-selected");
             selectedOperationCard = card;
-            card.setStyle(selectedStyle);
             populateForm(op);
             ev.consume();
         });
@@ -423,16 +403,7 @@ public class OperationUIController {
             ev.consume();
         });
 
-        card.setOnMouseEntered(e -> {
-            if (card != selectedOperationCard) {
-                card.setStyle(baseStyle + "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.16), 14, 0.3, 0, 3);");
-            }
-        });
-        card.setOnMouseExited(e -> {
-            if (card != selectedOperationCard) {
-                card.setStyle(baseStyle);
-            }
-        });
+        // Hover handled via CSS .card:hover
 
         return card;
     }

@@ -249,16 +249,6 @@ public class EntrepriseUIController {
         VBox card = new VBox(6);
         card.setPadding(new Insets(12));
         card.setSpacing(6);
-        String baseStyle = """
-                -fx-background-color: white;
-                -fx-border-color: #e5e7eb;
-                -fx-border-radius: 10;
-                -fx-background-radius: 10;
-                -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 10, 0.25, 0, 2);
-                """;
-        String selectedStyle = baseStyle + "-fx-border-color: #0ea5e9; -fx-border-width: 2;";
-        card.setStyle(baseStyle);
-        card.setUserData(baseStyle);
         card.getStyleClass().add("card");
 
         Label title = new Label(e.getNom());
@@ -293,14 +283,9 @@ public class EntrepriseUIController {
         card.setOnMouseClicked(eClick -> {
             if (selectedEntrepriseCard != null) {
                 selectedEntrepriseCard.getStyleClass().remove("card-selected");
-                Object prev = selectedEntrepriseCard.getUserData();
-                if (prev instanceof String) {
-                    selectedEntrepriseCard.setStyle((String) prev);
-                }
             }
             card.getStyleClass().add("card-selected");
             selectedEntrepriseCard = card;
-            card.setStyle(selectedStyle);
 
             selectedEntreprise = e;
             UserSession.setCurrentEntreprise(e.getIdEntreprise(), e.getNom());
@@ -318,14 +303,9 @@ public class EntrepriseUIController {
             selectedEntreprise = e;
             if (selectedEntrepriseCard != null) {
                 selectedEntrepriseCard.getStyleClass().remove("card-selected");
-                Object prev = selectedEntrepriseCard.getUserData();
-                if (prev instanceof String) {
-                    selectedEntrepriseCard.setStyle((String) prev);
-                }
             }
             card.getStyleClass().add("card-selected");
             selectedEntrepriseCard = card;
-            card.setStyle(selectedStyle);
             populateForm(e);
             ev.consume();
         });
@@ -350,16 +330,7 @@ public class EntrepriseUIController {
             ev.consume();
         });
 
-        card.setOnMouseEntered(evt -> {
-            if (card != selectedEntrepriseCard) {
-                card.setStyle(baseStyle + "-fx-effect: dropshadow(gaussian, rgba(15,23,42,0.16), 14, 0.3, 0, 3);");
-            }
-        });
-        card.setOnMouseExited(evt -> {
-            if (card != selectedEntrepriseCard) {
-                card.setStyle(baseStyle);
-            }
-        });
+        // Hover handled by CSS .card:hover
 
         return card;
     }

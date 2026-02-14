@@ -4,67 +4,191 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <VBox xmlns="http://javafx.com/javafx/25"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.cashfly.controllers.EntrepriseUIController"
-      spacing="16.0" style="-fx-background-color: #ffffff;">
+      spacing="20.0" style="-fx-background-color: #f8fafc;"
+      stylesheets="@style.css" styleClass="root-pane">
     <padding>
         <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
     </padding>
 
+    <!-- Header Section -->
     <HBox spacing="16.0" alignment="CENTER_LEFT">
         <children>
-            <Label text="Entreprises" style="-fx-text-fill: #0f172a;">
-                <font>
-                    <Font name="System Bold" size="20.0"/>
-                </font>
-            </Label>
+            <HBox spacing="12.0" alignment="CENTER_LEFT">
+                <children>
+                    <StackPane style="-fx-background-color: #13c8ec20; -fx-background-radius: 12; -fx-min-width: 40; -fx-min-height: 40;">
+                        <children>
+                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 20; -fx-text-fill: #13c8ec;" text="🏢" />
+                        </children>
+                    </StackPane>
+                    <VBox spacing="4.0">
+                        <children>
+                            <Label text="Entreprises" style="-fx-text-fill: #0f172a;">
+                                <font>
+                                    <Font name="System Bold" size="24.0"/>
+                                </font>
+                            </Label>
+                            <Label text="Gérez vos entreprises et leurs informations" style="-fx-text-fill: #64748b; -fx-font-size: 13px;">
+                                <font><Font size="13.0"/></font>
+                            </Label>
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
             <Region HBox.hgrow="ALWAYS"/>
-            <TextField fx:id="searchField" promptText="Recherche par nom..."
-                       prefWidth="220.0"/>
-            <Button text="Rechercher" onAction="#onSearch"/>
-            <TextField fx:id="secteurFilterField" promptText="Filtrer par secteur"
-                       prefWidth="180.0"/>
-            <Button text="Filtrer" onAction="#onFilterBySecteur"/>
+            <HBox spacing="12.0" alignment="CENTER_RIGHT">
+                <children>
+                    <HBox spacing="8.0" style="-fx-background-color: white; -fx-background-radius: 24; -fx-border-color: #e2e8f0; -fx-border-radius: 24; -fx-padding: 4 8 4 12;">
+                        <children>
+                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #94a3b8;" text="🔍" />
+                            <TextField fx:id="searchField" promptText="Rechercher une entreprise..."
+                                       prefWidth="240.0" style="-fx-background-color: transparent; -fx-border: none; -fx-padding: 8 4;"/>
+                        </children>
+                    </HBox>
+                    <Button onAction="#onSearch" style="-fx-background-color: #13c8ec; -fx-background-radius: 24; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20;">
+                        <graphic>
+                            <HBox spacing="8" alignment="CENTER">
+                                <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: white;" text="🔍" />
+                                <Label text="Rechercher" />
+                            </HBox>
+                        </graphic>
+                    </Button>
+                </children>
+            </HBox>
         </children>
     </HBox>
 
-    <HBox spacing="16.0">
+    <!-- Filter Section -->
+    <HBox spacing="16.0" alignment="CENTER_LEFT">
         <children>
-            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+            <HBox spacing="8.0" style="-fx-background-color: white; -fx-background-radius: 24; -fx-border-color: #e2e8f0; -fx-border-radius: 24; -fx-padding: 4 8 4 12;">
                 <children>
-                    <Label text="Gestion des entreprises" styleClass="panel-header"/>
-                    <ScrollPane prefHeight="380.0"
+                    <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #94a3b8;" text="📋" />
+                    <TextField fx:id="secteurFilterField" promptText="Filtrer par secteur d'activité"
+                               prefWidth="220.0" style="-fx-background-color: transparent; -fx-border: none; -fx-padding: 8 4;"/>
+                </children>
+            </HBox>
+            <Button onAction="#onFilterBySecteur" style="-fx-background-color: #f1f5f9; -fx-background-radius: 24; -fx-text-fill: #334155; -fx-font-weight: bold; -fx-border-color: #e2e8f0; -fx-border-radius: 24; -fx-padding: 8 20;">
+                <graphic>
+                    <HBox spacing="8" alignment="CENTER">
+                        <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #334155;" text="⚙️" />
+                        <Label text="Appliquer filtre" />
+                    </HBox>
+                </graphic>
+            </Button>
+            <Button text="Réinitialiser" style="-fx-background-color: transparent; -fx-text-fill: #64748b; -fx-underline: true; -fx-cursor: hand;"/>
+        </children>
+    </HBox>
+
+    <!-- Main Content -->
+    <HBox spacing="24.0" VBox.vgrow="ALWAYS">
+        <children>
+            <!-- Cards Container -->
+            <VBox spacing="16.0" HBox.hgrow="ALWAYS">
+                <children>
+                    <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <children>
+                            <Label text="Liste des entreprises" styleClass="panel-header" style="-fx-font-size: 16; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                            <Label fx:id="totalCountLabel" text="(0)" style="-fx-text-fill: #64748b; -fx-font-size: 14; -fx-background-color: #f1f5f9; -fx-background-radius: 12; -fx-padding: 2 8;"/>
+                        </children>
+                    </HBox>
+                    <ScrollPane prefHeight="420.0"
                                 fitToWidth="true"
                                 hbarPolicy="NEVER"
-                                style="-fx-background-color: transparent;">
+                                style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
                         <content>
                             <FlowPane fx:id="entrepriseCardsContainer"
-                                      hgap="12.0"
-                                      vgap="12.0"
+                                      hgap="16.0"
+                                      vgap="16.0"
                                       prefWrapLength="600.0"
-                                      style="-fx-padding: 4 0 4 0;"/>
+                                      style="-fx-padding: 8 0 8 0;"/>
                         </content>
                     </ScrollPane>
                 </children>
             </VBox>
 
-            <VBox spacing="8.0" prefWidth="260.0">
+            <!-- Form Panel -->
+            <VBox spacing="16.0" prefWidth="300.0" style="-fx-background-color: white; -fx-background-radius: 24; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 10, 0, 0, 2); -fx-border-color: #eef2f6; -fx-border-radius: 24;">
+                <padding>
+                    <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                </padding>
                 <children>
-                    <Label text="Formulaire" styleClass="panel-header"/>
-                    <TextField fx:id="nomField" promptText="Nom"/>
-                    <TextField fx:id="secteurField" promptText="Secteur"/>
-                    <TextField fx:id="formeField" promptText="Forme juridique"/>
-                    <TextField fx:id="dateCreationField" promptText="Date création (yyyy-MM-dd)"/>
-                    <TextField fx:id="capitalField" promptText="Capital"/>
-                    <TextField fx:id="proprietaireField" promptText="ID propriétaire"/>
-                    <HBox spacing="8.0">
+                    <!-- Form Header -->
+                    <VBox spacing="4.0">
                         <children>
-                            <Button text="Ajouter" onAction="#onAdd"/>
-                            <Button text="Enregistrer" onAction="#onUpdate"/>
+                            <Label text="Formulaire entreprise" styleClass="panel-header" style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                            <Label text="Ajoutez ou modifiez une entreprise" style="-fx-text-fill: #64748b; -fx-font-size: 12;"/>
+                        </children>
+                    </VBox>
+
+                    <Separator style="-fx-background-color: #eef2f6; -fx-padding: 8 0;"/>
+
+                    <!-- Form Fields -->
+                    <VBox spacing="12.0">
+                        <children>
+                            <VBox spacing="4.0">
+                                <Label text="Nom de l'entreprise" style="-fx-text-fill: #475569; -fx-font-size: 12; -fx-font-weight: bold;"/>
+                                <TextField fx:id="nomField" promptText="ex: Cashfly SA" style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0; -fx-background-color: #f8fafc; -fx-padding: 10;"/>
+                            </VBox>
+
+                            <VBox spacing="4.0">
+                                <Label text="Secteur d'activité" style="-fx-text-fill: #475569; -fx-font-size: 12; -fx-font-weight: bold;"/>
+                                <TextField fx:id="secteurField" promptText="ex: Finance" style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0; -fx-background-color: #f8fafc; -fx-padding: 10;"/>
+                            </VBox>
+
+                            <VBox spacing="4.0">
+                                <Label text="Forme juridique" style="-fx-text-fill: #475569; -fx-font-size: 12; -fx-font-weight: bold;"/>
+                                <TextField fx:id="formeField" promptText="ex: SA, SARL" style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0; -fx-background-color: #f8fafc; -fx-padding: 10;"/>
+                            </VBox>
+
+                            <HBox spacing="8.0">
+                                <children>
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label text="Date création" style="-fx-text-fill: #475569; -fx-font-size: 12; -fx-font-weight: bold;"/>
+                                        <TextField fx:id="dateCreationField" promptText="yyyy-MM-dd" style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0; -fx-background-color: #f8fafc; -fx-padding: 10;"/>
+                                    </VBox>
+                                    <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                        <Label text="Capital (TND)" style="-fx-text-fill: #475569; -fx-font-size: 12; -fx-font-weight: bold;"/>
+                                        <TextField fx:id="capitalField" promptText="0" style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0; -fx-background-color: #f8fafc; -fx-padding: 10;"/>
+                                    </VBox>
+                                </children>
+                            </HBox>
+
+                            <VBox spacing="4.0">
+                                <Label text="ID Propriétaire" style="-fx-text-fill: #475569; -fx-font-size: 12; -fx-font-weight: bold;"/>
+                                <TextField fx:id="proprietaireField" promptText="Identifiant du propriétaire" style="-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0; -fx-background-color: #f8fafc; -fx-padding: 10;"/>
+                            </VBox>
+                        </children>
+                    </VBox>
+
+                    <Separator style="-fx-background-color: #eef2f6; -fx-padding: 8 0;"/>
+
+                    <!-- Action Buttons -->
+                    <HBox spacing="10.0" alignment="CENTER">
+                        <children>
+                            <Button text="Ajouter" onAction="#onAdd" styleClass="btn-primary" style="-fx-background-color: #13c8ec; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-effect: dropshadow(gaussian, #13c8ec40, 8, 0, 0, 2);" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308">
+                                <graphic>
+                                    <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: white;" text="➕" />
+                                </graphic>
+                            </Button>
+                            <Button text="Enregistrer" onAction="#onUpdate" style="-fx-background-color: #0f172a; -fx-background-radius: 12; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308">
+                                <graphic>
+                                    <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: white;" text="💾" />
+                                </graphic>
+                            </Button>
                         </children>
                     </HBox>
+
+                    <!-- Cancel/Reset Button -->
+                    <Button text="Annuler les modifications" style="-fx-background-color: transparent; -fx-text-fill: #ef4444; -fx-border-color: #fee2e2; -fx-border-radius: 12; -fx-background-radius: 12; -fx-padding: 8; -fx-cursor: hand;">
+                        <graphic>
+                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 12; -fx-text-fill: #ef4444;" text="✖️" />
+                        </graphic>
+                    </Button>
                 </children>
             </VBox>
         </children>

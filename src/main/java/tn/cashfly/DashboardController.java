@@ -6,6 +6,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
 import tn.cashfly.session.UserSession;
 import tn.cashfly.utils.MyDataBase;
 
@@ -91,7 +93,12 @@ public class DashboardController {
     private void loadView(String fxmlPath) {
         try {
             Node view = FXMLLoader.load(getClass().getResource(fxmlPath));
+            view.setOpacity(0);
             contentRoot.getChildren().setAll(view);
+            FadeTransition ft = new FadeTransition(Duration.millis(220), view);
+            ft.setFromValue(0);
+            ft.setToValue(1);
+            ft.play();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -183,4 +190,3 @@ public class DashboardController {
         alert.showAndWait();
     }
 }
-

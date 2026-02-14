@@ -8,7 +8,8 @@
 <VBox xmlns="http://javafx.com/javafx/25"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.cashfly.controllers.OperationUIController"
-      spacing="16.0" style="-fx-background-color: #ffffff;">
+      spacing="16.0" style="-fx-background-color: #f8fafc;"
+      stylesheets="@style.css" styleClass="root-pane">
     <padding>
         <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
     </padding>
@@ -62,8 +63,8 @@
                     <TextField fx:id="descriptionField" promptText="Description"/>
                     <HBox spacing="8.0">
                         <children>
-                            <Button text="Ajouter" onAction="#onAdd"/>
-                            <Button text="Enregistrer" onAction="#onUpdate"/>
+                            <Button text="Ajouter" onAction="#onAdd" styleClass="btn-primary"/>
+                            <Button text="Enregistrer" onAction="#onUpdate" styleClass="btn-primary"/>
                         </children>
                     </HBox>
                 </children>

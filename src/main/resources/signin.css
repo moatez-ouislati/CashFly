@@ -1,0 +1,233 @@
+/* signin.css - Matching Dashboard Dark Blue Theme */
+
+/* Root styles */
+.root-pane {
+    -fx-font-family: 'Segoe UI', 'System', sans-serif;
+}
+
+/* Left Panel - Dashboard Dark Blue Gradient */
+.left-panel {
+    -fx-background-color: linear-gradient(165deg, #0a1a1f 0%, #1a2f34 100%);
+}
+
+/* Logo Container - Dashboard Style */
+.logo-container {
+    -fx-background-color: #1e3b41;
+    -fx-background-radius: 28px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 4);
+}
+
+/* App Name */
+.app-name {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 42px;
+    -fx-font-weight: 400;
+    -fx-letter-spacing: 6px;
+}
+
+/* Right Panel - Dark Blue */
+.right-panel {
+    -fx-background-color: #0f1e23;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, -2, 0);
+}
+
+/* Form Field Containers */
+.field-container {
+    -fx-background-color: #1a2f34;
+    -fx-background-radius: 8px;
+    -fx-border-color: #254147;
+    -fx-border-radius: 8px;
+    -fx-padding: 0 14px;
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.field-container:focused-within {
+    -fx-border-color: #13c8ec;
+    -fx-background-color: #1d353b;
+}
+
+.field-container:hover {
+    -fx-border-color: #2f4d55;
+}
+
+/* Input Fields */
+.input-field {
+    -fx-background-color: transparent;
+    -fx-border: none;
+    -fx-padding: 14px 6px;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #3f5e66;
+    -fx-font-size: 14px;
+}
+
+.input-field:focused {
+    -fx-background-color: transparent;
+}
+
+/* Field Labels */
+.field-label {
+    -fx-text-fill: #a0c0c8;
+    -fx-font-size: 12px;
+}
+
+/* Login Button - Dashboard Teal */
+.login-button {
+    -fx-background-color: #13c8ec;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 14px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(19,200,236,0.3), 8, 0.3, 0, 2);
+}
+
+.login-button:hover {
+    -fx-background-color: #0ea5d9;
+    -fx-effect: dropshadow(gaussian, rgba(19,200,236,0.4), 12, 0.4, 0, 3);
+}
+
+.login-button:pressed {
+    -fx-background-color: #0d8cb8;
+}
+
+/* Secondary Buttons */
+.secondary-button {
+    -fx-background-color: #1a2f34;
+    -fx-background-radius: 6px;
+    -fx-border-color: #254147;
+    -fx-border-radius: 6px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #1f383e;
+    -fx-border-color: #13c8ec40;
+}
+
+.secondary-button .label {
+    -fx-text-fill: #a0c0c8;
+    -fx-font-size: 12px;
+}
+
+/* Links */
+.link-teal {
+    -fx-text-fill: #13c8ec;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.link-teal:hover {
+    -fx-text-fill: #0ea5d9;
+    -fx-underline: true;
+}
+
+/* Error Label */
+.error-label {
+    -fx-text-fill: #ef4444;
+    -fx-font-size: 12px;
+    -fx-background-color: rgba(239,68,68,0.05);
+    -fx-background-radius: 6px;
+    -fx-padding: 8px;
+    -fx-alignment: center;
+    -fx-border-color: #ef444420;
+    -fx-border-radius: 6px;
+}
+
+/* Separator */
+.separator-line {
+    -fx-background-color: #254147;
+    -fx-min-height: 1px;
+}
+
+.separator-text {
+    -fx-text-fill: #5f7d85;
+    -fx-font-size: 11px;
+}
+
+/* Feature Icons */
+.feature-icon {
+    -fx-background-color: #254147;
+    -fx-background-radius: 8px;
+    -fx-min-width: 28px;
+    -fx-min-height: 28px;
+}
+
+.feature-icon .label {
+    -fx-text-fill: #a0c0c8;
+    -fx-font-size: 14px;
+}
+
+.feature-text {
+    -fx-text-fill: #e2e8f0;
+    -fx-font-size: 14px;
+}
+
+/* Footer */
+.footer-text {
+    -fx-text-fill: #5f7d85;
+    -fx-font-size: 12px;
+}
+
+/* Security Note */
+.security-note {
+    -fx-text-fill: #5f7d85;
+    -fx-font-size: 10px;
+}
+
+/* Quick Access Buttons */
+.quick-button {
+    -fx-background-color: #1a2f34;
+    -fx-background-radius: 6px;
+    -fx-border-color: #254147;
+    -fx-border-radius: 6px;
+    -fx-padding: 8px 20px;
+    -fx-cursor: hand;
+}
+
+.quick-button:hover {
+    -fx-background-color: #1f383e;
+    -fx-border-color: #13c8ec40;
+}
+
+.quick-button .label {
+    -fx-text-fill: #a0c0c8;
+    -fx-font-size: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    .app-name {
+        -fx-font-size: 36px;
+        -fx-letter-spacing: 4px;
+    }
+
+    .logo-container {
+        -fx-pref-height: 100px;
+        -fx-pref-width: 100px;
+    }
+
+    .logo-container .label {
+        -fx-font-size: 50px;
+    }
+}
+
+/* Animation */
+.field-container {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.login-button {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.quick-button {
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+/* Selection color */
+.text-field:selected, .password-field:selected {
+    -fx-highlight-fill: #13c8ec40;
+    -fx-highlight-text-fill: white;
+}
