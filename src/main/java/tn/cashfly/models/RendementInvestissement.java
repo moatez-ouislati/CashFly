@@ -1,18 +1,21 @@
 package tn.cashfly.models;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 public class RendementInvestissement {
     private int idRendement;
     private int idInvestissement;
     private Date dateCalcul;
-    private double gain;
-    private double perte;
-    private double valeurPortefeuille;
+    private BigDecimal gain;
+    private BigDecimal perte;
+    private BigDecimal valeurPortefeuille;
 
-    public RendementInvestissement() {}
+    public RendementInvestissement() {
+    }
 
-    public RendementInvestissement(int idInvestissement, Date dateCalcul, double gain, double perte, double valeurPortefeuille) {
+    public RendementInvestissement(int idInvestissement, Date dateCalcul, BigDecimal gain, BigDecimal perte,
+                                   BigDecimal valeurPortefeuille) {
         this.idInvestissement = idInvestissement;
         this.dateCalcul = dateCalcul;
         this.gain = gain;
@@ -21,7 +24,6 @@ public class RendementInvestissement {
     }
 
     // Getters & Setters
-
 
     public int getIdRendement() {
         return idRendement;
@@ -47,27 +49,27 @@ public class RendementInvestissement {
         this.dateCalcul = dateCalcul;
     }
 
-    public double getGain() {
+    public BigDecimal getGain() {
         return gain;
     }
 
-    public void setGain(double gain) {
+    public void setGain(BigDecimal gain) {
         this.gain = gain;
     }
 
-    public double getPerte() {
+    public BigDecimal getPerte() {
         return perte;
     }
 
-    public void setPerte(double perte) {
+    public void setPerte(BigDecimal perte) {
         this.perte = perte;
     }
 
-    public double getValeurPortefeuille() {
+    public BigDecimal getValeurPortefeuille() {
         return valeurPortefeuille;
     }
 
-    public void setValeurPortefeuille(double valeurPortefeuille) {
+    public void setValeurPortefeuille(BigDecimal valeurPortefeuille) {
         this.valeurPortefeuille = valeurPortefeuille;
     }
 

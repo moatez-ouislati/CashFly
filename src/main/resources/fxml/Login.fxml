@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -10,17 +11,18 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<StackPane styleClass="login-root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.LoginController">
+<StackPane stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.LoginController" styleClass="login-root">
     <children>
         <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-card">
             <children>
                 <VBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <ImageView fitHeight="139.0" fitWidth="143.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../images/logo.png" />
                             </image>
@@ -28,7 +30,12 @@
                                 <Insets bottom="20.0" />
                             </VBox.margin>
                         </ImageView>
-                        <Label text="Connectez-vous à la performance financière." textFill="#a0a0a0">
+                        <Label text="Bon retour" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label text="Gérez vos flux financiers avec CASHFLY" textFill="#a0a0a0">
                             <font>
                                 <Font size="12.0" />
                             </font>
@@ -46,7 +53,7 @@
                                 <Font name="System Bold" size="10.0" />
                             </font>
                         </Label>
-                        <TextField fx:id="emailField" promptText="name@company.com" styleClass="login-field" />
+                        <TextField promptText="name@company.com" styleClass="login-field" fx:id="emailField" />
                     </children>
                 </VBox>
 
@@ -57,7 +64,7 @@
                                 <Font name="System Bold" size="10.0" />
                             </font>
                         </Label>
-                        <PasswordField fx:id="passwordField" promptText="........" styleClass="login-field" />
+                        <PasswordField promptText="........" styleClass="login-field" fx:id="passwordField" />
                         <HBox alignment="CENTER_RIGHT">
                             <children>
                                 <Label styleClass="link-text" text="Mot de passe oublié ?" />
@@ -66,33 +73,33 @@
                     </children>
                 </VBox>
 
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" styleClass="login-btn" text="Se connecter -&gt;" />
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="login-btn" text="Se connecter -&gt;" onAction="#handleLogin" />
 
                 <HBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <Separator opacity="0.1" prefWidth="100.0" />
+                        <Separator prefWidth="100.0" opacity="0.1" />
                         <Label text="OU CONTINUER AVEC" textFill="#6c757d">
                             <font>
                                 <Font size="10.0" />
                             </font>
                         </Label>
-                        <Separator opacity="0.1" prefWidth="100.0" />
+                        <Separator prefWidth="100.0" opacity="0.1" />
                     </children>
                     <VBox.margin>
-                        <Insets bottom="10.0" top="10.0" />
+                        <Insets top="10.0" bottom="10.0" />
                     </VBox.margin>
                 </HBox>
 
                 <HBox spacing="10.0">
                     <children>
-                        <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="GitHub" HBox.hgrow="ALWAYS">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="GitHub" HBox.hgrow="ALWAYS" graphicTextGap="10.0">
                             <graphic>
-                                <Pane prefHeight="16.0" prefWidth="16.0" styleClass="icon-github" />
+                                <Pane styleClass="icon-github" prefHeight="16.0" prefWidth="16.0" />
                             </graphic>
                         </Button>
-                        <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="Google" HBox.hgrow="ALWAYS">
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="Google" HBox.hgrow="ALWAYS" graphicTextGap="10.0">
                             <graphic>
-                                <Pane prefHeight="16.0" prefWidth="16.0" styleClass="icon-google" />
+                                <Pane styleClass="icon-google" prefHeight="16.0" prefWidth="16.0" />
                             </graphic>
                         </Button>
                     </children>

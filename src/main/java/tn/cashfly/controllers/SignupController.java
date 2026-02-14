@@ -15,7 +15,6 @@ import tn.cashfly.models.Utilisateur;
 import tn.cashfly.services.ServiceUtilisateur;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class SignupController {
 
@@ -43,10 +42,10 @@ public class SignupController {
 
         try {
             Utilisateur u = new Utilisateur(name, email, password, "investisseur"); // Role match ENUM
-            serviceUtilisateur.ajouter(u);
+            serviceUtilisateur.add(u);
             showAlert(Alert.AlertType.INFORMATION, "Succès", "Compte créé avec succès ! Veuillez vous connecter.");
             showLogin(event);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la création du compte : " + e.getMessage());
         }

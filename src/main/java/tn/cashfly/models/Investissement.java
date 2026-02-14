@@ -1,24 +1,25 @@
 package tn.cashfly.models;
 
-
+import java.math.BigDecimal;
 import java.sql.Date;
 
 public class Investissement {
     private int idInvestissement;
     private int idInvestisseur;
     private int idEntreprise;
-    private double montant;
+    private BigDecimal montant;
     private String statut;
     private Date dateInvestissement;
-    private double tauxRendementPrevu;
+    private BigDecimal tauxRendementPrevu;
     private int duree_mois;
     private String description;
 
-    public Investissement() {}
+    public Investissement() {
+    }
 
-    public Investissement(int idInvestisseur, int idEntreprise, double montant,
+    public Investissement(int idInvestisseur, int idEntreprise, BigDecimal montant,
                           Date dateInvestissement, String statut,
-                          double tauxRendementPrevu, int dureeMois, String description) {
+                          BigDecimal tauxRendementPrevu, int dureeMois, String description) {
 
         this.idInvestisseur = idInvestisseur;
         this.idEntreprise = idEntreprise;
@@ -30,32 +31,77 @@ public class Investissement {
         this.description = description;
     }
 
-    public int getIdInvestissement() { return idInvestissement; }
-    public void setIdInvestissement(int idInvestissement) { this.idInvestissement = idInvestissement; }
+    public int getIdInvestissement() {
+        return idInvestissement;
+    }
 
-    public int getIdInvestisseur() { return idInvestisseur; }
-    public void setIdInvestisseur(int idInvestisseur) { this.idInvestisseur = idInvestisseur; }
+    public void setIdInvestissement(int idInvestissement) {
+        this.idInvestissement = idInvestissement;
+    }
 
-    public int getIdEntreprise() { return idEntreprise; }
-    public void setIdEntreprise(int idEntreprise) { this.idEntreprise = idEntreprise; }
+    public int getIdInvestisseur() {
+        return idInvestisseur;
+    }
 
-    public double getMontant() { return montant; }
-    public void setMontant(double montant) { this.montant = montant; }
+    public void setIdInvestisseur(int idInvestisseur) {
+        this.idInvestisseur = idInvestisseur;
+    }
 
-    public String getStatut() { return statut; }
-    public void setStatut(String statut) { this.statut = statut; }
+    public int getIdEntreprise() {
+        return idEntreprise;
+    }
 
-    public Date getDateInvestissement() { return dateInvestissement; }
-    public void setDateInvestissement(Date dateInvestissement) { this.dateInvestissement = dateInvestissement; }
+    public void setIdEntreprise(int idEntreprise) {
+        this.idEntreprise = idEntreprise;
+    }
 
-    public double getTauxRendementPrevu() { return tauxRendementPrevu; }
-    public void setTauxRendementPrevu(double tauxRendementPrevu) { this.tauxRendementPrevu = tauxRendementPrevu; }
+    public BigDecimal getMontant() {
+        return montant;
+    }
 
-    public int getDureeMois() { return duree_mois; }
-    public void setDureeMois(int duree_mois) { this.duree_mois = duree_mois; }
+    public void setMontant(BigDecimal montant) {
+        this.montant = montant;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+
+    public Date getDateInvestissement() {
+        return dateInvestissement;
+    }
+
+    public void setDateInvestissement(Date dateInvestissement) {
+        this.dateInvestissement = dateInvestissement;
+    }
+
+    public BigDecimal getTauxRendementPrevu() {
+        return tauxRendementPrevu;
+    }
+
+    public void setTauxRendementPrevu(BigDecimal tauxRendementPrevu) {
+        this.tauxRendementPrevu = tauxRendementPrevu;
+    }
+
+    public int getDureeMois() {
+        return duree_mois;
+    }
+
+    public void setDureeMois(int duree_mois) {
+        this.duree_mois = duree_mois;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public String toString() {
@@ -72,5 +118,3 @@ public class Investissement {
                 '}';
     }
 }
-
-
