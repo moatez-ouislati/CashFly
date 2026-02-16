@@ -1,0 +1,22 @@
+/* Button style */
+.backend-button {
+    -fx-background-color: #007bff; /* Blue */
+    -fx-text-fill: white; /* Text color */
+    -fx-font-size: 14px; /* Font size */
+    -fx-padding: 10px 20px; /* Padding */
+    -fx-border-radius: 5px; /* Border radius */
+    -fx-background-radius: 5px; /* Background radius */
+    -fx-effect: dropshadow(three-pass-box, #007bff, 10, 0, 0, 0); /* Glowing effect */
+}
+
+/* Hover effect */
+.backend-button:hover {
+    -fx-background-color: #0056b3; /* Darker blue on hover */
+    -fx-cursor: hand; /* Cursor on hover */
+}
+
+/* Pressed effect */
+.backend-button:pressed {
+    -fx-background-color: #003366; /* Dark blue when pressed */
+    -fx-effect: dropshadow(three-pass-box, #003366, 10, 0, 0, 0); /* Darker glowing effect when pressed */
+}
