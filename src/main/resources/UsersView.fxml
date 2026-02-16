@@ -1,0 +1,42 @@
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="controllers.AdminDashboardController"
+      spacing="20"
+      styleClass="card-container">
+
+    <HBox spacing="20">
+
+        <!-- LIST -->
+        <VBox spacing="10">
+            <Label text="Users List" styleClass="section-title"/>
+            <ListView fx:id="lvUsers" prefWidth="300" prefHeight="450"/>
+            <Button fx:id="btnRefresh" text="Refresh" styleClass="secondary-button"/>
+        </VBox>
+
+        <!-- DETAILS CARD -->
+        <VBox spacing="10" styleClass="card">
+
+            <Label text="User Details" styleClass="section-title"/>
+
+            <TextField fx:id="tfCin" promptText="CIN"/>
+            <TextField fx:id="tfTel" promptText="Phone"/>
+            <TextField fx:id="tfNom" promptText="Last Name"/>
+            <TextField fx:id="tfPrenom" promptText="First Name"/>
+            <TextField fx:id="tfEmail" promptText="Email"/>
+            <PasswordField fx:id="tfPassword" promptText="Password"/>
+
+            <ComboBox fx:id="cbRole"/>
+
+            <HBox spacing="10">
+                <Button fx:id="btnUpdate" text="Update" styleClass="primary-button"/>
+                <Button fx:id="btnDelete" text="Delete" styleClass="danger-button"/>
+            </HBox>
+
+            <Button fx:id="btnChangePass"
+                    text="Change Password"
+                    styleClass="secondary-button"/>
+
+        </VBox>
+
+    </HBox>
+
+</VBox>

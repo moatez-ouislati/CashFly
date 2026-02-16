@@ -1,0 +1,82 @@
+/* ================= ROOT ================= */
+.profile-root,
+.auth-root {
+    -fx-background-color: #f5f6fa;
+}
+
+/* ================= LEFT PANEL ================= */
+.profile-left,
+.auth-left {
+    -fx-background-color: linear-gradient(to bottom right, #1d1d41, #2b2f77);
+    -fx-padding: 40;
+    -fx-alignment: CENTER;
+    -fx-spacing: 15;
+}
+
+.profile-avatar {
+    -fx-fill: white;
+}
+
+.profile-welcome {
+    -fx-text-fill: #cfd4ff;
+    -fx-font-size: 14px;
+}
+
+.profile-name {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ================= RIGHT CARD ================= */
+.profile-card,
+.auth-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 35 45;
+    -fx-spacing: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 0, 6);
+}
+
+/* ================= TITLES ================= */
+.auth-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.auth-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+}
+
+/* ================= LABELS ================= */
+.profile-label {
+    -fx-text-fill: #555;
+    -fx-font-size: 13px;
+}
+
+/* ================= INPUTS ================= */
+.text-field,
+.password-field {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #ddd;
+    -fx-padding: 10 14;
+}
+
+/* ================= BUTTONS ================= */
+.btn-primary {
+    -fx-background-color: #ff7a18;
+    -fx-text-fill: white;
+    -fx-background-radius: 16;
+    -fx-padding: 10 40;
+    -fx-font-weight: bold;
+}
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #ff7a18;
+    -fx-text-fill: #ff7a18;
+    -fx-background-radius: 16;
+    -fx-padding: 10 40;
+}

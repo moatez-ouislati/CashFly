@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+
+<BorderPane
+        xmlns="http://javafx.com/javafx/21"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="controllers.AdminDashboard"
+        stylesheets="@admin.css">
+
+    <!-- ================= HEADER ================= -->
+    <top>
+        <HBox styleClass="header"
+              alignment="CENTER_LEFT"
+              spacing="20"
+              prefHeight="70">
+
+            <!-- LOGO -->
+            <Label text="CASHFLY"
+                   styleClass="logo-text"/>
+
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <!-- TITLE -->
+            <Label text="Dashboard Admin"
+                   styleClass="header-subtitle"/>
+
+            <Pane HBox.hgrow="ALWAYS"/>
+        </HBox>
+    </top>
+
+    <!-- ================= SIDEBAR ================= -->
+    <left>
+        <VBox spacing="15" styleClass="sidebar">
+
+            <Label text="Navigation"
+                   styleClass="sidebar-title"/>
+
+            <Button text="👥 Manage Users"
+                    styleClass="nav-button"/>
+
+            <Button fx:id="btnLogout"
+                    text="Logout"
+                    styleClass="danger-button"/>
+        </VBox>
+    </left>
+
+    <!-- ================= CONTENT ================= -->
+    <center>
+        <HBox spacing="30" styleClass="content-area">
+
+            <!-- USERS LIST -->
+            <VBox spacing="15"
+                  prefWidth="520"
+                  styleClass="card">
+
+                <Label text="Users"
+                       styleClass="section-title"/>
+
+                <TextField fx:id="tfSearch"
+                           promptText="Search by email"/>
+
+                <ComboBox fx:id="cbFilterRole"
+                          promptText="Filter by role"/>
+
+                <ListView fx:id="lvUsers"
+                          prefHeight="360"/>
+
+                <HBox spacing="10">
+                    <Button fx:id="btnRefresh"
+                            text="Refresh"
+                            styleClass="secondary-button"/>
+
+                    <Button text="🔤 Trier par Nom (A-Z)"
+                            onAction="#sortByNom"
+                            styleClass="primary-button"/>
+
+                    <Button text="📄 Export PDF"
+                            onAction="#exportPdf"
+                            styleClass="primary-button"/>
+                </HBox>
+            </VBox>
+
+            <!-- USER DETAILS -->
+            <VBox spacing="12"
+                  prefWidth="300"
+                  styleClass="card">
+
+                <Label text="User Details"
+                       styleClass="section-title"/>
+
+                <TextField fx:id="tfCin" promptText="CIN"/>
+                <TextField fx:id="tfTel" promptText="Phone"/>
+                <TextField fx:id="tfNom" promptText="Last Name"/>
+                <TextField fx:id="tfPrenom" promptText="First Name"/>
+                <TextField fx:id="tfEmail" promptText="Email"/>
+
+                <ComboBox fx:id="cbRole"
+                          promptText="Role"/>
+
+                <HBox spacing="10">
+                    <Button fx:id="btnAdd"
+                            text="Add"
+                            styleClass="primary-button"/>
+
+                    <Button fx:id="btnUpdate"
+                            text="Update"
+                            styleClass="secondary-button"/>
+                </HBox>
+
+                <Button fx:id="btnDelete"
+                        text="Delete"
+                        styleClass="danger-button"/>
+
+                <PasswordField fx:id="tfPassword"
+                               promptText="Password"/>
+
+                <Button fx:id="btnChangePass"
+                        text="Change Password"
+                        styleClass="secondary-button"/>
+            </VBox>
+
+            <!-- STATISTICS -->
+            <VBox spacing="16"
+                  prefWidth="240"
+                  styleClass="card">
+
+                <Label text="📊 Statistics"
+                       styleClass="section-title"/>
+
+                <StackPane prefWidth="180"
+                           prefHeight="180">
+                    <Canvas fx:id="donutCanvas"
+                            width="180"
+                            height="180"/>
+                    <Label fx:id="donutLabel"
+                           style="-fx-font-size:20;-fx-font-weight:bold;"/>
+                </StackPane>
+
+                <VBox styleClass="stat-box">
+                    <Label text="Admins"
+                           styleClass="stat-label"/>
+                    <Label fx:id="lblAdmins"
+                           styleClass="stat-number"/>
+                </VBox>
+
+                <VBox styleClass="stat-box">
+                    <Label text="Investisseurs"
+                           styleClass="stat-label"/>
+                    <Label fx:id="lblInvestisseurs"
+                           styleClass="stat-number"/>
+                </VBox>
+
+                <VBox styleClass="stat-box">
+                    <Label text="Propriétaires"
+                           styleClass="stat-label"/>
+                    <Label fx:id="lblProprietaires"
+                           styleClass="stat-number"/>
+                </VBox>
+
+                <Button text="🔄 Refresh Stats"
+                        onAction="#loadStats"
+                        styleClass="stat-refresh"/>
+            </VBox>
+
+        </HBox>
+    </center>
+
+</BorderPane>

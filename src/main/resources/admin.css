@@ -1,0 +1,176 @@
+/* ================= ROOT ================= */
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #F6F9FC;
+}
+
+/* ================= HEADER ================= */
+.header {
+    -fx-background-color: linear-gradient(to right, #1d1d41, #2b2f77);
+    -fx-padding: 20;
+}
+
+/* LOGO */
+.logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 26px;
+    -fx-font-weight: 800;
+    -fx-letter-spacing: 1px;
+}
+
+/* DASHBOARD TITLE */
+.header-subtitle {
+    -fx-font-family: "Times New Roman";
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-opacity: 0.95;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #1d1d41, #2b2f77);
+    -fx-padding: 20;
+    -fx-pref-width: 220;
+}
+
+.sidebar-title {
+    -fx-text-fill: #cfd4ff;
+    -fx-font-size: 13px;
+}
+
+/* ================= NAV BUTTONS ================= */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12;
+    -fx-background-radius: 10;
+}
+
+.nav-button:hover {
+    -fx-background-color: rgba(255,255,255,0.15);
+}
+
+/* ================= CONTENT ================= */
+.content-area {
+    -fx-padding: 35;
+}
+
+/* ================= CARD ================= */
+.card {
+    -fx-background-color: white;
+    -fx-padding: 22;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(
+            three-pass-box,
+            rgba(0,0,0,0.06),
+            14, 0, 0, 6
+    );
+}
+
+/* ================= TITLES ================= */
+.section-title {
+    -fx-font-family: "Times New Roman";
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e3a8a;
+}
+
+/* ================= INPUTS ================= */
+.text-field,
+.password-field,
+.combo-box {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #d1d5db;
+    -fx-padding: 10 14;
+}
+
+.text-field:focused,
+.password-field:focused,
+.combo-box:focused {
+    -fx-border-color: #6aa9f7;
+}
+
+/* ================= BUTTONS ================= */
+.primary-button {
+    -fx-background-color: #4f8fe0;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+    -fx-font-weight: bold;
+}
+
+.primary-button:hover {
+    -fx-background-color: #3b82f6;
+}
+
+.secondary-button {
+    -fx-background-color: #e5e7eb;
+    -fx-background-radius: 12;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #d1d5db;
+}
+
+.danger-button {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-background-radius: 12;
+}
+
+.danger-button:hover {
+    -fx-background-color: #dc2626;
+}
+
+/* ================= LISTVIEW ================= */
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.list-cell {
+    -fx-background-color: white;
+    -fx-padding: 16;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-effect: dropshadow(
+            three-pass-box,
+            rgba(0,0,0,0.05),
+            8, 0, 0, 4
+    );
+}
+
+.list-cell:selected {
+    -fx-background-color: #eef3ff;
+}
+
+/* ================= STATISTICS (KPI) ================= */
+.stat-box {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 16;
+    -fx-padding: 16;
+}
+
+.stat-number {
+    -fx-font-size: 34px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #1e3a8a;
+}
+
+.stat-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+}
+
+.stat-refresh {
+    -fx-background-color: #ff7a18;
+    -fx-text-fill: white;
+    -fx-background-radius: 14;
+    -fx-font-weight: bold;
+}
+
+.stat-refresh:hover {
+    -fx-background-color: #ff5c00;
+}

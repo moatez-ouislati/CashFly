@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+
+<HBox prefWidth="800" prefHeight="480"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      stylesheets="@styles/inscription.css"
+      fx:controller="controllers.InscriptionController">
+
+   <!-- ===== LEFT BLUE PART ===== -->
+   <VBox prefWidth="320"
+         alignment="CENTER"
+         spacing="10"
+         styleClass="left-pane">
+
+      <Label text="CASHFLY" styleClass="app-name"/>
+      <Label text="Votre croissance, notre mission"
+             styleClass="slogan"/>
+   </VBox>
+
+   <!-- ===== RIGHT WHITE PART ===== -->
+   <VBox prefWidth="480"
+         alignment="CENTER_LEFT"
+         spacing="12">
+
+      <!-- ✅ padding corrigé -->
+      <padding>
+         <Insets top="40" right="40" bottom="40" left="40"/>
+      </padding>
+
+      <Label text="Inscription" styleClass="title"/>
+      <Label text="Créez votre compte" styleClass="subtitle"/>
+
+      <TextField fx:id="tfcin" promptText="CIN"/>
+      <TextField fx:id="tfnum_tel" promptText="Numéro téléphone"/>
+      <TextField fx:id="tfnom" promptText="Nom"/>
+      <TextField fx:id="tfprenom" promptText="Prénom"/>
+      <TextField fx:id="tfemail" promptText="Adresse email"/>
+
+      <PasswordField fx:id="tfmdp" promptText="Mot de passe"/>
+      <TextField fx:id="tfshowpassword" visible="false"/>
+
+      <CheckBox fx:id="show" text="Voir mot de passe"/>
+
+      <!-- ROLE -->
+      <HBox spacing="15">
+         <RadioButton fx:id="rbInvestisseur" text="Investisseur"/>
+         <RadioButton fx:id="rbProprietaire" text="Propriétaire"/>
+         <RadioButton fx:id="rbadmin" text="Admin"/>
+      </HBox>
+
+      <!-- BUTTON -->
+      <Button fx:id="btn_inscri"
+              text="S'inscrire"
+              styleClass="btn-primary"
+              onAction="#savePerson"/>
+
+      <Hyperlink fx:id="hyperlink"
+                 text="Vous avez déjà un compte ?"
+                 onAction="#redirectToAuthPage"/>
+
+   </VBox>
+
+</HBox>

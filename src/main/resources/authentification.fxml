@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<HBox prefWidth="800" prefHeight="480"
+      xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      stylesheets="@styles/inscription.css"
+      fx:controller="controllers.AuthentificationController">
+
+    <!-- ===== LEFT BLUE PART ===== -->
+    <VBox prefWidth="320"
+          alignment="CENTER"
+          spacing="10"
+          styleClass="left-pane">
+
+        <Label text="CASHFLY" styleClass="app-name"/>
+        <Label text="Votre croissance, notre mission"
+               styleClass="slogan"/>
+    </VBox>
+
+    <!-- ===== RIGHT WHITE PART ===== -->
+    <VBox prefWidth="480"
+          alignment="CENTER_LEFT"
+          spacing="14">
+
+        <padding>
+            <Insets top="60" right="40" bottom="40" left="40"/>
+        </padding>
+
+        <Label text="Authentification" styleClass="title"/>
+        <Label text="Content de te revoir !" styleClass="subtitle"/>
+
+        <TextField fx:id="tfemail"
+                   promptText="Adresse email"/>
+
+        <PasswordField fx:id="tfmdp"
+                       promptText="Mot de passe"/>
+
+        <!-- message info / error -->
+        <Label fx:id="lblMessage" styleClass="error"/>
+
+        <!-- BUTTONS -->
+        <HBox spacing="15">
+            <children>
+                <Button fx:id="btn_auth"
+                        text="Se connecter"
+                        styleClass="btn-primary"/>
+
+
+            </children>
+        </HBox>
+
+        <Hyperlink text="Mot de passe oublié ?"/>
+
+    </VBox>
+
+</HBox>
