@@ -3,9 +3,8 @@ package tn.cashfly.services;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.interfaces.Service;
 import tn.cashfly.utils.CashFlyDB;
+
 import java.sql.*;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,58 +18,51 @@ public class ServiceJPO implements Service<JPO> {
 
     @Override
     public void add(JPO jpo) throws SQLException {
-//        String query = "INSERT INTO `journées_portes_ouvertes`(`titre`, `date_evenement`, `lieu`, `description`) VALUES (?, ?, ?, ?)";
-//        PreparedStatement ps = connection.prepareStatement(query);
-//        ps.setString(1, jpo.getTitre());
-//        ps.setDate(2, new java.sql.Date(jpo.getDate_evenement().getTime()));
-//        ps.setString(3, jpo.getLieu());
-//        ps.setString(4, jpo.getDescription());
-//        ps.executeUpdate();
-        String query = "INSERT INTO `journées_portes_ouvertes`(`titre`, `date_evenement`, `lieu`, `description`) VALUES (?, ?, ?, ?)";
-
-        // Add Statement.RETURN_GENERATED_KEYS to get the auto-generated ID
+        String query = "INSERT INTO journées_portes_ouvertes(titre, date_evenement, lieu, description, image_path, max_participants, current_participants) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-
         ps.setString(1, jpo.getTitre());
         ps.setDate(2, new java.sql.Date(jpo.getDate_evenement().getTime()));
         ps.setString(3, jpo.getLieu());
         ps.setString(4, jpo.getDescription());
-
+        ps.setString(5, jpo.getImagePath());
+        ps.setInt(6, jpo.getMaxParticipants() > 0 ? jpo.getMaxParticipants() : 100);
+        ps.setInt(7, 0);
         ps.executeUpdate();
 
-        // Retrieve the auto-generated ID
         ResultSet rs = ps.getGeneratedKeys();
         if (rs.next()) {
-            int generatedId = rs.getInt(1);
-            jpo.setId_evenement(generatedId);  // Update the JPO object with the new ID
+            jpo.setId_evenement(rs.getInt(1));
         }
-
         rs.close();
         ps.close();
     }
 
     @Override
     public void delete(JPO jpo) throws SQLException {
-        String query = "DELETE FROM journées_portes_ouvertes WHERE id_evenement =?";
+        String query = "DELETE FROM journées_portes_ouvertes WHERE id_evenement = ?";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setInt(1, jpo.getId_evenement());
         ps.executeUpdate();
+        ps.close();
     }
 
     @Override
     public void update(JPO jpo) throws SQLException {
-        String query = "UPDATE journées_portes_ouvertes SET titre = ?, date_evenement = ?, lieu = ?, description = ? WHERE id_evenement = ?";
+        String query = "UPDATE journées_portes_ouvertes SET titre = ?, date_evenement = ?, lieu = ?, description = ?, image_path = ?, max_participants = ? WHERE id_evenement = ?";
         PreparedStatement ps = connection.prepareStatement(query);
         ps.setString(1, jpo.getTitre());
         ps.setDate(2, new java.sql.Date(jpo.getDate_evenement().getTime()));
         ps.setString(3, jpo.getLieu());
         ps.setString(4, jpo.getDescription());
-        ps.setInt(5, jpo.getId_evenement());
+        ps.setString(5, jpo.getImagePath());
+        ps.setInt(6, jpo.getMaxParticipants());
+        ps.setInt(7, jpo.getId_evenement());
         ps.executeUpdate();
+        ps.close();
     }
 
     @Override
-    public List<JPO> getAll() throws SQLException{
+    public List<JPO> getAll() throws SQLException {
         List<JPO> jpoList = new ArrayList<>();
         String query = "SELECT * FROM journées_portes_ouvertes";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -82,8 +74,13 @@ public class ServiceJPO implements Service<JPO> {
             jpo.setDate_evenement(rs.getDate("date_evenement"));
             jpo.setLieu(rs.getString("lieu"));
             jpo.setDescription(rs.getString("description"));
+            jpo.setImagePath(rs.getString("image_path"));
+            jpo.setMaxParticipants(rs.getInt("max_participants"));
+            jpo.setCurrentParticipants(rs.getInt("current_participants"));
             jpoList.add(jpo);
         }
+        rs.close();
+        ps.close();
         return jpoList;
     }
 }

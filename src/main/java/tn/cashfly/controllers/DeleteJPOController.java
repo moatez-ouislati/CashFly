@@ -1,17 +1,20 @@
 package tn.cashfly.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.services.ServiceJPO;
+import tn.cashfly.utils.ImageStorage;
+import tn.cashfly.utils.NavigationUtil;
+import tn.cashfly.utils.SessionManager;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -19,22 +22,16 @@ import java.util.List;
 
 public class DeleteJPOController {
 
-    @FXML
-    private Button backButton;
-    @FXML
-    private TextField searchField;
-    @FXML
-    private VBox resultCard;
-    @FXML
-    private Label idLabel;
-    @FXML
-    private Label titreLabel;
-    @FXML
-    private Label dateLabel;
-    @FXML
-    private Label lieuLabel;
-    @FXML
-    private Label confirmLabel;
+    @FXML private Button backButton;
+    @FXML private TextField searchField;
+    @FXML private VBox resultCard;
+    @FXML private Label idLabel;
+    @FXML private Label titreLabel;
+    @FXML private Label dateLabel;
+    @FXML private Label lieuLabel;
+    @FXML private Label confirmLabel;
+    @FXML private ImageView eventImageView;
+    @FXML private GridPane detailsGrid;
 
     private ServiceJPO serviceJPO;
     private JPO currentJPO;
@@ -43,6 +40,16 @@ public class DeleteJPOController {
     public void initialize() {
         serviceJPO = new ServiceJPO();
         resultCard.setVisible(false);
+    }
+
+    @FXML
+    private void handleLogout() {
+        SessionManager.clearSession();
+        try {
+            NavigationUtil.navigateTo((Stage) backButton.getScene().getWindow(), "RoleSelector.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -57,12 +64,10 @@ public class DeleteJPOController {
             List<JPO> allJPOs = serviceJPO.getAll();
             JPO found = null;
 
-            // Try to find by ID first
             try {
                 int id = Integer.parseInt(search);
                 found = allJPOs.stream().filter(j -> j.getId_evenement() == id).findFirst().orElse(null);
             } catch (NumberFormatException e) {
-                // Search by title
                 found = allJPOs.stream()
                         .filter(j -> j.getTitre().toLowerCase().contains(search.toLowerCase()))
                         .findFirst().orElse(null);
@@ -85,9 +90,9 @@ public class DeleteJPOController {
         currentJPO = jpo;
         idLabel.setText(String.valueOf(jpo.getId_evenement()));
         titreLabel.setText(jpo.getTitre());
-        dateLabel.setText(jpo.getDate_evenement().toString());
         lieuLabel.setText(jpo.getLieu());
-
+        dateLabel.setText(jpo.getDate_evenement().toString());
+        eventImageView.setImage(ImageStorage.loadImage(jpo.getImagePath()));
         resultCard.setVisible(true);
     }
 
@@ -97,14 +102,11 @@ public class DeleteJPOController {
 
         try {
             serviceJPO.delete(currentJPO);
-
             showAlert(Alert.AlertType.INFORMATION, "Succès", "JPO supprimée",
                     "L'événement '" + currentJPO.getTitre() + "' a été supprimé définitivement.");
-
             resultCard.setVisible(false);
             searchField.clear();
             currentJPO = null;
-
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de suppression", e.getMessage());
         }
@@ -119,18 +121,8 @@ public class DeleteJPOController {
 
     @FXML
     private void handleBack() {
-        navigateToMain();
-    }
-
-    private void navigateToMain() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/MainJPO.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) backButton.getScene().getWindow();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/tn/cashfly/Styles/custom.css").toExternalForm());
-            stage.setScene(scene);
-            stage.show();
+            NavigationUtil.navigateTo((Stage) backButton.getScene().getWindow(), "MainJPO.fxml");
         } catch (IOException e) {
             e.printStackTrace();
         }

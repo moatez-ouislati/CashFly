@@ -1,14 +1,18 @@
 package tn.cashfly.controllers;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.services.ServiceJPO;
+import tn.cashfly.utils.ImageStorage;
+import tn.cashfly.utils.NavigationUtil;
+import tn.cashfly.utils.SessionManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -18,63 +22,55 @@ import java.util.regex.Pattern;
 
 public class AddJPOController {
 
-    @FXML
-    private TextField titreField;
-    @FXML
-    private DatePicker dateField;
-    @FXML
-    private TextField lieuField;
-    @FXML
-    private TextArea descriptionField;
-    @FXML
-    private Label titreError;
-    @FXML
-    private Label dateError;
-    @FXML
-    private Label lieuError;
-    @FXML
-    private Label descriptionError;
+    @FXML private TextField titreField;
+    @FXML private DatePicker dateField;
+    @FXML private TextField lieuField;
+    @FXML private TextArea descriptionField;
+    @FXML private Spinner<Integer> maxParticipantsSpinner;
+    @FXML private ImageView imagePreview;
+    @FXML private Label imageNameLabel;
+    @FXML private Label titreError;
+    @FXML private Label dateError;
+    @FXML private Label lieuError;
+    @FXML private Label maxParticipantsError;
+    @FXML private Button saveButton;
+    @FXML private Button backButton;
 
     private ServiceJPO serviceJPO;
-
-    // Validation patterns
+    private File selectedImageFile;
     private static final Pattern ONLY_NUMBERS = Pattern.compile("^[0-9]+$");
     private static final int MIN_LENGTH = 3;
-    private static final int MAX_DESCRIPTION = 500;
 
     @FXML
     public void initialize() {
         serviceJPO = new ServiceJPO();
-        setupRealTimeValidation();
+        setupValidation();
+
+        // Initialize spinner
+        SpinnerValueFactory<Integer> valueFactory =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 1000, 50);
+        maxParticipantsSpinner.setValueFactory(valueFactory);
+        maxParticipantsSpinner.setEditable(true);
     }
 
-    private void setupRealTimeValidation() {
-        // Titre validation
-        titreField.textProperty().addListener((obs, old, newVal) -> {
-            validateTitreRealTime(newVal);
-        });
+    @FXML
+    private void handleLogout() {
+        SessionManager.clearSession();
+        try {
+            NavigationUtil.navigateTo((Stage) backButton.getScene().getWindow(), "RoleSelector.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-        // Lieu validation
-        lieuField.textProperty().addListener((obs, old, newVal) -> {
-            validateLieuRealTime(newVal);
-        });
-
-        // Date validation
+    private void setupValidation() {
+        titreField.textProperty().addListener((obs, old, newVal) -> validateTitreRealTime(newVal));
+        lieuField.textProperty().addListener((obs, old, newVal) -> validateLieuRealTime(newVal));
         dateField.valueProperty().addListener((obs, old, newVal) -> {
             if (newVal != null && newVal.isBefore(LocalDate.now())) {
                 showError(dateError, "La date ne peut pas être dans le passé");
             } else {
                 hideError(dateError);
-            }
-        });
-
-        // Description length limit
-        descriptionField.textProperty().addListener((obs, old, newVal) -> {
-            if (newVal.length() > MAX_DESCRIPTION) {
-                descriptionField.setText(old);
-                showError(descriptionError, "Maximum " + MAX_DESCRIPTION + " caractères");
-            } else {
-                hideError(descriptionError);
             }
         });
     }
@@ -84,9 +80,7 @@ public class AddJPOController {
             hideError(titreError);
             return;
         }
-
         String trimmed = value.trim();
-
         if (trimmed.length() < MIN_LENGTH) {
             showError(titreError, "Minimum " + MIN_LENGTH + " caractères requis");
         } else if (ONLY_NUMBERS.matcher(trimmed).matches()) {
@@ -101,15 +95,27 @@ public class AddJPOController {
             hideError(lieuError);
             return;
         }
-
         String trimmed = value.trim();
-
         if (trimmed.length() < MIN_LENGTH) {
             showError(lieuError, "Minimum " + MIN_LENGTH + " caractères requis");
         } else if (ONLY_NUMBERS.matcher(trimmed).matches()) {
             showError(lieuError, "Ne peut pas contenir uniquement des chiffres");
         } else {
             hideError(lieuError);
+        }
+    }
+
+    @FXML
+    private void handleSelectImage() {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif")
+        );
+        selectedImageFile = chooser.showOpenDialog(titreField.getScene().getWindow());
+
+        if (selectedImageFile != null) {
+            imageNameLabel.setText(selectedImageFile.getName());
+            imagePreview.setImage(new Image(selectedImageFile.toURI().toString()));
         }
     }
 
@@ -123,6 +129,12 @@ public class AddJPOController {
             jpo.setDate_evenement(Date.from(dateField.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
             jpo.setLieu(lieuField.getText().trim());
             jpo.setDescription(descriptionField.getText().trim());
+            jpo.setMaxParticipants(maxParticipantsSpinner.getValue());
+
+            if (selectedImageFile != null) {
+                String savedPath = ImageStorage.saveImage(selectedImageFile);
+                jpo.setImagePath(savedPath);
+            }
 
             serviceJPO.add(jpo);
 
@@ -134,13 +146,36 @@ public class AddJPOController {
 
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de base de données", e.getMessage());
+        } catch (IOException e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur de sauvegarde d'image", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void handleClear() {
+        titreField.clear();
+        dateField.setValue(null);
+        lieuField.clear();
+        descriptionField.clear();
+        maxParticipantsSpinner.getValueFactory().setValue(50);
+        imagePreview.setImage(null);
+        imageNameLabel.setText("Aucune image sélectionnée");
+        selectedImageFile = null;
+        hideAllErrors();
+    }
+
+    @FXML
+    private void handleBack() {
+        try {
+            NavigationUtil.navigateTo((Stage) backButton.getScene().getWindow(), "MainJPO.fxml");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private boolean validateAll() {
         boolean valid = true;
 
-        // Validate Titre
         String titre = titreField.getText();
         if (titre == null || titre.trim().isEmpty()) {
             showError(titreError, "Le titre est obligatoire");
@@ -153,7 +188,6 @@ public class AddJPOController {
             valid = false;
         }
 
-        // Validate Date
         if (dateField.getValue() == null) {
             showError(dateError, "La date est obligatoire");
             valid = false;
@@ -162,7 +196,6 @@ public class AddJPOController {
             valid = false;
         }
 
-        // Validate Lieu
         String lieu = lieuField.getText();
         if (lieu == null || lieu.trim().isEmpty()) {
             showError(lieuError, "Le lieu est obligatoire");
@@ -178,28 +211,6 @@ public class AddJPOController {
         return valid;
     }
 
-    @FXML
-    private void handleClear() {
-        titreField.clear();
-        dateField.setValue(null);
-        lieuField.clear();
-        descriptionField.clear();
-        hideAllErrors();
-    }
-
-    @FXML
-    private void handleBack() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/MainJPO.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) titreField.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private void showError(Label label, String message) {
         label.setText(message);
         label.setVisible(true);
@@ -213,7 +224,7 @@ public class AddJPOController {
         hideError(titreError);
         hideError(dateError);
         hideError(lieuError);
-        hideError(descriptionError);
+        hideError(maxParticipantsError);
     }
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {

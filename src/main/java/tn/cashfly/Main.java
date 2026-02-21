@@ -1,28 +1,35 @@
 package tn.cashfly;
 
-import atlantafx.base.theme.PrimerLight;  // or PrimerDark
+import atlantafx.base.theme.PrimerLight;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import tn.cashfly.utils.NavigationUtil;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // 1. Set AtlantaFX theme
+        // Set AtlantaFX theme
         Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
-        // 2. Load FXML
-        Parent root = FXMLLoader.load(getClass().getResource("/tn/cashfly/MainJPO.fxml"));
-        Scene scene = new Scene(root);
+        // Initialize NavigationUtil with primary stage
+        NavigationUtil.setCurrentStage(primaryStage);
 
-        // 3. ADD THIS LINE - Load your custom CSS
+        // Load RoleSelector (which serves as login page)
+        Parent root = FXMLLoader.load(getClass().getResource("/tn/cashfly/RoleSelector.fxml"));
+        Scene scene = new Scene(root, 1280, 720);
         scene.getStylesheets().add(getClass().getResource("/tn/cashfly/Styles/custom.css").toExternalForm());
 
-        primaryStage.setTitle("CashFly - JPO Management");
+        primaryStage.setTitle("CashFly - Connexion");
         primaryStage.setScene(scene);
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setMaxWidth(1280);
+        primaryStage.setMaxHeight(720);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

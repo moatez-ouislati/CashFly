@@ -29,8 +29,14 @@ public class CashFlyDB {
         return instance;
     }
 
-    public Connection getConnection()
-    {
+    public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         return connection;
     }
 }

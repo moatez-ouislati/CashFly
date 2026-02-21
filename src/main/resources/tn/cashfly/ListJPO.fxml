@@ -2,78 +2,71 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="600.0" prefWidth="1100.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.ListJPOController">
-    <children>
-        <!-- Header -->
-        <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1100.0" spacing="20.0" styleClass="app-header" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <padding>
-                <Insets left="30.0" right="30.0" />
-            </padding>
-            <children>
-                <ImageView fx:id="cashflyLogoHeader" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@Images/Logo4.png" />
-                    </image>
-                </ImageView>
-                <Label fx:id="ManageJPOTitleHeader" text="Gestion des Journées Portes Ouvertes">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
-                    <textFill>
-                        <LinearGradient endX="1.0" endY="0.0">
-                            <stops>
-                                <Stop offset="0.0">
-                                    <color>
-                                        <Color red="0.0" green="0.5137254901960784" blue="1.0" />
-                                    </color>
-                                </Stop>
-                                <Stop offset="1.0">
-                                    <color>
-                                        <Color red="0.0" green="1.0" blue="0.9921568627450981" />
-                                    </color>
-                                </Stop>
-                            </stops>
-                        </LinearGradient>
-                    </textFill>
-                </Label>
-            </children>
-        </HBox>
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.ListJPOController">
 
-        <!-- Back Button -->
-        <Button fx:id="backButton" layoutX="30.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleBack" styleClass="btn-secondary" text="← Retour" />
+    <!-- Header -->
+    <HBox alignment="CENTER" prefHeight="80.0" prefWidth="1280.0" spacing="20.0" styleClass="app-header" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets left="30.0" right="30.0" />
+        </padding>
+        <Label styleClass="app-header-title" text="Calendrier des Journées Portes Ouvertes" />
+    </HBox>
 
-        <!-- Table Card -->
-        <VBox layoutX="50.0" layoutY="140.0" prefWidth="1000.0" spacing="15.0" styleClass="card" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="150.0">
+    <!-- Back Button -->
+    <Button fx:id="backButton" layoutX="50.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleBack" styleClass="btn-secondary" text="← Retour" />
+
+    <!-- Main Content -->
+    <HBox layoutX="50.0" layoutY="140.0" spacing="20.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="140.0">
+
+        <!-- Calendar -->
+        <VBox spacing="15.0" styleClass="card" HBox.hgrow="ALWAYS">
             <padding>
                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
 
-            <!-- Search/Filter -->
-            <HBox alignment="CENTER_LEFT" spacing="10.0">
-                <TextField fx:id="filterField" promptText="Filtrer par titre ou lieu" HBox.hgrow="ALWAYS" />
-                <Button onAction="#handleRefresh" styleClass="btn-primary" text="Actualiser" />
+            <!-- Month Navigation -->
+            <HBox alignment="CENTER" spacing="20.0">
+                <Button onAction="#previousMonth" styleClass="btn-secondary" text="←" />
+                <VBox alignment="CENTER">
+                    <Label fx:id="monthLabel" styleClass="form-label" text="Janvier" />
+                    <Label fx:id="yearLabel" styleClass="text-muted" text="2024" />
+                </VBox>
+                <Button onAction="#nextMonth" styleClass="btn-secondary" text="→" />
             </HBox>
 
-            <!-- Table -->
-            <TableView fx:id="jpoTable" VBox.vgrow="ALWAYS">
-                <columns>
-                    <TableColumn fx:id="idCol" prefWidth="80.0" text="ID" />
-                    <TableColumn fx:id="titreCol" prefWidth="250.0" text="Titre" />
-                    <TableColumn fx:id="dateCol" prefWidth="120.0" text="Date" />
-                    <TableColumn fx:id="lieuCol" prefWidth="200.0" text="Lieu" />
-                    <TableColumn fx:id="descCol" prefWidth="300.0" text="Description" />
-                </columns>
-            </TableView>
+            <!-- Calendar Grid -->
+            <GridPane fx:id="calendarGrid" alignment="CENTER" hgap="8.0" vgap="8.0" VBox.vgrow="ALWAYS" />
 
-            <!-- Status Bar -->
-            <HBox alignment="CENTER_LEFT">
-                <Label fx:id="statusLabel" styleClass="text-muted" text="0 JPO(s) trouvée(s)" />
+            <!-- Legend -->
+            <HBox spacing="20.0" alignment="CENTER">
+                <HBox spacing="5.0" alignment="CENTER">
+                    <Region prefHeight="15.0" prefWidth="15.0" style="-fx-background-color: -color-accent-subtle; -fx-background-radius: 3px;" />
+                    <Label styleClass="text-muted" text="Avec événement" />
+                </HBox>
+                <HBox spacing="5.0" alignment="CENTER">
+                    <Region prefHeight="15.0" prefWidth="15.0" style="-fx-background-color: transparent; -fx-border-color: -color-accent-emphasis; -fx-border-width: 2px; -fx-background-radius: 3px;" />
+                    <Label styleClass="text-muted" text="Aujourd'hui" />
+                </HBox>
             </HBox>
         </VBox>
-    </children>
+
+        <!-- Event Details Panel -->
+        <VBox fx:id="eventPanel" prefWidth="350.0" spacing="15.0" styleClass="card">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+
+            <Label fx:id="selectedDateTitle" styleClass="form-label" text="Sélectionnez une date" />
+
+            <ScrollPane fx:id="eventsScrollPane" fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                <content>
+                    <VBox fx:id="eventsContainer" spacing="15.0" />
+                </content>
+            </ScrollPane>
+
+            <Label fx:id="noEventsLabel" styleClass="text-muted" text="Aucun événement pour cette date" visible="true" />
+        </VBox>
+    </HBox>
 </AnchorPane>
