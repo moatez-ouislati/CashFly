@@ -49,6 +49,8 @@
                                 <Button fx:id="btnEntreprises" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="🏢 Entreprises" onAction="#showEntreprises"/>
                                 <Button fx:id="btnTresorerie" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="💰 Trésorerie" onAction="#showTresorerie"/>
                                 <Button fx:id="btnOperations" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="🔄 Opérations" onAction="#showOperations"/>
+                                <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="💡 Suggestions" onAction="#showSuggestions"/>
+                                <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="📈 Statistiques" onAction="#showStatistiques"/>
                                 <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="📊 Rapports" />
                             </children>
                         </VBox>

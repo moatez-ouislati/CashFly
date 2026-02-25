@@ -97,6 +97,20 @@ public class DashboardController {
         updateStats();
     }
 
+    @FXML
+    public void showSuggestions() {
+        loadView("/suggestions.fxml");
+    }
+
+    @FXML
+    public void showStatistiques() {
+        if (UserSession.getCurrentEntrepriseId() == null) {
+            showInfo("Veuillez d'abord sélectionner une entreprise.");
+            return;
+        }
+        loadView("/statistiques.fxml");
+    }
+
     private void loadView(String fxmlPath) {
         try {
             Node view = FXMLLoader.load(getClass().getResource(fxmlPath));
