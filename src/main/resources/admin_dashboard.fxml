@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane prefHeight="800.0" prefWidth="1280.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.DashboardController">
+    <left>
+        <VBox prefWidth="260.0" styleClass="sidebar">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="80.0" spacing="10.0">
+                    <children>
+                        <ImageView fitHeight="40.0" fitWidth="40.0">
+                            <image><Image url="@images/logo.png" /></image>
+                        </ImageView>
+                        <VBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label styleClass="logo-text" text="CASHFLY" />
+                                <Label text="ADMINISTRATEUR" textFill="#a1a1a1" style="-fx-font-size: 10;" />
+                            </children>
+                        </VBox>
+                    </children>
+                    <padding><Insets left="20.0" /></padding>
+                </HBox>
+                
+                <VBox VBox.vgrow="ALWAYS" />
+                
+                <VBox spacing="5.0" styleClass="sidebar-profile" style="-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10; -fx-padding: 15;">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" bottom="10.0" />
+                    </VBox.margin>
+                    <children>
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="👤" style="-fx-font-size: 20;" />
+                                <VBox>
+                                    <children>
+                                        <Label fx:id="userNameLabel" text="Admin" textFill="WHITE" style="-fx-font-weight: bold; -fx-font-size: 12px;" />
+                                        <Label fx:id="userEmailLabel" text="admin@cashfly.tn" textFill="#a1a1a1" style="-fx-font-size: 10px;" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                
+                <Button text="Déconnexion" styleClass="nav-btn" maxWidth="Infinity" alignment="BASELINE_LEFT" onAction="#handleLogout">
+                    <graphic><Label text="🚪" /></graphic>
+                    <VBox.margin><Insets bottom="20.0" left="10.0" /></VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <VBox styleClass="main-content">
+            <children>
+                <HBox prefHeight="80.0" alignment="CENTER_LEFT" styleClass="header">
+                    <children>
+                        <VBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="Console Administration" styleClass="page-title" />
+                                <Label text="Espace réservé aux administrateurs." styleClass="page-subtitle" />
+                            </children>
+                        </VBox>
+                    </children>
+                    <padding><Insets left="30.0" right="30.0" /></padding>
+                </HBox>
+                <StackPane VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,216 +1,134 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.LoginController" style="-fx-background-color: #0a1a1f;">
+<StackPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.LoginController" styleClass="login-root">
     <children>
-        <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <!-- Left Panel - Branding with Dashboard Dark Blue -->
-            <left>
-                <VBox maxHeight="1.7976931348623157E308" prefWidth="500.0" style="-fx-background-color: linear-gradient(165deg, #0a1a1f 0%, #1a2f34 100%);" BorderPane.alignment="CENTER">
+        <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="400.0" spacing="20.0" styleClass="login-card">
+            <children>
+                <VBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <!-- Centered Content with Logo -->
-                        <StackPane VBox.vgrow="ALWAYS">
+                        <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@images/logo.png" />
+                            </image>
+                            <VBox.margin>
+                                <Insets bottom="20.0" />
+                            </VBox.margin>
+                        </ImageView>
+                        <Label text="Bon retour" textFill="WHITE">
+                            <font>
+                                <Font name="System Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label text="Gérez vos flux financiers avec CASHFLY" textFill="#a0a0a0">
+                            <font>
+                                <Font size="12.0" />
+                            </font>
+                        </Label>
+                    </children>
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="EMAIL PROFESSIONNEL" textFill="#6c757d">
+                            <font>
+                                <Font name="System Bold" size="10.0" />
+                            </font>
+                        </Label>
+                        <TextField promptText="name@company.com" styleClass="login-field" fx:id="usernameField" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="MOT DE PASSE" textFill="#6c757d">
+                            <font>
+                                <Font name="System Bold" size="10.0" />
+                            </font>
+                        </Label>
+                        <PasswordField promptText="........" styleClass="login-field" fx:id="passwordField" />
+                        <HBox alignment="CENTER_RIGHT">
                             <children>
-                                <VBox spacing="30.0" alignment="CENTER" maxWidth="400.0" translateY="-30.0">
-                                    <children>
-                                        <!-- Logo Container - Dashboard Teal Accent -->
-                                        <StackPane prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #1e3b41; -fx-background-radius: 28; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 4);">
-                                            <children>
-                                                <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 60; -fx-text-fill: #e9f0f5; -fx-font-weight: 300;" text="" />
-                                            </children>
-                                        </StackPane>
-
-                                        <!-- App Name - Clean White -->
-                                        <Label text="CASHFLY" style="-fx-text-fill: #ffffff; -fx-font-size: 42px; -fx-font-weight: 400; -fx-letter-spacing: 6px;">
-                                            <font>
-                                                <Font name="System Bold" size="42.0"/>
-                                            </font>
-                                        </Label>
-
-                                        <!-- Slogan - Dashboard Gray -->
-                                        <Label text="Solutions financières professionnelles" style="-fx-text-fill: #a0c0c8; -fx-font-size: 15px;">
-                                            <font>
-                                                <Font size="15.0"/>
-                                            </font>
-                                        </Label>
-
-                                        <!-- Feature List - Dashboard Style -->
-                                        <VBox spacing="18.0" alignment="CENTER_LEFT" translateY="30.0">
-                                            <children>
-                                                <HBox spacing="14.0" alignment="CENTER_LEFT">
-                                                    <children>
-                                                        <StackPane style="-fx-background-color: #254147; -fx-background-radius: 8; -fx-min-width: 28; -fx-min-height: 28;">
-                                                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #a0c0c8;" text="⚡" />
-                                                        </StackPane>
-                                                        <Label text="Gestion de trésorerie" style="-fx-text-fill: #e2e8f0; -fx-font-size: 14px;"/>
-                                                    </children>
-                                                </HBox>
-                                                <HBox spacing="14.0" alignment="CENTER_LEFT">
-                                                    <children>
-                                                        <StackPane style="-fx-background-color: #254147; -fx-background-radius: 8; -fx-min-width: 28; -fx-min-height: 28;">
-                                                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #a0c0c8;" text="📊" />
-                                                        </StackPane>
-                                                        <Label text="Tableaux de bord analytiques" style="-fx-text-fill: #e2e8f0; -fx-font-size: 14px;"/>
-                                                    </children>
-                                                </HBox>
-                                                <HBox spacing="14.0" alignment="CENTER_LEFT">
-                                                    <children>
-                                                        <StackPane style="-fx-background-color: #254147; -fx-background-radius: 8; -fx-min-width: 28; -fx-min-height: 28;">
-                                                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #a0c0c8;" text="🔒" />
-                                                        </StackPane>
-                                                        <Label text="Sécurité bancaire" style="-fx-text-fill: #e2e8f0; -fx-font-size: 14px;"/>
-                                                    </children>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </VBox>
-                            </children>
-                        </StackPane>
-
-                        <!-- Footer - Dashboard Style -->
-                        <HBox alignment="CENTER" spacing="12.0" translateY="-20.0">
-                            <children>
-                                <Label text="© 2026 Cashfly" style="-fx-text-fill: #5f7d85; -fx-font-size: 12px;"/>
-                                <Label text="|" style="-fx-text-fill: #2a3f43;"/>
-                                <Label text="Conçu pour les professionnels" style="-fx-text-fill: #5f7d85; -fx-font-size: 12px;"/>
+                                <Label styleClass="link-text" text="Mot de passe oublié ?" />
                             </children>
                         </HBox>
                     </children>
                 </VBox>
-            </left>
 
-            <!-- Right Panel - Login Form with Dark Blue -->
-            <right>
-                <VBox maxHeight="1.7976931348623157E308" prefWidth="500.0" style="-fx-background-color: #0f1e23; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, -2, 0);" alignment="CENTER" spacing="24.0" BorderPane.alignment="CENTER">
+                <Label fx:id="errorLabel" textFill="#e74c3c" visible="false" wrapText="true">
+                    <font>
+                        <Font size="11.0" />
+                    </font>
+                </Label>
+
+                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="login-btn" text="Se connecter -&gt;" onAction="#onLogin" />
+
+                <HBox alignment="CENTER" spacing="10.0">
                     <children>
-                        <!-- Welcome Message -->
-                        <VBox spacing="8.0" alignment="CENTER">
-                            <children>
-                                <Label text="Bienvenue" style="-fx-text-fill: #ffffff; -fx-font-size: 32px; -fx-font-weight: 400;">
-                                    <font>
-                                        <Font name="System Bold" size="32.0"/>
-                                    </font>
-                                </Label>
-                                <Label text="Accédez à votre espace professionnel" style="-fx-text-fill: #a0c0c8; -fx-font-size: 14px;">
-                                    <font>
-                                        <Font size="14.0"/>
-                                    </font>
-                                </Label>
-                            </children>
-                        </VBox>
-
-                        <!-- Login Form -->
-                        <VBox spacing="20.0" alignment="CENTER" maxWidth="360.0">
-                            <children>
-                                <!-- Email Field -->
-                                <VBox spacing="6.0" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                                    <children>
-                                        <Label text="Email professionnel" style="-fx-text-fill: #a0c0c8; -fx-font-size: 12px;"/>
-                                        <HBox spacing="8.0" alignment="CENTER_LEFT" style="-fx-background-color: #1a2f34; -fx-background-radius: 8; -fx-border-color: #254147; -fx-border-radius: 8; -fx-padding: 0 14;">
-                                            <children>
-                                                <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #5f7d85;" text="📧" />
-                                                <TextField fx:id="usernameField" promptText="nom@entreprise.com" style="-fx-background-color: transparent; -fx-border: none; -fx-padding: 14 6; -fx-text-fill: #ffffff; -fx-prompt-text-fill: #3f5e66; -fx-font-size: 14px;" HBox.hgrow="ALWAYS"/>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-
-                                <!-- Password Field -->
-                                <VBox spacing="6.0" alignment="CENTER_LEFT">
-                                    <children>
-                                        <Label text="Mot de passe" style="-fx-text-fill: #a0c0c8; -fx-font-size: 12px;"/>
-                                        <HBox spacing="8.0" alignment="CENTER_LEFT" style="-fx-background-color: #1a2f34; -fx-background-radius: 8; -fx-border-color: #254147; -fx-border-radius: 8; -fx-padding: 0 14;">
-                                            <children>
-                                                <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #5f7d85;" text="🔒" />
-                                                <PasswordField fx:id="passwordField" promptText="••••••••" style="-fx-background-color: transparent; -fx-border: none; -fx-padding: 14 6; -fx-text-fill: #ffffff; -fx-prompt-text-fill: #3f5e66; -fx-font-size: 14px;" HBox.hgrow="ALWAYS"/>
-                                            </children>
-                                        </HBox>
-                                    </children>
-                                </VBox>
-
-                                <!-- Forgot Password -->
-                                <HBox alignment="CENTER_RIGHT">
-                                    <children>
-                                        <Label text="Mot de passe oublié ?" style="-fx-text-fill: #13c8ec; -fx-font-size: 12px; -fx-cursor: hand;"/>
-                                    </children>
-                                </HBox>
-
-                                <!-- Error Label -->
-                                <Label fx:id="errorLabel"
-                                       textFill="#ef4444"
-                                       visible="false"
-                                       style="-fx-font-size: 12px; -fx-background-color: rgba(239,68,68,0.05); -fx-background-radius: 6; -fx-padding: 8; -fx-alignment: center; -fx-border-color: #ef444420; -fx-border-radius: 6;"
-                                       maxWidth="1.7976931348623157E308"/>
-
-                                <!-- Login Button - Dashboard Teal -->
-                                <Button text="Se connecter"
-                                        onAction="#onLogin"
-                                        defaultButton="true"
-                                        maxWidth="1.7976931348623157E308"
-                                        style="-fx-background-color: #13c8ec; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 14; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, #13c8ec40, 8, 0.3, 0, 2);"
-                                        HBox.hgrow="ALWAYS">
-                                    <graphic>
-                                        <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: white;" text="→" />
-                                    </graphic>
-                                </Button>
-
-                                <!-- Sign Up Link -->
-                                <HBox spacing="4.0" alignment="CENTER" translateY="10.0">
-                                    <children>
-                                        <Label text="Première visite ?" style="-fx-text-fill: #a0c0c8; -fx-font-size: 13px;"/>
-                                        <Label text="Créer un compte" style="-fx-text-fill: #13c8ec; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;"/>
-                                    </children>
-                                </HBox>
-                            </children>
-                        </VBox>
-
-                        <!-- Separator -->
-                        <HBox spacing="10.0" alignment="CENTER" maxWidth="360.0">
-                            <children>
-                                <Region style="-fx-background-color: #254147; -fx-min-height: 1;" HBox.hgrow="ALWAYS"/>
-                                <Label text="Accès rapide" style="-fx-text-fill: #5f7d85; -fx-font-size: 11px;"/>
-                                <Region style="-fx-background-color: #254147; -fx-min-height: 1;" HBox.hgrow="ALWAYS"/>
-                            </children>
-                        </HBox>
-
-                        <!-- Quick Access Buttons -->
-                        <HBox spacing="12.0" alignment="CENTER">
-                            <children>
-                                <Button style="-fx-background-color: #1a2f34; -fx-background-radius: 6; -fx-border-color: #254147; -fx-border-radius: 6; -fx-padding: 8 20; -fx-cursor: hand;">
-                                    <graphic>
-                                        <HBox spacing="6" alignment="CENTER">
-                                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #a0c0c8;" text="🏦" />
-                                            <Label text="Démo" style="-fx-text-fill: #a0c0c8; -fx-font-size: 12px;"/>
-                                        </HBox>
-                                    </graphic>
-                                </Button>
-                                <Button style="-fx-background-color: #1a2f34; -fx-background-radius: 6; -fx-border-color: #254147; -fx-border-radius: 6; -fx-padding: 8 20; -fx-cursor: hand;">
-                                    <graphic>
-                                        <HBox spacing="6" alignment="CENTER">
-                                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 14; -fx-text-fill: #a0c0c8;" text="📞" />
-                                            <Label text="Support" style="-fx-text-fill: #a0c0c8; -fx-font-size: 12px;"/>
-                                        </HBox>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>
-
-                        <!-- Security Note -->
-                        <HBox spacing="6.0" alignment="CENTER" translateY="10.0">
-                            <children>
-                                <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 10; -fx-text-fill: #5f7d85;" text="🔒" />
-                                <Label text="Connexion sécurisée SSL" style="-fx-text-fill: #5f7d85; -fx-font-size: 10px;"/>
-                            </children>
-                        </HBox>
+                        <Separator prefWidth="100.0" opacity="0.1" />
+                        <Label text="OU CONTINUER AVEC" textFill="#6c757d">
+                            <font>
+                                <Font size="10.0" />
+                            </font>
+                        </Label>
+                        <Separator prefWidth="100.0" opacity="0.1" />
                     </children>
-                </VBox>
-            </right>
-        </BorderPane>
+                    <VBox.margin>
+                        <Insets top="10.0" bottom="10.0" />
+                    </VBox.margin>
+                </HBox>
+
+                <HBox spacing="10.0">
+                    <children>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="GitHub" HBox.hgrow="ALWAYS" graphicTextGap="10.0">
+                            <graphic>
+                                <Pane styleClass="icon-github" prefHeight="16.0" prefWidth="16.0" />
+                            </graphic>
+                        </Button>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="social-btn" text="Google" HBox.hgrow="ALWAYS" graphicTextGap="10.0">
+                            <graphic>
+                                <Pane styleClass="icon-google" prefHeight="16.0" prefWidth="16.0" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER" spacing="5.0">
+                    <children>
+                        <Label text="Pas encore de compte ?" textFill="#6c757d">
+                            <font>
+                                <Font size="11.0" />
+                            </font>
+                        </Label>
+                        <Label styleClass="link-text-bold" text="S'inscrire" />
+                    </children>
+                    <VBox.margin>
+                        <Insets top="20.0" />
+                    </VBox.margin>
+                </HBox>
+
+            </children>
+            <padding>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+            </padding>
+        </VBox>
     </children>
-</AnchorPane>
+</StackPane>

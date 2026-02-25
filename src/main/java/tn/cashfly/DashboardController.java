@@ -3,9 +3,12 @@ package tn.cashfly;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
 import tn.cashfly.session.UserSession;
@@ -29,6 +32,9 @@ public class DashboardController {
     private StackPane contentRoot;
 
     @FXML
+    private Button btnHome;
+
+    @FXML
     private Button btnEntreprises;
 
     @FXML
@@ -36,6 +42,15 @@ public class DashboardController {
 
     @FXML
     private Button btnOperations;
+
+    @FXML
+    private Button btnStatistiques;
+
+    @FXML
+    private Label pageTitle;
+
+    @FXML
+    private Label pageSubtitle;
 
     @FXML
     private Label userNameLabel;
@@ -63,13 +78,30 @@ public class DashboardController {
         instance = this;
         updateUserInfo();
         updateStats();
-        // Vue par défaut : entreprises
-        showEntreprises();
+        // Vue par défaut : Accueil
+        try {
+            showHome();
+        } catch (Exception e) {
+            System.err.println("Erreur lors de l'initialisation de la vue Accueil: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void showHome() {
+        loadView("/dashboard_home.fxml");
+        updateActiveButton(btnHome);
+        pageTitle.setText("Tableau de Bord");
+        pageSubtitle.setText("Aperçu général de vos performances financières.");
+        updateStats();
     }
 
     @FXML
     public void showEntreprises() {
         loadView("/entreprises.fxml");
+        updateActiveButton(btnEntreprises);
+        pageTitle.setText("Entreprises");
+        pageSubtitle.setText("Gérez vos entreprises et leurs informations financières.");
         updateStats();
     }
 
@@ -80,6 +112,9 @@ public class DashboardController {
             return;
         }
         loadView("/tresorerie.fxml");
+        updateActiveButton(btnTresorerie);
+        pageTitle.setText("Trésorerie");
+        pageSubtitle.setText("Suivi de vos comptes et flux de trésorerie.");
         updateStats();
     }
 
@@ -94,12 +129,10 @@ public class DashboardController {
             return;
         }
         loadView("/operations.fxml");
+        updateActiveButton(btnOperations);
+        pageTitle.setText("Opérations");
+        pageSubtitle.setText("Enregistrement et analyse de vos transactions.");
         updateStats();
-    }
-
-    @FXML
-    public void showSuggestions() {
-        loadView("/suggestions.fxml");
     }
 
     @FXML
@@ -109,17 +142,56 @@ public class DashboardController {
             return;
         }
         loadView("/statistiques.fxml");
+        updateActiveButton(btnStatistiques);
+        pageTitle.setText("Statistiques");
+        pageSubtitle.setText("Visualisation de vos indicateurs de performance.");
+    }
+
+    @FXML
+    public void handleLogout(javafx.event.ActionEvent event) {
+        UserSession.clear();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/login.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Cashfly - Connexion");
+            stage.centerOnScreen();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateActiveButton(Button activeBtn) {
+        if (activeBtn == null) return;
+        
+        if (btnHome != null) btnHome.getStyleClass().remove("active-nav-btn");
+        if (btnEntreprises != null) btnEntreprises.getStyleClass().remove("active-nav-btn");
+        if (btnTresorerie != null) btnTresorerie.getStyleClass().remove("active-nav-btn");
+        if (btnOperations != null) btnOperations.getStyleClass().remove("active-nav-btn");
+        if (btnStatistiques != null) btnStatistiques.getStyleClass().remove("active-nav-btn");
+
+        activeBtn.getStyleClass().add("active-nav-btn");
     }
 
     private void loadView(String fxmlPath) {
         try {
             Node view = FXMLLoader.load(getClass().getResource(fxmlPath));
             view.setOpacity(0);
+            view.setScaleX(0.98);
+            view.setScaleY(0.98);
             contentRoot.getChildren().setAll(view);
-            FadeTransition ft = new FadeTransition(Duration.millis(220), view);
+            
+            FadeTransition ft = new FadeTransition(Duration.millis(300), view);
             ft.setFromValue(0);
             ft.setToValue(1);
-            ft.play();
+            
+            javafx.animation.ScaleTransition st = new javafx.animation.ScaleTransition(Duration.millis(300), view);
+            st.setFromX(0.98);
+            st.setFromY(0.98);
+            st.setToX(1);
+            st.setToY(1);
+            
+            new javafx.animation.ParallelTransition(ft, st).play();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,11 +209,11 @@ public class DashboardController {
 
     public void updateStats() {
         if (UserSession.getUserId() == null) {
-            totalEntreprisesLabel.setText("0");
-            totalTresoreriesLabel.setText("0");
-            totalOperationsLabel.setText("0");
-            totalRevenusLabel.setText("0 TND");
-            totalDepensesLabel.setText("0 TND");
+            if (totalEntreprisesLabel != null) totalEntreprisesLabel.setText("0");
+            if (totalTresoreriesLabel != null) totalTresoreriesLabel.setText("0");
+            if (totalOperationsLabel != null) totalOperationsLabel.setText("0");
+            if (totalRevenusLabel != null) totalRevenusLabel.setText("0 TND");
+            if (totalDepensesLabel != null) totalDepensesLabel.setText("0 TND");
             return;
         }
 
@@ -158,7 +230,7 @@ public class DashboardController {
                     "SELECT COUNT(*) FROM entreprises WHERE id_proprietaire = ?")) {
                 ps.setInt(1, userId);
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
+                    if (rs.next() && totalEntreprisesLabel != null) {
                         totalEntreprisesLabel.setText(String.valueOf(rs.getInt(1)));
                     }
                 }
@@ -171,7 +243,7 @@ public class DashboardController {
                             "WHERE e.id_proprietaire = ?")) {
                 ps.setInt(1, userId);
                 try (ResultSet rs = ps.executeQuery()) {
-                    if (rs.next()) {
+                    if (rs.next() && totalTresoreriesLabel != null) {
                         totalTresoreriesLabel.setText(String.valueOf(rs.getInt(1)));
                     }
                 }
@@ -193,9 +265,9 @@ public class DashboardController {
                         double totalRevenus = rs.getDouble("total_revenus");
                         double totalDepenses = rs.getDouble("total_depenses");
 
-                        totalOperationsLabel.setText(String.valueOf(totalOps));
-                        totalRevenusLabel.setText(String.format("%.2f TND", totalRevenus));
-                        totalDepensesLabel.setText(String.format("%.2f TND", totalDepenses));
+                        if (totalOperationsLabel != null) totalOperationsLabel.setText(String.valueOf(totalOps));
+                        if (totalRevenusLabel != null) totalRevenusLabel.setText(String.format("%.2f TND", totalRevenus));
+                        if (totalDepensesLabel != null) totalDepensesLabel.setText(String.format("%.2f TND", totalDepenses));
                     }
                 }
             }

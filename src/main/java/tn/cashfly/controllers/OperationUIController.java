@@ -3,7 +3,10 @@ package tn.cashfly.controllers;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -12,6 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import tn.cashfly.entities.OPÉRATIONS;
 import tn.cashfly.entities.TRÉSORERIE;
 import tn.cashfly.services.ExchangeRateService;
@@ -27,7 +32,10 @@ import java.util.stream.Collectors;
 public class OperationUIController {
 
     @FXML
-    private FlowPane operationCardsContainer;
+    private VBox revenuCardsContainer;
+
+    @FXML
+    private VBox depenseCardsContainer;
 
     @FXML
     private ComboBox<String> typeFilterBox;
@@ -58,6 +66,9 @@ public class OperationUIController {
     private TextField toCurrencyField;
     @FXML
     private Label rateResultLabel;
+
+    @FXML
+    private Label kycStatusLabel;
 
     private final OperationController operationController = new OperationController();
     private final TresorerieController tresorerieController = new TresorerieController();
@@ -174,7 +185,37 @@ public class OperationUIController {
     }
 
     @FXML
+    private void onKYC() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Vérification KYC");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            if (KYCController.isVerified()) {
+                kycStatusLabel.setText("✅ Vérifié");
+                kycStatusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur lors de l'ouverture du KYC", e);
+        }
+    }
+
+    @FXML
     private void onAdd() {
+        if (!KYCController.isVerified()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("KYC Requis");
+            alert.setHeaderText("Vérification d'identité nécessaire");
+            alert.setContentText("Veuillez effectuer la reconnaissance faciale avant d'ajouter une opération.");
+            alert.showAndWait();
+            return;
+        }
+
         String opCurrency = operationCurrencyBox.getValue();
         
         // Background thread to handle potential API call for conversion
@@ -357,11 +398,16 @@ public class OperationUIController {
     }
 
     private void renderCards(List<OPÉRATIONS> operations) {
-        operationCardsContainer.getChildren().clear();
+        revenuCardsContainer.getChildren().clear();
+        depenseCardsContainer.getChildren().clear();
 
         for (OPÉRATIONS op : operations) {
             VBox card = createCard(op);
-            operationCardsContainer.getChildren().add(card);
+            if ("revenu".equalsIgnoreCase(op.getType())) {
+                revenuCardsContainer.getChildren().add(card);
+            } else {
+                depenseCardsContainer.getChildren().add(card);
+            }
         }
     }
 

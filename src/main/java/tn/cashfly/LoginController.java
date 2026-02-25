@@ -89,15 +89,25 @@ public class LoginController {
 
     private void openDashboard(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/dashboard.fxml"));
+            String role = UserSession.getRole();
+            String fxmlPath = "/dashboard.fxml"; // Default for proprietaire
+
+            if ("administrateur".equalsIgnoreCase(role)) {
+                fxmlPath = "/admin_dashboard.fxml";
+            } else if ("investisseur".equalsIgnoreCase(role)) {
+                fxmlPath = "/investor_dashboard.fxml";
+            }
+
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Cashfly - Dashboard");
-            stage.setScene(new Scene(root, 1024, 600));
+            stage.setTitle("Cashfly - Dashboard (" + role + ")");
+            stage.setScene(new Scene(root, 1280, 800));
             stage.setMinWidth(1024);
             stage.setMinHeight(600);
-        } catch (IOException e) {
+            stage.centerOnScreen();
+        } catch (Exception e) {
             e.printStackTrace();
-            showError("Impossible de charger le tableau de bord.");
+            showError("Impossible de charger le tableau de bord : " + e.getMessage());
         }
     }
 

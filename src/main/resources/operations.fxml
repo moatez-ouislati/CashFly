@@ -34,23 +34,39 @@
         </children>
     </HBox>
 
-    <HBox spacing="16.0">
+    <HBox spacing="16.0" VBox.vgrow="ALWAYS">
         <children>
-            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS">
                 <children>
-                    <Label text="Liste des opérations" styleClass="panel-header"/>
-                    <ScrollPane prefHeight="380.0"
-                                fitToWidth="true"
-                                hbarPolicy="NEVER"
-                                style="-fx-background-color: transparent;">
-                        <content>
-                            <FlowPane fx:id="operationCardsContainer"
-                                      hgap="12.0"
-                                      vgap="12.0"
-                                      prefWrapLength="600.0"
-                                      style="-fx-padding: 4 0 4 0;"/>
-                        </content>
-                    </ScrollPane>
+                    <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <!-- Revenus Column -->
+                            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                <children>
+                                    <Label text="Revenus" style="-fx-font-weight: bold; -fx-text-fill: #2ecc71;"/>
+                                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                                        <content>
+                                            <VBox fx:id="revenuCardsContainer" spacing="10.0" style="-fx-padding: 5;"/>
+                                        </content>
+                                    </ScrollPane>
+                                </children>
+                            </VBox>
+                            
+                            <Separator orientation="VERTICAL" />
+
+                            <!-- Depenses Column -->
+                            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                <children>
+                                    <Label text="Dépenses" style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                                        <content>
+                                            <VBox fx:id="depenseCardsContainer" spacing="10.0" style="-fx-padding: 5;"/>
+                                        </content>
+                                    </ScrollPane>
+                                </children>
+                            </VBox>
+                        </children>
+                    </HBox>
                 </children>
             </VBox>
 
@@ -66,6 +82,18 @@
                     </HBox>
                     <TextField fx:id="categorieField" promptText="Catégorie"/>
                     <TextField fx:id="descriptionField" promptText="Description"/>
+                    <VBox spacing="8.0" style="-fx-background-color: #f8fafc; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #e2e8f0; -fx-border-radius: 8;">
+                        <children>
+                            <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <Label text="KYC Identité" style="-fx-font-weight: bold; -fx-text-fill: #475569;"/>
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="kycStatusLabel" text="❌ Non vérifié" style="-fx-font-size: 11; -fx-text-fill: #e74c3c; -fx-font-weight: bold;"/>
+                                </children>
+                            </HBox>
+                            <Button text="Reconnaissance Faciale" onAction="#onKYC" styleClass="btn-kyc" maxWidth="Infinity" style="-fx-font-size: 11;"/>
+                        </children>
+                    </VBox>
                     <HBox spacing="8.0">
                         <children>
                             <Button text="Ajouter" onAction="#onAdd" styleClass="btn-primary"/>

@@ -1,74 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.CheckBox?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1280.0" style="-fx-background-color: #f0f2f5;" stylesheets="@style.css" styleClass="root-pane" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.DashboardController">
-    <children>
-        <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" spacing="0">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.DashboardController">
+    <left>
+        <VBox prefHeight="800.0" prefWidth="260.0" styleClass="sidebar" BorderPane.alignment="CENTER">
             <children>
-                <VBox prefWidth="260.0" style="-fx-background-color: linear-gradient(to bottom, #0a1a1f, #0e2429); -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 2, 0);">
+                <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" spacing="10.0">
                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="12">
-                            <padding><Insets bottom="28.0" left="24.0" right="24.0" top="28.0" /></padding>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@images/logo.png" />
+                            </image>
+                        </ImageView>
+                        <VBox alignment="CENTER_LEFT">
                             <children>
-                                <StackPane prefHeight="36.0" prefWidth="36.0" style="-fx-background-color: linear-gradient(to bottom right, #13c8ec, #0ea5d9); -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, #13c8ec80, 10, 0.3, 0, 2);">
-                                    <children>
-                                        <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white;" text="" />
-                                    </children>
-                                </StackPane>
-                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Cashfly">
-                                    <font><Font name="System Bold" size="22.0" /></font>
-                                </Text>
-                            </children>
-                        </HBox>
-                        <VBox spacing="2.0" VBox.vgrow="ALWAYS">
-                            <padding><Insets left="16.0" right="16.0" top="8.0" /></padding>
-                            <children>
-                                <Label text="MAIN MENU" textFill="#5f7d85" style="-fx-font-size: 11; -fx-font-weight: bold; -fx-letter-spacing: 0.5;">
-                                    <padding><Insets bottom="8.0" left="8.0" top="8.0" /></padding>
+                                <Label styleClass="logo-text" text="CASHFLY" textFill="WHITE">
+                                    <font>
+                                        <Font name="System Bold" size="20.0" />
+                                    </font>
                                 </Label>
-                                <Button fx:id="btnEntreprises" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="🏢 Entreprises" onAction="#showEntreprises"/>
-                                <Button fx:id="btnTresorerie" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="💰 Trésorerie" onAction="#showTresorerie"/>
-                                <Button fx:id="btnOperations" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="🔄 Opérations" onAction="#showOperations"/>
-                                <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="💡 Suggestions" onAction="#showSuggestions"/>
-                                <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="📈 Statistiques" onAction="#showStatistiques"/>
-                                <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" styleClass="my-button" text="📊 Rapports" />
+                                <Label text="PROPRIETAIRE PME" textFill="#a1a1a1">
+                                    <font>
+                                        <Font size="10.0" />
+                                    </font>
+                                </Label>
                             </children>
                         </VBox>
-                        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-color: #1a2f34; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);" styleClass="profile-section">
-                            <padding><Insets bottom="16.0" left="16.0" right="16.0" top="16.0" /></padding>
+                    </children>
+                    <padding>
+                        <Insets left="20.0" />
+                    </padding>
+                </HBox>
+                <Label text="MENU PRINCIPAL" textFill="#6c757d">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets left="20.0" top="20.0" />
+                    </VBox.margin>
+                </Label>
+                <VBox spacing="5.0">
+                    <children>
+                        <Button fx:id="btnHome" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" text="Tableau de bord" onAction="#showHome">
+                            <styleClass>
+                                <String fx:value="nav-btn" />
+                            </styleClass>
+                            <graphic>
+                                <Label style="-fx-font-size: 18;" text="🏠" />
+                            </graphic>
+                        </Button>
+                        <Button fx:id="btnEntreprises" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Entreprises" onAction="#showEntreprises">
+                            <graphic>
+                                <Label style="-fx-font-size: 18;" text="🏢" />
+                            </graphic>
+                        </Button>
+                        <Button fx:id="btnTresorerie" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Trésorerie" onAction="#showTresorerie">
+                            <graphic>
+                                <Label style="-fx-font-size: 18;" text="💰" />
+                            </graphic>
+                        </Button>
+                        <Button fx:id="btnOperations" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Opérations" onAction="#showOperations">
+                            <graphic>
+                                <Label style="-fx-font-size: 18;" text="🔄" />
+                            </graphic>
+                        </Button>
+                        <Button fx:id="btnStatistiques" alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Statistiques" onAction="#showStatistiques">
+                            <graphic>
+                                <Label style="-fx-font-size: 18;" text="📊" />
+                            </graphic>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+                
+                <Pane VBox.vgrow="ALWAYS" />
+                
+                <VBox spacing="5.0" styleClass="sidebar-profile" style="-fx-background-color: rgba(255,255,255,0.05); -fx-background-radius: 10; -fx-padding: 15;">
+                    <VBox.margin>
+                        <Insets left="10.0" right="10.0" bottom="10.0" />
+                    </VBox.margin>
+                    <children>
+                        <HBox spacing="10.0" alignment="CENTER_LEFT">
                             <children>
-                                <StackPane>
-                                    <Rectangle arcHeight="10.0" arcWidth="10.0" fill="#2d484e" height="42.0" stroke="TRANSPARENT" strokeType="INSIDE" strokeWidth="0.0" width="42.0" style="-fx-arc-height: 12; -fx-arc-width: 12;" />
-                                    <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 20; -fx-text-fill: #13c8ec;" text="👤" />
-                                </StackPane>
-                                <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                <Circle fill="#5a5ce5" radius="15.0" />
+                                <VBox>
                                     <children>
-                                        <Label fx:id="userNameLabel" text="Utilisateur" textFill="WHITE">
-                                            <font><Font name="System Bold" size="13.0" /></font>
-                                        </Label>
-                                        <Label fx:id="userEmailLabel" text="admin@cashfly.tn" textFill="#8baab3">
-                                            <font><Font size="11.0" /></font>
-                                        </Label>
+                                        <Label fx:id="userNameLabel" text="Utilisateur" textFill="WHITE" style="-fx-font-weight: bold; -fx-font-size: 12px;" />
+                                        <Label fx:id="userEmailLabel" text="email@cashfly.tn" textFill="#a1a1a1" style="-fx-font-size: 10px;" />
                                     </children>
                                 </VBox>
                             </children>
@@ -76,87 +116,73 @@
                     </children>
                 </VBox>
 
-                <VBox HBox.hgrow="ALWAYS" spacing="0">
+                <Button alignment="BASELINE_LEFT" graphicTextGap="15.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="240.0" styleClass="nav-btn" text="Déconnexion" onAction="#handleLogout">
+                    <graphic>
+                        <Label style="-fx-font-size: 18;" text="🚪" />
+                    </graphic>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="10.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+        </VBox>
+    </left>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-content" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" styleClass="header">
                     <children>
-                        <VBox>
+                        <VBox alignment="CENTER_LEFT">
                             <children>
-                                <HBox alignment="CENTER_LEFT" prefHeight="70.0" style="-fx-background-color: white; -fx-border-color: transparent transparent #e9edf2 transparent; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 4, 0, 0, 2);">
-                                    <padding><Insets left="32.0" right="32.0" /></padding>
-                                    <children>
-                                        <HBox spacing="8" alignment="CENTER_LEFT">
-                                            <Label style="-fx-font-family: 'Material Icons'; -fx-font-size: 18; -fx-text-fill: #94a3b8;" text="🔍" />
-                                            <TextField prefWidth="360.0" promptText="Rechercher entreprises, transactions..." style="-fx-background-radius: 24; -fx-background-color: #f8fafc; -fx-border-color: #e2e8f0; -fx-border-radius: 24; -fx-padding: 8 16; -fx-font-size: 13;" />
-                                        </HBox>
-                                        <Region HBox.hgrow="ALWAYS" />
-                                        <HBox spacing="12">
-                                            <Button style="-fx-background-color: transparent; -fx-border-color: #e2e8f0; -fx-border-radius: 24; -fx-text-fill: #475569; -fx-font-weight: bold; -fx-background-radius: 24;" text="🔔">
-                                                <padding><Insets bottom="8.0" left="16.0" right="16.0" top="8.0" /></padding>
-                                            </Button>
-                                            <Button style="-fx-background-color: linear-gradient(to right, #13c8ec, #0ea5d9); -fx-text-fill: white; -fx-background-radius: 24; -fx-font-weight: bold; -fx-effect: dropshadow(gaussian, #13c8ec80, 10, 0.3, 0, 2);" text="+ Nouveau">
-                                                <padding><Insets bottom="8.0" left="20.0" right="20.0" top="8.0" /></padding>
-                                                <font><Font name="System Bold" size="12.0" /></font>
-                                            </Button>
-                                        </HBox>
-                                    </children>
-                                </HBox>
-                                <HBox spacing="20.0" style="-fx-background-color: #f8fafc; -fx-border-color: transparent transparent #e9edf2 transparent; -fx-border-width: 0 0 1 0;">
-                                    <padding><Insets left="32.0" right="32.0" top="20.0" bottom="20.0"/></padding>
-                                    <children>
-                                        <VBox spacing="6.0" styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 8, 0, 0, 2); -fx-border-color: #eef2f6; -fx-border-radius: 16;">
-                                            <children>
-                                                <Label text="ENTREPRISES" styleClass="stat-label" style="-fx-text-fill: #64748b; -fx-font-size: 11; -fx-font-weight: bold; -fx-letter-spacing: 0.3;"/>
-                                                <HBox alignment="CENTER_LEFT" spacing="8">
-                                                    <Label fx:id="totalEntreprisesLabel" text="0" styleClass="stat-value" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
-                                                    <Label text="actives" style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="6.0" styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 8, 0, 0, 2); -fx-border-color: #eef2f6; -fx-border-radius: 16;">
-                                            <children>
-                                                <Label text="TRÉSORERIES" styleClass="stat-label" style="-fx-text-fill: #64748b; -fx-font-size: 11; -fx-font-weight: bold; -fx-letter-spacing: 0.3;"/>
-                                                <HBox alignment="CENTER_LEFT" spacing="8">
-                                                    <Label fx:id="totalTresoreriesLabel" text="0" styleClass="stat-value" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
-                                                    <Label text="comptes" style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="6.0" styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 8, 0, 0, 2); -fx-border-color: #eef2f6; -fx-border-radius: 16;">
-                                            <children>
-                                                <Label text="OPÉRATIONS" styleClass="stat-label" style="-fx-text-fill: #64748b; -fx-font-size: 11; -fx-font-weight: bold; -fx-letter-spacing: 0.3;"/>
-                                                <HBox alignment="CENTER_LEFT" spacing="8">
-                                                    <Label fx:id="totalOperationsLabel" text="0" styleClass="stat-value" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
-                                                    <Label text="ce mois" style="-fx-text-fill: #94a3b8; -fx-font-size: 12;"/>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="6.0" styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 8, 0, 0, 2); -fx-border-color: #eef2f6; -fx-border-radius: 16;">
-                                            <children>
-                                                <Label text="REVENUS" styleClass="stat-label" style="-fx-text-fill: #64748b; -fx-font-size: 11; -fx-font-weight: bold; -fx-letter-spacing: 0.3;"/>
-                                                <HBox alignment="CENTER_LEFT" spacing="4">
-                                                    <Label fx:id="totalRevenusLabel" text="0 TND" styleClass="stat-value" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #059669;"/>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                        <VBox spacing="6.0" styleClass="stat-card" style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.02), 8, 0, 0, 2); -fx-border-color: #eef2f6; -fx-border-radius: 16;">
-                                            <children>
-                                                <Label text="DÉPENSES" styleClass="stat-label" style="-fx-text-fill: #64748b; -fx-font-size: 11; -fx-font-weight: bold; -fx-letter-spacing: 0.3;"/>
-                                                <HBox alignment="CENTER_LEFT" spacing="4">
-                                                    <Label fx:id="totalDepensesLabel" text="0 TND" styleClass="stat-value" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #dc2626;"/>
-                                                </HBox>
-                                            </children>
-                                        </VBox>
-                                    </children>
-                                </HBox>
+                                <Label styleClass="page-title" text="Cashfly Dashboard" fx:id="pageTitle" />
+                                <Label styleClass="page-subtitle" text="Analyse en temps réel de votre écosystème financier." fx:id="pageSubtitle" />
                             </children>
                         </VBox>
-                        <StackPane fx:id="contentRoot" VBox.vgrow="ALWAYS" style="-fx-background-color: #f8fafc;">
+                        <Region prefWidth="40.0" />
+                        <HBox spacing="20.0" alignment="CENTER_LEFT">
                             <children>
-                                <!-- Views (entreprises / trésorerie / opérations) will be loaded here -->
+                                <VBox alignment="CENTER_LEFT">
+                                    <Label text="ENTREPRISES" styleClass="stat-label" style="-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+                                    <Label fx:id="totalEntreprisesLabel" text="0" styleClass="stat-value" style="-fx-font-size: 16; -fx-text-fill: #2c3e50;" />
+                                </VBox>
+                                <VBox alignment="CENTER_LEFT">
+                                    <Label text="TRÉSORERIES" styleClass="stat-label" style="-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+                                    <Label fx:id="totalTresoreriesLabel" text="0" styleClass="stat-value" style="-fx-font-size: 16; -fx-text-fill: #2c3e50;" />
+                                </VBox>
+                                <VBox alignment="CENTER_LEFT">
+                                    <Label text="REVENUS" styleClass="stat-label" style="-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+                                    <Label fx:id="totalRevenusLabel" text="0 TND" styleClass="stat-value" style="-fx-font-size: 16; -fx-text-fill: #2ecc71;" />
+                                </VBox>
+                                <VBox alignment="CENTER_LEFT">
+                                     <Label text="DÉPENSES" styleClass="stat-label" style="-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+                                     <Label fx:id="totalDepensesLabel" text="0 TND" styleClass="stat-value" style="-fx-font-size: 16; -fx-text-fill: #e74c3c;" />
+                                 </VBox>
+                                 <VBox alignment="CENTER_LEFT">
+                                     <Label text="OPS" styleClass="stat-label" style="-fx-font-size: 9; -fx-font-weight: bold; -fx-text-fill: #94a3b8;" />
+                                     <Label fx:id="totalOperationsLabel" text="0" styleClass="stat-value" style="-fx-font-size: 16; -fx-text-fill: #2c3e50;" />
+                                 </VBox>
+                             </children>
+                         </HBox>
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER" spacing="8.0" styleClass="status-badge">
+                            <children>
+                                <Label style="-fx-text-fill: #2ecc71;" text="🛡️" />
+                                <Label text="STATUS SÉCURISÉ" textFill="#2ecc71">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                </Label>
                             </children>
-                        </StackPane>
+                        </HBox>
                     </children>
-                </VBox>
+                    <padding>
+                        <Insets left="30.0" right="30.0" />
+                    </padding>
+                </HBox>
+                <StackPane fx:id="contentRoot" VBox.vgrow="ALWAYS">
+                    <!-- Views will be loaded here -->
+                </StackPane>
             </children>
-        </HBox>
-    </children>
-</AnchorPane>
+        </VBox>
+    </center>
+</BorderPane>

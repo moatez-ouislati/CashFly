@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="30.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.DashboardHomeUIController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+    <children>
+        <VBox spacing="5.0">
+            <children>
+                <Label fx:id="welcomeLabel" style="-fx-font-size: 28; -fx-font-weight: bold; -fx-text-fill: #1e293b;" text="Bonjour, Utilisateur 👋" />
+                <Label style="-fx-font-size: 14; -fx-text-fill: #64748b;" text="Voici un aperçu global de votre situation financière aujourd'hui." />
+            </children>
+        </VBox>
+
+        <GridPane hgap="25.0" vgap="25.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <!-- Revenus Card -->
+                <VBox styleClass="card" style="-fx-border-color: rgba(46, 204, 113, 0.2); -fx-border-width: 0 0 0 5;" GridPane.columnIndex="0">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <VBox alignment="CENTER" styleClass="icon-container-green">
+                                    <children>
+                                        <Label style="-fx-font-size: 20;" text="📈" />
+                                    </children>
+                                </VBox>
+                                <VBox>
+                                    <children>
+                                        <Label styleClass="card-label" text="TOTAL REVENUS" />
+                                        <Label fx:id="homeRevenusLabel" styleClass="card-value" style="-fx-text-fill: #2ecc71;" text="0.00 TND" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <Label style="-fx-font-size: 11; -fx-text-fill: #94a3b8; -fx-padding: 10 0 0 0;" text="Total des entrées d'argent sur tous vos comptes." />
+                    </children>
+                </VBox>
+
+                <!-- Dépenses Card -->
+                <VBox styleClass="card" style="-fx-border-color: rgba(231, 76, 60, 0.2); -fx-border-width: 0 0 0 5;" GridPane.columnIndex="1">
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <VBox alignment="CENTER" styleClass="icon-container-red">
+                                    <children>
+                                        <Label style="-fx-font-size: 20;" text="📉" />
+                                    </children>
+                                </VBox>
+                                <VBox>
+                                    <children>
+                                        <Label styleClass="card-label" text="TOTAL DÉPENSES" />
+                                        <Label fx:id="homeDepensesLabel" styleClass="card-value" style="-fx-text-fill: #e74c3c;" text="0.00 TND" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <Label style="-fx-font-size: 11; -fx-text-fill: #94a3b8; -fx-padding: 10 0 0 0;" text="Total des sorties d'argent sur tous vos comptes." />
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+
+        <HBox spacing="25.0">
+            <children>
+                <!-- Info Card 1 -->
+                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="card-label" text="ENTREPRISES" />
+                        <HBox alignment="BOTTOM_LEFT" spacing="10.0">
+                            <children>
+                                <Label fx:id="homeEntreprisesLabel" styleClass="card-value" text="0" />
+                                <Label style="-fx-text-fill: #94a3b8; -fx-padding: 0 0 5 0;" text="entités enregistrées" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Info Card 2 -->
+                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="card-label" text="TRÉSORERIES" />
+                        <HBox alignment="BOTTOM_LEFT" spacing="10.0">
+                            <children>
+                                <Label fx:id="homeTresoreriesLabel" styleClass="card-value" text="0" />
+                                <Label style="-fx-text-fill: #94a3b8; -fx-padding: 0 0 5 0;" text="comptes actifs" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+
+                <!-- Info Card 3 -->
+                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label styleClass="card-label" text="OPÉRATIONS" />
+                        <HBox alignment="BOTTOM_LEFT" spacing="10.0">
+                            <children>
+                                <Label fx:id="homeOpsLabel" styleClass="card-value" text="0" />
+                                <Label style="-fx-text-fill: #94a3b8; -fx-padding: 0 0 5 0;" text="transactions totales" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- A "Cool Thing" : AI Insight Placeholder -->
+        <VBox styleClass="card-dark" spacing="15.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label style="-fx-font-size: 18;" text="✨" />
+                        <Label styleClass="section-title-light" text="Insight de l'Assistant Cashfly" />
+                    </children>
+                </HBox>
+                <Label styleClass="ai-text" wrapText="true" text="Basé sur vos dernières opérations, nous avons remarqué une augmentation de 12% de vos revenus ce mois-ci par rapport au mois dernier. Continuez ainsi pour atteindre vos objectifs financiers !" />
+            </children>
+        </VBox>
+    </children>
+</VBox>
