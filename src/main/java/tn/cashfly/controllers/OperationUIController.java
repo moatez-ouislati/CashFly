@@ -476,10 +476,19 @@ public class OperationUIController {
         HBox actions = new HBox(8);
         Button modifyBtn = new Button("Modifier");
         Button deleteBtn = new Button("Supprimer");
+        Button noteBtn = new Button("Notes");
+        
         modifyBtn.setStyle("-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 6;");
         deleteBtn.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 6;");
-        actions.getChildren().addAll(modifyBtn, deleteBtn);
+        noteBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-background-radius: 6;");
+        
+        actions.getChildren().addAll(modifyBtn, deleteBtn, noteBtn);
         card.getChildren().add(actions);
+
+        noteBtn.setOnAction(ev -> {
+            openNoteEditor(op);
+            ev.consume();
+        });
 
         modifyBtn.setOnAction(ev -> {
             selectedOperation = op;
@@ -520,6 +529,25 @@ public class OperationUIController {
     private boolean containsIgnoreCase(String haystack, String needle) {
         if (haystack == null || needle == null) return false;
         return haystack.toLowerCase().contains(needle.toLowerCase());
+    }
+
+    private void openNoteEditor(OPÉRATIONS op) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/note_editor.fxml"));
+            Parent root = loader.load();
+            
+            NoteEditorController controller = loader.getController();
+            controller.setOperation(op);
+            
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Éditeur de notes - Cashfly");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur lors de l'ouverture de l'éditeur de notes", e);
+        }
     }
 
     private void showError(String message, Exception e) {
