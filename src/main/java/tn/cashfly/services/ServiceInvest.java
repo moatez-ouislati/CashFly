@@ -3,7 +3,7 @@ package tn.cashfly.services;
 import tn.cashfly.interfaces.Service;
 import tn.cashfly.models.Investissement;
 import tn.cashfly.utils.CashFlyDB;
-
+import tn.cashfly.dto.SearchCriteria;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,4 +172,6 @@ public class ServiceInvest implements Service<Investissement> {
             System.out.println("Tous les investissements ont été supprimés.");
         }
     }
+
+    // This for Research
 }

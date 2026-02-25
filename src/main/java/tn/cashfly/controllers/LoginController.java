@@ -26,6 +26,7 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+
     @FXML
     private void handleLogin(javafx.event.Event event) {
         String email = emailField.getText();

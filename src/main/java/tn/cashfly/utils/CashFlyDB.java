@@ -26,7 +26,7 @@ public class CashFlyDB {
 
             connection.setAutoCommit(true);
 
-            System.out.println("Base de donnees est connecteé ...");
+            System.out.println("Base de donnees est connectee ...");
 
         } catch(SQLException e)
         {

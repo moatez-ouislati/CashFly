@@ -16,6 +16,8 @@ public class Investissement {
 
     public Investissement() {
     }
+    
+    
 
     public Investissement(int idInvestisseur, int idEntreprise, BigDecimal montant,
                           Date dateInvestissement, String statut,
@@ -30,6 +32,11 @@ public class Investissement {
         this.duree_mois = dureeMois;
         this.description = description;
     }
+
+    //This for filter
+    //public Investissement(int id, String nom, double montant, Date dateInvestissement) {
+    //}
+    //
 
     public int getIdInvestissement() {
         return idInvestissement;
@@ -105,7 +112,7 @@ public class Investissement {
 
     @Override
     public String toString() {
-        return "Invesstissement{" +
+        return "Investissement{" +
                 "idInvestissement=" + idInvestissement +
                 ", idInvestisseur=" + idInvestisseur +
                 ", idEntreprise=" + idEntreprise +
