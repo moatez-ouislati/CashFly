@@ -9,14 +9,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import tn.cashfly.services.KycService;
 import tn.cashfly.session.UserSession;
 import tn.cashfly.utils.MyDataBase;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class LoginController {
 
@@ -28,6 +26,8 @@ public class LoginController {
 
     @FXML
     private Label errorLabel;
+
+    private final KycService kycService = new KycService();
 
     @FXML
     private void onLogin(ActionEvent event) {
@@ -42,7 +42,38 @@ public class LoginController {
         }
 
         if (authenticate(username, password)) {
-            openDashboard(event);
+            if (!UserSession.isKycEnrolled()) {
+                openKYCEnrollment(event);
+            } else {
+                openDashboard(event);
+            }
+        }
+    }
+
+    private void openKYCEnrollment(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
+            Parent root = loader.load();
+            
+            // Get stage
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Enrôlement KYC Obligatoire - Cashfly");
+            stage.setScene(new Scene(root));
+            
+            // On successful KYC enrollment, proceed to dashboard (KYCController now handles persistence)
+            stage.setOnHidden(e -> {
+                if (KYCController.isVerified()) {
+                    openDashboard(event);
+                } else {
+                    // User closed without verifying
+                    showError("Vous devez compléter le KYC pour accéder à votre compte.");
+                }
+            });
+            
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Erreur lors de l'ouverture du KYC : " + e.getMessage());
         }
     }
 
@@ -72,7 +103,10 @@ public class LoginController {
                         String emailDb = rs.getString("email");
                         String role = rs.getString("role");
 
-                        UserSession.setUser(id, fullName, emailDb, role);
+                        // Check KYC status from user_kyc table instead of column
+                        boolean kycEnrolled = kycService.getKycByUserId(id) != null;
+
+                        UserSession.setUser(id, fullName, emailDb, role, kycEnrolled);
                         return true;
                     } else {
                         showError("Email ou mot de passe incorrect.");

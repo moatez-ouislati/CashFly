@@ -20,6 +20,10 @@ import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import tn.cashfly.entities.UserKyc;
+import tn.cashfly.services.KycService;
+import tn.cashfly.session.UserSession;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -28,6 +32,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class KYCController {
@@ -54,6 +60,7 @@ public class KYCController {
     private static boolean isVerified = false;
     private int faceDetectedCounter = 0;
     private final int REQUIRED_FACE_FRAMES = 30; // ~3 seconds at 10fps
+    private final KycService kycService = new KycService();
 
     public static boolean isVerified() {
         return isVerified;
@@ -197,8 +204,30 @@ public class KYCController {
         statusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
         isVerified = true;
 
+        // Persist to user_kyc table
+        saveKycToDatabase();
+
         Timeline closeTimer = new Timeline(new KeyFrame(Duration.seconds(2), e -> closeModal()));
         closeTimer.play();
+    }
+
+    private void saveKycToDatabase() {
+        try {
+            Integer userId = UserSession.getUserId();
+            if (userId != null) {
+                // In a real app, we would extract a vector embedding from the face
+                // For this demo, we store a simulated embedding and a dummy path
+                String simulatedEmbedding = "embedding_vector_" + System.currentTimeMillis();
+                String dummyDocPath = "uploads/kyc/doc_" + userId + ".jpg";
+
+                UserKyc kyc = new UserKyc(userId, simulatedEmbedding, true, dummyDocPath);
+                kycService.saveKyc(kyc);
+                UserSession.setKycEnrolled(true);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Platform.runLater(() -> statusLabel.setText("❌ Erreur sauvegarde DB"));
+        }
     }
 
     @FXML

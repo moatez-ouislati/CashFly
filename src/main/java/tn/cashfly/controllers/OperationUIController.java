@@ -205,14 +205,35 @@ public class OperationUIController {
         }
     }
 
+    private boolean ensureKYC() {
+        if (KYCController.isVerified()) {
+            return true;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Vérification Biométrique Requise");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            if (KYCController.isVerified()) {
+                kycStatusLabel.setText("✅ Vérifié");
+                kycStatusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Erreur lors de l'ouverture du KYC", e);
+        }
+        return false;
+    }
+
     @FXML
     private void onAdd() {
-        if (!KYCController.isVerified()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("KYC Requis");
-            alert.setHeaderText("Vérification d'identité nécessaire");
-            alert.setContentText("Veuillez effectuer la reconnaissance faciale avant d'ajouter une opération.");
-            alert.showAndWait();
+        if (!ensureKYC()) {
             return;
         }
 
@@ -259,6 +280,10 @@ public class OperationUIController {
 
     @FXML
     private void onUpdate() {
+        if (!ensureKYC()) {
+            return;
+        }
+
         OPÉRATIONS selected = selectedOperation;
         if (selected == null) {
             showInfo("Veuillez sélectionner une opération à modifier.");
@@ -301,6 +326,10 @@ public class OperationUIController {
 
     @FXML
     private void onDelete() {
+        if (!ensureKYC()) {
+            return;
+        }
+
         OPÉRATIONS selected = selectedOperation;
         if (selected == null) {
             showInfo("Veuillez sélectionner une opération à supprimer.");

@@ -10,17 +10,27 @@ public class UserSession {
     private static String fullName;
     private static String email;
     private static String role;
+    private static boolean isKycEnrolled;
 
     private static Integer currentEntrepriseId;
     private static String currentEntrepriseName;
 
     private static Integer currentTresorerieId;
 
-    public static void setUser(int id, String fullNameValue, String emailValue, String roleValue) {
+    public static void setUser(int id, String fullNameValue, String emailValue, String roleValue, boolean kycEnrolled) {
         userId = id;
         fullName = fullNameValue;
         email = emailValue;
         role = roleValue;
+        isKycEnrolled = kycEnrolled;
+    }
+
+    public static boolean isKycEnrolled() {
+        return isKycEnrolled;
+    }
+
+    public static void setKycEnrolled(boolean enrolled) {
+        isKycEnrolled = enrolled;
     }
 
     public static Integer getUserId() {
