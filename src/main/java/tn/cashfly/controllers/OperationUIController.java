@@ -14,7 +14,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import tn.cashfly.entities.OPÉRATIONS;
 import tn.cashfly.entities.TRÉSORERIE;
+import tn.cashfly.services.ExchangeRateService;
 import tn.cashfly.session.UserSession;
+import tn.cashfly.DashboardController;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -39,6 +41,8 @@ public class OperationUIController {
     @FXML
     private ComboBox<String> typeBox;
     @FXML
+    private ComboBox<String> operationCurrencyBox;
+    @FXML
     private TextField montantField;
     @FXML
     private TextField categorieField;
@@ -48,8 +52,16 @@ public class OperationUIController {
     @FXML
     private Label currentContextLabel;
 
+    @FXML
+    private TextField fromCurrencyField;
+    @FXML
+    private TextField toCurrencyField;
+    @FXML
+    private Label rateResultLabel;
+
     private final OperationController operationController = new OperationController();
     private final TresorerieController tresorerieController = new TresorerieController();
+    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
     private final ObservableList<OPÉRATIONS> data = FXCollections.observableArrayList();
 
     private OPÉRATIONS selectedOperation;
@@ -59,6 +71,8 @@ public class OperationUIController {
     public void initialize() {
         typeBox.setItems(FXCollections.observableArrayList("revenu", "depense"));
         typeFilterBox.setItems(FXCollections.observableArrayList("revenu", "depense"));
+        operationCurrencyBox.setItems(FXCollections.observableArrayList("TND", "EUR", "USD"));
+        operationCurrencyBox.setValue("TND");
 
         String entreprise = UserSession.getCurrentEntrepriseName();
         Integer tresId = UserSession.getCurrentTresorerieId();
@@ -161,21 +175,45 @@ public class OperationUIController {
 
     @FXML
     private void onAdd() {
-        try {
-            OPÉRATIONS op = buildFromForm(null);
-            if (op == null) return;
-            operationController.createOperation(
-                    op.getTresorerie(),
-                    op.getType(),
-                    op.getMontant(),
-                    op.getCategorie(),
-                    op.getDescription()
-            );
-            refreshTable();
-            clearForm();
-        } catch (SQLException e) {
-            showError("Erreur lors de l'ajout", e);
-        }
+        String opCurrency = operationCurrencyBox.getValue();
+        
+        // Background thread to handle potential API call for conversion
+        new Thread(() -> {
+            try {
+                OPÉRATIONS op = buildFromForm(null);
+                if (op == null) return;
+
+                TRÉSORERIE t = op.getTresorerie();
+                String tresCurrency = (t != null && t.getDevise() != null) ? t.getDevise() : "TND";
+
+                double finalAmount = op.getMontant();
+                if (!opCurrency.equalsIgnoreCase(tresCurrency)) {
+                    double rate = exchangeRateService.getExchangeRate(opCurrency, tresCurrency);
+                    finalAmount = op.getMontant() * rate;
+                    op.setMontant(finalAmount);
+                }
+
+                final double convertedAmount = finalAmount;
+                operationController.createOperation(
+                        op.getTresorerie(),
+                        op.getType(),
+                        convertedAmount,
+                        op.getCategorie(),
+                        op.getDescription()
+                );
+
+                javafx.application.Platform.runLater(() -> {
+                    refreshTable();
+                    clearForm();
+                    if (DashboardController.getInstance() != null) {
+                        DashboardController.getInstance().updateStats();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                javafx.application.Platform.runLater(() -> showError("Erreur lors de l'ajout", e));
+            }
+        }).start();
     }
 
     @FXML
@@ -185,15 +223,39 @@ public class OperationUIController {
             showInfo("Veuillez sélectionner une opération à modifier.");
             return;
         }
-        try {
-            OPÉRATIONS op = buildFromForm(selected.getIdOperation());
-            if (op == null) return;
-            op.setIdOperation(selected.getIdOperation());
-            operationController.updateOperation(op);
-            refreshTable();
-        } catch (SQLException e) {
-            showError("Erreur lors de la mise à jour", e);
-        }
+
+        String opCurrency = operationCurrencyBox.getValue();
+
+        new Thread(() -> {
+            try {
+                OPÉRATIONS op = buildFromForm(selected.getIdOperation());
+                if (op == null) return;
+                op.setIdOperation(selected.getIdOperation());
+
+                TRÉSORERIE t = op.getTresorerie();
+                String tresCurrency = (t != null && t.getDevise() != null) ? t.getDevise() : "TND";
+
+                double finalAmount = op.getMontant();
+                if (!opCurrency.equalsIgnoreCase(tresCurrency)) {
+                    double rate = exchangeRateService.getExchangeRate(opCurrency, tresCurrency);
+                    finalAmount = op.getMontant() * rate;
+                    op.setMontant(finalAmount);
+                }
+
+                operationController.updateOperation(op);
+
+                javafx.application.Platform.runLater(() -> {
+                    refreshTable();
+                    clearForm();
+                    if (DashboardController.getInstance() != null) {
+                        DashboardController.getInstance().updateStats();
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                javafx.application.Platform.runLater(() -> showError("Erreur lors de la mise à jour", e));
+            }
+        }).start();
     }
 
     @FXML
@@ -277,7 +339,7 @@ public class OperationUIController {
             }
             return op;
         } catch (NumberFormatException e) {
-            showInfo("Vérifiez les valeurs numériques (ID trésorerie, montant).");
+            showInfo("Vérifiez les valeurs numériques ( montant).");
             return null;
         } catch (SQLException e) {
             showError("Erreur lors de la récupération de la trésorerie", e);
@@ -290,6 +352,7 @@ public class OperationUIController {
         montantField.clear();
         categorieField.clear();
         descriptionField.clear();
+        operationCurrencyBox.setValue("TND");
         selectedOperation = null;
     }
 
@@ -415,17 +478,21 @@ public class OperationUIController {
 
     private void showError(String message, Exception e) {
         e.printStackTrace();
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(message);
-        alert.setContentText(e.getMessage());
-        alert.showAndWait();
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(message);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        });
     }
 
     private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 
     private List<OPÉRATIONS> filterForCurrentEntreprise(List<OPÉRATIONS> input) {
@@ -440,5 +507,33 @@ public class OperationUIController {
                     return true;
                 })
                 .collect(Collectors.toList());
+    }
+
+    @FXML
+    private void onCheckRate() {
+        String from = fromCurrencyField.getText();
+        String to = toCurrencyField.getText();
+        
+        if (from == null || from.isBlank() || to == null || to.isBlank()) {
+            showInfo("Veuillez saisir les deux devises (ex: EUR, TND).");
+            return;
+        }
+
+        rateResultLabel.setText("Chargement...");
+        
+        // Run in a background thread to avoid UI freezing
+        new Thread(() -> {
+            try {
+                double rate = exchangeRateService.getExchangeRate(from, to);
+                javafx.application.Platform.runLater(() -> {
+                    rateResultLabel.setText(String.format("1 %s = %.4f %s", from.toUpperCase(), rate, to.toUpperCase()));
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                javafx.application.Platform.runLater(() -> {
+                    rateResultLabel.setText("Erreur : " + e.getMessage());
+                });
+            }
+        }).start();
     }
 }

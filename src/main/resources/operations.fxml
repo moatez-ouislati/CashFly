@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/25"
+<VBox xmlns="http://javafx.com/javafx/20"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.cashfly.controllers.OperationUIController"
       spacing="16.0" style="-fx-background-color: #f8fafc;"
@@ -58,7 +58,12 @@
                 <children>
                     <Label text="Formulaire" styleClass="panel-header"/>
                     <ComboBox fx:id="typeBox" promptText="Type (revenu / depense)" prefWidth="200.0"/>
-                    <TextField fx:id="montantField" promptText="Montant"/>
+                    <HBox spacing="8.0">
+                        <children>
+                            <TextField fx:id="montantField" promptText="Montant" HBox.hgrow="ALWAYS"/>
+                            <ComboBox fx:id="operationCurrencyBox" prefWidth="80.0" promptText="TND"/>
+                        </children>
+                    </HBox>
                     <TextField fx:id="categorieField" promptText="Catégorie"/>
                     <TextField fx:id="descriptionField" promptText="Description"/>
                     <HBox spacing="8.0">
@@ -67,6 +72,23 @@
                             <Button text="Enregistrer" onAction="#onUpdate" styleClass="btn-primary"/>
                         </children>
                     </HBox>
+
+                    <Separator prefWidth="200.0" style="-fx-padding: 10 0 10 0;"/>
+                    
+                    <VBox spacing="8.0" style="-fx-background-color: #f1f5f9; -fx-padding: 12; -fx-background-radius: 8;">
+                        <children>
+                            <Label text="Taux de Change" style="-fx-font-weight: bold; -fx-text-fill: #475569;"/>
+                            <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                <children>
+                                    <TextField fx:id="fromCurrencyField" text="EUR" prefWidth="60.0" promptText="De"/>
+                                    <Label text="➜" textFill="#94a3b8"/>
+                                    <TextField fx:id="toCurrencyField" text="TND" prefWidth="60.0" promptText="Vers"/>
+                                </children>
+                            </HBox>
+                            <Button text="Vérifier le taux" onAction="#onCheckRate" styleClass="btn-secondary" maxWidth="Infinity"/>
+                            <Label fx:id="rateResultLabel" text="Taux : ---" style="-fx-font-size: 13px; -fx-text-fill: #8b5cf6; -fx-font-weight: bold;"/>
+                        </children>
+                    </VBox>
                 </children>
             </VBox>
         </children>

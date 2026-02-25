@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/25"
+<VBox xmlns="http://javafx.com/javafx/20"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="tn.cashfly.controllers.TresorerieUIController"
       spacing="16.0" style="-fx-background-color: #f8fafc;"

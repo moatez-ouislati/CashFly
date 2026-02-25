@@ -19,6 +19,12 @@ import java.sql.SQLException;
 
 public class DashboardController {
 
+    private static DashboardController instance;
+
+    public static DashboardController getInstance() {
+        return instance;
+    }
+
     @FXML
     private StackPane contentRoot;
 
@@ -54,6 +60,7 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        instance = this;
         updateUserInfo();
         updateStats();
         // Vue par défaut : entreprises
@@ -114,7 +121,7 @@ public class DashboardController {
         }
     }
 
-    private void updateStats() {
+    public void updateStats() {
         if (UserSession.getUserId() == null) {
             totalEntreprisesLabel.setText("0");
             totalTresoreriesLabel.setText("0");

@@ -45,11 +45,21 @@ public class OperationService implements IOperationService {
                     operation.setIdOperation(rs.getInt(1));
                 }
             }
+            
+            // Mise à jour automatique du solde de la trésorerie
+            updateTresorerieBalance(operation.getTresorerie().getIdTresorerie(), operation.getMontant(), operation.getType(), true);
         }
     }
 
     @Override
     public void update(OPÉRATIONS operation) throws SQLException {
+        // Pour l'update, on doit d'abord annuler l'ancienne opération
+        OPÉRATIONS oldOp = getById(operation.getIdOperation());
+        if (oldOp != null) {
+            // Annuler l'impact de l'ancienne opération (reverse = true pour soustraire au lieu d'ajouter si c'est un revenu)
+            updateTresorerieBalance(oldOp.getTresorerie().getIdTresorerie(), oldOp.getMontant(), oldOp.getType(), false);
+        }
+
         String sql = "UPDATE OPÉRATIONS SET id_tresorerie = ?, type = ?, montant = ?, categorie = ?, " +
                 "date_operation = ?, description = ? WHERE id_operation = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
@@ -68,16 +78,53 @@ public class OperationService implements IOperationService {
             ps.setInt(7, operation.getIdOperation());
 
             ps.executeUpdate();
+            
+            // Appliquer le nouvel impact
+            updateTresorerieBalance(operation.getTresorerie().getIdTresorerie(), operation.getMontant(), operation.getType(), true);
         }
     }
 
     @Override
     public void delete(int idOperation) throws SQLException {
+        OPÉRATIONS op = getById(idOperation);
+        if (op != null) {
+            // Inverser l'impact avant de supprimer
+            updateTresorerieBalance(op.getTresorerie().getIdTresorerie(), op.getMontant(), op.getType(), false);
+        }
+
         String sql = "DELETE FROM OPÉRATIONS WHERE id_operation = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, idOperation);
             ps.executeUpdate();
         }
+    }
+
+    private void updateTresorerieBalance(int idTresorerie, double montant, String type, boolean isNewImpact) throws SQLException {
+        TRÉSORERIE t = tresorerieService.getById(idTresorerie);
+        if (t == null) return;
+
+        double currentSolde = t.getSolde();
+        boolean isRevenu = "revenu".equalsIgnoreCase(type);
+
+        if (isNewImpact) {
+            // Ajouter un revenu ou soustraire une dépense
+            if (isRevenu) {
+                t.setSolde(currentSolde + montant);
+            } else {
+                t.setSolde(currentSolde - montant);
+            }
+        } else {
+            // Reverse operation: Inverser l'impact précédent
+            // Si c'était un revenu, on le retire. Si c'était une dépense, on le rajoute.
+            if (isRevenu) {
+                t.setSolde(currentSolde - montant);
+            } else {
+                t.setSolde(currentSolde + montant);
+            }
+        }
+        
+        t.setDerniereMaj(LocalDateTime.now());
+        tresorerieService.update(t);
     }
 
     @Override

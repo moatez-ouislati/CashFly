@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import tn.cashfly.entities.ENTREPRISE;
 import tn.cashfly.session.UserSession;
+import tn.cashfly.DashboardController;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -123,6 +124,9 @@ public class EntrepriseUIController {
             );
             refreshTable();
             clearForm();
+            if (DashboardController.getInstance() != null) {
+                DashboardController.getInstance().updateStats();
+            }
         } catch (SQLException ex) {
             showError("Erreur lors de l'ajout", ex);
         }
@@ -141,6 +145,9 @@ public class EntrepriseUIController {
             updated.setIdEntreprise(selected.getIdEntreprise());
             entrepriseController.updateEntreprise(updated);
             refreshTable();
+            if (DashboardController.getInstance() != null) {
+                DashboardController.getInstance().updateStats();
+            }
         } catch (SQLException ex) {
             showError("Erreur lors de la mise à jour", ex);
         }
@@ -157,6 +164,9 @@ public class EntrepriseUIController {
             entrepriseController.deleteEntreprise(selected.getIdEntreprise());
             refreshTable();
             clearForm();
+            if (DashboardController.getInstance() != null) {
+                DashboardController.getInstance().updateStats();
+            }
         } catch (SQLException ex) {
             showError("Erreur lors de la suppression", ex);
         }
@@ -213,17 +223,21 @@ public class EntrepriseUIController {
 
     private void showError(String message, Exception e) {
         e.printStackTrace();
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(message);
-        alert.setContentText(e.getMessage());
-        alert.showAndWait();
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText(message);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        });
     }
 
     private void showInfo(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        javafx.application.Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText(null);
+            alert.setContentText(message);
+            alert.showAndWait();
+        });
     }
 
     private List<ENTREPRISE> filterForCurrentUser(List<ENTREPRISE> input) {
