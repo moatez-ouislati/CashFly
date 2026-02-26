@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" stylesheets="@Styles/calendar-proprietaire.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.CalendarViewProprietaireController">
+
+    <!-- Toolbar -->
+    <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 15 25; -fx-background-color: -color-bg-overlay; -fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+        <!-- Month Navigation -->
+        <HBox alignment="CENTER" spacing="10.0">
+            <Button fx:id="prevMonthBtn" styleClass="calendar-nav-btn" text="◀" />
+            <Label fx:id="monthYearLabel" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #0D2440;" text="JANVIER 2024" />
+            <Button fx:id="nextMonthBtn" styleClass="calendar-nav-btn" text="▶" />
+        </HBox>
+
+        <Button fx:id="todayBtn" styleClass="btn-secondary" text="📍 Aujourd'hui" />
+
+        <Region HBox.hgrow="ALWAYS" />
+    </HBox>
+
+    <!-- Calendar Grid -->
+    <GridPane fx:id="calendarGrid" styleClass="calendar-grid" vgap="8.0" hgap="8.0"
+              AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="25.0"
+              AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="80.0">
+    </GridPane>
+
+</AnchorPane>

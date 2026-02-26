@@ -1,19 +1,17 @@
 package tn.cashfly.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import tn.cashfly.entities.JPO;
@@ -21,8 +19,10 @@ import tn.cashfly.entities.Utilisateur;
 import tn.cashfly.services.ServiceJPO;
 import tn.cashfly.services.ServiceParticipation;
 import tn.cashfly.utils.ImageStorage;
+import tn.cashfly.utils.NavigationHistory;
 import tn.cashfly.utils.SessionManager;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InvestorListAllJPOController {
@@ -42,7 +41,6 @@ public class InvestorListAllJPOController {
     @FXML private ComboBox<String> filterAvailabilityCombo;
     @FXML private Button applyFiltersBtn;
     @FXML private TilePane eventsTilePane;
-    @FXML private ScrollPane eventsScrollPane;
     @FXML private Label resultCountLabel;
 
     private ServiceJPO serviceJPO;
@@ -50,6 +48,7 @@ public class InvestorListAllJPOController {
     private Utilisateur currentUser;
     private List<JPO> allEvents;
     private List<JPO> filteredEvents;
+    private InvestorMainController mainController;
 
     @FXML
     public void initialize() {
@@ -59,6 +58,10 @@ public class InvestorListAllJPOController {
 
         setupFilters();
         loadEvents();
+    }
+
+    public void setMainController(InvestorMainController mainController) {
+        this.mainController = mainController;
     }
 
     private void setupFilters() {
@@ -186,11 +189,16 @@ public class InvestorListAllJPOController {
         card.getStyleClass().add("event-card");
         card.setPadding(new Insets(15));
 
+        // Make card clickable for details
+        card.setOnMouseClicked(e -> handleEventClick(event));
+        card.setStyle(card.getStyle() + "-fx-cursor: hand;");
+
         // Image
         ImageView imgView = new ImageView(ImageStorage.loadImage(event.getImagePath()));
         imgView.setFitHeight(150);
         imgView.setFitWidth(270);
         imgView.setPreserveRatio(true);
+        imgView.setStyle("-fx-background-radius: 8;");
 
         // Title
         Label title = new Label(event.getTitre());
@@ -238,20 +246,30 @@ public class InvestorListAllJPOController {
             boolean isRegistered = serviceParticipation.isRegistered(event.getId_evenement(), currentUser.getIdUtilisateur());
 
             if (isRegistered) {
-                actionBtn.setText("✓ Inscrit - Se désinscrire");
-                actionBtn.getStyleClass().add("btn-danger");
+                actionBtn.setText("✓ Inscrit - Voir détails");
+                actionBtn.getStyleClass().add("btn-secondary");
                 final JPO evt = event;
-                actionBtn.setOnAction(e -> handleCancel(evt));
+                // Stop propagation to prevent double navigation
+                actionBtn.setOnAction(e -> {
+                    e.consume();
+                    navigateToEventDetail(evt);
+                });
             } else if (spots > 0) {
                 actionBtn.setText("S'inscrire");
                 actionBtn.getStyleClass().add("btn-primary");
                 final JPO evt = event;
-                actionBtn.setOnAction(e -> handleRegister(evt));
+                actionBtn.setOnAction(e -> {
+                    e.consume();
+                    handleRegister(evt);
+                });
             } else {
                 actionBtn.setText("Rejoindre la liste d'attente");
                 actionBtn.getStyleClass().add("btn-secondary");
                 final JPO evt = event;
-                actionBtn.setOnAction(e -> handleRegister(evt));
+                actionBtn.setOnAction(e -> {
+                    e.consume();
+                    handleRegister(evt);
+                });
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -261,6 +279,32 @@ public class InvestorListAllJPOController {
 
         card.getChildren().addAll(imgView, title, dateLoc, participantsBox, actionBtn);
         return card;
+    }
+
+    private void handleEventClick(JPO event) {
+        navigateToEventDetail(event);
+    }
+
+    private void navigateToEventDetail(JPO event) {
+        if (mainController == null) {
+            showAlert("Erreur", "Navigation impossible - contrôleur principal non initialisé");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/InvestorEventDetail.fxml"));
+            Parent detailView = loader.load();
+
+            InvestorEventDetailController controller = loader.getController();
+            // UPDATED: Pass NavigationHistory.ALL_EVENTS so back button works
+            controller.setEvent(event, mainController, NavigationHistory.ALL_EVENTS);
+
+            mainController.showEventDetail(detailView);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger les détails de l'événement: " + e.getMessage());
+        }
     }
 
     /**
@@ -279,13 +323,13 @@ public class InvestorListAllJPOController {
     /**
      * FIXED: Convert Date to LocalDateTime for comparison
      */
-    private LocalDateTime convertToLocalDateTime(Date date) {
-        // Use getTime() which works for both java.util.Date and java.sql.Date
-        return LocalDateTime.ofInstant(
-                Instant.ofEpochMilli(date.getTime()),
-                ZoneId.systemDefault()
-        );
-    }
+//    private LocalDateTime convertToLocalDateTime(Date date) {
+//        // Use getTime() which works for both java.util.Date and java.sql.Date
+//        return LocalDateTime.ofInstant(
+//                Instant.ofEpochMilli(date.getTime()),
+//                ZoneId.systemDefault()
+//        );
+//    }
 
     private void handleRegister(JPO event) {
         try {
@@ -299,31 +343,31 @@ public class InvestorListAllJPOController {
         }
     }
 
-    private void handleCancel(JPO event) {
-        // FIXED: Use proper conversion method that handles java.sql.Date
-        LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
-
-        if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {
-            showAlert("⛔ Impossible", "Désinscription impossible moins de 24h avant l'événement.");
-            return;
-        }
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setHeaderText("Se désinscrire de \"" + event.getTitre() + "\" ?");
-        confirm.setContentText("Cette action est irréversible.");
-
-        Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                serviceParticipation.cancel(event.getId_evenement(), currentUser.getIdUtilisateur());
-                showAlert("✅ Désinscription confirmée", "Vous êtes désinscrit de l'événement.");
-                loadEvents(); // Refresh
-            } catch (SQLException e) {
-                showAlert("❌ Erreur", "Impossible de se désinscrire: " + e.getMessage());
-            }
-        }
-    }
+//    private void handleCancel(JPO event) {
+//        // FIXED: Use proper conversion method that handles java.sql.Date
+//        LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
+//
+//        if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {
+//            showAlert("⛔ Impossible", "Désinscription impossible moins de 24h avant l'événement.");
+//            return;
+//        }
+//
+//        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+//        confirm.setTitle("Confirmation");
+//        confirm.setHeaderText("Se désinscrire de \"" + event.getTitre() + "\" ?");
+//        confirm.setContentText("Cette action est irréversible.");
+//
+//        Optional<ButtonType> result = confirm.showAndWait();
+//        if (result.isPresent() && result.get() == ButtonType.OK) {
+//            try {
+//                serviceParticipation.cancel(event.getId_evenement(), currentUser.getIdUtilisateur());
+//                showAlert("✅ Désinscription confirmée", "Vous êtes désinscrit de l'événement.");
+//                loadEvents(); // Refresh
+//            } catch (SQLException e) {
+//                showAlert("❌ Erreur", "Impossible de se désinscrire: " + e.getMessage());
+//            }
+//        }
+//    }
 
     private void showAlert(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

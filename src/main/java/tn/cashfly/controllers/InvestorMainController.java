@@ -25,6 +25,11 @@ public class InvestorMainController {
 
     private Utilisateur currentUser;
 
+    private Parent currentContentView;
+    private String currentViewTitle;
+    private Parent previousContentView;
+    private String previousViewTitle;
+
     @FXML
     public void initialize() {
         currentUser = SessionManager.getCurrentUser();
@@ -34,73 +39,138 @@ public class InvestorMainController {
             return;
         }
 
-        // Set welcome message
         welcomeLabel.setText("Bienvenue, " + currentUser.getNomComplet() + " !");
-
-        // Setup button actions
         consulterBtn.setOnAction(e -> navigateToAllEvents());
         gererBtn.setOnAction(e -> navigateToMyEvents());
         logoutBtn.setOnAction(e -> handleLogout());
-    }
 
-    @FXML
-    private void showWelcome() {
-        contentArea.getChildren().clear();
-        contentArea.getChildren().add(welcomeView);
-        AnchorPane.setTopAnchor(welcomeView, 0.0);
-        AnchorPane.setBottomAnchor(welcomeView, 0.0);
-        AnchorPane.setLeftAnchor(welcomeView, 0.0);
-        AnchorPane.setRightAnchor(welcomeView, 0.0);
-
-        resetButtonStyles();
+        // Initialize tracking
+        this.currentContentView = welcomeView;
+        this.currentViewTitle = "Accueil";
     }
 
     /**
-     * Navigate to All Events page - Called from FXML onMouseClicked
+     * NEW: Get current content view for tracking
      */
+    public Parent getCurrentContentView() {
+        return currentContentView;
+    }
+
+    /**
+     * NEW: Get current view title for tracking
+     */
+    public String getCurrentViewTitle() {
+        return currentViewTitle;
+    }
+
+    /**
+     * NEW: Navigate to a specific view and track history
+     */
+    private void navigateToView(Parent newView, String title, Button activeButton) {
+        // Save current as previous before switching
+        this.previousContentView = this.currentContentView;
+        this.previousViewTitle = this.currentViewTitle;
+
+        // Update current
+        this.currentContentView = newView;
+        this.currentViewTitle = title;
+
+        // Show in content area
+        contentArea.getChildren().clear();
+        contentArea.getChildren().add(newView);
+        AnchorPane.setTopAnchor(newView, 0.0);
+        AnchorPane.setBottomAnchor(newView, 0.0);
+        AnchorPane.setLeftAnchor(newView, 0.0);
+        AnchorPane.setRightAnchor(newView, 0.0);
+
+        // Update button styles
+        resetButtonStyles();
+        if (activeButton != null) {
+            activeButton.getStyleClass().add("btn-active");
+        }
+    }
+
+    /**
+     * NEW: Navigate back to previous view
+     */
+    public void showPreviousView(Parent previousView, String title) {
+        // Swap current and previous
+        Parent tempView = this.currentContentView;
+        String tempTitle = this.currentViewTitle;
+
+        this.currentContentView = previousView;
+        this.currentViewTitle = title;
+        this.previousContentView = tempView;
+        this.previousViewTitle = tempTitle;
+
+        // Show the previous view
+        contentArea.getChildren().clear();
+        contentArea.getChildren().add(previousView);
+        AnchorPane.setTopAnchor(previousView, 0.0);
+        AnchorPane.setBottomAnchor(previousView, 0.0);
+        AnchorPane.setLeftAnchor(previousView, 0.0);
+        AnchorPane.setRightAnchor(previousView, 0.0);
+
+        // Update button styles based on title
+        resetButtonStyles();
+        if (title != null) {
+            if (title.contains("Tous") || title.contains("événements")) {
+                consulterBtn.getStyleClass().add("btn-active");
+            } else if (title.contains("Mes") || title.contains("inscriptions")) {
+                gererBtn.getStyleClass().add("btn-active");
+            }
+        }
+    }
+
+    @FXML
+    public void showWelcome() {
+        navigateToView(welcomeView, "Accueil", null);
+    }
+
     @FXML
     public void navigateToAllEvents() {
         try {
-            Parent allEventsView = FXMLLoader.load(getClass().getResource("/tn/cashfly/InvestorListAllJPO.fxml"));
-            contentArea.getChildren().clear();
-            contentArea.getChildren().add(allEventsView);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/InvestorListAllJPO.fxml"));
+            Parent allEventsView = loader.load();
+            InvestorListAllJPOController controller = loader.getController();
+            controller.setMainController(this);
 
-            // Anchor the loaded view
-            AnchorPane.setTopAnchor(allEventsView, 0.0);
-            AnchorPane.setBottomAnchor(allEventsView, 0.0);
-            AnchorPane.setLeftAnchor(allEventsView, 0.0);
-            AnchorPane.setRightAnchor(allEventsView, 0.0);
-
-            resetButtonStyles();
-            consulterBtn.getStyleClass().add("btn-active");
+            navigateToView(allEventsView, "Tous les événements", consulterBtn);
         } catch (IOException e) {
             e.printStackTrace();
             showError("Impossible de charger la page des événements");
         }
     }
 
-    /**
-     * Navigate to My Events page - Called from FXML onMouseClicked
-     */
     @FXML
     public void navigateToMyEvents() {
         try {
-            Parent myEventsView = FXMLLoader.load(getClass().getResource("/tn/cashfly/InvestorListMyJPO.fxml"));
-            contentArea.getChildren().clear();
-            contentArea.getChildren().add(myEventsView);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/InvestorListMyJPO.fxml"));
+            Parent myEventsView = loader.load();
+            InvestorListMyJPOController controller = loader.getController();
+            controller.setMainController(this);
 
-            // Anchor the loaded view
-            AnchorPane.setTopAnchor(myEventsView, 0.0);
-            AnchorPane.setBottomAnchor(myEventsView, 0.0);
-            AnchorPane.setLeftAnchor(myEventsView, 0.0);
-            AnchorPane.setRightAnchor(myEventsView, 0.0);
-
-            resetButtonStyles();
-            gererBtn.getStyleClass().add("btn-active");
+            navigateToView(myEventsView, "Mes inscriptions", gererBtn);
         } catch (IOException e) {
             e.printStackTrace();
             showError("Impossible de charger la page de vos inscriptions");
         }
+    }
+
+    /**
+     * NEW: Show event detail with proper back navigation tracking
+     */
+    public void showEventDetail(Parent detailView) {
+        contentArea.getChildren().clear();
+        contentArea.getChildren().add(detailView);
+
+        // Anchor the loaded view
+        AnchorPane.setTopAnchor(detailView, 0.0);
+        AnchorPane.setBottomAnchor(detailView, 0.0);
+        AnchorPane.setLeftAnchor(detailView, 0.0);
+        AnchorPane.setRightAnchor(detailView, 0.0);
+
+        resetButtonStyles();
     }
 
     private void resetButtonStyles() {

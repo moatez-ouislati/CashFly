@@ -1,13 +1,14 @@
 package tn.cashfly.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -19,8 +20,10 @@ import tn.cashfly.entities.Utilisateur;
 import tn.cashfly.services.ServiceJPO;
 import tn.cashfly.services.ServiceParticipation;
 import tn.cashfly.utils.ImageStorage;
+import tn.cashfly.utils.NavigationHistory;
 import tn.cashfly.utils.SessionManager;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -33,13 +36,14 @@ import java.util.Optional;
 public class InvestorListMyJPOController {
 
     @FXML private VBox eventsContainer;
-    @FXML private ScrollPane eventsScrollPane;
     @FXML private Label countLabel;
     @FXML private Label emptyMessage;
 
     private ServiceJPO serviceJPO;
     private ServiceParticipation serviceParticipation;
     private Utilisateur currentUser;
+    private InvestorMainController mainController;
+
 
     @FXML
     public void initialize() {
@@ -48,6 +52,9 @@ public class InvestorListMyJPOController {
         currentUser = SessionManager.getCurrentUser();
 
         loadMyEvents();
+    }
+    public void setMainController(InvestorMainController mainController) {
+        this.mainController = mainController;
     }
 
     private void loadMyEvents() {
@@ -121,7 +128,8 @@ public class InvestorListMyJPOController {
         card.setStyle("-fx-background-color: -color-bg-overlay; -fx-background-radius: 12; " +
                 "-fx-border-radius: 12; -fx-border-color: -color-border-default; " +
                 "-fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);");
-
+        card.setOnMouseClicked(e -> navigateToEventDetail(event));
+        card.setStyle(card.getStyle() + "-fx-cursor: hand;");
         // Top row: Image + Info
         HBox topRow = new HBox(15);
         topRow.setAlignment(Pos.CENTER_LEFT);
@@ -209,6 +217,28 @@ public class InvestorListMyJPOController {
         return card;
     }
 
+    private void navigateToEventDetail(JPO event) {
+        if (mainController == null) {
+            showAlert("Erreur", "Navigation impossible - contrôleur principal non initialisé");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/InvestorEventDetail.fxml"));
+            Parent detailView = loader.load();
+
+            InvestorEventDetailController controller = loader.getController();
+            // UPDATED: Pass NavigationHistory.MY_EVENTS so back button works
+            controller.setEvent(event, mainController, NavigationHistory.MY_EVENTS);
+
+            mainController.showEventDetail(detailView);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible de charger les détails de l'événement: " + e.getMessage());
+        }
+    }
+
     /**
      * FIXED: Convert Date to LocalDateTime using getTime() which works for both java.util.Date and java.sql.Date
      */
@@ -294,28 +324,46 @@ public class InvestorListMyJPOController {
     }
 
     private void handleCancel(JPO event) {
-        // FIXED: Use proper conversion
-        LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
+        try {
+            // Check if participation exists and badge status via service
+            Participation p = serviceParticipation.getParticipation(
+                    event.getId_evenement(),
+                    currentUser.getIdUtilisateur()
+            );
 
-        if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {
-            showAlert("⛔ Impossible", "Désinscription impossible moins de 24h avant l'événement.");
-            return;
-        }
+            if (p == null) {
+                showAlert("Erreur", "Inscription non trouvée.");
+                return;
+            }
 
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Confirmation");
-        confirm.setHeaderText("Se désinscrire de \"" + event.getTitre() + "\" ?");
-        confirm.setContentText("Cette action est irréversible.");
+            // Check badge generation
+            if (p.isBadgeGenere()) {
+                showAlert("⛔ Action impossible",
+                        "Vous ne pouvez pas annuler après avoir généré votre badge.");
+                return;
+            }
 
-        Optional<ButtonType> result = confirm.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
+            // FIXED: Use proper conversion for time check
+            LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
+
+            if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {
+                showAlert("⛔ Impossible", "Désinscription impossible moins de 24h avant l'événement.");
+                return;
+            }
+
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirmation");
+            confirm.setHeaderText("Se désinscrire de \"" + event.getTitre() + "\" ?");
+            confirm.setContentText("Cette action est irréversible.");
+
+            Optional<ButtonType> result = confirm.showAndWait();
+            if (result.isPresent() && result.get() == ButtonType.OK) {
                 serviceParticipation.cancel(event.getId_evenement(), currentUser.getIdUtilisateur());
                 showAlert("✅ Désinscription confirmée", "Vous êtes désinscrit de l'événement.");
                 loadMyEvents();
-            } catch (SQLException e) {
-                showAlert("❌ Erreur", "Impossible de se désinscrire: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            showAlert("❌ Erreur", e.getMessage());
         }
     }
 

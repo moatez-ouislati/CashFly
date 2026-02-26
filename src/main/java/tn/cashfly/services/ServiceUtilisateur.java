@@ -7,7 +7,7 @@ import java.sql.*;
 
 public class ServiceUtilisateur {
 
-    private Connection connection;
+    private final Connection connection;
 
     public ServiceUtilisateur() {
         connection = CashFlyDB.getInstance().getConnection();

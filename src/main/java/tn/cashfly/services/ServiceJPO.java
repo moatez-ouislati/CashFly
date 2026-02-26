@@ -10,7 +10,7 @@ import java.util.List;
 
 public class ServiceJPO implements Service<JPO> {
 
-    private Connection connection;
+    private final Connection connection;
 
     public ServiceJPO() {
         connection = CashFlyDB.getInstance().getConnection();

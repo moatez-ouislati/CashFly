@@ -1,6 +1,5 @@
 package tn.cashfly.services;
 
-import tn.cashfly.entities.JPO;
 import tn.cashfly.entities.Participation;
 import tn.cashfly.utils.CashFlyDB;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class ServiceParticipation {
 
-    private Connection connection;
+    private final Connection connection;
 
     public ServiceParticipation() {
         connection = CashFlyDB.getInstance().getConnection();
@@ -121,23 +120,20 @@ public class ServiceParticipation {
      * Cancel registration
      */
     public void cancel(int idEvenement, int idUtilisateur) throws SQLException {
-        // Get current status
-        String statusQuery = "SELECT statut, id_participation FROM participation_jpo WHERE id_evenement = ? AND id_utilisateur = ? AND statut != 'annulé'";
-        PreparedStatement statusPs = connection.prepareStatement(statusQuery);
-        statusPs.setInt(1, idEvenement);
-        statusPs.setInt(2, idUtilisateur);
-        ResultSet rs = statusPs.executeQuery();
+        // Get current participation with badge status
+        Participation participation = getParticipation(idEvenement, idUtilisateur);
 
-        if (!rs.next()) {
-            rs.close();
-            statusPs.close();
+        if (participation == null) {
             throw new SQLException("Participation non trouvée ou déjà annulée");
         }
 
-        String currentStatus = rs.getString("statut");
-        int participationId = rs.getInt("id_participation");
-        rs.close();
-        statusPs.close();
+        // CRITICAL: Check if badge was generated - cannot cancel after badge generation
+        if (participation.isBadgeGenere()) {
+            throw new SQLException("Impossible d'annuler après génération du badge");
+        }
+
+        String currentStatus = participation.getStatut();
+        int participationId = participation.getIdParticipation();
 
         // Update status to cancelled
         String query = "UPDATE participation_jpo SET statut = 'annulé' WHERE id_participation = ?";
@@ -231,5 +227,26 @@ public class ServiceParticipation {
         ps.setInt(1, idParticipation);
         ps.executeUpdate();
         ps.close();
+    }
+    public Participation getParticipation(int idEvenement, int idUtilisateur) throws SQLException {
+        String query = "SELECT * FROM participation_jpo WHERE id_evenement = ? AND id_utilisateur = ? AND statut != 'annulé'";
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setInt(1, idEvenement);
+        ps.setInt(2, idUtilisateur);
+        ResultSet rs = ps.executeQuery();
+
+        Participation p = null;
+        if (rs.next()) {
+            p = new Participation();
+            p.setIdParticipation(rs.getInt("id_participation"));
+            p.setIdEvenement(rs.getInt("id_evenement"));
+            p.setIdUtilisateur(rs.getInt("id_utilisateur"));
+            p.setStatut(rs.getString("statut"));
+            p.setDateInscription(rs.getTimestamp("date_inscription"));
+            p.setBadgeGenere(rs.getBoolean("badge_genere"));
+        }
+        rs.close();
+        ps.close();
+        return p;
     }
 }

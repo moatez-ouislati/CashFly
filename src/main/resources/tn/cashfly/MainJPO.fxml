@@ -23,35 +23,26 @@
 
       <Label styleClass="sidebar-title" text="MENU PRINCIPAL" />
 
-      <Button fx:id="addJPO" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="➕ Créer JPO">
-         <VBox.margin>
-            <Insets top="10.0" />
-         </VBox.margin>
+      <Button fx:id="addJPO" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="Calendrier JPO">
       </Button>
-
-      <Button fx:id="updateJPO" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="✏️ Modifier JPO" />
-
-      <Button fx:id="deleteJPO" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="🗑️ Supprimer JPO" />
-
-      <Button fx:id="listJPO" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="📅 Calendrier JPOs" />
 
       <Region VBox.vgrow="ALWAYS" />
 
-      <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text="🚪 Déconnexion" />
+      <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="🚪 Déconnexion" />
    </VBox>
 
    <!-- Content Area -->
-   <AnchorPane prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+   <AnchorPane fx:id="contentArea" prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="220.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
       <padding>
          <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
       </padding>
 
-      <VBox alignment="CENTER" prefWidth="500.0" spacing="15.0" styleClass="card" AnchorPane.leftAnchor="280.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="150.0">
+      <VBox fx:id="welcomeView" alignment="CENTER" prefWidth="500.0" spacing="15.0" styleClass="card" AnchorPane.leftAnchor="280.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="150.0">
          <padding>
             <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
          </padding>
 
-         <Label text="Bienvenue dans CashFly JPO">
+         <Label fx:id="welcomeLabel" text="Bienvenue dans CashFly JPO">
             <font>
                <Font name="System Bold" size="24.0" />
             </font>

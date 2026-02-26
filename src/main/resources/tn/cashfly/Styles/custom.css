@@ -534,3 +534,41 @@ GridPane .label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
+
+.combo-box-popup .list-view {
+    -fx-background-color: -color-bg-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 1px;
+    -fx-background-radius: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0, 0, 2);
+}
+
+.combo-box-popup .list-cell {
+    -fx-padding: 8px 12px;
+    -fx-text-fill: -color-fg-default;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: -color-bg-subtle;
+}
+.status-badge {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 16;
+    -fx-background-radius: 20;
+}
+
+.status-full {
+    -fx-text-fill: white;
+    -fx-background-color: #dc3545;
+}
+
+.status-low {
+    -fx-text-fill: #0D2440;
+    -fx-background-color: #ffc107;
+}
+
+.status-open {
+    -fx-text-fill: white;
+    -fx-background-color: #28a745;
+}
