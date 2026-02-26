@@ -1,0 +1,126 @@
+@font-face {
+    font-famimy: 'Calibri';
+    src: url('./fonts/calibrii.ttf');
+}
+
+@font-face {
+    font-famimy: 'Calibri Bold Italic';
+    src: url('./fonts/calibriz.ttf');
+}
+
+@font-face {
+    font-famimy: 'Calibri Bold';
+    src: url('./fonts/calibrib.ttf');
+}
+
+.root {
+    -fx-font-family: 'Calibri';
+}
+
+.notifications-image {
+    -fx-cursor: hand;
+}
+
+.notifications-image:hover {
+    -fx-effect: dropshadow(gaussian, #A6A6A6, 15, 0, 0, 3);
+}
+
+.transparent-fill {
+    -fx-background-color: transparent;
+}
+
+.hyperlink-label .text {
+    -fx-font-size: 16px;
+    -fx-fill: -fx-focus-color;
+    -fx-underline: true;
+}
+
+.hyperlink-label .text {
+    -fx-font-family: 'Calibri Bold';
+}
+
+.hyperlink-label {
+    -fx-cursor: hand;
+}
+/*
+.small-hyperlink-label .text {
+    -fx-font-size: 12px;
+    -fx-fill: -fx-focus-color;
+    -fx-underline: true;
+}*/
+
+.root-pane {
+    -fx-background-color: rgba(164, 164, 164, 0.6);
+    -fx-background-radius: 10;
+}
+
+.note-list {
+    -fx-spacing: 10;
+    -fx-padding: 10 10 10 10;
+}
+
+.notes-scroll-pane {
+    -fx-background-color:transparent;
+}
+
+.notes-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+/* hide standard scroll-bar*/
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button,
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-padding: 0;
+}
+
+.opacity-slider {
+    -fx-padding: 10 10 10 10;
+    -fx-orientation: HORIZONTAL;
+}
+
+.opacity-slider .track {
+    -fx-background-color: black;
+    -fx-pref-height: 1.0;
+}
+/****************/
+/* Item уведомление  */
+/****************/
+.notification {
+    -fx-background-color : lemonchiffon;
+    -fx-background-radius : 6;
+    -fx-border-radius : 6;
+    -fx-border-width : 1;
+    -fx-border-color : derive(black, 100%);
+    -fx-max-width: 380;
+    -fx-padding: 5 5 5 5;
+}
+
+.notification:hover .notification-cross {
+    visibility: true;
+}
+
+.notification-cross {
+    -fx-image: url('./cross.png');
+    visibility: false;
+    -fx-pref-height: 10;
+    -fx-pref-width: 10;
+    -fx-cursor: hand;
+}
+
+.note-text {
+    -fx-font-size: 14px;
+}
+
+.note-type-icon:info {
+    -fx-image: url('./info.png');
+}
+
+.note-type-icon:error {
+    -fx-image: url('./error.png');
+}
+
+.note-type-icon:warning {
+    -fx-image: url('./warning.png');
+}

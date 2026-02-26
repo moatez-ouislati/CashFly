@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<StackPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.gestion_entreprises.controllers.MainController">
+
+    <children>
+
+        <AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #F2F2F2;">
+
+            <!-- Sidebar -->
+            <SplitPane prefHeight="600.0" prefWidth="200.0" style="-fx-background-color: #013B63;" />
+
+            <!-- MENU BUTTONS -->
+            <Button layoutX="14" layoutY="60" onAction="#goToEntreprises" prefWidth="174" text="Gestion Entreprises" />
+
+            <Button layoutX="14" layoutY="130" onAction="#goToDocuments" prefWidth="174" text="Gestion Documents" />
+
+            <Button layoutX="14" layoutY="200" onAction="#afficherEntreprises" prefWidth="174" text="Afficher Entreprises" />
+
+            <Button layoutX="14" layoutY="270" onAction="#afficherDocuments" prefWidth="174" text="Afficher Documents" />
+
+            <Button layoutX="14" layoutY="520" onAction="#exitApp" prefWidth="174" text="Quitter" />
+
+            <!-- WIDE AREA WITH STATS -->
+            <BorderPane layoutX="210" layoutY="20" prefHeight="560" prefWidth="570">
+
+                <top>
+                    <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding:10;">
+                        <ComboBox fx:id="statutFilter" prefWidth="150" promptText="Filtrer Statut" />
+                        <Button fx:id="switchBtn" style="-fx-background-color: #013B63;" text="Switch Chart" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Button>
+                     <Button onAction="#openMap" style="-fx-background-color: #1b9993;" text="Carte des Entreprises" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+                    </HBox>
+                </top>
+
+                <center>
+                    <StackPane fx:id="chartHolder" />
+                </center>
+
+            </BorderPane>
+         <ImageView fitHeight="44.0" fitWidth="51.0">
+            <image>
+               <Image url="@../../../../../../../../ChatGPT%20Image%2014%20févr.%202026,%2011_00_50.png" />
+            </image>
+         </ImageView>
+
+        </AnchorPane>
+
+    </children>
+</StackPane>

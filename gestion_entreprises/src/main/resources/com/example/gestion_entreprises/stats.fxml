@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.gestion_entreprises.controllers.StatsController"
+            prefHeight="500.0"
+            prefWidth="800.0">
+
+    <children>
+
+        <BarChart fx:id="barChart"
+                  layoutX="20.0"
+                  layoutY="20.0"
+                  prefWidth="760.0"
+                  prefHeight="450.0">
+
+            <xAxis>
+                <CategoryAxis label="Entreprises"/>
+            </xAxis>
+
+            <yAxis>
+                <NumberAxis label="Nombre de Documents"/>
+            </yAxis>
+
+        </BarChart>
+
+    </children>
+</AnchorPane>
