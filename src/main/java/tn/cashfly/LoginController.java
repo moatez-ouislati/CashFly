@@ -3,17 +3,20 @@ package tn.cashfly;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import tn.cashfly.controllers.KYCController;
 import tn.cashfly.services.KycService;
 import tn.cashfly.session.UserSession;
 import tn.cashfly.utils.MyDataBase;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.*;
 
 public class LoginController {
@@ -27,10 +30,17 @@ public class LoginController {
     @FXML
     private Label errorLabel;
 
-    private final KycService kycService = new KycService();
+    private KycService kycService;
 
     @FXML
     private void onLogin(ActionEvent event) {
+        if (kycService == null) {
+            try {
+                kycService = new KycService();
+            } catch (Exception e) {
+                System.err.println("Avertissement: Impossible d'initialiser le service KYC: " + e.getMessage());
+            }
+        }
         String username = usernameField.getText() != null ? usernameField.getText().trim() : "";
         String password = passwordField.getText() != null ? passwordField.getText() : "";
 
@@ -52,28 +62,47 @@ public class LoginController {
 
     private void openKYCEnrollment(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
+            URL fxmlUrl = getClass().getResource("/kyc_modal.fxml");
+            if (fxmlUrl == null) {
+                showError("Fichier FXML introuvable : /kyc_modal.fxml");
+                return;
+            }
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
             Parent root = loader.load();
+            
+            KYCController kycController = loader.getController();
             
             // Get stage
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setTitle("Enrôlement KYC Obligatoire - Cashfly");
             stage.setScene(new Scene(root));
             
+            // Ensure webcam closure even if window is closed by the "X" button
+            stage.setOnCloseRequest(e -> {
+                if (kycController != null) {
+                    kycController.cleanup();
+                }
+            });
+            
             // On successful KYC enrollment, proceed to dashboard (KYCController now handles persistence)
             stage.setOnHidden(e -> {
                 if (KYCController.isVerified()) {
                     openDashboard(event);
                 } else {
-                    // User closed without verifying
+                    // Cleanup again just in case hidden without verification
+                    if (kycController != null) kycController.cleanup();
                     showError("Vous devez compléter le KYC pour accéder à votre compte.");
                 }
             });
             
             stage.show();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            showError("Erreur lors de l'ouverture du KYC : " + e.getMessage());
+            Throwable cause = e;
+            while (cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            showError("Erreur critique lors du chargement du KYC : " + cause.getMessage());
         }
     }
 
@@ -104,7 +133,14 @@ public class LoginController {
                         String role = rs.getString("role");
 
                         // Check KYC status from user_kyc table instead of column
-                        boolean kycEnrolled = kycService.getKycByUserId(id) != null;
+                        boolean kycEnrolled = false;
+                        if (kycService != null) {
+                            try {
+                                kycEnrolled = kycService.getKycByUserId(id) != null;
+                            } catch (Exception e) {
+                                System.err.println("Erreur vérification KYC DB: " + e.getMessage());
+                            }
+                        }
 
                         UserSession.setUser(id, fullName, emailDb, role, kycEnrolled);
                         return true;

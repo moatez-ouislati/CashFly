@@ -189,11 +189,21 @@ public class OperationUIController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
             Parent root = loader.load();
+            
+            KYCController kycController = loader.getController();
+            
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Vérification KYC");
             stage.setScene(new Scene(root));
+            
+            stage.setOnCloseRequest(e -> {
+                if (kycController != null) kycController.cleanup();
+            });
+            
             stage.showAndWait();
+
+            if (kycController != null) kycController.cleanup();
 
             if (KYCController.isVerified()) {
                 kycStatusLabel.setText("✅ Vérifié");
@@ -213,11 +223,23 @@ public class OperationUIController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
             Parent root = loader.load();
+            
+            KYCController kycController = loader.getController();
+            
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Vérification Biométrique Requise");
             stage.setScene(new Scene(root));
+            
+            // Cleanup on "X" button
+            stage.setOnCloseRequest(e -> {
+                if (kycController != null) kycController.cleanup();
+            });
+            
             stage.showAndWait();
+
+            // Final cleanup just in case
+            if (kycController != null) kycController.cleanup();
 
             if (KYCController.isVerified()) {
                 kycStatusLabel.setText("✅ Vérifié");

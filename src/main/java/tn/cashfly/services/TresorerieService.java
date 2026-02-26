@@ -19,17 +19,21 @@ public class TresorerieService implements ITresorerieService {
 
     @Override
     public void add(TRÉSORERIE tresorerie) throws SQLException {
-        String sql = "INSERT INTO TRÉSORERIE (id_entreprise, solde, devise, derniere_maj) " +
-                "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO TRÉSORERIE (id_entreprise, nom_compte, type_compte, solde, devise, rib, numero_compte, derniere_maj) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, tresorerie.getIdEntreprise());
-            ps.setDouble(2, tresorerie.getSolde());
-            ps.setString(3, tresorerie.getDevise());
+            ps.setString(2, tresorerie.getNomCompte());
+            ps.setString(3, tresorerie.getTypeCompte().name());
+            ps.setDouble(4, tresorerie.getSolde());
+            ps.setString(5, tresorerie.getDevise());
+            ps.setString(6, tresorerie.getRib());
+            ps.setString(7, tresorerie.getNumeroCompte());
 
             if (tresorerie.getDerniereMaj() != null) {
-                ps.setTimestamp(4, Timestamp.valueOf(tresorerie.getDerniereMaj()));
+                ps.setTimestamp(8, Timestamp.valueOf(tresorerie.getDerniereMaj()));
             } else {
-                ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             }
 
             ps.executeUpdate();
@@ -44,20 +48,24 @@ public class TresorerieService implements ITresorerieService {
 
     @Override
     public void update(TRÉSORERIE tresorerie) throws SQLException {
-        String sql = "UPDATE TRÉSORERIE SET id_entreprise = ?, solde = ?, devise = ?, derniere_maj = ? " +
+        String sql = "UPDATE TRÉSORERIE SET id_entreprise = ?, nom_compte = ?, type_compte = ?, solde = ?, devise = ?, rib = ?, numero_compte = ?, derniere_maj = ? " +
                 "WHERE id_tresorerie = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, tresorerie.getIdEntreprise());
-            ps.setDouble(2, tresorerie.getSolde());
-            ps.setString(3, tresorerie.getDevise());
+            ps.setString(2, tresorerie.getNomCompte());
+            ps.setString(3, tresorerie.getTypeCompte().name());
+            ps.setDouble(4, tresorerie.getSolde());
+            ps.setString(5, tresorerie.getDevise());
+            ps.setString(6, tresorerie.getRib());
+            ps.setString(7, tresorerie.getNumeroCompte());
 
             if (tresorerie.getDerniereMaj() != null) {
-                ps.setTimestamp(4, Timestamp.valueOf(tresorerie.getDerniereMaj()));
+                ps.setTimestamp(8, Timestamp.valueOf(tresorerie.getDerniereMaj()));
             } else {
-                ps.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             }
 
-            ps.setInt(5, tresorerie.getIdTresorerie());
+            ps.setInt(9, tresorerie.getIdTresorerie());
 
             ps.executeUpdate();
         }
@@ -122,13 +130,20 @@ public class TresorerieService implements ITresorerieService {
     private TRÉSORERIE mapRowToTresorerie(ResultSet rs) throws SQLException {
         int id = rs.getInt("id_tresorerie");
         int idEntreprise = rs.getInt("id_entreprise");
+        String nomCompte = rs.getString("nom_compte");
+        String typeStr = rs.getString("type_compte");
+        TRÉSORERIE.TypeCompte typeCompte = TRÉSORERIE.TypeCompte.valueOf(typeStr);
+
         double solde = rs.getDouble("solde");
         String devise = rs.getString("devise");
+
+        String rib = rs.getString("rib");
+        String numeroCompte = rs.getString("numero_compte");
 
         Timestamp ts = rs.getTimestamp("derniere_maj");
         LocalDateTime derniereMaj = ts != null ? ts.toLocalDateTime() : null;
 
-        return new TRÉSORERIE(id, idEntreprise, solde, devise, derniereMaj);
+        return new TRÉSORERIE(id, idEntreprise, nomCompte, typeCompte, solde, devise, derniereMaj, rib, numeroCompte);
     }
 }
 

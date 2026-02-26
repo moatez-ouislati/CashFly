@@ -32,6 +32,15 @@ public class TresorerieUIController {
     private TextField minSoldeField;
 
     @FXML
+    private TextField nomCompteField;
+    @FXML
+    private javafx.scene.control.ComboBox<TRÉSORERIE.TypeCompte> typeCompteCombo;
+    @FXML
+    private TextField ribField;
+    @FXML
+    private TextField numeroCompteField;
+
+    @FXML
     private TextField soldeField;
     @FXML
     private TextField deviseField;
@@ -53,6 +62,22 @@ public class TresorerieUIController {
         } else {
             currentEntrepriseLabel.setText("Aucune entreprise sélectionnée");
         }
+
+        // Initialize ComboBox
+        typeCompteCombo.setItems(FXCollections.observableArrayList(TRÉSORERIE.TypeCompte.values()));
+        typeCompteCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == TRÉSORERIE.TypeCompte.BANQUE) {
+                ribField.setVisible(true);
+                ribField.setManaged(true);
+                numeroCompteField.setVisible(false);
+                numeroCompteField.setManaged(false);
+            } else {
+                ribField.setVisible(false);
+                ribField.setManaged(false);
+                numeroCompteField.setVisible(true);
+                numeroCompteField.setManaged(true);
+            }
+        });
 
         // Live filter: run directly when user types (no button click)
         deviseFilterField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
@@ -110,6 +135,15 @@ public class TresorerieUIController {
     }
 
     private void populateForm(TRÉSORERIE t) {
+        nomCompteField.setText(t.getNomCompte());
+        typeCompteCombo.setValue(t.getTypeCompte());
+        if (t.getTypeCompte() == TRÉSORERIE.TypeCompte.BANQUE) {
+            ribField.setText(t.getRib());
+            numeroCompteField.clear();
+        } else {
+            numeroCompteField.setText(t.getNumeroCompte());
+            ribField.clear();
+        }
         soldeField.setText(String.valueOf(t.getSolde()));
         deviseField.setText(t.getDevise());
     }
@@ -188,6 +222,30 @@ public class TresorerieUIController {
                 return null;
             }
             int idEntreprise = fromSession;
+            String nom = nomCompteField.getText();
+            TRÉSORERIE.TypeCompte type = typeCompteCombo.getValue();
+            
+            if (nom == null || nom.isBlank() || type == null) {
+                showInfo("Nom et Type de compte obligatoires.");
+                return null;
+            }
+
+            String rib = null;
+            String num = null;
+            if (type == TRÉSORERIE.TypeCompte.BANQUE) {
+                rib = ribField.getText();
+                if (rib == null || rib.isBlank()) {
+                     showInfo("Le RIB est obligatoire pour un compte bancaire.");
+                     return null;
+                }
+            } else {
+                num = numeroCompteField.getText();
+                if (num == null || num.isBlank()) {
+                     showInfo("Le numéro de compte est obligatoire.");
+                     return null;
+                }
+            }
+
             double solde = Double.parseDouble(soldeField.getText());
             String devise = deviseField.getText();
 
@@ -197,17 +255,21 @@ public class TresorerieUIController {
             }
 
             if (existingId == null) {
-                return new TRÉSORERIE(idEntreprise, solde, devise);
+                return new TRÉSORERIE(idEntreprise, nom, type, solde, devise, rib, num);
             } else {
-                return new TRÉSORERIE(existingId, idEntreprise, solde, devise, LocalDateTime.now());
+                return new TRÉSORERIE(existingId, idEntreprise, nom, type, solde, devise, LocalDateTime.now(), rib, num);
             }
         } catch (NumberFormatException e) {
-            showInfo("Vérifiez les valeurs numériques (ID entreprise, solde).");
+            showInfo("Vérifiez les valeurs numériques (solde).");
             return null;
         }
     }
 
     private void clearForm() {
+        nomCompteField.clear();
+        typeCompteCombo.setValue(null);
+        ribField.clear();
+        numeroCompteField.clear();
         soldeField.clear();
         deviseField.clear();
         selectedTresorerie = null;
@@ -257,13 +319,22 @@ public class TresorerieUIController {
         card.setSpacing(6);
         card.getStyleClass().add("card");
 
-        String titleText = "Compte #" + t.getIdTresorerie();
+        String titleText = t.getNomCompte() + " (" + t.getTypeCompte() + ")";
         Label title = new Label(titleText);
         title.setStyle("-fx-font-weight: bold; -fx-text-fill: #0f172a;");
 
         String soldeText = String.format("Solde: %.2f %s", t.getSolde(), t.getDevise());
         Label solde = new Label(soldeText);
         solde.setStyle("-fx-text-fill: #4b5563;");
+
+        String details = "";
+        if (t.getTypeCompte() == TRÉSORERIE.TypeCompte.BANQUE) {
+            details = "RIB: " + t.getRib();
+        } else {
+            details = "N°: " + t.getNumeroCompte();
+        }
+        Label detailsLabel = new Label(details);
+        detailsLabel.setStyle("-fx-text-fill: #6b7280; -fx-font-size: 11;");
 
         String meta = "Entreprise: " + t.getIdEntreprise();
         LocalDateTime maj = t.getDerniereMaj();
@@ -276,7 +347,7 @@ public class TresorerieUIController {
         HBox header = new HBox(8, title);
         header.setPadding(new Insets(0, 0, 4, 0));
 
-        card.getChildren().addAll(header, solde, metaLabel);
+        card.getChildren().addAll(header, solde, detailsLabel, metaLabel);
 
         card.setOnMouseClicked(eClick -> {
             if (selectedTresorerieCard != null) {

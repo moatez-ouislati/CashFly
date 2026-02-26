@@ -55,6 +55,10 @@
             <VBox spacing="8.0" prefWidth="260.0">
                 <children>
                     <Label text="Formulaire" styleClass="panel-header"/>
+                    <TextField fx:id="nomCompteField" promptText="Nom du compte"/>
+                    <ComboBox fx:id="typeCompteCombo" promptText="Type de compte" prefWidth="260.0"/>
+                    <TextField fx:id="ribField" promptText="RIB (Bancaire)" managed="false" visible="false"/>
+                    <TextField fx:id="numeroCompteField" promptText="Numéro de compte" managed="false" visible="false"/>
                     <TextField fx:id="soldeField" promptText="Solde"/>
                     <TextField fx:id="deviseField" promptText="Devise (3 lettres)"/>
                     <HBox spacing="8.0">

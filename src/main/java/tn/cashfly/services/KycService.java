@@ -18,8 +18,8 @@ public class KycService {
     private void createTableIfNotExists() {
         String sql = "CREATE TABLE IF NOT EXISTS user_kyc (" +
                 "user_id INT PRIMARY KEY, " +
-                "face_embedding TEXT, " +
-                "is_verified BOOLEAN DEFAULT FALSE, " +
+                "face_embedding BLOB, " +
+                "is_verified TINYINT(1) DEFAULT 0, " +
                 "verified_at TIMESTAMP NULL, " +
                 "id_document_path VARCHAR(255), " +
                 "created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
@@ -51,7 +51,8 @@ public class KycService {
         String sql = "INSERT INTO user_kyc (user_id, face_embedding, is_verified, verified_at, id_document_path) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, kyc.getUserId());
-            ps.setString(2, kyc.getFaceEmbedding());
+            // Convert String embedding to bytes for BLOB
+            ps.setBytes(2, kyc.getFaceEmbedding() != null ? kyc.getFaceEmbedding().getBytes() : null);
             ps.setBoolean(3, kyc.isVerified());
             ps.setTimestamp(4, kyc.getVerifiedAt() != null ? Timestamp.valueOf(kyc.getVerifiedAt()) : null);
             ps.setString(5, kyc.getIdDocumentPath());
@@ -62,7 +63,7 @@ public class KycService {
     private void updateKyc(UserKyc kyc) throws SQLException {
         String sql = "UPDATE user_kyc SET face_embedding = ?, is_verified = ?, verified_at = ?, id_document_path = ?, updated_at = ? WHERE user_id = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
-            ps.setString(1, kyc.getFaceEmbedding());
+            ps.setBytes(1, kyc.getFaceEmbedding() != null ? kyc.getFaceEmbedding().getBytes() : null);
             ps.setBoolean(2, kyc.isVerified());
             ps.setTimestamp(3, kyc.getVerifiedAt() != null ? Timestamp.valueOf(kyc.getVerifiedAt()) : Timestamp.valueOf(LocalDateTime.now()));
             ps.setString(4, kyc.getIdDocumentPath());
@@ -80,13 +81,20 @@ public class KycService {
                 if (rs.next()) {
                     UserKyc kyc = new UserKyc();
                     kyc.setUserId(rs.getInt("user_id"));
-                    kyc.setFaceEmbedding(rs.getString("face_embedding"));
+                    // Convert bytes back to String for the entity
+                    byte[] bytes = rs.getBytes("face_embedding");
+                    kyc.setFaceEmbedding(bytes != null ? new String(bytes) : null);
                     kyc.setVerified(rs.getBoolean("is_verified"));
                     Timestamp verifiedAt = rs.getTimestamp("verified_at");
                     if (verifiedAt != null) kyc.setVerifiedAt(verifiedAt.toLocalDateTime());
                     kyc.setIdDocumentPath(rs.getString("id_document_path"));
-                    kyc.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                    kyc.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+                    
+                    Timestamp createdAt = rs.getTimestamp("created_at");
+                    if (createdAt != null) kyc.setCreatedAt(createdAt.toLocalDateTime());
+                    
+                    Timestamp updatedAt = rs.getTimestamp("updated_at");
+                    if (updatedAt != null) kyc.setUpdatedAt(updatedAt.toLocalDateTime());
+                    
                     return kyc;
                 }
             }
