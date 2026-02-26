@@ -7,6 +7,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import tn.cashfly.entities.Participation;
+import tn.cashfly.entities.ParticipantInfo;
+import tn.cashfly.entities.EventStatistics;
+import tn.cashfly.utils.CashFlyDB;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 public class ServiceParticipation {
 
     private final Connection connection;
@@ -248,5 +257,78 @@ public class ServiceParticipation {
         rs.close();
         ps.close();
         return p;
+    }
+    public List<ParticipantInfo> getEventParticipantsDetailed(int idEvenement) throws SQLException {
+        List<ParticipantInfo> participants = new ArrayList<>();
+
+        String query = "SELECT p.id_participation, p.id_utilisateur, p.statut, p.date_inscription, p.badge_genere, " +
+                "u.nom_complet, u.email, u.role, u.date_creation, " +
+                "j.titre as event_titre, j.date_evenement " +
+                "FROM participation_jpo p " +
+                "JOIN utilisateurs u ON p.id_utilisateur = u.id_utilisateur " +
+                "JOIN journées_portes_ouvertes j ON p.id_evenement = j.id_evenement " +
+                "WHERE p.id_evenement = ? AND p.statut != 'annulé' " +
+                "ORDER BY p.date_inscription ASC";
+
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setInt(1, idEvenement);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            ParticipantInfo info = new ParticipantInfo();
+
+            // Participation data
+            info.setParticipationId(rs.getInt("id_participation"));
+            info.setUserId(rs.getInt("id_utilisateur"));
+            info.setStatut(rs.getString("statut"));
+            info.setDateInscription(rs.getTimestamp("date_inscription"));
+            info.setBadgeGenere(rs.getBoolean("badge_genere"));
+
+            // User data
+            info.setNomComplet(rs.getString("nom_complet"));
+            info.setEmail(rs.getString("email"));
+            info.setRole(rs.getString("role"));
+            info.setDateCreationCompte(rs.getDate("date_creation"));
+
+            // Event data
+            info.setEventTitre(rs.getString("event_titre"));
+            info.setEventDate(rs.getTimestamp("date_evenement"));
+
+            participants.add(info);
+        }
+
+        rs.close();
+        ps.close();
+        return participants;
+    }
+
+    /**
+     * Get summary statistics for an event
+     */
+    public EventStatistics getEventStatistics(int idEvenement) throws SQLException {
+        EventStatistics stats = new EventStatistics();
+
+        String query = "SELECT " +
+                "COUNT(*) as total_participants, " +
+                "SUM(CASE WHEN statut = 'confirmé' THEN 1 ELSE 0 END) as confirmed, " +
+                "SUM(CASE WHEN statut = 'en_attente' THEN 1 ELSE 0 END) as waiting, " +
+                "SUM(CASE WHEN badge_genere = TRUE THEN 1 ELSE 0 END) as badges_generated " +
+                "FROM participation_jpo " +
+                "WHERE id_evenement = ? AND statut != 'annulé'";
+
+        PreparedStatement ps = connection.prepareStatement(query);
+        ps.setInt(1, idEvenement);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            stats.setTotalParticipants(rs.getInt("total_participants"));
+            stats.setConfirmed(rs.getInt("confirmed"));
+            stats.setWaiting(rs.getInt("waiting"));
+            stats.setBadgesGenerated(rs.getInt("badges_generated"));
+        }
+
+        rs.close();
+        ps.close();
+        return stats;
     }
 }

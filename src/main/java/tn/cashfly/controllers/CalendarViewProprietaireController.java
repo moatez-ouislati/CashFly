@@ -17,6 +17,7 @@ import javafx.stage.StageStyle;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.entities.Utilisateur;
 import tn.cashfly.services.ServiceJPO;
+import tn.cashfly.services.ServiceParticipation;
 import tn.cashfly.utils.ImageStorage;
 import tn.cashfly.utils.SessionManager;
 
@@ -31,7 +32,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import tn.cashfly.utils.ImageStorage;
+import tn.cashfly.services.ExcelExportService;
+import tn.cashfly.entities.EventStatistics;
+import tn.cashfly.entities.ParticipantInfo;
+import java.io.IOException;
+
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+
+
+import java.util.*;
+import javafx.stage.DirectoryChooser;
+
 
 public class CalendarViewProprietaireController {
 
@@ -475,18 +487,47 @@ public class CalendarViewProprietaireController {
         // Buttons
         HBox actions = new HBox(12);
         actions.setAlignment(Pos.CENTER);
-        Button editBtn = new Button("Modifier");
-        editBtn.setStyle("-fx-background-color: #ffc107; -fx-text-fill: #0D2440;");
+        Button editBtn = new Button("✏️ Modifier");
+        editBtn.setStyle("-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold;");
         editBtn.setOnAction(e -> { currentPopup.close(); showEditEventDialog(event); });
 
-        Button deleteBtn = new Button("Supprimer");
-        deleteBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white;");
-        deleteBtn.setOnAction(e -> { /* delete logic */ });
+        Button deleteBtn = new Button("🗑️ Supprimer");
+        deleteBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold;");
+        deleteBtn.setOnAction(e -> {
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirmer la suppression");
+            confirm.setHeaderText("Supprimer \"" + event.getTitre() + "\" ?");
+            confirm.setContentText("Cette action est irréversible et supprimera toutes les inscriptions.");
 
-        Button closeBtn = new Button("Fermer");
-        closeBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white;");
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    deleteEvent(event);
+                    currentPopup.close();
+                    loadEvents();
+                    buildCalendar();
+                }
+            });
+        });
+
+        Button exportBtn = new Button("📊 Exporter Excel");
+        exportBtn.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
+        exportBtn.setOnAction(e -> {
+            currentPopup.close();
+            exportParticipantsToExcel(event);
+        });
+
+        Button closeBtn = new Button("❌ Fermer");
+        closeBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
         closeBtn.setOnAction(e -> currentPopup.close());
-        actions.getChildren().addAll(editBtn, deleteBtn, closeBtn);
+
+        actions.getChildren().addAll(editBtn, deleteBtn, exportBtn, closeBtn);
+
+
+
+//        Button closeBtn = new Button("Fermer");
+//        closeBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white;");
+//        closeBtn.setOnAction(e -> currentPopup.close());
+//        actions.getChildren().addAll(editBtn, deleteBtn, closeBtn);
 
         // Assemble popup
         content.getChildren().addAll(header, new Separator(), mainInfoBox, new Separator(), descBox, actions);
@@ -1014,5 +1055,85 @@ public class CalendarViewProprietaireController {
         scene.setFill(Color.TRANSPARENT);
         currentPopup.setScene(scene);
         currentPopup.show();
+    }
+    private void exportParticipantsToExcel(JPO event) {
+        System.out.println("=== Exporting participants for event: " + event.getTitre());
+
+        try {
+            ServiceParticipation serviceParticipation = new ServiceParticipation();
+            List<ParticipantInfo> participants = serviceParticipation.getEventParticipantsDetailed(event.getId_evenement());
+            EventStatistics statistics = serviceParticipation.getEventStatistics(event.getId_evenement());
+
+            System.out.println("Found " + participants.size() + " participants");
+
+            if (participants.isEmpty()) {
+                showAlert("Information", "Aucun participant inscrit à cet événement.");
+                return;
+            }
+
+            // Show directory chooser dialog
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Choisir le dossier de destination pour l'export Excel");
+
+            // Set default directory (CashFly/Exports or user home)
+            File defaultDir = new File(System.getProperty("user.home"), "CashFly/Exports");
+            if (!defaultDir.exists()) {
+                defaultDir = new File(System.getProperty("user.home"));
+            }
+            directoryChooser.setInitialDirectory(defaultDir);
+
+            // Show the dialog (need to get the stage from the current scene)
+            Stage stage = (Stage) calendarGrid.getScene().getWindow();
+            File selectedDirectory = directoryChooser.showDialog(stage);
+
+            // User cancelled the dialog
+            if (selectedDirectory == null) {
+                System.out.println("User cancelled directory selection");
+                return;
+            }
+
+            System.out.println("Selected directory: " + selectedDirectory.getAbsolutePath());
+
+            // Generate Excel file in selected directory
+            ExcelExportService exportService = new ExcelExportService();
+            String filePath = exportService.exportParticipantsToExcel(event, participants, statistics, selectedDirectory);
+
+            // Show success dialog
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Export réussi");
+            alert.setHeaderText("Fichier Excel généré avec succès!");
+            alert.setContentText("Nom du fichier: " + new File(filePath).getName() + "\n" +
+                    "Dossier: " + selectedDirectory.getAbsolutePath() + "\n\n" +
+                    "Statistiques exportées:\n" +
+                    "• Total participants: " + statistics.getTotalParticipants() + "\n" +
+                    "• Confirmés: " + statistics.getConfirmed() + "\n" +
+                    "• En attente: " + statistics.getWaiting() + "\n" +
+                    "• Badges générés: " + statistics.getBadgesGenerated());
+
+            // Add buttons
+            ButtonType openFileButton = new ButtonType("Ouvrir le fichier");
+            ButtonType openFolderButton = new ButtonType("Ouvrir le dossier");
+            ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+            alert.getButtonTypes().setAll(openFileButton, openFolderButton, okButton);
+
+            alert.showAndWait().ifPresent(response -> {
+                try {
+                    File file = new File(filePath);
+                    if (response == openFileButton) {
+                        // Open the Excel file directly
+                        java.awt.Desktop.getDesktop().open(file);
+                    } else if (response == openFolderButton) {
+                        // Open the containing folder
+                        java.awt.Desktop.getDesktop().open(file.getParentFile());
+                    }
+                } catch (Exception e) {
+                    showAlert("Erreur", "Impossible d'ouvrir: " + e.getMessage());
+                }
+            });
+
+        } catch (IOException | SQLException e) {
+            showAlert("Erreur d'export", "Impossible de générer le fichier Excel: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
