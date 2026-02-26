@@ -105,6 +105,20 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 20, 0, 0, 10);
 }
 
+.card-selected {
+    -fx-background-color: white;
+    -fx-border-color: #5a5ce5;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-effect: dropshadow(three-pass-box, rgba(90, 92, 229, 0.4), 15, 0, 0, 0);
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.card-selected:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(90, 92, 229, 0.6), 20, 0, 0, 0);
+}
+
 .card-label {
     -fx-text-fill: #7f8c8d;
     -fx-font-size: 12px;

@@ -33,6 +33,10 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import org.opencv.imgcodecs.Imgcodecs;
 import java.util.Arrays;
 
@@ -493,8 +497,54 @@ private void loadEnrolledData() {
     public void closeModal() {
         shutdownWebcam();
         if (statusLabel != null && statusLabel.getScene() != null) {
-            ((Stage) statusLabel.getScene().getWindow()).close();
+            Stage stage = (Stage) statusLabel.getScene().getWindow();
+            
+            // If verification is done and we just enrolled, go to dashboard
+            if (isVerified && !UserSession.isKycEnrolled()) {
+                // This shouldn't happen here because completeScan calls closeModal after saveKycToDatabase
+                // which sets isKycEnrolled to true.
+            }
+
+            // If we are in the main stage (not a modal), we should navigate back to Login if not verified
+            // Modals usually have an owner or a different modality.
+            if (stage.getModality() == Modality.NONE) {
+                if (!isVerified) {
+                    navigateTo("/login.fxml", "Cashfly - Connexion");
+                } else {
+                    navigateToDashboard();
+                }
+            } else {
+                // It's a modal (verification during operation), just close it
+                stage.close();
+            }
         }
+    }
+
+    private void navigateTo(String fxmlPath, String title) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource(fxmlPath));
+            Stage stage = (Stage) statusLabel.getScene().getWindow();
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            if (fxmlPath.contains("dashboard")) {
+                stage.setMinWidth(1024);
+                stage.setMinHeight(600);
+            }
+            stage.centerOnScreen();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void navigateToDashboard() {
+        String role = UserSession.getRole();
+        String fxmlPath = "/dashboard.fxml";
+        if ("administrateur".equalsIgnoreCase(role)) {
+            fxmlPath = "/admin_dashboard.fxml";
+        } else if ("investisseur".equalsIgnoreCase(role)) {
+            fxmlPath = "/investor_dashboard.fxml";
+        }
+        navigateTo(fxmlPath, "Cashfly - Dashboard (" + role + ")");
     }
 
     public void cleanup() {

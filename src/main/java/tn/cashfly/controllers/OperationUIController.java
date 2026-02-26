@@ -68,6 +68,9 @@ public class OperationUIController {
     @FXML
     private Label currentContextLabel;
 
+    @FXML
+    private Label currentBalanceLabel;
+
     // These fields are referred to in the controller but are missing from operations.fxml
     /*
     @FXML
@@ -122,7 +125,31 @@ public class OperationUIController {
         minMontantField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
         maxMontantField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
 
+        updateCurrentBalance();
         refreshTable();
+    }
+
+    private void updateCurrentBalance() {
+        Integer tresId = UserSession.getCurrentTresorerieId();
+        if (tresId != null) {
+            try {
+                TRÉSORERIE t = tresorerieController.getTresorerieById(tresId);
+                if (t != null) {
+                    javafx.application.Platform.runLater(() -> {
+                        currentBalanceLabel.setText(String.format(" • Solde : %.2f %s", t.getSolde(), t.getDevise()));
+                        if (t.getSolde() < 0) {
+                            currentBalanceLabel.setStyle("-fx-text-fill: #dc2626; -fx-font-weight: bold;");
+                        } else {
+                            currentBalanceLabel.setStyle("-fx-text-fill: #059669; -fx-font-weight: bold;");
+                        }
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            currentBalanceLabel.setText("");
+        }
     }
 
     /** Applies current keyword + type + montant filters and refreshes the cards (no button needed). */
@@ -328,6 +355,7 @@ public class OperationUIController {
                 );
 
                 javafx.application.Platform.runLater(() -> {
+                    updateCurrentBalance();
                     refreshTable();
                     clearForm();
                     if (DashboardController.getInstance() != null) {
@@ -374,6 +402,7 @@ public class OperationUIController {
                 operationController.updateOperation(op);
 
                 javafx.application.Platform.runLater(() -> {
+                    updateCurrentBalance();
                     refreshTable();
                     clearForm();
                     if (DashboardController.getInstance() != null) {
@@ -400,6 +429,7 @@ public class OperationUIController {
         }
         try {
             operationController.deleteOperation(selected.getIdOperation());
+            updateCurrentBalance();
             refreshTable();
             clearForm();
         } catch (SQLException e) {

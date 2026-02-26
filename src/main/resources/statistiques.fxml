@@ -32,12 +32,12 @@
         </children>
     </HBox>
 
-    <HBox spacing="16.0">
+    <HBox spacing="16.0" VBox.vgrow="ALWAYS">
         <children>
             <VBox spacing="8.0" HBox.hgrow="ALWAYS">
                 <children>
                     <Label text="Répartition revenus vs dépenses" style="-fx-text-fill: #475569; -fx-font-size: 14; -fx-font-weight: bold;"/>
-                    <PieChart fx:id="pieChart" prefHeight="340.0"/>
+                    <PieChart fx:id="pieChart" prefHeight="300.0"/>
                     <HBox spacing="16.0">
                         <children>
                             <Label text="Revenus:"/>
@@ -49,18 +49,26 @@
                             <Label fx:id="soldeLabel" text="0 TND" style="-fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
                         </children>
                     </HBox>
+                    <Separator/>
+                    <Label text="Prédiction financière (Mois prochain)" style="-fx-text-fill: #475569; -fx-font-size: 14; -fx-font-weight: bold;"/>
+                    <VBox style="-fx-background-color: #f1f5f9; -fx-padding: 15; -fx-background-radius: 10;">
+                        <children>
+                            <Label fx:id="predictionLabel" text="Analyse des données en cours..." wrapText="true" style="-fx-text-fill: #1e293b; -fx-font-style: italic;"/>
+                        </children>
+                    </VBox>
                 </children>
             </VBox>
             <VBox spacing="8.0" prefWidth="520.0">
                 <children>
+                    <Label text="Évolution mensuelle" style="-fx-text-fill: #475569; -fx-font-size: 14; -fx-font-weight: bold;"/>
+                    <LineChart fx:id="lineChart" prefHeight="300.0">
+                        <xAxis><CategoryAxis label="Mois"/></xAxis>
+                        <yAxis><NumberAxis label="Montant"/></yAxis>
+                    </LineChart>
                     <Label text="Montants par catégorie" style="-fx-text-fill: #475569; -fx-font-size: 14; -fx-font-weight: bold;"/>
-                    <BarChart fx:id="barChart" prefHeight="400.0">
-                        <xAxis>
-                            <CategoryAxis label="Catégorie"/>
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis label="Montant (TND)"/>
-                        </yAxis>
+                    <BarChart fx:id="barChart" prefHeight="300.0">
+                        <xAxis><CategoryAxis label="Catégorie"/></xAxis>
+                        <yAxis><NumberAxis label="Montant (TND)"/></yAxis>
                     </BarChart>
                 </children>
             </VBox>

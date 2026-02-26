@@ -1,6 +1,7 @@
 package tn.cashfly.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.web.HTMLEditor;
 import javafx.stage.Stage;
@@ -44,6 +45,7 @@ public class NoteEditorController {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            showError("Erreur lors du chargement de la note", e);
         }
     }
 
@@ -64,7 +66,16 @@ public class NoteEditorController {
             closeStage();
         } catch (SQLException e) {
             e.printStackTrace();
+            showError("Erreur lors de l'enregistrement de la note", e);
         }
+    }
+
+    private void showError(String message, Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(message);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 
     @FXML
