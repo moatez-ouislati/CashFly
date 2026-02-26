@@ -127,6 +127,24 @@ public class TresorerieService implements ITresorerieService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public String generateNextNumeroCompte() throws SQLException {
+        String sql = "SELECT numero_compte FROM TRÉSORERIE WHERE numero_compte LIKE 'ACC-%' ORDER BY id_tresorerie DESC LIMIT 1";
+        try (PreparedStatement ps = cnx.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                String lastNum = rs.getString("numero_compte");
+                try {
+                    int numericPart = Integer.parseInt(lastNum.substring(4));
+                    return String.format("ACC-%05d", numericPart + 1);
+                } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+                    return "ACC-00001";
+                }
+            }
+        }
+        return "ACC-00001";
+    }
+
     private TRÉSORERIE mapRowToTresorerie(ResultSet rs) throws SQLException {
         int id = rs.getInt("id_tresorerie");
         int idEntreprise = rs.getInt("id_entreprise");

@@ -56,6 +56,7 @@ public class KYCController {
     private Webcam webcam;
     private AtomicBoolean stopWebcam = new AtomicBoolean(false);
     private CascadeClassifier faceCascade;
+    private CascadeClassifier eyeCascade;
     private boolean modelLoaded = false;
     private boolean openCVLoaded = false;
     private final Object modelLock = new Object();
@@ -67,10 +68,20 @@ public class KYCController {
     private static boolean isVerified = false;
     private int faceDetectedCounter = 0;
     private final int REQUIRED_FACE_FRAMES = 30;
+    
+    // Liveness Detection Vars
+    private int blinkCounter = 0;
+    private boolean eyesOpenPreviously = true;
+    private boolean isAlive = false;
+    private final int REQUIRED_BLINKS = 2; // User must blink at least twice
     private KycService kycService;
 
     public static boolean isVerified() {
         return isVerified;
+    }
+
+    public static void resetVerification() {
+        isVerified = false;
     }
 
     @FXML
@@ -91,42 +102,76 @@ public class KYCController {
             cameraPane.getChildren().add(0, webcamView);
         }
 
-        // Sequential Initialization to avoid race conditions
-        new Thread(() -> {
-            try {
-                // 1. Load OpenCV Native Lib
-                Platform.runLater(() -> statusLabel.setText("Chargement du moteur d'IA..."));
-                OpenCV.loadLocally();
-                openCVLoaded = true;
+    // Sequential Initialization to avoid race conditions
+    new Thread(() -> {
+        try {
+            // 1. Load OpenCV Native Lib
+            Platform.runLater(() -> statusLabel.setText("Chargement du moteur d'IA..."));
+            OpenCV.loadLocally();
+            openCVLoaded = true;
 
-                // 2. Load Model (only after OpenCV is ready)
-                loadModel();
+            // 2. Load Model (only after OpenCV is ready)
+            loadModel();
 
-                // 3. Start Webcam Stream
-                startWebcamStream();
-            } catch (Throwable e) {
-                Platform.runLater(() -> statusLabel.setText("❌ Erreur moteur : " + e.getMessage()));
+            // 2.5 Check if already enrolled (Verification Mode)
+            if (UserSession.isKycEnrolled()) {
+                Platform.runLater(() -> {
+                    uploadBtn.setVisible(false);
+                    uploadPromptLabel.setText("Vérification d'identité (Mode Comparaison)");
+                    statusLabel.setText("Chargement de vos données biométriques...");
+                });
+                loadEnrolledData();
             }
-        }).start();
+
+            // 3. Start Webcam Stream
+            startWebcamStream();
+        } catch (Throwable e) {
+            Platform.runLater(() -> statusLabel.setText("❌ Erreur moteur : " + e.getMessage()));
+        }
+    }).start();
+}
+
+private void loadEnrolledData() {
+    try {
+        Integer userId = UserSession.getUserId();
+        if (userId == null) return;
+        
+        UserKyc kyc = kycService.getKycByUserId(userId);
+        if (kyc != null && kyc.getIdDocumentPath() != null) {
+            File docFile = new File(kyc.getIdDocumentPath());
+            if (docFile.exists()) {
+                Mat docImage = Imgcodecs.imread(docFile.getAbsolutePath());
+                if (!docImage.empty()) {
+                    docFaceHist = calculateHistogram(docImage);
+                    docLoaded = true;
+                    this.uploadedDocPath = kyc.getIdDocumentPath();
+                    
+                    Platform.runLater(() -> {
+                        docFacePreview.setImage(SwingFXUtils.toFXImage(matToBufferedImage(docImage), null));
+                        scanButton.setDisable(false);
+                        statusLabel.setText("✅ Données chargées. Prêt pour la vérification.");
+                        // Auto-start scan if desired, but let's wait for user click
+                    });
+                }
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Platform.runLater(() -> statusLabel.setText("❌ Erreur chargement données KYC"));
     }
+}
 
     private void loadModel() {
         try {
             Platform.runLater(() -> statusLabel.setText("Chargement du modèle de visage..."));
-            File modelFile = new File(System.getProperty("java.io.tmpdir"), "haarcascade_frontalface_default.xml");
-            
-            // Fast check and download if missing
-            if (!modelFile.exists()) {
-                URL url = new URL("https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/haarcascade_frontalface_default.xml");
-                try (ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-                     FileOutputStream fos = new FileOutputStream(modelFile)) {
-                    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                }
-            }
+            File faceModel = downloadCascade("haarcascade_frontalface_default.xml");
+            File eyeModel = downloadCascade("haarcascade_eye.xml");
             
             // This requires OpenCV to be fully loaded!
-            faceCascade = new CascadeClassifier(modelFile.getAbsolutePath());
-            if (!faceCascade.empty()) {
+            faceCascade = new CascadeClassifier(faceModel.getAbsolutePath());
+            eyeCascade = new CascadeClassifier(eyeModel.getAbsolutePath());
+
+            if (!faceCascade.empty() && !eyeCascade.empty()) {
                 modelLoaded = true;
                 Platform.runLater(() -> statusLabel.setText("Système prêt pour l'analyse."));
             } else {
@@ -135,6 +180,18 @@ public class KYCController {
         } catch (Exception e) {
             Platform.runLater(() -> statusLabel.setText("❌ Erreur IA : " + e.getMessage()));
         }
+    }
+
+    private File downloadCascade(String filename) throws Exception {
+        File modelFile = new File(System.getProperty("java.io.tmpdir"), filename);
+        if (!modelFile.exists()) {
+            URL url = new URL("https://raw.githubusercontent.com/opencv/opencv/master/data/haarcascades/" + filename);
+            try (ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+                 FileOutputStream fos = new FileOutputStream(modelFile)) {
+                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            }
+        }
+        return modelFile;
     }
 
     private void startWebcamStream() {
@@ -194,24 +251,63 @@ public class KYCController {
             Imgproc.rectangle(frame, rect.tl(), rect.br(), color, 3);
             
             if (progressBar.isVisible()) {
+                // Liveness Check (Blink Detection)
+                Mat faceGrayROI = grayFrame.submat(rect);
+                detectBlink(faceGrayROI);
+
                 // Biometric Comparison
                 double similarity = compareFaces(liveFaceROI);
-                
-                if (similarity > 0.65) { // Increased threshold for stricter matching
-                    faceDetectedCounter++;
-                    double progress = Math.min(1.0, (double) faceDetectedCounter / REQUIRED_FACE_FRAMES);
-                    Platform.runLater(() -> {
-                        progressBar.setProgress(progress);
-                        percentageLabel.setText((int)(progress * 100) + "%");
-                        statusLabel.setText(String.format("Match d'identité : %.0f%% (Vérifié)", similarity * 100));
-                        if (progress >= 1.0) completeScan();
-                    });
+// accuracy is 50
+                if (similarity > 0.50) {
+                    if (!isAlive) {
+                         Platform.runLater(() -> {
+                             statusLabel.setText("⚠️ CLIGNEZ DES YEUX ! (" + blinkCounter + "/" + REQUIRED_BLINKS + ")");
+                             statusLabel.setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold; -fx-font-size: 14;");
+                         });
+                    } else {
+                        faceDetectedCounter++;
+                        double progress = Math.min(1.0, (double) faceDetectedCounter / REQUIRED_FACE_FRAMES);
+                        Platform.runLater(() -> {
+                            progressBar.setProgress(progress);
+                            percentageLabel.setText((int)(progress * 100) + "%");
+                            statusLabel.setText(String.format("Vérifié : %.0f%% ✅", similarity * 100));
+                            statusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                            if (progress >= 1.0) completeScan();
+                        });
+                    }
                 } else {
-                    Platform.runLater(() -> statusLabel.setText(String.format("⚠️ Échec : Ressemblance insuffisante (%.0f%%)", similarity * 100)));
+                    Platform.runLater(() -> {
+                        statusLabel.setText(String.format("⚠️ Visage non reconnu (%.0f%%)", similarity * 100));
+                        statusLabel.setStyle("-fx-text-fill: #ef4444;");
+                    });
                 }
             }
         }
         updateWebcamView(matToBufferedImage(frame));
+    }
+
+    private void detectBlink(Mat faceROI) {
+        if (eyeCascade == null || eyeCascade.empty()) return;
+        
+        MatOfRect eyes = new MatOfRect();
+        // Adjust minSize based on face size
+        eyeCascade.detectMultiScale(faceROI, eyes, 1.1, 3, 0, new Size(20, 20), new Size());
+        
+        boolean eyesOpen = eyes.toArray().length > 0;
+        
+        // Simple state machine for blink detection
+        if (eyesOpenPreviously && !eyesOpen) {
+            // Eyes just closed
+        } else if (!eyesOpenPreviously && eyesOpen) {
+             // Eyes just opened -> Blink detected
+             blinkCounter++;
+        }
+        
+        eyesOpenPreviously = eyesOpen;
+        
+        if (blinkCounter >= REQUIRED_BLINKS) {
+            isAlive = true;
+        }
     }
 
     private void updateWebcamView(BufferedImage image) {
@@ -368,7 +464,12 @@ public class KYCController {
             statusLabel.setText("Identité confirmée ✅");
             statusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
         });
-        saveKycToDatabase();
+        
+        // If not enrolled, save. If enrolled, we just verified.
+        if (!UserSession.isKycEnrolled()) {
+             saveKycToDatabase();
+        }
+        
         new Timeline(new KeyFrame(Duration.seconds(2), e -> closeModal())).play();
     }
 

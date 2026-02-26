@@ -71,17 +71,32 @@ public class TresorerieUIController {
                 ribField.setManaged(true);
                 numeroCompteField.setVisible(false);
                 numeroCompteField.setManaged(false);
-            } else {
+                numeroCompteField.clear();
+            } else if (newVal != null) {
                 ribField.setVisible(false);
                 ribField.setManaged(false);
+                ribField.clear();
                 numeroCompteField.setVisible(true);
                 numeroCompteField.setManaged(true);
+                
+                // Auto-generate if adding new or if field is empty
+                if (selectedTresorerie == null && (numeroCompteField.getText() == null || numeroCompteField.getText().isBlank())) {
+                    try {
+                        numeroCompteField.setText(tresorerieController.generateNextNumeroCompte());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
         // Live filter: run directly when user types (no button click)
         deviseFilterField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
         minSoldeField.textProperty().addListener((o, oldVal, newVal) -> applyFilters());
+
+        // Make numeroCompteField non-editable to ensure automatic increment is respected
+        numeroCompteField.setEditable(false);
+        numeroCompteField.setStyle("-fx-background-color: #f1f5f9;"); // Light gray background to show it's read-only
 
         refreshTable();
     }
@@ -163,7 +178,7 @@ public class TresorerieUIController {
         try {
             TRÉSORERIE t = buildFromForm(null);
             if (t == null) return;
-            tresorerieController.createTresorerie(t.getIdEntreprise(), t.getSolde(), t.getDevise());
+            tresorerieController.addTresorerie(t);
             refreshTable();
             clearForm();
             if (DashboardController.getInstance() != null) {
@@ -225,8 +240,16 @@ public class TresorerieUIController {
             String nom = nomCompteField.getText();
             TRÉSORERIE.TypeCompte type = typeCompteCombo.getValue();
             
-            if (nom == null || nom.isBlank() || type == null) {
-                showInfo("Nom et Type de compte obligatoires.");
+            if (nom == null || nom.isBlank()) {
+                showInfo("Le nom du compte est obligatoire (min 3 caractères).");
+                return null;
+            }
+            if (nom.length() < 3) {
+                showInfo("Le nom du compte est trop court (min 3 caractères, actuel: " + nom.length() + ").");
+                return null;
+            }
+            if (type == null) {
+                showInfo("Le type de compte est obligatoire.");
                 return null;
             }
 
@@ -235,22 +258,36 @@ public class TresorerieUIController {
             if (type == TRÉSORERIE.TypeCompte.BANQUE) {
                 rib = ribField.getText();
                 if (rib == null || rib.isBlank()) {
-                     showInfo("Le RIB est obligatoire pour un compte bancaire.");
+                     showInfo("Le RIB est obligatoire pour un compte bancaire (20 chiffres).");
                      return null;
+                }
+                if (rib.length() != 20 || !rib.matches("\\d+")) {
+                    showInfo("Le RIB doit contenir exactement 20 chiffres (actuel: " + rib.length() + ").");
+                    return null;
                 }
             } else {
                 num = numeroCompteField.getText();
                 if (num == null || num.isBlank()) {
-                     showInfo("Le numéro de compte est obligatoire.");
+                     showInfo("Le numéro de compte est obligatoire (min 8 caractères).");
                      return null;
+                }
+                if (num.length() < 8) {
+                    showInfo("Le numéro de compte est trop court (min 8 caractères, actuel: " + num.length() + ").");
+                    return null;
                 }
             }
 
-            double solde = Double.parseDouble(soldeField.getText());
-            String devise = deviseField.getText();
+            double solde;
+            try {
+                solde = Double.parseDouble(soldeField.getText());
+            } catch (NumberFormatException e) {
+                showInfo("Le solde doit être un nombre valide.");
+                return null;
+            }
 
-            if (devise == null || devise.isBlank()) {
-                showInfo("La devise est obligatoire.");
+            String devise = deviseField.getText();
+            if (devise == null || devise.length() != 3) {
+                showInfo("La devise doit contenir exactement 3 caractères (ex: TND, EUR, USD).");
                 return null;
             }
 
@@ -259,8 +296,8 @@ public class TresorerieUIController {
             } else {
                 return new TRÉSORERIE(existingId, idEntreprise, nom, type, solde, devise, LocalDateTime.now(), rib, num);
             }
-        } catch (NumberFormatException e) {
-            showInfo("Vérifiez les valeurs numériques (solde).");
+        } catch (Exception e) {
+            showError("Erreur lors de la préparation des données", e);
             return null;
         }
     }

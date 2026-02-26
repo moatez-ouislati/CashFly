@@ -124,10 +124,6 @@ public class DashboardController {
             showInfo("Veuillez d'abord sélectionner une entreprise.");
             return;
         }
-        if (UserSession.getCurrentTresorerieId() == null) {
-            showInfo("Veuillez d'abord sélectionner une trésorerie dans l'onglet Trésorerie.");
-            return;
-        }
         loadView("/operations.fxml");
         updateActiveButton(btnOperations);
         pageTitle.setText("Opérations");

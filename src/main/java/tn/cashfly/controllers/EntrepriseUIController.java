@@ -182,22 +182,43 @@ public class EntrepriseUIController {
             String propStr = proprietaireField.getText();
 
             if (nom == null || nom.isBlank()) {
-                showInfo("Le nom est obligatoire.");
+                showInfo("Le nom est obligatoire (min 3 caractères).");
+                return null;
+            }
+            if (nom.length() < 3) {
+                showInfo("Le nom est trop court (min 3 caractères, actuel: " + nom.length() + ").");
                 return null;
             }
 
             LocalDate date = null;
             if (dateStr != null && !dateStr.isBlank()) {
-                date = LocalDate.parse(dateStr);
+                try {
+                    date = LocalDate.parse(dateStr);
+                } catch (DateTimeParseException e) {
+                    showInfo("Format de date invalide (attendu: yyyy-MM-dd, ex: 2023-01-01).");
+                    return null;
+                }
             }
-            double capital = capitalStr == null || capitalStr.isBlank()
-                    ? 0.0
-                    : Double.parseDouble(capitalStr);
+            double capital;
+            try {
+                capital = capitalStr == null || capitalStr.isBlank()
+                        ? 0.0
+                        : Double.parseDouble(capitalStr);
+            } catch (NumberFormatException e) {
+                showInfo("Le capital doit être un nombre valide.");
+                return null;
+            }
+            
             int idProp;
-            if (UserSession.getUserId() != null) {
-                idProp = UserSession.getUserId();
-            } else {
-                idProp = Integer.parseInt(propStr);
+            try {
+                if (UserSession.getUserId() != null) {
+                    idProp = UserSession.getUserId();
+                } else {
+                    idProp = Integer.parseInt(propStr);
+                }
+            } catch (NumberFormatException e) {
+                showInfo("L'ID propriétaire doit être un nombre.");
+                return null;
             }
 
             if (existingId == null) {
@@ -205,8 +226,8 @@ public class EntrepriseUIController {
             } else {
                 return new ENTREPRISE(existingId, nom, secteur, forme, date, capital, idProp);
             }
-        } catch (NumberFormatException | DateTimeParseException e) {
-            showInfo("Vérifiez les valeurs numériques et la date (format yyyy-MM-dd).");
+        } catch (Exception e) {
+            showError("Erreur lors de la préparation des données", e);
             return null;
         }
     }

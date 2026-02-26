@@ -22,21 +22,24 @@ public class OperationService implements IOperationService {
 
     @Override
     public void add(OPÉRATIONS operation) throws SQLException {
-        String sql = "INSERT INTO OPÉRATIONS (id_tresorerie, type, montant, categorie, date_operation, description) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO OPÉRATIONS (id_tresorerie, reference, facture, pdf_url, type, montant, categorie, date_operation, description) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = cnx.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, operation.getTresorerie().getIdTresorerie());
-            ps.setString(2, operation.getType());
-            ps.setDouble(3, operation.getMontant());
-            ps.setString(4, operation.getCategorie());
+            ps.setString(2, operation.getReference());
+            ps.setString(3, operation.getFacture());
+            ps.setString(4, operation.getPdfUrl());
+            ps.setString(5, operation.getType().name());
+            ps.setDouble(6, operation.getMontant());
+            ps.setString(7, operation.getCategorie());
 
             if (operation.getDateOperation() != null) {
-                ps.setTimestamp(5, Timestamp.valueOf(operation.getDateOperation()));
+                ps.setTimestamp(8, Timestamp.valueOf(operation.getDateOperation()));
             } else {
-                ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             }
 
-            ps.setString(6, operation.getDescription());
+            ps.setString(9, operation.getDescription());
 
             ps.executeUpdate();
 
@@ -60,22 +63,25 @@ public class OperationService implements IOperationService {
             updateTresorerieBalance(oldOp.getTresorerie().getIdTresorerie(), oldOp.getMontant(), oldOp.getType(), false);
         }
 
-        String sql = "UPDATE OPÉRATIONS SET id_tresorerie = ?, type = ?, montant = ?, categorie = ?, " +
+        String sql = "UPDATE OPÉRATIONS SET id_tresorerie = ?, reference = ?, facture = ?, pdf_url = ?, type = ?, montant = ?, categorie = ?, " +
                 "date_operation = ?, description = ? WHERE id_operation = ?";
         try (PreparedStatement ps = cnx.prepareStatement(sql)) {
             ps.setInt(1, operation.getTresorerie().getIdTresorerie());
-            ps.setString(2, operation.getType());
-            ps.setDouble(3, operation.getMontant());
-            ps.setString(4, operation.getCategorie());
+            ps.setString(2, operation.getReference());
+            ps.setString(3, operation.getFacture());
+            ps.setString(4, operation.getPdfUrl());
+            ps.setString(5, operation.getType().name());
+            ps.setDouble(6, operation.getMontant());
+            ps.setString(7, operation.getCategorie());
 
             if (operation.getDateOperation() != null) {
-                ps.setTimestamp(5, Timestamp.valueOf(operation.getDateOperation()));
+                ps.setTimestamp(8, Timestamp.valueOf(operation.getDateOperation()));
             } else {
-                ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+                ps.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
             }
 
-            ps.setString(6, operation.getDescription());
-            ps.setInt(7, operation.getIdOperation());
+            ps.setString(9, operation.getDescription());
+            ps.setInt(10, operation.getIdOperation());
 
             ps.executeUpdate();
             
@@ -99,12 +105,12 @@ public class OperationService implements IOperationService {
         }
     }
 
-    private void updateTresorerieBalance(int idTresorerie, double montant, String type, boolean isNewImpact) throws SQLException {
+    private void updateTresorerieBalance(int idTresorerie, double montant, OPÉRATIONS.TypeOperation type, boolean isNewImpact) throws SQLException {
         TRÉSORERIE t = tresorerieService.getById(idTresorerie);
         if (t == null) return;
 
         double currentSolde = t.getSolde();
-        boolean isRevenu = "revenu".equalsIgnoreCase(type);
+        boolean isRevenu = type == OPÉRATIONS.TypeOperation.revenu;
 
         if (isNewImpact) {
             // Ajouter un revenu ou soustraire une dépense
@@ -177,7 +183,7 @@ public class OperationService implements IOperationService {
         String lower = type.toLowerCase();
         return getAll()
                 .stream()
-                .filter(o -> o.getType() != null && o.getType().toLowerCase().equals(lower))
+                .filter(o -> o.getType() != null && o.getType().name().toLowerCase().equals(lower))
                 .collect(Collectors.toList());
     }
 
@@ -218,6 +224,24 @@ public class OperationService implements IOperationService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public String generateNextReference() throws SQLException {
+        String sql = "SELECT reference FROM OPÉRATIONS WHERE reference LIKE 'OP-%' ORDER BY id_operation DESC LIMIT 1";
+        try (PreparedStatement ps = cnx.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                String lastRef = rs.getString("reference");
+                try {
+                    int numericPart = Integer.parseInt(lastRef.substring(3));
+                    return String.format("OP-%05d", numericPart + 1);
+                } catch (NumberFormatException | StringIndexOutOfBoundsException e) {
+                    return "OP-00001";
+                }
+            }
+        }
+        return "OP-00001";
+    }
+
     private OPÉRATIONS mapRowToOperation(ResultSet rs) throws SQLException {
         int idTresorerie = rs.getInt("id_tresorerie");
         TRÉSORERIE tresorerie = tresorerieService.getById(idTresorerie);
@@ -226,7 +250,11 @@ public class OperationService implements IOperationService {
 
     private OPÉRATIONS mapRowToOperation(ResultSet rs, TRÉSORERIE tresorerie) throws SQLException {
         int id = rs.getInt("id_operation");
-        String type = rs.getString("type");
+        String reference = rs.getString("reference");
+        String facture = rs.getString("facture");
+        String pdfUrl = rs.getString("pdf_url");
+        String typeStr = rs.getString("type");
+        OPÉRATIONS.TypeOperation type = OPÉRATIONS.TypeOperation.valueOf(typeStr);
         double montant = rs.getDouble("montant");
         String categorie = rs.getString("categorie");
         String description = rs.getString("description");
@@ -234,7 +262,7 @@ public class OperationService implements IOperationService {
         Timestamp ts = rs.getTimestamp("date_operation");
         LocalDateTime dateOperation = ts != null ? ts.toLocalDateTime() : null;
 
-        OPÉRATIONS op = new OPÉRATIONS(id, tresorerie, type, montant, categorie, description, dateOperation);
+        OPÉRATIONS op = new OPÉRATIONS(id, tresorerie, reference, facture, pdfUrl, type, montant, categorie, description, dateOperation);
         return op;
     }
 }

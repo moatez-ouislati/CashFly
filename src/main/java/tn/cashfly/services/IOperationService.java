@@ -31,5 +31,7 @@ public interface IOperationService {
     List<OPÉRATIONS> filterByDateRange(LocalDateTime from, LocalDateTime to) throws SQLException;
 
     List<OPÉRATIONS> searchByCategorieOrDescription(String keyword) throws SQLException;
+
+    String generateNextReference() throws SQLException;
 }
 

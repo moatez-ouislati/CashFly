@@ -22,5 +22,7 @@ public interface ITresorerieService {
     List<TRÉSORERIE> filterByDevise(String devise) throws SQLException;
 
     List<TRÉSORERIE> filterBySoldeGreaterThan(double minSolde) throws SQLException;
+
+    String generateNextNumeroCompte() throws SQLException;
 }
 

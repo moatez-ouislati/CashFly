@@ -16,13 +16,53 @@ public class TresorerieController {
 
     private final ITresorerieService tresorerieService = new TresorerieService();
 
+    /**
+     * Create a Tresorerie using full constructor (all fields)
+     */
     public TRÉSORERIE createTresorerie(int idEntreprise,
+                                       String nomCompte,
+                                       TRÉSORERIE.TypeCompte typeCompte,
                                        double solde,
-                                       String devise) throws SQLException {
-        TRÉSORERIE t = new TRÉSORERIE(idEntreprise, solde, devise);
+                                       String devise,
+                                       String rib,
+                                       String numeroCompte) throws SQLException {
+        // Use the full constructor
+        TRÉSORERIE t = new TRÉSORERIE(
+                idEntreprise,
+                nomCompte,
+                typeCompte,
+                solde,
+                devise,
+                rib,
+                numeroCompte
+        );
+
         t.setDerniereMaj(LocalDateTime.now());
         tresorerieService.add(t);
         return t;
+    }
+
+    /**
+     * Optional convenience method: create Tresorerie with minimal parameters
+     * Default typeCompte = CAISSE, default rib & numeroCompte = empty strings
+     */
+    public TRÉSORERIE createTresorerie(int idEntreprise, double solde, String devise) throws SQLException {
+        return createTresorerie(
+                idEntreprise,
+                "Compte Principal",              // default name
+                TRÉSORERIE.TypeCompte.CAISSE,    // default type
+                solde,
+                devise,
+                "",                               // default rib
+                ""                                // default numeroCompte
+        );
+    }
+
+    public void addTresorerie(TRÉSORERIE t) throws SQLException {
+        if (t.getDerniereMaj() == null) {
+            t.setDerniereMaj(LocalDateTime.now());
+        }
+        tresorerieService.add(t);
     }
 
     public void updateTresorerie(TRÉSORERIE tresorerie) throws SQLException {
@@ -49,5 +89,8 @@ public class TresorerieController {
     public List<TRÉSORERIE> filterTresorerieByMinSolde(double minSolde) throws SQLException {
         return tresorerieService.filterBySoldeGreaterThan(minSolde);
     }
-}
 
+    public String generateNextNumeroCompte() throws SQLException {
+        return tresorerieService.generateNextNumeroCompte();
+    }
+}

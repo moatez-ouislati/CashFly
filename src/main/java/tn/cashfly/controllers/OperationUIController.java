@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import tn.cashfly.services.ExportService;
+
 public class OperationUIController {
 
     @FXML
@@ -47,9 +49,15 @@ public class OperationUIController {
     private TextField keywordField;
 
     @FXML
-    private ComboBox<String> typeBox;
+    private ComboBox<OPÉRATIONS.TypeOperation> typeBox;
     @FXML
     private ComboBox<String> operationCurrencyBox;
+    @FXML
+    private TextField referenceField;
+    @FXML
+    private TextField factureField;
+    @FXML
+    private TextField pdfUrlField;
     @FXML
     private TextField montantField;
     @FXML
@@ -60,6 +68,8 @@ public class OperationUIController {
     @FXML
     private Label currentContextLabel;
 
+    // These fields are referred to in the controller but are missing from operations.fxml
+    /*
     @FXML
     private TextField fromCurrencyField;
     @FXML
@@ -69,10 +79,12 @@ public class OperationUIController {
 
     @FXML
     private Label kycStatusLabel;
+    */
 
     private final OperationController operationController = new OperationController();
     private final TresorerieController tresorerieController = new TresorerieController();
     private final ExchangeRateService exchangeRateService = new ExchangeRateService();
+    private final ExportService exportService = new ExportService();
     private final ObservableList<OPÉRATIONS> data = FXCollections.observableArrayList();
 
     private OPÉRATIONS selectedOperation;
@@ -80,10 +92,19 @@ public class OperationUIController {
 
     @FXML
     public void initialize() {
-        typeBox.setItems(FXCollections.observableArrayList("revenu", "depense"));
+        typeBox.setItems(FXCollections.observableArrayList(OPÉRATIONS.TypeOperation.values()));
         typeFilterBox.setItems(FXCollections.observableArrayList("revenu", "depense"));
         operationCurrencyBox.setItems(FXCollections.observableArrayList("TND", "EUR", "USD"));
         operationCurrencyBox.setValue("TND");
+
+        // Reference auto-generation
+        try {
+            referenceField.setText(operationController.generateNextReference());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        referenceField.setEditable(false);
+        referenceField.setStyle("-fx-background-color: #f1f5f9;");
 
         String entreprise = UserSession.getCurrentEntrepriseName();
         Integer tresId = UserSession.getCurrentTresorerieId();
@@ -126,12 +147,14 @@ public class OperationUIController {
                     .filter(op -> {
                         if (keyword == null || keyword.isBlank()) return true;
                         return containsIgnoreCase(op.getCategorie(), keyword)
-                                || containsIgnoreCase(op.getDescription(), keyword);
+                                || containsIgnoreCase(op.getDescription(), keyword)
+                                || containsIgnoreCase(op.getReference(), keyword)
+                                || containsIgnoreCase(op.getFacture(), keyword);
                     })
                     .filter(op -> {
                         if (type == null || type.isBlank()) return true;
-                        String t = op.getType();
-                        return t != null && t.equalsIgnoreCase(type);
+                        OPÉRATIONS.TypeOperation t = op.getType();
+                        return t != null && t.name().equalsIgnoreCase(type);
                     })
                     .filter(op -> op.getMontant() >= minVal && op.getMontant() <= maxVal)
                     .collect(Collectors.toList());
@@ -164,6 +187,9 @@ public class OperationUIController {
 
     private void populateForm(OPÉRATIONS op) {
         typeBox.setValue(op.getType());
+        referenceField.setText(op.getReference());
+        factureField.setText(op.getFacture());
+        pdfUrlField.setText(op.getPdfUrl());
         montantField.setText(String.valueOf(op.getMontant()));
         categorieField.setText(op.getCategorie());
         descriptionField.setText(op.getDescription());
@@ -206,8 +232,12 @@ public class OperationUIController {
             if (kycController != null) kycController.cleanup();
 
             if (KYCController.isVerified()) {
-                kycStatusLabel.setText("✅ Vérifié");
-                kycStatusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                /*
+                if (kycStatusLabel != null) {
+                    kycStatusLabel.setText("✅ Vérifié");
+                    kycStatusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                }
+                */
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -216,9 +246,8 @@ public class OperationUIController {
     }
 
     private boolean ensureKYC() {
-        if (KYCController.isVerified()) {
-            return true;
-        }
+        // Reset verification to force a new scan for each operation
+        KYCController.resetVerification();
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/kyc_modal.fxml"));
@@ -242,8 +271,12 @@ public class OperationUIController {
             if (kycController != null) kycController.cleanup();
 
             if (KYCController.isVerified()) {
-                kycStatusLabel.setText("✅ Vérifié");
-                kycStatusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                /*
+                if (kycStatusLabel != null) {
+                    kycStatusLabel.setText("✅ Vérifié");
+                    kycStatusLabel.setStyle("-fx-text-fill: #10b981; -fx-font-weight: bold;");
+                }
+                */
                 return true;
             }
         } catch (Exception e) {
@@ -278,8 +311,16 @@ public class OperationUIController {
                 }
 
                 final double convertedAmount = finalAmount;
+                
+                // Generate PDF first
+                String pdfPath = exportService.generateOperationInvoice(op);
+                op.setPdfUrl(pdfPath);
+
                 operationController.createOperation(
                         op.getTresorerie(),
+                        op.getReference(),
+                        op.getFacture(),
+                        op.getPdfUrl(),
                         op.getType(),
                         convertedAmount,
                         op.getCategorie(),
@@ -379,13 +420,32 @@ public class OperationUIController {
             //creation de sesision tresorerie
             int idTres = fromSession;
             // retrieve form values
-            String type = typeBox.getValue();
+            OPÉRATIONS.TypeOperation type = typeBox.getValue();
+            String reference = referenceField.getText();
+            String facture = factureField.getText();
+            String pdfUrl = pdfUrlField.getText();
             double montant = Double.parseDouble(montantField.getText());
             String categorie = categorieField.getText();
             String description = descriptionField.getText();
             //control de saisieee
             if (type == null ) {
                 showInfo("Le type (revenu/depense) est obligatoire.");
+                return null;
+            }
+            if (reference == null || reference.isBlank()) {
+                showInfo("La référence est obligatoire (ex: REF-001).");
+                return null;
+            }
+            if (reference.length() < 3) {
+                showInfo("La référence est trop courte (min 3 caractères).");
+                return null;
+            }
+            if (facture == null || facture.isBlank()) {
+                showInfo("Le numéro de facture est obligatoire.");
+                return null;
+            }
+            if (facture.length() < 3) {
+                showInfo("Le numéro de facture est trop court (min 3 caractères).");
                 return null;
             }
             ////////////////////////////////////////////////////////////////////
@@ -403,7 +463,7 @@ public class OperationUIController {
                 return null;
             }
             if (description.length() > 255) {
-                showInfo("La description ne doit pas dépasser 255 caractères.");
+                showInfo("La description ne doit pas dépasser 255 caractères (actuel: " + description.length() + ").");
                 return null;
             }
             ///////////////////////////////////////////////////////////////////
@@ -412,7 +472,7 @@ public class OperationUIController {
                 return null;
             }
             if (categorie.length() > 15) {
-                showInfo("La catégorie ne doit pas dépasser 15 caractères.");
+                showInfo("La catégorie ne doit pas dépasser 15 caractères (actuel: " + categorie.length() + ").");
                 return null;
             }
 
@@ -425,9 +485,9 @@ public class OperationUIController {
 
             OPÉRATIONS op;
             if (existingId == null) {
-                op = new OPÉRATIONS(t, type, montant, categorie, description);
+                op = new OPÉRATIONS(t, reference, facture, pdfUrl, type, montant, categorie, description);
             } else {
-                op = new OPÉRATIONS(existingId, t, type, montant, categorie, description, LocalDateTime.now());
+                op = new OPÉRATIONS(existingId, t, reference, facture, pdfUrl, type, montant, categorie, description, LocalDateTime.now());
             }
             return op;
         } catch (NumberFormatException e) {
@@ -441,6 +501,13 @@ public class OperationUIController {
 
     private void clearForm() {
         typeBox.getSelectionModel().clearSelection();
+        try {
+            referenceField.setText(operationController.generateNextReference());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        factureField.clear();
+        pdfUrlField.clear();
         montantField.clear();
         categorieField.clear();
         descriptionField.clear();
@@ -454,7 +521,7 @@ public class OperationUIController {
 
         for (OPÉRATIONS op : operations) {
             VBox card = createCard(op);
-            if ("revenu".equalsIgnoreCase(op.getType())) {
+            if (op.getType() == OPÉRATIONS.TypeOperation.revenu) {
                 revenuCardsContainer.getChildren().add(card);
             } else {
                 depenseCardsContainer.getChildren().add(card);
@@ -468,13 +535,15 @@ public class OperationUIController {
         card.setSpacing(6);
         card.getStyleClass().add("card");
 
-        String type = op.getType() != null ? op.getType() : "";
+        String type = op.getType() != null ? op.getType().name() : "";
         String typeColor = "revenu".equalsIgnoreCase(type) ? "#16a34a" : "#dc2626";
 
         Label title = new Label(type.toUpperCase() + " • " + String.format("%.2f", op.getMontant()) + " TND");
         title.setStyle("-fx-font-weight: bold; -fx-text-fill: #0f172a;");
 
-        Label categorie = new Label(op.getCategorie() != null ? op.getCategorie() : "(aucune catégorie)");
+        String metaInfo = op.getCategorie() != null ? op.getCategorie() : "(aucune catégorie)";
+        metaInfo += "\nRef: " + (op.getReference() != null ? op.getReference() : "-");
+        Label categorie = new Label(metaInfo);
         categorie.setStyle("-fx-text-fill: #6b7280;");
 
         String descText = op.getDescription() != null && !op.getDescription().isBlank()
@@ -534,6 +603,21 @@ public class OperationUIController {
         noteBtn.setStyle("-fx-background-color: #8b5cf6; -fx-text-fill: white; -fx-background-radius: 6;");
         
         actions.getChildren().addAll(modifyBtn, deleteBtn, noteBtn);
+        
+        if (op.getPdfUrl() != null && !op.getPdfUrl().isBlank()) {
+            Button pdfBtn = new Button("PDF");
+            pdfBtn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 6;");
+            actions.getChildren().add(pdfBtn);
+            pdfBtn.setOnAction(ev -> {
+                try {
+                    java.awt.Desktop.getDesktop().open(new java.io.File(op.getPdfUrl()));
+                } catch (Exception e) {
+                    showError("Impossible d'ouvrir le PDF", e);
+                }
+                ev.consume();
+            });
+        }
+        
         card.getChildren().add(actions);
 
         noteBtn.setOnAction(ev -> {
@@ -627,13 +711,16 @@ public class OperationUIController {
                 .filter(op -> {
                     TRÉSORERIE t = op.getTresorerie();
                     if (t == null) return false;
+                    // Filter by enterprise (mandatory)
                     if (entrepriseId != null && t.getIdEntreprise() != entrepriseId) return false;
+                    // Filter by treasury ONLY if one is selected
                     if (tresId != null && t.getIdTresorerie() != tresId) return false;
                     return true;
                 })
                 .collect(Collectors.toList());
     }
 
+    /*
     @FXML
     private void onCheckRate() {
         String from = fromCurrencyField.getText();
@@ -661,4 +748,5 @@ public class OperationUIController {
             }
         }).start();
     }
+    */
 }

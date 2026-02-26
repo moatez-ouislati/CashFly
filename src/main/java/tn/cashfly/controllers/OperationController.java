@@ -18,11 +18,14 @@ public class OperationController {
     private final IOperationService operationService = new OperationService();
 
     public OPÉRATIONS createOperation(TRÉSORERIE tresorerie,
-                                      String type,
+                                      String reference,
+                                      String facture,
+                                      String pdfUrl,
+                                      OPÉRATIONS.TypeOperation type,
                                       double montant,
                                       String categorie,
                                       String description) throws SQLException {
-        OPÉRATIONS op = new OPÉRATIONS(tresorerie, type, montant, categorie, description);
+        OPÉRATIONS op = new OPÉRATIONS(tresorerie, reference, facture, pdfUrl, type, montant, categorie, description);
         op.setDateOperation(LocalDateTime.now());
         operationService.add(op);
         return op;
@@ -65,6 +68,10 @@ public class OperationController {
 
     public List<OPÉRATIONS> searchOperationsByKeyword(String keyword) throws SQLException {
         return operationService.searchByCategorieOrDescription(keyword);
+    }
+
+    public String generateNextReference() throws SQLException {
+        return operationService.generateNextReference();
     }
 }
 

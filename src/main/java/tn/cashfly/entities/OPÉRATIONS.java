@@ -5,16 +5,26 @@ import java.time.LocalDateTime;
 public class OPÉRATIONS {
 
     private int idOperation;
-    private TRÉSORERIE tresorerie;  // reference to the treasury object
-    private String type;            // "revenu" or "depense"
+    private String reference;
+    private String facture; // Invoice number
+    private String pdfUrl;  // Path to generated PDF
+    private TRÉSORERIE tresorerie;
+    private TypeOperation type;
     private double montant;
     private String categorie;
     private String description;
     private LocalDateTime dateOperation;
 
+    public enum TypeOperation {
+        revenu, depense
+    }
+
     // Constructor for new operation
-    public OPÉRATIONS(TRÉSORERIE tresorerie, String type, double montant, String categorie, String description) {
+    public OPÉRATIONS(TRÉSORERIE tresorerie, String reference, String facture, String pdfUrl, TypeOperation type, double montant, String categorie, String description) {
         this.tresorerie = tresorerie;
+        this.reference = reference;
+        this.facture = facture;
+        this.pdfUrl = pdfUrl;
         this.type = type;
         this.montant = montant;
         this.categorie = categorie;
@@ -23,10 +33,13 @@ public class OPÉRATIONS {
     }
 
     // Constructor for operation loaded from DB
-    public OPÉRATIONS(int idOperation, TRÉSORERIE tresorerie, String type, double montant,
+    public OPÉRATIONS(int idOperation, TRÉSORERIE tresorerie, String reference, String facture, String pdfUrl, TypeOperation type, double montant,
                       String categorie, String description, LocalDateTime dateOperation) {
         this.idOperation = idOperation;
         this.tresorerie = tresorerie;
+        this.reference = reference;
+        this.facture = facture;
+        this.pdfUrl = pdfUrl;
         this.type = type;
         this.montant = montant;
         this.categorie = categorie;
@@ -37,10 +50,22 @@ public class OPÉRATIONS {
     // Getters & setters
     public int getIdOperation() { return idOperation; }
     public void setIdOperation(int idOperation) { this.idOperation = idOperation; }
+    
+    public String getReference() { return reference; }
+    public void setReference(String reference) { this.reference = reference; }
+    
+    public String getFacture() { return facture; }
+    public void setFacture(String facture) { this.facture = facture; }
+    
+    public String getPdfUrl() { return pdfUrl; }
+    public void setPdfUrl(String pdfUrl) { this.pdfUrl = pdfUrl; }
+
     public TRÉSORERIE getTresorerie() { return tresorerie; }
     public void setTresorerie(TRÉSORERIE tresorerie) { this.tresorerie = tresorerie; }
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
+    
+    public TypeOperation getType() { return type; }
+    public void setType(TypeOperation type) { this.type = type; }
+    
     public double getMontant() { return montant; }
     public void setMontant(double montant) { this.montant = montant; }
     public String getCategorie() { return categorie; }
@@ -53,13 +78,11 @@ public class OPÉRATIONS {
     @Override
     public String toString() {
         return "Operation{" +
-                "idOperation=" + idOperation +
-                ", tresorerieId=" + tresorerie.getIdTresorerie() +
-                ", type='" + type + '\'' +
+                "id=" + idOperation +
+                ", ref='" + reference + '\'' +
+                ", facture='" + facture + '\'' +
+                ", type=" + type +
                 ", montant=" + montant +
-                ", categorie='" + categorie + '\'' +
-                ", description='" + description + '\'' +
-                ", dateOperation=" + dateOperation +
                 '}';
     }
 }
