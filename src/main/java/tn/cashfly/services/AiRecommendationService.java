@@ -19,7 +19,7 @@ public class AiRecommendationService {
     // 🔹 OpenAI Configuration
     // =========================
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String OPENAI_API_KEY = "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"; // 🔐 replace
+    private static final String OPENAI_API_KEY = "OPENAI_API_KEY"; // 🔐 replace
     private static final String OPENAI_MODEL = "gpt-4o-mini";
 
     // =========================
