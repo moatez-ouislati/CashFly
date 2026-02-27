@@ -456,6 +456,47 @@
     -fx-underline: true;
 }
 
+/* AI icon placeholder */
+.icon-ai {
+    -fx-background-color: rgba(90, 92, 229, 0.2);
+    -fx-background-radius: 50%;
+    -fx-min-width: 32px;
+    -fx-min-height: 32px;
+}
+
+/* Notification header container */
+.notif-header-container {
+    -fx-padding: 0 0 16 0;
+}
+
+/* Notification card */
+.notif-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 8, 0, 0, 3);
+    -fx-padding: 16;
+}
+
+.notif-card:hover {
+    -fx-background-color: #f8f9ff;
+    -fx-effect: dropshadow(three-pass-box, rgba(90,92,229,0.10), 12, 0, 0, 4);
+}
+
+.notif-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Scroll pane inside dark card */
+.card-dark .scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.card-dark .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
 /* Icon Styling */
 .ikonli-font-icon {
     -fx-icon-color: #a0a4b8;

@@ -1,90 +1,66 @@
 package tn.cashfly.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import tn.cashfly.models.Investissement;
 import tn.cashfly.models.RendementInvestissement;
-import tn.cashfly.models.Utilisateur;
-import tn.cashfly.services.ServiceInvest;
-import tn.cashfly.services.ServiceRendement;
-import tn.cashfly.services.ServiceUtilisateur;
-import javafx.scene.chart.*;
+import tn.cashfly.services.*;
 
 import java.math.BigDecimal;
+
 import java.net.URL;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 public class DashboardController implements Initializable {
 
-    // Navigation
     @FXML
     private ScrollPane dashboardView;
     @FXML
-    private VBox investmentsView;
+    private Parent investmentsView;
     @FXML
-    private VBox rendementsView;
+    private Parent rendementsView;
     @FXML
-    private VBox utilisateursView;
+    private Parent utilisateursView;
     @FXML
-    private VBox rapportsView;
+    private Parent rapportsView;
     @FXML
-    private VBox parametresView;
+    private Parent parametresView;
     @FXML
-    private VBox notificationsView;
+    private Parent notificationsView;
+
+    // ─── Header ──────────────────────────────────────────────────────────────
     @FXML
     private Label pageTitle;
     @FXML
     private Label pageSubtitle;
 
-    // Table
+    // ─── Dashboard KPI cards ─────────────────────────────────────────────────
     @FXML
-    private TableView<Investissement> investTable;
+    private Label lblTotalInvested;
     @FXML
-    private TableColumn<Investissement, Integer> colId;
+    private Label lblTotalGain;
     @FXML
-    private TableColumn<Investissement, String> colDescription;
+    private Label lblNetResult;
     @FXML
-    private TableColumn<Investissement, Double> colMontant;
-    @FXML
-    private TableColumn<Investissement, String> colStatut;
-    @FXML
-    private TableColumn<Investissement, Date> colDate;
-    @FXML
-    private TableColumn<Investissement, Double> colTaux;
-    @FXML
-    private TableColumn<Investissement, Integer> colDuree;
+    private Label lblActiveCount;
 
-    // Rendements Table
-    @FXML
-    private TableView<RendementInvestissement> returnsTable;
-    @FXML
-    private TableColumn<RendementInvestissement, Integer> colRdtId;
-    @FXML
-    private TableColumn<RendementInvestissement, Integer> colRdtInvId;
-    @FXML
-    private TableColumn<RendementInvestissement, Date> colRdtDate;
-    @FXML
-    private TableColumn<RendementInvestissement, BigDecimal> colRdtGain;
-    @FXML
-    private TableColumn<RendementInvestissement, BigDecimal> colRdtPerte;
-    @FXML
-    private TableColumn<RendementInvestissement, BigDecimal> colRdtValeur;
-
-    // Charts
+    // ─── Charts ──────────────────────────────────────────────────────────────
     @FXML
     private PieChart pieChart;
     @FXML
@@ -92,7 +68,7 @@ public class DashboardController implements Initializable {
     @FXML
     private LineChart<String, Number> lineChart;
 
-    // Reports View Charts
+    // ─── Reports Charts ──────────────────────────────────────────────────────
     @FXML
     private PieChart pieChartReports;
     @FXML
@@ -100,388 +76,363 @@ public class DashboardController implements Initializable {
     @FXML
     private LineChart<String, Number> lineChartReports;
 
-    // Users Table
+    // ─── AI / News area ──────────────────────────────────────────────────────
     @FXML
-    private TableView<Utilisateur> usersTable;
+    private VBox aiRecommendationsBox;
     @FXML
-    private TableColumn<Utilisateur, Integer> colUserId;
+    private VBox newsContainer;
     @FXML
-    private TableColumn<Utilisateur, String> colUserNom;
+    private Label aiLoadingLabel;
     @FXML
-    private TableColumn<Utilisateur, String> colUserType;
-    @FXML
-    private TableColumn<Utilisateur, String> colUserEmail;
-    @FXML
-    private TableColumn<Utilisateur, String> colUserStatut;
+    private Label newsLoadingLabel;
 
-    // Form
-    @FXML
-    private TextField txtDescription;
-    @FXML
-    private TextField txtMontant;
-    @FXML
-    private TextField txtStatut;
-    @FXML
-    private TextField txtTaux;
-    @FXML
-    private TextField txtDuree;
-    @FXML
-    private TextField txtIdEntreprise;
-    @FXML
-    private TextField txtIdInvestisseur;
+    // ─── Services ────────────────────────────────────────────────────────────
+    private final ServiceInvest serviceInvest = new ServiceInvest();
+    private final ServiceRendement serviceRendement = new ServiceRendement();
+    private final NewsService newsService = new NewsService();
+    private final AiRecommendationService aiService = new AiRecommendationService();
 
-    // Rendement Form
-    @FXML
-    private TextField txtIdInvestissementRDT;
-    @FXML
-    private TextField txtDateCalcul;
-    @FXML
-    private TextField txtGain;
-    @FXML
-    private TextField txtPerte;
-    @FXML
-    private TextField txtValeurPortefeuille;
-
-    private ServiceInvest serviceInvest;
-    private ServiceRendement serviceRendement;
-    private ServiceUtilisateur serviceUtilisateur;
     private ObservableList<Investissement> investmentList;
     private ObservableList<RendementInvestissement> rendementList;
-    private ObservableList<Utilisateur> userList;
 
+    // ─── Init ─────────────────────────────────────────────────────────────────
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        serviceInvest = new ServiceInvest();
-        serviceRendement = new ServiceRendement();
-        serviceUtilisateur = new ServiceUtilisateur();
         investmentList = FXCollections.observableArrayList();
         rendementList = FXCollections.observableArrayList();
-        userList = FXCollections.observableArrayList();
-
-        setupTable();
         loadData();
-        setupSelectionListener();
+        loadNewsAsync();
+        loadAiRecommendationsAsync();
     }
 
-    private void setupTable() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("idInvestissement"));
-        colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
-        colMontant.setCellValueFactory(new PropertyValueFactory<>("montant"));
-        colStatut.setCellValueFactory(new PropertyValueFactory<>("statut"));
-        colDate.setCellValueFactory(new PropertyValueFactory<>("dateInvestissement"));
-        colTaux.setCellValueFactory(new PropertyValueFactory<>("tauxRendementPrevu"));
-        colDuree.setCellValueFactory(new PropertyValueFactory<>("dureeMois"));
-
-        investTable.setItems(investmentList);
-
-        // Rendements Table
-        colRdtId.setCellValueFactory(new PropertyValueFactory<>("idRendement"));
-        colRdtInvId.setCellValueFactory(new PropertyValueFactory<>("idInvestissement"));
-        colRdtDate.setCellValueFactory(new PropertyValueFactory<>("dateCalcul"));
-        colRdtGain.setCellValueFactory(new PropertyValueFactory<>("gain"));
-        colRdtPerte.setCellValueFactory(new PropertyValueFactory<>("perte"));
-        colRdtValeur.setCellValueFactory(new PropertyValueFactory<>("valeurPortefeuille"));
-
-        returnsTable.setItems(rendementList);
-
-        // Users Table
-        colUserId.setCellValueFactory(new PropertyValueFactory<>("idUtilisateur"));
-        colUserNom.setCellValueFactory(new PropertyValueFactory<>("nomComplet"));
-        colUserType.setCellValueFactory(new PropertyValueFactory<>("role"));
-        colUserEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
-        // Assuming 'statut' might not exist in Utilisateur yet, but we'll map role to
-        // it for now or just skip
-        colUserStatut.setCellValueFactory(new PropertyValueFactory<>("role"));
-
-        usersTable.setItems(userList);
-    }
-
+    // ─── Data loading ─────────────────────────────────────────────────────────
     private void loadData() {
         try {
             investmentList.clear();
-            investmentList.addAll(serviceInvest.getAll());
-
             rendementList.clear();
+            investmentList.addAll(serviceInvest.getAll());
             rendementList.addAll(serviceRendement.getAll());
-
-            userList.clear();
-            userList.addAll(serviceUtilisateur.getAll());
-
+            updateKpiCards();
             updateCharts();
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur de chargement",
-                    "Impossible de charger les données : " + e.getMessage());
+            System.err.println("Dashboard load error: " + e.getMessage());
         }
     }
 
-    private void setupSelectionListener() {
-        investTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                fillForm(newSelection);
-            }
-        });
+    private void updateKpiCards() {
+        BigDecimal totalInvested = investmentList.stream()
+                .map(Investissement::getMontant)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        returnsTable.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                fillRendementForm(newSelection);
-            }
-        });
+        BigDecimal totalGain = rendementList.stream()
+                .map(RendementInvestissement::getGain)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal totalPerte = rendementList.stream()
+                .map(RendementInvestissement::getPerte)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal net = totalGain.subtract(totalPerte);
+        long activeCount = investmentList.stream()
+                .filter(i -> i.getStatut() != null &&
+                        (i.getStatut().equalsIgnoreCase("actif") ||
+                                i.getStatut().equalsIgnoreCase("en cours")))
+                .count();
+
+        if (lblTotalInvested != null)
+            lblTotalInvested.setText(String.format("%,.0f TND", totalInvested.doubleValue()));
+        if (lblTotalGain != null)
+            lblTotalGain.setText(String.format("+%,.2f TND", totalGain.doubleValue()));
+        if (lblNetResult != null) {
+            lblNetResult.setText(String.format("%,.2f TND", net.doubleValue()));
+            lblNetResult.setStyle(net.compareTo(BigDecimal.ZERO) >= 0
+                    ? "-fx-text-fill: #2ecc71; -fx-font-size: 24px; -fx-font-weight: bold;"
+                    : "-fx-text-fill: #e74c3c; -fx-font-size: 24px; -fx-font-weight: bold;");
+        }
+        if (lblActiveCount != null)
+            lblActiveCount.setText(String.valueOf(activeCount));
     }
 
-    private void fillRendementForm(RendementInvestissement r) {
-        txtIdInvestissementRDT.setText(String.valueOf(r.getIdInvestissement()));
-        txtDateCalcul.setText(r.getDateCalcul().toString());
-        txtGain.setText(String.valueOf(r.getGain()));
-        txtPerte.setText(String.valueOf(r.getPerte()));
-        txtValeurPortefeuille.setText(String.valueOf(r.getValeurPortefeuille()));
-    }
-
+    // ─── Charts ───────────────────────────────────────────────────────────────
     private void updateCharts() {
-        updatePieChart(pieChart);
-        updatePieChart(pieChartReports);
-        updateBarChart(barChart);
-        updateBarChart(barChartReports);
-        updateLineChart(lineChart);
-        updateLineChart(lineChartReports);
+        // Dashboard home: per-record detail
+        updatePieChartByEnterprise(pieChart);
+        updateBarChartPerRecord(barChart);
+        updateLineChartPerRecord(lineChart);
+
+        // Reports: clean semi-annual (S1 Jan-Jun / S2 Jul-Dec) grouping
+        updatePieChartByEnterprise(pieChartReports);
+        updateBarChartSemiAnnual(barChartReports);
+        updateLineChartSemiAnnual(lineChartReports);
     }
 
-    private void updatePieChart(PieChart chart) {
+    /** Pie chart — portfolio split by enterprise. */
+    private void updatePieChartByEnterprise(PieChart chart) {
         if (chart == null)
             return;
-        ObservableList<PieChart.Data> pieData = FXCollections.observableArrayList();
-
-        // Group investments by Enterprise ID
-        java.util.Map<String, Double> dataMap = new java.util.HashMap<>();
+        java.util.LinkedHashMap<String, Double> map = new java.util.LinkedHashMap<>();
         for (Investissement i : investmentList) {
-            String label = "Entreprise #" + i.getIdEntreprise();
-            dataMap.put(label, dataMap.getOrDefault(label, 0.0) + i.getMontant().doubleValue());
+            String label = "Ent. #" + i.getIdEntreprise();
+            map.merge(label, i.getMontant().doubleValue(), Double::sum);
         }
-
-        dataMap.forEach((k, v) -> pieData.add(new PieChart.Data(k, v)));
-        chart.setData(pieData);
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        if (map.isEmpty()) {
+            data.add(new PieChart.Data("Aucune donnée", 1));
+        } else {
+            map.forEach((k, v) -> data.add(new PieChart.Data(
+                    k + " (" + String.format("%,.0f TND", v) + ")", v)));
+        }
+        chart.setData(data);
+        chart.setLegendVisible(true);
+        chart.setLabelsVisible(true);
     }
 
-    private void updateBarChart(BarChart<String, Number> chart) {
-        if (chart == null)
+    /** Dashboard home bar — one bar per investment record. */
+    private void updateBarChartPerRecord(BarChart<String, Number> chart) {
+        if (chart == null || investmentList.isEmpty())
             return;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Montant Investi");
-
+        series.setName("Montant (TND)");
         for (Investissement i : investmentList) {
-            series.getData().add(new XYChart.Data<>(i.getDateInvestissement().toString(), i.getMontant()));
+            series.getData().add(new XYChart.Data<>(
+                    i.getDateInvestissement().toString(), i.getMontant()));
         }
-
         chart.getData().clear();
         chart.getData().add(series);
     }
 
-    private void updateLineChart(LineChart<String, Number> chart) {
-        if (chart == null)
+    /** Dashboard home line — cumulative gain per rendement record. */
+    private void updateLineChartPerRecord(LineChart<String, Number> chart) {
+        if (chart == null || rendementList.isEmpty())
             return;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Gains Cumulés");
-
-        BigDecimal cumulativeGain = BigDecimal.ZERO;
+        series.setName("Gains Cumulés (TND)");
+        BigDecimal cumulative = BigDecimal.ZERO;
         for (RendementInvestissement r : rendementList) {
-            cumulativeGain = cumulativeGain.add(r.getGain());
-            series.getData().add(new XYChart.Data<>(r.getDateCalcul().toString(), cumulativeGain));
+            cumulative = cumulative.add(r.getGain());
+            series.getData().add(new XYChart.Data<>(
+                    r.getDateCalcul().toString(), cumulative));
         }
-
         chart.getData().clear();
         chart.getData().add(series);
     }
 
-    private void fillForm(Investissement i) {
-        txtDescription.setText(i.getDescription());
-        txtMontant.setText(String.valueOf(i.getMontant()));
-        txtStatut.setText(i.getStatut());
-        txtTaux.setText(String.valueOf(i.getTauxRendementPrevu()));
-        txtDuree.setText(String.valueOf(i.getDureeMois()));
-        txtIdEntreprise.setText(String.valueOf(i.getIdEntreprise()));
-        txtIdInvestisseur.setText(String.valueOf(i.getIdInvestisseur()));
-    }
-
-    @FXML
-    private void handleAdd(ActionEvent event) {
-        try {
-            Investissement i = new Investissement(
-                    Integer.parseInt(txtIdInvestisseur.getText()),
-                    Integer.parseInt(txtIdEntreprise.getText()),
-                    new BigDecimal(txtMontant.getText()),
-                    Date.valueOf(LocalDate.now()), // Default to today
-                    txtStatut.getText(),
-                    new BigDecimal(txtTaux.getText()),
-                    Integer.parseInt(txtDuree.getText()),
-                    txtDescription.getText());
-
-            serviceInvest.add(i);
-            loadData();
-            clearForm();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Investissement ajouté avec succès.");
-
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez vérifier les champs numériques.");
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'ajout : " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleUpdate(ActionEvent event) {
-        Investissement selected = investTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez sélectionner un investissement à modifier.");
+    /** Reports bar — capital invested grouped by semester (S1 / S2). */
+    private void updateBarChartSemiAnnual(BarChart<String, Number> chart) {
+        if (chart == null)
             return;
+        java.util.TreeMap<String, Double> semMap = new java.util.TreeMap<>();
+        for (Investissement i : investmentList) {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(i.getDateInvestissement());
+            int year = cal.get(java.util.Calendar.YEAR);
+            int month = cal.get(java.util.Calendar.MONTH); // 0-based
+            String key = year + (month < 6 ? " — S1" : " — S2");
+            semMap.merge(key, i.getMontant().doubleValue(), Double::sum);
         }
+        // Ensure at least the current year has both buckets
+        if (semMap.isEmpty()) {
+            int y = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+            semMap.put(y + " — S1", 0.0);
+            semMap.put(y + " — S2", 0.0);
+        }
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Capital Investi (TND)");
+        semMap.forEach((k, v) -> series.getData().add(new XYChart.Data<>(k, v)));
+        chart.getData().clear();
+        chart.setAnimated(false);
+        chart.getData().add(series);
+    }
 
-        try {
-            selected.setIdInvestisseur(Integer.parseInt(txtIdInvestisseur.getText()));
-            selected.setIdEntreprise(Integer.parseInt(txtIdEntreprise.getText()));
-            selected.setMontant(new BigDecimal(txtMontant.getText()));
-            selected.setStatut(txtStatut.getText());
-            selected.setTauxRendementPrevu(new BigDecimal(txtTaux.getText()));
-            selected.setDureeMois(Integer.parseInt(txtDuree.getText()));
-            selected.setDescription(txtDescription.getText());
+    /** Reports line — gain, perte and net per semester with 3 series. */
+    private void updateLineChartSemiAnnual(LineChart<String, Number> chart) {
+        if (chart == null)
+            return;
+        // [0] = gain, [1] = perte per semester key
+        java.util.TreeMap<String, double[]> semMap = new java.util.TreeMap<>();
+        for (RendementInvestissement r : rendementList) {
+            java.util.Calendar cal = java.util.Calendar.getInstance();
+            cal.setTime(r.getDateCalcul());
+            int year = cal.get(java.util.Calendar.YEAR);
+            int month = cal.get(java.util.Calendar.MONTH);
+            String key = year + (month < 6 ? " — S1" : " — S2");
+            semMap.computeIfAbsent(key, k2 -> new double[] { 0.0, 0.0 });
+            semMap.get(key)[0] += r.getGain().doubleValue();
+            semMap.get(key)[1] += r.getPerte().doubleValue();
+        }
+        if (semMap.isEmpty()) {
+            int y = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+            semMap.put(y + " — S1", new double[] { 0.0, 0.0 });
+            semMap.put(y + " — S2", new double[] { 0.0, 0.0 });
+        }
+        XYChart.Series<String, Number> gainSeries = new XYChart.Series<>();
+        gainSeries.setName("Gains (TND)");
+        XYChart.Series<String, Number> perteSeries = new XYChart.Series<>();
+        perteSeries.setName("Pertes (TND)");
+        XYChart.Series<String, Number> netSeries = new XYChart.Series<>();
+        netSeries.setName("Net (TND)");
+        semMap.forEach((k, v) -> {
+            gainSeries.getData().add(new XYChart.Data<>(k, v[0]));
+            perteSeries.getData().add(new XYChart.Data<>(k, v[1]));
+            netSeries.getData().add(new XYChart.Data<>(k, v[0] - v[1]));
+        });
+        chart.getData().clear();
+        chart.setAnimated(false);
+        chart.getData().addAll(gainSeries, perteSeries, netSeries);
+    }
 
-            serviceInvest.update(selected);
-            loadData();
-            clearForm();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Investissement mis à jour avec succès.");
+    // ─── News (async) ─────────────────────────────────────────────────────────
+    private void loadNewsAsync() {
+        if (newsContainer == null)
+            return;
+        if (newsLoadingLabel != null)
+            newsLoadingLabel.setVisible(true);
 
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Veuillez vérifier les champs numériques.");
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la mise à jour : " + e.getMessage());
+        CompletableFuture.supplyAsync(() -> newsService.fetchFinancialNews())
+                .thenAccept(articles -> Platform.runLater(() -> {
+                    if (newsLoadingLabel != null)
+                        newsLoadingLabel.setVisible(false);
+                    renderNews(articles);
+                }))
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> {
+                        if (newsLoadingLabel != null)
+                            newsLoadingLabel.setText("Actualités non disponibles.");
+                        renderNews(newsService.getFallbackNews());
+                    });
+                    return null;
+                });
+    }
+
+    private void renderNews(List<NewsService.NewsArticle> articles) {
+        if (newsContainer == null)
+            return;
+        newsContainer.getChildren().clear();
+
+        for (NewsService.NewsArticle article : articles) {
+            VBox card = createNewsCard(article);
+            newsContainer.getChildren().add(card);
         }
     }
 
-    @FXML
-    private void handleDelete(ActionEvent event) {
-        Investissement selected = investTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez sélectionner un investissement à supprimer.");
-            return;
+    private VBox createNewsCard(NewsService.NewsArticle article) {
+        VBox card = new VBox(6);
+        card.setStyle("-fx-background-color: #1e2130; -fx-background-radius: 8; " +
+                "-fx-padding: 12; -fx-cursor: hand;");
+        card.setPadding(new Insets(12));
+
+        HBox header = new HBox(8);
+        header.setAlignment(Pos.CENTER_LEFT);
+        Label sourceBadge = new Label(article.source != null && !article.source.isEmpty()
+                ? article.source
+                : "Actualités");
+        sourceBadge.setStyle("-fx-background-color: #5a5ce533; -fx-text-fill: #5a5ce5; " +
+                "-fx-background-radius: 10; -fx-padding: 2 8; -fx-font-size: 10px; -fx-font-weight: bold;");
+        Region sp = new Region();
+        HBox.setHgrow(sp, Priority.ALWAYS);
+        Label timeLabel = new Label(article.publishedAt != null ? article.publishedAt : "Récent");
+        timeLabel.setStyle("-fx-text-fill: #6c757d; -fx-font-size: 10px;");
+        header.getChildren().addAll(sourceBadge, sp, timeLabel);
+
+        Label title = new Label(article.title);
+        title.setWrapText(true);
+        title.setStyle("-fx-text-fill: #ecf0f1; -fx-font-size: 12px; -fx-font-weight: bold;");
+
+        if (article.description != null && !article.description.isEmpty()) {
+            Label desc = new Label(article.description);
+            desc.setWrapText(true);
+            desc.setStyle("-fx-text-fill: #95a5a6; -fx-font-size: 11px;");
+            card.getChildren().addAll(header, title, desc);
+        } else {
+            card.getChildren().addAll(header, title);
         }
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText("Supprimer l'investissement ?");
-        alert.setContentText("Êtes-vous sûr de vouloir supprimer cet investissement ?");
+        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #252840; -fx-background-radius: 8; " +
+                "-fx-padding: 12; -fx-cursor: hand;"));
+        card.setOnMouseExited(e -> card.setStyle("-fx-background-color: #1e2130; -fx-background-radius: 8; " +
+                "-fx-padding: 12; -fx-cursor: hand;"));
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
+        return card;
+    }
+
+    // ─── AI Recommendations (async) ───────────────────────────────────────────
+    private void loadAiRecommendationsAsync() {
+        if (aiRecommendationsBox == null)
+            return;
+        if (aiLoadingLabel != null) {
+            aiLoadingLabel.setText("⏳ Génération des recommandations IA...");
+            aiLoadingLabel.setVisible(true);
+        }
+
+        CompletableFuture.supplyAsync(() -> {
+            // Re-load data for AI analysis
             try {
-                serviceInvest.delete(selected);
-                loadData();
-                clearForm();
+                List<Investissement> invs = serviceInvest.getAll();
+                List<RendementInvestissement> rdts = serviceRendement.getAll();
+
+                BigDecimal totalInvested = invs.stream().map(Investissement::getMontant)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal totalGain = rdts.stream().map(RendementInvestissement::getGain)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal totalPerte = rdts.stream().map(RendementInvestissement::getPerte)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                double avgTaux = invs.stream()
+                        .mapToDouble(i -> i.getTauxRendementPrevu().doubleValue())
+                        .average().orElse(0);
+
+                return aiService.generateRecommendations(
+                        totalInvested, totalGain, totalPerte, invs.size(), avgTaux);
             } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la suppression : " + e.getMessage());
+                return aiService.getRuleBasedRecommendations(
+                        BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, 0, 0);
             }
-        }
+        }).thenAccept(recs -> Platform.runLater(() -> {
+            if (aiLoadingLabel != null)
+                aiLoadingLabel.setVisible(false);
+            renderAiRecommendations(recs);
+        })).exceptionally(ex -> {
+            Platform.runLater(() -> {
+                if (aiLoadingLabel != null)
+                    aiLoadingLabel.setText("IA non disponible.");
+            });
+            return null;
+        });
     }
 
-    @FXML
-    private void handleClear(ActionEvent event) {
-        clearForm();
-        investTable.getSelectionModel().clearSelection();
-    }
-
-    // --- Rendements CRUD ---
-
-    @FXML
-    private void handleAddRendement(ActionEvent event) {
-        try {
-            RendementInvestissement r = new RendementInvestissement(
-                    Integer.parseInt(txtIdInvestissementRDT.getText()),
-                    Date.valueOf(txtDateCalcul.getText()),
-                    new BigDecimal(txtGain.getText()),
-                    new BigDecimal(txtPerte.getText()),
-                    new BigDecimal(txtValeurPortefeuille.getText()));
-
-            serviceRendement.add(r);
-            loadData();
-            clearRendementForm();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Rendement ajouté avec succès.");
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de l'ajout du rendement : " + e.getMessage());
-        }
-    }
-
-    @FXML
-    private void handleUpdateRendement(ActionEvent event) {
-        RendementInvestissement selected = returnsTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez sélectionner un rendement à modifier.");
+    private void renderAiRecommendations(List<AiRecommendationService.Recommendation> recs) {
+        if (aiRecommendationsBox == null)
             return;
-        }
+        aiRecommendationsBox.getChildren().clear();
 
-        try {
-            selected.setIdInvestissement(Integer.parseInt(txtIdInvestissementRDT.getText()));
-            selected.setDateCalcul(Date.valueOf(txtDateCalcul.getText()));
-            selected.setGain(new BigDecimal(txtGain.getText()));
-            selected.setPerte(new BigDecimal(txtPerte.getText()));
-            selected.setValeurPortefeuille(new BigDecimal(txtValeurPortefeuille.getText()));
-
-            serviceRendement.update(selected);
-            loadData();
-            clearRendementForm();
-            showAlert(Alert.AlertType.INFORMATION, "Succès", "Rendement mis à jour.");
-        } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la modification : " + e.getMessage());
+        for (AiRecommendationService.Recommendation rec : recs) {
+            VBox card = createAiCard(rec);
+            aiRecommendationsBox.getChildren().add(card);
         }
     }
 
-    @FXML
-    private void handleDeleteRendement(ActionEvent event) {
-        RendementInvestissement selected = returnsTable.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert(Alert.AlertType.WARNING, "Attention", "Veuillez sélectionner un rendement à supprimer.");
-            return;
-        }
+    private VBox createAiCard(AiRecommendationService.Recommendation rec) {
+        VBox card = new VBox(6);
+        card.setPadding(new Insets(12));
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation");
-        alert.setHeaderText("Supprimer ce rendement ?");
-        alert.setContentText("Ceci est irréversible.");
+        String borderColor = switch (rec.type) {
+            case "success" -> "#2ecc71";
+            case "warning" -> "#f39c12";
+            default -> "#3498db";
+        };
+        card.setStyle("-fx-background-color: " + borderColor + "15; " +
+                "-fx-background-radius: 8; -fx-border-color: " + borderColor + "44; " +
+                "-fx-border-radius: 8; -fx-border-width: 1; -fx-padding: 12;");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                serviceRendement.delete(selected);
-                loadData();
-                clearRendementForm();
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la suppression : " + e.getMessage());
-            }
-        }
+        Label title = new Label(rec.title);
+        title.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + borderColor + ";");
+
+        Label detail = new Label(rec.detail);
+        detail.setWrapText(true);
+        detail.setStyle("-fx-font-size: 11px; -fx-text-fill: #bdc3c7; -fx-line-spacing: 2;");
+
+        card.getChildren().addAll(title, detail);
+        return card;
     }
 
-    @FXML
-    private void handleClearRendement(ActionEvent event) {
-        clearRendementForm();
-        returnsTable.getSelectionModel().clearSelection();
-    }
-
-    private void clearRendementForm() {
-        txtIdInvestissementRDT.clear();
-        txtDateCalcul.clear();
-        txtGain.clear();
-        txtPerte.clear();
-        txtValeurPortefeuille.clear();
-    }
-
-    private void clearForm() {
-        txtDescription.clear();
-        txtMontant.clear();
-        txtStatut.clear();
-        txtTaux.clear();
-        txtDuree.clear();
-        txtIdEntreprise.clear();
-        txtIdInvestisseur.clear();
-    }
-
-    // Simple navigation handler (connect to buttons in FXML if needed, for now just
-    // programmatic example)
+    // ─── Navigation ───────────────────────────────────────────────────────────
     private void hideAllViews() {
         if (dashboardView != null)
             dashboardView.setVisible(false);
@@ -499,76 +450,69 @@ public class DashboardController implements Initializable {
             notificationsView.setVisible(false);
     }
 
+    @FXML
     public void showDashboard() {
         hideAllViews();
-        if (dashboardView != null)
-            dashboardView.setVisible(true);
-        pageTitle.setText("Console de Pilotage");
-        pageSubtitle.setText("Analyse en temps réel de votre écosystème financier.");
+        show(dashboardView, "Console de Pilotage", "Analyse en temps réel de votre écosystème financier.");
     }
 
+    @FXML
     public void showInvestments() {
         hideAllViews();
-        if (investmentsView != null)
-            investmentsView.setVisible(true);
-        pageTitle.setText("Investissements");
-        pageSubtitle.setText("Gestion des investissements et transactions.");
+        show(investmentsView, "Investissements", "Gérez vos investissements en vue cartes.");
     }
 
+    @FXML
     public void showRendements() {
         hideAllViews();
-        if (rendementsView != null)
-            rendementsView.setVisible(true);
-        pageTitle.setText("Rendements");
-        pageSubtitle.setText("Analyse des performances et KPI.");
+        show(rendementsView, "Rendements", "Analyse des performances et KPI.");
     }
 
+    @FXML
     public void showUtilisateurs() {
         hideAllViews();
-        if (utilisateursView != null)
-            utilisateursView.setVisible(true);
-        pageTitle.setText("Utilisateurs / Clients");
-        pageSubtitle.setText("Gestion des investisseurs et entreprises.");
+        show(utilisateursView, "Utilisateurs", "Gestion des investisseurs et entreprises.");
     }
 
+    @FXML
     public void showRapports() {
         hideAllViews();
-        if (rapportsView != null)
-            rapportsView.setVisible(true);
-        pageTitle.setText("Rapports & Analytics");
-        pageSubtitle.setText("Statistiques globales et comparaisons.");
+        show(rapportsView, "Rapports & Analytics", "Statistiques globales et comparaisons.");
     }
 
+    @FXML
     public void showParametres() {
         hideAllViews();
-        if (parametresView != null)
-            parametresView.setVisible(true);
-        pageTitle.setText("Paramètres");
-        pageSubtitle.setText("Configuration de l'application.");
+        show(parametresView, "Paramètres", "Configuration de l'application.");
     }
 
+    @FXML
     public void showNotifications() {
         hideAllViews();
-        if (notificationsView != null)
-            notificationsView.setVisible(true);
-        pageTitle.setText("Notifications");
-        pageSubtitle.setText("Centre d'alertes et messages.");
+        show(notificationsView, "Notifications", "Centre d'alertes et messages.");
     }
 
+    private void show(Node view, String title, String subtitle) {
+        if (view != null)
+            view.setVisible(true);
+        if (pageTitle != null)
+            pageTitle.setText(title);
+        if (pageSubtitle != null)
+            pageSubtitle.setText(subtitle);
+    }
+
+    // ─── Logout ───────────────────────────────────────────────────────────────
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/login.fxml"));
             Parent root = loader.load();
-
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
+            stage.setScene(new Scene(root));
             stage.centerOnScreen();
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de se déconnecter : " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible de se déconnecter: " + e.getMessage());
         }
     }
 
@@ -579,6 +523,4 @@ public class DashboardController implements Initializable {
         alert.setContentText(content);
         alert.showAndWait();
     }
-
-
 }

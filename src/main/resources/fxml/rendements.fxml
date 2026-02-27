@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox spacing="20.0" styleClass="main-content" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.RendementsController">
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+    <children>
+
+        <!-- Top bar -->
+        <HBox alignment="CENTER_LEFT" spacing="20.0">
+            <children>
+                <VBox>
+                    <Label styleClass="section-title" text="Analyse des Rendements" />
+                    <Label styleClass="page-subtitle" text="Suivi de la performance de vos actifs en vue cartes" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- Summary KPIs -->
+                <HBox spacing="15.0">
+                    <VBox styleClass="card" alignment="CENTER" prefWidth="130">
+                        <Label text="Gains Totaux" textFill="#7f8c8d" style="-fx-font-size:11px;" />
+                        <Label fx:id="lblTotalGain" text="+0.00 TND" style="-fx-text-fill:#2ecc71;-fx-font-size:16px;-fx-font-weight:bold;" />
+                    </VBox>
+                    <VBox styleClass="card" alignment="CENTER" prefWidth="130">
+                        <Label text="Pertes Totales" textFill="#7f8c8d" style="-fx-font-size:11px;" />
+                        <Label fx:id="lblTotalPerte" text="-0.00 TND" style="-fx-text-fill:#e74c3c;-fx-font-size:16px;-fx-font-weight:bold;" />
+                    </VBox>
+                    <VBox styleClass="card" alignment="CENTER" prefWidth="130">
+                        <Label text="Résultat Net" textFill="#7f8c8d" style="-fx-font-size:11px;" />
+                        <Label fx:id="lblNetResult" text="0.00 TND" style="-fx-font-size:22px;-fx-font-weight:bold;" />
+                    </VBox>
+                </HBox>
+            </children>
+        </HBox>
+
+        <!-- Main layout: cards + form -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <children>
+
+                <!-- Cards area -->
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="scroll-pane" vbarPolicy="AS_NEEDED">
+                    <content>
+                        <FlowPane fx:id="cardsContainer" hgap="16" vgap="16" prefWrapLength="700">
+                            <padding><Insets top="4" /></padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+
+                <!-- Form panel -->
+                <VBox prefWidth="300.0" spacing="14.0" styleClass="card">
+                    <children>
+                        <Label styleClass="section-title" text="📊 Gestion du Rendement" />
+                        <Separator style="-fx-opacity:0.15;" />
+
+                        <VBox spacing="4.0">
+                            <Label text="ID Investissement" textFill="#6c757d" />
+                            <TextField fx:id="txtIdInvestissementRDT" styleClass="form-field" promptText="ID de l'investissement" />
+                        </VBox>
+
+                        <VBox spacing="4.0">
+                            <Label text="Date de Calcul (YYYY-MM-DD)" textFill="#6c757d" />
+                            <TextField fx:id="txtDateCalcul" styleClass="form-field" promptText="2024-01-15" />
+                        </VBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Gain (TND)" textFill="#6c757d" />
+                                <TextField fx:id="txtGain" styleClass="form-field" promptText="0.00" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Perte (TND)" textFill="#6c757d" />
+                                <TextField fx:id="txtPerte" styleClass="form-field" promptText="0.00" />
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="4.0">
+                            <Label text="Valeur Portefeuille (TND)" textFill="#6c757d" />
+                            <TextField fx:id="txtValeurPortefeuille" styleClass="form-field" promptText="Valeur totale" />
+                        </VBox>
+
+                        <Pane VBox.vgrow="ALWAYS" />
+
+                        <HBox spacing="10.0">
+                            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                    onAction="#handleAddRendement" styleClass="action-btn" text="✚ Ajouter"
+                                    HBox.hgrow="ALWAYS" />
+                            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                    onAction="#handleUpdateRendement" styleClass="btn-warning" text="✎ Modifier"
+                                    HBox.hgrow="ALWAYS" />
+                        </HBox>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleDeleteRendement" styleClass="btn-danger" text="✕ Supprimer" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleClearRendement" styleClass="btn-secondary" text="↺ Réinitialiser" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

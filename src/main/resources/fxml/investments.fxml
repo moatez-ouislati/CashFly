@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox spacing="20.0" styleClass="main-content" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.InvestmentsController">
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+    <children>
+
+        <!-- Top bar -->
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <children>
+                <VBox>
+                    <Label styleClass="section-title" text="Gestionnaire d'Investissements" />
+                    <Label styleClass="page-subtitle" text="Vue cartes — cliquez pour sélectionner" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="txtSearch" promptText="🔍 Rechercher..." styleClass="search-field" prefWidth="220" />
+                <Label fx:id="lblCount" styleClass="page-subtitle" />
+            </children>
+        </HBox>
+
+        <!-- Main layout: cards + form -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <children>
+
+                <!-- Cards area -->
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="scroll-pane" vbarPolicy="AS_NEEDED">
+                    <content>
+                        <FlowPane fx:id="cardsContainer" hgap="16" vgap="16" prefWrapLength="700">
+                            <padding><Insets top="4" /></padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+
+                <!-- Form panel -->
+                <VBox prefWidth="320.0" spacing="14.0" styleClass="card">
+                    <children>
+                        <Label styleClass="section-title" text="📝 Détails Investissement" />
+                        <Separator style="-fx-opacity:0.15;" />
+
+                        <VBox spacing="4.0">
+                            <Label text="Description" textFill="#6c757d" />
+                            <TextField fx:id="txtDescription" styleClass="form-field" promptText="Description de l'investissement" />
+                        </VBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Montant (TND)" textFill="#6c757d" />
+                                <TextField fx:id="txtMontant" styleClass="form-field" promptText="0.00" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Statut" textFill="#6c757d" />
+                                <TextField fx:id="txtStatut" styleClass="form-field" promptText="Actif" />
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Taux Rendement (%)" textFill="#6c757d" />
+                                <TextField fx:id="txtTaux" styleClass="form-field" promptText="5.0" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Durée (Mois)" textFill="#6c757d" />
+                                <TextField fx:id="txtDuree" styleClass="form-field" promptText="12" />
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="ID Entreprise" textFill="#6c757d" />
+                                <TextField fx:id="txtIdEntreprise" styleClass="form-field" promptText="1" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="ID Investisseur" textFill="#6c757d" />
+                                <TextField fx:id="txtIdInvestisseur" styleClass="form-field" promptText="1" />
+                            </VBox>
+                        </HBox>
+
+                        <Pane VBox.vgrow="ALWAYS" />
+
+                        <HBox spacing="10.0">
+                            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                    onAction="#handleAdd" styleClass="action-btn" text="✚ Ajouter"
+                                    HBox.hgrow="ALWAYS" />
+                            <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                    onAction="#handleUpdate" styleClass="btn-warning" text="✎ Modifier"
+                                    HBox.hgrow="ALWAYS" />
+                        </HBox>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleDelete" styleClass="btn-danger" text="✕ Supprimer" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                onAction="#handleClear" styleClass="btn-secondary" text="↺ Vider le formulaire" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>
