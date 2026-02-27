@@ -17,7 +17,7 @@ import java.util.List;
 public class NewsService {
 
     // NewsAPI endpoint for finance, economy, and investment strictly in Tunisia
-    private static final String API_KEY = "2a6e167a37374964b203cb3f15093dcc";
+    private static final String API_KEY = "";
     // Encoded advanced query: (finance OR économie OR bourse OR investissement) AND
     // tunisie
     private static final String NEWS_API_URL = "https://newsapi.org/v2/everything?q=%28finance+OR+%C3%A9conomie+OR+bourse+OR+investissement%29+AND+tunisie&language=fr&sortBy=publishedAt&apiKey="
