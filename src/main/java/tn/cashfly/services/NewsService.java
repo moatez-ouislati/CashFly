@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * Service to fetch financial news from NewsAPI.org (free tier)
@@ -16,8 +17,9 @@ import java.util.List;
  */
 public class NewsService {
 
+    private static final Dotenv dotenv = Dotenv.load();
     // NewsAPI endpoint for finance, economy, and investment strictly in Tunisia
-    private static final String API_KEY = "NEWS_API_KEY";
+    private static final String API_KEY = dotenv.get("NEWS_API_KEY");
     // Encoded advanced query: (finance OR économie OR bourse OR investissement) AND
     // tunisie
     private static final String NEWS_API_URL = "https://newsapi.org/v2/everything?q=%28finance+OR+%C3%A9conomie+OR+bourse+OR+investissement%29+AND+tunisie&language=fr&sortBy=publishedAt&apiKey="

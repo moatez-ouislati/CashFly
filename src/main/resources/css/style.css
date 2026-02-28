@@ -473,13 +473,13 @@
 .notif-card {
     -fx-background-color: white;
     -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 8, 0, 0, 3);
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 8, 0, 0, 3);
     -fx-padding: 16;
 }
 
 .notif-card:hover {
     -fx-background-color: #f8f9ff;
-    -fx-effect: dropshadow(three-pass-box, rgba(90,92,229,0.10), 12, 0, 0, 4);
+    -fx-effect: dropshadow(three-pass-box, rgba(90, 92, 229, 0.10), 12, 0, 0, 4);
 }
 
 .notif-title {
@@ -493,6 +493,7 @@
     -fx-background-color: transparent;
     -fx-background: transparent;
 }
+
 .card-dark .scroll-pane .viewport {
     -fx-background-color: transparent;
 }
@@ -509,4 +510,101 @@
 
 .notif-card .ikonli-font-icon {
     -fx-icon-size: 20px;
+}
+
+/* ========================================================= */
+/* 📈 DASHBOARD CHARTS PRO STYLING (Match Reference Image)   */
+/* ========================================================= */
+
+.dashboard-pie .chart-pie-label {
+    -fx-fill: #7f8c8d;
+    -fx-font-size: 11px;
+}
+
+.dashboard-pie .chart-pie {
+    -fx-border-color: white;
+    -fx-border-width: 2px;
+}
+
+/* Green, Blue, Red/Orange, Yellow palette */
+.dashboard-pie .default-color0.chart-pie {
+    -fx-pie-color: #5cb85c;
+}
+
+.dashboard-pie .default-color1.chart-pie {
+    -fx-pie-color: #3f90b5;
+}
+
+.dashboard-pie .default-color2.chart-pie {
+    -fx-pie-color: #e67e22;
+}
+
+.dashboard-pie .default-color3.chart-pie {
+    -fx-pie-color: #f7a831;
+}
+
+.dashboard-pie .default-color4.chart-pie {
+    -fx-pie-color: #9b59b6;
+}
+
+/* Remove background grid entirely */
+.dashboard-chart .chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+/* Hide complete axis outlines */
+.dashboard-chart .axis {
+    -fx-border-color: transparent;
+    -fx-tick-label-fill: #7f8c8d;
+    -fx-font-size: 10px;
+}
+
+/* Hide all ticks completely */
+.dashboard-chart .axis-tick-mark,
+.dashboard-chart .axis-minor-tick-mark {
+    -fx-stroke: transparent;
+}
+
+/* Orange Bars */
+.dashboard-chart.chart-bar .default-color0.chart-bar {
+    -fx-bar-fill: #f1692e;
+}
+
+/* Orange Line Chart, thicker stroke */
+.dashboard-chart.chart-line .default-color0.chart-series-line {
+    -fx-stroke: #f1692e;
+    -fx-stroke-width: 3px;
+}
+
+/* Minimal Line Chart Dot Points */
+.dashboard-chart.chart-line .default-color0.chart-line-symbol {
+    -fx-background-color: white, #f1692e;
+    -fx-background-insets: 0, 2;
+    -fx-padding: 4px;
+}
+
+.dashboard-chart .chart-legend {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+/* ========================================================= */
+/* 🏔️ PRO AREA CHART STYLING (Blue/Purple Gradient)         */
+/* ========================================================= */
+
+/* The top line of the area chart */
+.dashboard-chart .chart-series-area-line.default-color0 {
+    -fx-stroke: #5a4bdc;
+    -fx-stroke-width: 3px;
+}
+
+/* The gradient fill below the line */
+.dashboard-chart .chart-series-area-fill.default-color0 {
+    -fx-fill: linear-gradient(to bottom, rgba(90, 75, 220, 0.35) 0%, rgba(90, 75, 220, 0.0) 100%);
+}
+
+/* Hide the dot-symbols completely to create a fluid, continuous curve aesthetic */
+.dashboard-chart .chart-area-symbol {
+    -fx-background-color: transparent, transparent;
+    -fx-padding: 0;
 }

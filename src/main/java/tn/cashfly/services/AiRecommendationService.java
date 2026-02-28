@@ -6,6 +6,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.math.BigDecimal;
 import java.util.List;
+import io.github.cdimascio.dotenv.Dotenv;
 
 /**
  * AI Recommendation Service
@@ -15,18 +16,20 @@ import java.util.List;
  */
 public class AiRecommendationService {
 
+    private static final Dotenv dotenv = Dotenv.load();
+
     // =========================
     // 🔹 OpenAI Configuration
     // =========================
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String OPENAI_API_KEY = "OPENAI_API_KEY"; // 🔐 replace
+    private static final String OPENAI_API_KEY = dotenv.get("OPENAI_API_KEY");
     private static final String OPENAI_MODEL = "gpt-4o-mini";
 
     // =========================
     // 🔹 OpenRouter (optional fallback)
     // =========================
     private static final String OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
-    private static final String OPENROUTER_API_KEY = "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";
+    private static final String OPENROUTER_API_KEY = dotenv.get("OPENROUTER_API_KEY");
     private static final String MODEL = "mistralai/mistral-7b-instruct:free";
 
     public static class Recommendation {
@@ -61,7 +64,7 @@ public class AiRecommendationService {
         }
 
         // 🔹 Try OpenRouter (fallback)
-        if (!OPENROUTER_API_KEY.equals("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")) {
+        if (OPENROUTER_API_KEY != null && !OPENROUTER_API_KEY.isEmpty()) {
             try {
                 String response = callOpenRouter(prompt);
                 if (response != null && !response.isEmpty()) {
@@ -79,16 +82,22 @@ public class AiRecommendationService {
     private String buildPrompt(BigDecimal totalInvested, BigDecimal totalGain, BigDecimal totalPerte,
                                int numberOfInvestments, double avgTaux) {
         return String.format(
-                "Tu es un conseiller financier expert. Analyse ce portefeuille d'investissement tunisien et donne 3 recommandations courtes et précises en français.\n\n"
+                "Tu es un conseiller financier expert et stratégique pour un investisseur de haut niveau en Tunisie. " +
+                        "Analyse ce portefeuille et formule 4 recommandations pointues et professionnelles en français.\n"
                         +
-                        "Données du portefeuille:\n" +
+                        "En plus de l'analyse des chiffres, tu dois IMPÉRATIVEMENT inclure des conseils sur la manière de "
+                        +
+                        "choisir les prochaines entreprises dans lesquelles investir (critères d'évaluation, secteurs porteurs, "
+                        +
+                        "analyse des fondamentaux et des risques).\n\n" +
+                        "Données du portefeuille :\n" +
                         "- Montant total investi: %,.0f TND\n" +
                         "- Gains totaux: %,.2f TND\n" +
                         "- Pertes totales: %,.2f TND\n" +
                         "- Résultat net: %,.2f TND\n" +
                         "- Nombre d'investissements: %d\n" +
                         "- Taux de rendement moyen: %.1f%%\n\n" +
-                        "Donne exactement 3 recommandations, chacune sur une ligne commençant par [CONSEIL], [ALERTE] ou [INFO].",
+                        "Format exigé : Donne EXACTEMENT 4 recommandations distinctes, chacune sur sa propre ligne et commençant OBLIGATOIREMENT par [CONSEIL], [ALERTE] ou [INFO].",
                 totalInvested.doubleValue(),
                 totalGain.doubleValue(),
                 totalPerte.doubleValue(),
@@ -226,14 +235,26 @@ public class AiRecommendationService {
 
             recs.add(new Recommendation(
                     "💡 Performance Positive",
-                    String.format("Votre portefeuille affiche un ROI de %.1f%%.", roi),
+                    String.format(
+                            "Votre portefeuille affiche un ROI net de %.1f%%. Maintenez cette rigueur de sélection.",
+                            roi),
                     "success"));
         } else {
             recs.add(new Recommendation(
                     "⚠️ Attention aux Pertes",
-                    "Vos pertes dépassent vos gains. Revoyez votre stratégie.",
+                    "Vos pertes dépassent vos gains. Il est impératif de resserrer vos critères de sélection et d'auditer vos actifs sous-performants.",
                     "warning"));
         }
+
+        recs.add(new Recommendation(
+                "💡 Évaluation d'Entreprise",
+                "Pour vos prochains financements, privilégiez les entreprises ayant un flux de trésorerie disponible (Free Cash Flow) positif et un modèle de revenus récurrents sécurisé (B2B, SaaS, contrats longs).",
+                "info"));
+
+        recs.add(new Recommendation(
+                "💡 Analyse des Risques",
+                "Ne vous fiez pas uniquement aux promesses de rendement prévisionnel. Exigez toujours l'analyse du BFR (Besoin en Fonds de Roulement) et du ratio d'endettement net avant toute prise de participation.",
+                "success"));
 
         return recs;
     }

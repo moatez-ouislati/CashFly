@@ -21,11 +21,22 @@ import tn.cashfly.models.RendementInvestissement;
 import tn.cashfly.services.*;
 
 import java.math.BigDecimal;
-
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
+import java.time.OffsetDateTime;
+import java.time.Duration;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
+import javafx.stage.FileChooser;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 
 public class DashboardController implements Initializable {
 
@@ -66,7 +77,7 @@ public class DashboardController implements Initializable {
     @FXML
     private BarChart<String, Number> barChart;
     @FXML
-    private LineChart<String, Number> lineChart;
+    private AreaChart<String, Number> areaChart;
 
     // ─── Reports Charts ──────────────────────────────────────────────────────
     @FXML
@@ -85,12 +96,21 @@ public class DashboardController implements Initializable {
     private Label aiLoadingLabel;
     @FXML
     private Label newsLoadingLabel;
+    @FXML
+    private ComboBox<String> currencySelector;
+    @FXML
+    private Label lblDynamicRate;
+    @FXML
+    private HBox exchangeRateBadge;
+
+    private Map<String, BctExchangeRateService.ExchangeRate> cachedRates;
 
     // ─── Services ────────────────────────────────────────────────────────────
     private final ServiceInvest serviceInvest = new ServiceInvest();
     private final ServiceRendement serviceRendement = new ServiceRendement();
     private final NewsService newsService = new NewsService();
     private final AiRecommendationService aiService = new AiRecommendationService();
+    private final BctExchangeRateService bctService = new BctExchangeRateService();
 
     private ObservableList<Investissement> investmentList;
     private ObservableList<RendementInvestissement> rendementList;
@@ -103,6 +123,49 @@ public class DashboardController implements Initializable {
         loadData();
         loadNewsAsync();
         loadAiRecommendationsAsync();
+        loadExchangeRatesAsync();
+    }
+
+    // ─── Exchange Rates ───────────────────────────────────────────────────────
+    private void loadExchangeRatesAsync() {
+        CompletableFuture.runAsync(() -> {
+            try {
+                this.cachedRates = bctService.getTodayExchangeRates();
+
+                Platform.runLater(() -> {
+                    // Populate Selector
+                    if (currencySelector != null) {
+                        List<String> codes = cachedRates.keySet().stream().sorted().toList();
+                        currencySelector.setItems(FXCollections.observableArrayList(codes));
+
+                        // Default selection to EUR since it's most common for TND investors
+                        if (codes.contains("EUR"))
+                            currencySelector.setValue("EUR");
+                        else if (!codes.isEmpty())
+                            currencySelector.setValue(codes.get(0));
+
+                        updateDynamicRate();
+
+                        // Add listener
+                        currencySelector.setOnAction(e -> updateDynamicRate());
+                    }
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    if (lblDynamicRate != null)
+                        lblDynamicRate.setText("Service Indisponible");
+                });
+                System.err.println("Failed to load BCT rates: " + e.getMessage());
+            }
+        });
+    }
+
+    private void updateDynamicRate() {
+        String selected = currencySelector.getValue();
+        if (selected != null && cachedRates != null && cachedRates.containsKey(selected)) {
+            double rate = cachedRates.get(selected).middleRate;
+            lblDynamicRate.setText(String.format("%.3f TND", rate));
+        }
     }
 
     // ─── Data loading ─────────────────────────────────────────────────────────
@@ -156,7 +219,7 @@ public class DashboardController implements Initializable {
         // Dashboard home: per-record detail
         updatePieChartByEnterprise(pieChart);
         updateBarChartPerRecord(barChart);
-        updateLineChartPerRecord(lineChart);
+        updateAreaChartPerRecord(areaChart);
 
         // Reports: clean semi-annual (S1 Jan-Jun / S2 Jul-Dec) grouping
         updatePieChartByEnterprise(pieChartReports);
@@ -185,34 +248,103 @@ public class DashboardController implements Initializable {
         chart.setLabelsVisible(true);
     }
 
-    /** Dashboard home bar — one bar per investment record. */
+    /** Dashboard home bar — aggregated grouped natively by month. */
     private void updateBarChartPerRecord(BarChart<String, Number> chart) {
         if (chart == null || investmentList.isEmpty())
             return;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Montant (TND)");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yy", Locale.FRENCH);
+        Map<String, BigDecimal> monthlyAmounts = new LinkedHashMap<>();
+
+        // Group investments by chronological month to eliminate bottom label overlap
         for (Investissement i : investmentList) {
-            series.getData().add(new XYChart.Data<>(
-                    i.getDateInvestissement().toString(), i.getMontant()));
+            if (i.getDateInvestissement() != null) {
+                String monthLabel = i.getDateInvestissement().toLocalDate().format(formatter);
+                monthlyAmounts.merge(monthLabel, i.getMontant(), BigDecimal::add);
+            }
         }
+
+        for (Map.Entry<String, BigDecimal> entry : monthlyAmounts.entrySet()) {
+            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+
         chart.getData().clear();
         chart.getData().add(series);
+
+        // Add tooltips to each bar node
+        Platform.runLater(() -> {
+            for (XYChart.Data<String, Number> data : series.getData()) {
+                Node node = data.getNode();
+                if (node != null) {
+                    Tooltip tooltip = new Tooltip(
+                            "Mois: " + data.getXValue() + "\n" +
+                                    "Montant: " + String.format("%,.0f TND", data.getYValue().doubleValue()));
+                    tooltip.setStyle(
+                            "-fx-font-size: 13px; -fx-background-color: #2c3e50; -fx-text-fill: white; -fx-padding: 8px; -fx-opacity: 0.9; -fx-background-radius: 4px;");
+                    Tooltip.install(node, tooltip);
+
+                    node.setOnMouseEntered(e -> node.setStyle("-fx-bar-fill: #e6511a; -fx-cursor: hand;"));
+                    node.setOnMouseExited(e -> node.setStyle(""));
+                }
+            }
+        });
     }
 
-    /** Dashboard home line — cumulative gain per rendement record. */
-    private void updateLineChartPerRecord(LineChart<String, Number> chart) {
+    /** Dashboard home area — cumulative gain grouped strictly by month. */
+    private void updateAreaChartPerRecord(AreaChart<String, Number> chart) {
         if (chart == null || rendementList.isEmpty())
             return;
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Gains Cumulés (TND)");
+
         BigDecimal cumulative = BigDecimal.ZERO;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM yy", Locale.FRENCH);
+        Map<String, BigDecimal> monthlyGains = new LinkedHashMap<>();
+
+        // Group by chronological month
         for (RendementInvestissement r : rendementList) {
             cumulative = cumulative.add(r.getGain());
-            series.getData().add(new XYChart.Data<>(
-                    r.getDateCalcul().toString(), cumulative));
+            if (r.getDateCalcul() != null) {
+                String monthLabel = r.getDateCalcul().toLocalDate().format(formatter);
+                monthlyGains.put(monthLabel, cumulative); // Replaces earlier records in the same month with latest
+                // cumul
+            }
         }
+
+        for (Map.Entry<String, BigDecimal> entry : monthlyGains.entrySet()) {
+            series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
+        }
+
         chart.getData().clear();
         chart.getData().add(series);
+
+        // Add Tooltips to each line chart plot-point
+        Platform.runLater(() -> {
+            for (XYChart.Data<String, Number> data : series.getData()) {
+                Node node = data.getNode();
+                if (node != null) {
+                    Tooltip tooltip = new Tooltip(
+                            "Mois: " + data.getXValue() + "\n" +
+                                    "Cumul: " + String.format("%,.2f TND", data.getYValue().doubleValue()));
+                    tooltip.setStyle(
+                            "-fx-font-size: 13px; -fx-background-color: #2c3e50; -fx-text-fill: white; -fx-padding: 8px; -fx-opacity: 0.9; -fx-background-radius: 4px;");
+                    Tooltip.install(node, tooltip);
+
+                    // Add subtle hover effect size expansion to points
+                    node.setOnMouseEntered(e -> {
+                        node.setScaleX(1.5);
+                        node.setScaleY(1.5);
+                    });
+
+                    node.setOnMouseExited(e -> {
+                        node.setScaleX(1);
+                        node.setScaleY(1);
+                    });
+                }
+            }
+        });
     }
 
     /** Reports bar — capital invested grouped by semester (S1 / S2). */
@@ -328,8 +460,8 @@ public class DashboardController implements Initializable {
                 "-fx-background-radius: 10; -fx-padding: 2 8; -fx-font-size: 10px; -fx-font-weight: bold;");
         Region sp = new Region();
         HBox.setHgrow(sp, Priority.ALWAYS);
-        Label timeLabel = new Label(article.publishedAt != null ? article.publishedAt : "Récent");
-        timeLabel.setStyle("-fx-text-fill: #6c757d; -fx-font-size: 10px;");
+        Label timeLabel = new Label(formatTimeAgo(article.publishedAt));
+        timeLabel.setStyle("-fx-text-fill: #7f8c8d; -fx-font-size: 10px; -fx-font-weight: bold;");
         header.getChildren().addAll(sourceBadge, sp, timeLabel);
 
         Label title = new Label(article.title);
@@ -345,12 +477,59 @@ public class DashboardController implements Initializable {
             card.getChildren().addAll(header, title);
         }
 
-        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #252840; -fx-background-radius: 8; " +
-                "-fx-padding: 12; -fx-cursor: hand;"));
+        card.setOnMouseClicked(e -> {
+            if (article.url != null && !article.url.isEmpty()) {
+                try {
+                    String url = article.url.trim();
+                    if (java.awt.Desktop.isDesktopSupported()) {
+                        java.awt.Desktop.getDesktop().browse(new java.net.URI(url));
+                    } else {
+                        // Fallback for Windows
+                        new ProcessBuilder("cmd", "/c", "start", url).start();
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Could not open news URL: " + ex.getMessage());
+                }
+            }
+        });
+
+        card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #2c2f48; -fx-background-radius: 8; " +
+                "-fx-padding: 12; -fx-cursor: hand; -fx-border-color: #5a5ce5; -fx-border-width: 0.5; -fx-border-radius: 8;"));
         card.setOnMouseExited(e -> card.setStyle("-fx-background-color: #1e2130; -fx-background-radius: 8; " +
-                "-fx-padding: 12; -fx-cursor: hand;"));
+                "-fx-padding: 12; -fx-cursor: hand; -fx-border-color: transparent;"));
 
         return card;
+    }
+
+    private String formatTimeAgo(String isoDate) {
+        if (isoDate == null || isoDate.isEmpty() || isoDate.equals("Récent") || isoDate.contains("Il y a")
+                || isoDate.contains("Aujourd'hui") || isoDate.contains("Cette semaine")) {
+            return isoDate;
+        }
+        try {
+            OffsetDateTime published = OffsetDateTime.parse(isoDate);
+            OffsetDateTime now = OffsetDateTime.now();
+            Duration diff = Duration.between(published, now);
+
+            long seconds = diff.getSeconds();
+            if (seconds < 60)
+                return "À l'instant";
+            long minutes = diff.toMinutes();
+            if (minutes < 60)
+                return "Il y a " + minutes + "m";
+            long hours = diff.toHours();
+            if (hours < 24)
+                return "Il y a " + hours + "h";
+            long days = diff.toDays();
+            if (days == 1)
+                return "Hier";
+            if (days < 7)
+                return "Il y a " + days + "j";
+
+            return published.format(DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.FRENCH));
+        } catch (Exception e) {
+            return isoDate;
+        }
     }
 
     // ─── AI Recommendations (async) ───────────────────────────────────────────
@@ -412,24 +591,84 @@ public class DashboardController implements Initializable {
         VBox card = new VBox(6);
         card.setPadding(new Insets(12));
 
-        String borderColor = switch (rec.type) {
-            case "success" -> "#2ecc71";
-            case "warning" -> "#f39c12";
-            default -> "#3498db";
-        };
-        card.setStyle("-fx-background-color: " + borderColor + "15; " +
-                "-fx-background-radius: 8; -fx-border-color: " + borderColor + "44; " +
-                "-fx-border-radius: 8; -fx-border-width: 1; -fx-padding: 12;");
+        card.setStyle("-fx-background-color: #1e2130; -fx-background-radius: 8; -fx-padding: 12;");
 
-        Label title = new Label(rec.title);
-        title.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: " + borderColor + ";");
+        String text = rec.detail;
+        if (rec.title != null && !rec.title.contains("IA") && !rec.title.contains("Information")
+                && !rec.title.contains("Alerte")) {
+            text = rec.title + " - " + text;
+        }
 
-        Label detail = new Label(rec.detail);
+        Label detail = new Label(text);
         detail.setWrapText(true);
         detail.setStyle("-fx-font-size: 11px; -fx-text-fill: #bdc3c7; -fx-line-spacing: 2;");
 
-        card.getChildren().addAll(title, detail);
+        card.getChildren().add(detail);
         return card;
+    }
+
+    // ─── PDF Generation ───────────────────────────────────────────────────────
+    @FXML
+    public void generateAiPdfReport(ActionEvent event) {
+        if (aiRecommendationsBox == null || aiRecommendationsBox.getChildren().isEmpty()) {
+            showAlert(Alert.AlertType.INFORMATION, "Information", "Aucune recommandation à exporter.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Enregistrer le rapport PDF");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Fichiers PDF", "*.pdf"));
+        fileChooser.setInitialFileName("Rapport_CashFly_Recommandations.pdf");
+
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        File file = fileChooser.showSaveDialog(stage);
+
+        if (file != null) {
+            try {
+                Document document = new Document();
+                PdfWriter.getInstance(document, new FileOutputStream(file));
+                document.open();
+
+                com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(
+                        com.itextpdf.text.Font.FontFamily.HELVETICA, 18, com.itextpdf.text.Font.BOLD);
+                com.itextpdf.text.Font subTitleFont = new com.itextpdf.text.Font(
+                        com.itextpdf.text.Font.FontFamily.HELVETICA, 14, com.itextpdf.text.Font.BOLD);
+                com.itextpdf.text.Font normalFont = new com.itextpdf.text.Font(
+                        com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.NORMAL);
+
+                document.add(new Paragraph("Rapport CashFly - Recommandations IA", titleFont));
+                document.add(new Paragraph("Date : " + java.time.LocalDate.now(), normalFont));
+                document.add(new Paragraph("\n"));
+
+                document.add(new Paragraph("Analyse du Portefeuille:", subTitleFont));
+                document.add(new Paragraph("Capital Investi: " + lblTotalInvested.getText(), normalFont));
+                document.add(new Paragraph("Gains Totaux: " + lblTotalGain.getText(), normalFont));
+                document.add(new Paragraph("Résultat Net: " + lblNetResult.getText(), normalFont));
+                document.add(new Paragraph("Investissements Actifs: " + lblActiveCount.getText(), normalFont));
+                document.add(new Paragraph("\n"));
+
+                document.add(new Paragraph("Conseils Strategiques (Fournis par l'IA):", subTitleFont));
+                document.add(new Paragraph("\n"));
+
+                for (Node node : aiRecommendationsBox.getChildren()) {
+                    if (node instanceof VBox) {
+                        VBox vBox = (VBox) node;
+                        for (Node child : vBox.getChildren()) {
+                            if (child instanceof Label) {
+                                document.add(new Paragraph("• " + ((Label) child).getText(), normalFont));
+                                document.add(new Paragraph("\n"));
+                            }
+                        }
+                    }
+                }
+
+                document.close();
+                showAlert(Alert.AlertType.INFORMATION, "Succes",
+                        "Rapport PDF genere avec succes dans :\n" + file.getAbsolutePath());
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Erreur lors de la generation du PDF: " + e.getMessage());
+            }
+        }
     }
 
     // ─── Navigation ───────────────────────────────────────────────────────────
@@ -499,6 +738,13 @@ public class DashboardController implements Initializable {
             pageTitle.setText(title);
         if (pageSubtitle != null)
             pageSubtitle.setText(subtitle);
+
+        // Toggle Exchange Rate Badge: Only on Dashboard
+        if (exchangeRateBadge != null) {
+            boolean isDashboard = (view == dashboardView);
+            exchangeRateBadge.setVisible(isDashboard);
+            exchangeRateBadge.setManaged(isDashboard);
+        }
     }
 
     // ─── Logout ───────────────────────────────────────────────────────────────

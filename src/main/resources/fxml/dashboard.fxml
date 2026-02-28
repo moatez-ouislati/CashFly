@@ -3,6 +3,7 @@
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.AreaChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
@@ -112,6 +113,20 @@
                         <Label fx:id="pageSubtitle" styleClass="page-subtitle" text="Analyse en temps réel de votre écosystème financier." />
                     </VBox>
                     <Pane HBox.hgrow="ALWAYS" />
+                    <HBox fx:id="exchangeRateBadge" alignment="CENTER" spacing="12.0">
+                        <!-- Dynamic Selector Badge -->
+                        <HBox alignment="CENTER" spacing="8.0" style="-fx-background-color: #fff9db; -fx-padding: 6px 14px; -fx-background-radius: 20px; -fx-border-color: #ffe066; -fx-border-radius: 20px; -fx-border-width: 1px;">
+                            <FontIcon iconColor="#f08c00" iconLiteral="fas-sync-alt" iconSize="12" />
+                            <Label text="Change:" textFill="#f08c00">
+                                <font><Font name="System Bold" size="12.0" /></font>
+                            </Label>
+                            <ComboBox fx:id="currencySelector" prefWidth="75.0" style="-fx-background-color: transparent; -fx-padding: 0; -fx-font-size: 11px; -fx-font-weight: bold; -fx-cursor: hand;" />
+                            <Label fx:id="lblDynamicRate" text="-- TND" textFill="#f08c00">
+                                <font><Font name="System Bold" size="12.0" /></font>
+                            </Label>
+                        </HBox>
+                    </HBox>
+                    <Region prefWidth="25.0" />
                     <HBox alignment="CENTER" spacing="8.0" styleClass="status-badge">
                         <FontIcon iconColor="#2ecc71" iconLiteral="fas-shield-alt" iconSize="14" />
                         <Label text="SECURISÉ" textFill="#2ecc71">
@@ -141,7 +156,9 @@
                                             <!-- Total Invested -->
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <HBox alignment="CENTER_LEFT">
-                                                    <Pane styleClass="icon-container-blue" />
+                                                    <StackPane styleClass="icon-container-blue">
+                                                        <FontIcon iconColor="#3498db" iconLiteral="fas-wallet" iconSize="20" />
+                                                    </StackPane>
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Label styleClass="percentage-green" text="Total" />
                                                 </HBox>
@@ -153,7 +170,9 @@
                                             <!-- Total Gain -->
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <HBox alignment="CENTER_LEFT">
-                                                    <Pane styleClass="icon-container-green" />
+                                                    <StackPane styleClass="icon-container-green">
+                                                        <FontIcon iconColor="#2ecc71" iconLiteral="fas-chart-line" iconSize="20" />
+                                                    </StackPane>
                                                     <Region HBox.hgrow="ALWAYS" />
                                                     <Label styleClass="percentage-green" text="Gains" />
                                                 </HBox>
@@ -165,7 +184,9 @@
                                             <!-- Net Result -->
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <HBox alignment="CENTER_LEFT">
-                                                    <Pane styleClass="icon-container-red" />
+                                                    <StackPane styleClass="icon-container-red">
+                                                        <FontIcon iconColor="#e74c3c" iconLiteral="fas-coins" iconSize="20" />
+                                                    </StackPane>
                                                     <Region HBox.hgrow="ALWAYS" />
                                                 </HBox>
                                                 <Label styleClass="card-label" text="Résultat Net">
@@ -176,7 +197,9 @@
                                             <!-- Active Investments -->
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <HBox alignment="CENTER_LEFT">
-                                                    <Pane styleClass="icon-container-green" />
+                                                    <StackPane styleClass="icon-container-green">
+                                                        <FontIcon iconColor="#2ecc71" iconLiteral="fas-briefcase" iconSize="20" />
+                                                    </StackPane>
                                                 </HBox>
                                                 <Label styleClass="card-label" text="Investissements Actifs">
                                                     <VBox.margin><Insets top="12.0" /></VBox.margin>
@@ -190,17 +213,20 @@
                                             <!-- Pie Chart card -->
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <Label styleClass="section-title" text="Répartition des Investissements" />
-                                                <PieChart fx:id="pieChart" prefHeight="280.0" VBox.vgrow="ALWAYS" />
+                                                <PieChart fx:id="pieChart" styleClass="dashboard-pie" prefHeight="280.0" VBox.vgrow="ALWAYS" />
                                             </VBox>
 
                                             <!-- AI Recommendations dark card -->
                                             <VBox prefWidth="340.0" styleClass="card-dark" spacing="12.0">
                                                 <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                                    <Pane styleClass="icon-ai" />
-                                                    <Label styleClass="section-title-light" text="🤖 Conseils IA" />
+                                                    <StackPane styleClass="icon-ai">
+                                                        <FontIcon iconColor="#2ecc71" iconLiteral="fas-brain" iconSize="16" />
+                                                    </StackPane>
+                                                    <Label styleClass="section-title-light" text="Conseils IA" />
                                                 </HBox>
                                                 <Label fx:id="aiLoadingLabel" text="⏳ Chargement..." styleClass="ai-text" />
                                                 <VBox fx:id="aiRecommendationsBox" spacing="10.0" VBox.vgrow="ALWAYS" />
+                                                <Button maxWidth="Infinity" styleClass="action-btn" text="Générer Rapport PDF" onAction="#generateAiPdfReport" />
                                             </VBox>
                                         </HBox>
 
@@ -208,17 +234,17 @@
                                         <HBox spacing="20.0">
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <Label styleClass="section-title" text="Évolution des Montants" />
-                                                <BarChart fx:id="barChart" prefHeight="220.0" VBox.vgrow="ALWAYS">
-                                                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
-                                                    <yAxis><NumberAxis side="LEFT" /></yAxis>
+                                                <BarChart fx:id="barChart" styleClass="dashboard-chart" horizontalGridLinesVisible="false" verticalGridLinesVisible="false" alternativeColumnFillVisible="false" alternativeRowFillVisible="false" prefHeight="220.0" VBox.vgrow="ALWAYS">
+                                                    <xAxis><CategoryAxis side="BOTTOM" tickLabelsVisible="true" tickMarkVisible="false" /></xAxis>
+                                                    <yAxis><NumberAxis side="LEFT" tickLabelsVisible="true" minorTickVisible="false" tickMarkVisible="false" /></yAxis>
                                                 </BarChart>
                                             </VBox>
                                             <VBox styleClass="card" HBox.hgrow="ALWAYS">
                                                 <Label styleClass="section-title" text="Gains Cumulés" />
-                                                <LineChart fx:id="lineChart" prefHeight="220.0" VBox.vgrow="ALWAYS">
-                                                    <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
-                                                    <yAxis><NumberAxis side="LEFT" /></yAxis>
-                                                </LineChart>
+                                                <AreaChart fx:id="areaChart" styleClass="dashboard-chart" horizontalGridLinesVisible="false" verticalGridLinesVisible="false" alternativeColumnFillVisible="false" alternativeRowFillVisible="false" prefHeight="220.0" VBox.vgrow="ALWAYS">
+                                                    <xAxis><CategoryAxis side="BOTTOM" tickLabelsVisible="true" tickMarkVisible="false" /></xAxis>
+                                                    <yAxis><NumberAxis side="LEFT" tickLabelsVisible="true" minorTickVisible="false" tickMarkVisible="false" /></yAxis>
+                                                </AreaChart>
                                             </VBox>
                                         </HBox>
 
