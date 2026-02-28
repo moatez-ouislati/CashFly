@@ -64,7 +64,8 @@ public class BadgeGenerator {
 
     /**
      * Generates a complete badge with embedded QR code from API
-     * This method can be called from any thread - it handles FX thread safety internally
+     * This method can be called from any thread - it handles FX thread safety
+     * internally
      */
     public static String generateBadge(Utilisateur user, JPO event, Participation participation)
             throws Exception {
@@ -122,10 +123,11 @@ public class BadgeGenerator {
     // ============================================
 
     /**
-     * Creates the badge canvas on FX thread using CountDownLatch for synchronization
+     * Creates the badge canvas on FX thread using CountDownLatch for
+     * synchronization
      */
     private static Canvas createCanvasOnFxThread(Utilisateur user, JPO event,
-                                                 Participation participation, String qrFilePath)
+            Participation participation, String qrFilePath)
             throws Exception {
 
         AtomicReference<Canvas> canvasRef = new AtomicReference<>();
@@ -312,70 +314,72 @@ public class BadgeGenerator {
         Canvas canvas = new Canvas(BADGE_WIDTH, BADGE_HEIGHT);
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        // Background
-        gc.setFill(Color.web("#1A1C2C"));
+        // Background (Deep Navy)
+        gc.setFill(Color.web("#0D2440"));
         gc.fillRect(0, 0, BADGE_WIDTH, BADGE_HEIGHT);
 
-        // Top accent bar
-        gc.setFill(Color.web("#0083ff"));
+        // Top accent bar (Cashfly Sapphire Blue)
+        gc.setFill(Color.web("#2E5E99"));
         gc.fillRect(0, 0, BADGE_WIDTH, 20);
 
         // Event title
-        gc.setFill(Color.web("#00fffd"));
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 48));
+        gc.setFill(Color.web("#E7F0FA"));
+        gc.setFont(Font.font("Segoe UI", FontWeight.BOLD, 48));
         gc.fillText(truncateText(event.getTitre(), 35), 50, 100);
 
         // Event details
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", 28));
+        gc.setFont(Font.font("Segoe UI", 28));
         String dateStr = formatEventDateSafe(event.getDate_evenement());
-        gc.fillText("📅 " + dateStr, 50, 160);
-        gc.fillText("📍 " + truncateText(event.getLieu(), 40), 50, 210);
+        gc.fillText("Date: " + dateStr, 50, 160);
+        gc.fillText("Lieu: " + truncateText(event.getLieu(), 40), 50, 210);
 
         // Separator line
-        gc.setStroke(Color.web("#0083ff"));
-        gc.setLineWidth(3);
-        gc.strokeLine(50, 250, 600, 250);
+        gc.setStroke(Color.web("#7BA4D0"));
+        gc.setLineWidth(2);
+        gc.strokeLine(50, 250, 580, 250);
 
         // Participant section
-        gc.setFill(Color.web("#00fffd"));
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 42));
-        gc.fillText("PARTICIPANT", 50, 320);
+        gc.setFill(Color.web("#7BA4D0"));
+        gc.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 32));
+        gc.fillText("PARTICIPANT", 50, 310);
 
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", 36));
-        gc.fillText(truncateText(user.getNomComplet(), 30), 50, 380);
+        gc.setFont(Font.font("Segoe UI", FontWeight.BOLD, 42));
+        gc.fillText(truncateText(user.getNomComplet(), 30), 50, 370);
 
-        gc.setFont(Font.font("Arial", 24));
-        gc.fillText(truncateText(user.getEmail(), 40), 50, 430);
+        gc.setFill(Color.web("#E7F0FA"));
+        gc.setFont(Font.font("Segoe UI", 24));
+        gc.fillText(truncateText(user.getEmail(), 40), 50, 410);
 
-        // Status badge
+        // Status badge format
         String statusText = participation.getStatut().toUpperCase();
         Color statusColor = switch (participation.getStatut().toLowerCase()) {
             case "confirmé" -> Color.web("#28a745");
-            case "en_attente" -> Color.web("#ffc107");
+            case "en_attente" -> Color.web("#fd7e14");
             case "annulé" -> Color.web("#dc3545");
             default -> Color.web("#6c757d");
         };
 
+        // Draw pill background
         gc.setFill(statusColor);
-        gc.fillRoundRect(50, 470, 220, 45, 22, 22);
+        gc.fillRoundRect(50, 460, 240, 50, 25, 25);
         gc.setFill(Color.WHITE);
-        gc.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        gc.fillText(statusText, 75, 500);
+        gc.setFont(Font.font("Segoe UI", FontWeight.BOLD, 22));
+        gc.fillText("STATUT : " + statusText, 70, 492);
 
-        // Draw QR code
-        gc.drawImage(qrImage, 620, 180, 360, 360);
+        // Draw QR code with modern placement
+        gc.drawImage(qrImage, 600, 160, 380, 380);
 
         // QR label
-        gc.setFill(Color.web("#00fffd"));
-        gc.setFont(Font.font("Arial", 18));
-        gc.fillText("Scan for verification", 680, 560);
-
-        // Registration ID
         gc.setFill(Color.web("#7BA4D0"));
-        gc.setFont(Font.font("Arial", 14));
-        gc.fillText("Reg. ID: " + participation.getIdParticipation() + " | CashFly JPO System", 50, 610);
+        gc.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 16));
+        gc.fillText("Scanner pour validation sécurisée", 670, 570);
+
+        // Registration ID footer
+        gc.setFill(Color.web("#7BA4D0"));
+        gc.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 14));
+        gc.fillText("CashFly JPO  •  ID Inscription : " + participation.getIdParticipation(), 50, 610);
 
         return canvas;
     }
@@ -443,8 +447,10 @@ public class BadgeGenerator {
     }
 
     private static String truncateText(String text, int maxLength) {
-        if (text == null) return "";
-        if (text.length() <= maxLength) return text;
+        if (text == null)
+            return "";
+        if (text.length() <= maxLength)
+            return text;
         return text.substring(0, maxLength - 3) + "...";
     }
 }

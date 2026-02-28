@@ -3,13 +3,17 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.InvestorListAllJPOController">
 
     <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
 
         <!-- Header -->
-        <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="📅 Tous les événements à venir" />
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <FontIcon iconLiteral="fas-calendar-alt" iconSize="24" />
+            <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Tous les événements à venir" />
+        </HBox>
 
         <!-- Filter Bar -->
         <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: -color-bg-overlay; -fx-padding: 15; -fx-background-radius: 8;">
@@ -26,7 +30,11 @@
             <Label text="Filtrer:" style="-fx-font-weight: bold;" />
             <ComboBox fx:id="filterAvailabilityCombo" prefWidth="180" />
 
-            <Button fx:id="applyFiltersBtn" text="🔄 Actualiser" styleClass="btn-secondary" />
+            <Button fx:id="applyFiltersBtn" text=" Actualiser" styleClass="btn-secondary">
+                <graphic>
+                    <FontIcon iconLiteral="fas-sync-alt" />
+                </graphic>
+            </Button>
 
             <Region HBox.hgrow="ALWAYS" />
 

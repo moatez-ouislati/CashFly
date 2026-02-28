@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.InvestorMainController">
 
@@ -22,17 +23,28 @@
 
         <Label styleClass="sidebar-title" text="MENU" />
 
-        <Button fx:id="consulterBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="🔍 Tous les événements">
+        <Button fx:id="consulterBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text=" Tous les événements">
+            <graphic>
+                <FontIcon iconLiteral="fas-search" />
+            </graphic>
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>
         </Button>
 
-        <Button fx:id="gererBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="📋 Mes inscriptions" />
+        <Button fx:id="gererBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text=" Mes inscriptions">
+             <graphic>
+                 <FontIcon iconLiteral="fas-clipboard-list" />
+             </graphic>
+        </Button>
 
         <Region VBox.vgrow="ALWAYS" />
 
-        <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text="🚪 Déconnexion" />
+        <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text=" Déconnexion">
+            <graphic>
+                 <FontIcon iconLiteral="fas-sign-out-alt" />
+            </graphic>
+        </Button>
     </VBox>
 
     <!-- Content Area - Dynamic content loaded here -->
@@ -53,7 +65,7 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
-                    <Label style="-fx-font-size: 48px;" text="🔍" />
+                    <FontIcon iconLiteral="fas-search" iconSize="48" iconColor="#2E5E99" />
                     <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Découvrir les événements" />
                     <Label style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted; -fx-wrap-text: true; -fx-alignment: center;" text="Parcourez tous les JPO à venir et inscrivez-vous" />
                 </VBox>
@@ -62,7 +74,7 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
-                    <Label style="-fx-font-size: 48px;" text="📋" />
+                    <FontIcon iconLiteral="fas-clipboard-list" iconSize="48" iconColor="#2E5E99" />
                     <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Mes inscriptions" />
                     <Label style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted; -fx-wrap-text: true; -fx-alignment: center;" text="Gérez vos inscriptions et générez vos badges" />
                 </VBox>

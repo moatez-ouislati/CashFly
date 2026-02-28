@@ -5,15 +5,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.entities.Participation;
 import tn.cashfly.entities.Utilisateur;
@@ -53,6 +58,7 @@ public class InvestorListMyJPOController {
 
         loadMyEvents();
     }
+
     public void setMainController(InvestorMainController mainController) {
         this.mainController = mainController;
     }
@@ -130,6 +136,7 @@ public class InvestorListMyJPOController {
                 "-fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 10, 0, 0, 2);");
         card.setOnMouseClicked(e -> navigateToEventDetail(event));
         card.setStyle(card.getStyle() + "-fx-cursor: hand;");
+
         // Top row: Image + Info
         HBox topRow = new HBox(15);
         topRow.setAlignment(Pos.CENTER_LEFT);
@@ -168,7 +175,7 @@ public class InvestorListMyJPOController {
 
         statusRow.getChildren().addAll(statusBadge, participantBadge);
 
-        // Action row
+        // Action row - NOW WITH CHAT BUTTON
         HBox actionRow = new HBox(10);
         actionRow.setAlignment(Pos.CENTER_RIGHT);
 
@@ -184,13 +191,28 @@ public class InvestorListMyJPOController {
                 Button badgeBtn = new Button("🎫 Générer mon badge");
                 badgeBtn.getStyleClass().add("btn-secondary");
                 badgeBtn.setStyle("-fx-font-size: 12px; -fx-padding: 8 15;");
-                badgeBtn.setOnAction(e -> generateBadge(participation));
+                badgeBtn.setOnAction(e -> {
+                    e.consume();
+                    generateBadge(participation);
+                });
                 actionRow.getChildren().add(badgeBtn);
             } else {
                 Label badgeLabel = new Label("✓ Badge généré");
                 badgeLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #28a745; -fx-font-weight: bold;");
                 actionRow.getChildren().add(badgeLabel);
             }
+        }
+
+        // NEW: Chat button - only for confirmed or waiting participants
+        if (!isPast && !"annulé".equals(participation.getStatut())) {
+            Button chatBtn = new Button("💬 Chat");
+            chatBtn.getStyleClass().add("btn-secondary");
+            chatBtn.setStyle("-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #7BA4D0; -fx-text-fill: white;");
+            chatBtn.setOnAction(e -> {
+                e.consume(); // Prevent card click
+                openChatWindow(event);
+            });
+            actionRow.getChildren().add(chatBtn);
         }
 
         Region spacer = new Region();
@@ -209,12 +231,58 @@ public class InvestorListMyJPOController {
             Button cancelBtn = new Button("Se désinscrire");
             cancelBtn.getStyleClass().add("btn-danger");
             cancelBtn.setStyle("-fx-font-size: 12px; -fx-padding: 8 20;");
-            cancelBtn.setOnAction(e -> handleCancel(event));
+            cancelBtn.setOnAction(e -> {
+                e.consume();
+                handleCancel(event);
+            });
             actionRow.getChildren().add(cancelBtn);
         }
 
         card.getChildren().addAll(topRow, statusRow, actionRow);
         return card;
+    }
+
+    /**
+     * NEW: Open chat window for event
+     */
+    private void openChatWindow(JPO event) {
+        System.out.println("Opening chat for event: " + event.getTitre());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/ChatView.fxml"));
+            Parent chatView = loader.load();
+
+            ChatViewController controller = loader.getController();
+            if (controller == null) {
+                System.err.println("ERROR: ChatViewController is null!");
+                showAlert("Erreur", "Impossible d'initialiser le chat");
+                return;
+            }
+
+            controller.setEvent(event);
+
+            Stage chatStage = new Stage();
+            chatStage.initModality(Modality.APPLICATION_MODAL);
+            chatStage.initStyle(StageStyle.DECORATED);
+            chatStage.setTitle("Chat - " + event.getTitre());
+
+            Scene scene = new Scene(chatView, 450, 600);
+
+            scene.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ESCAPE) {
+                    controller.cleanup();
+                    chatStage.close();
+                }
+            });
+
+            chatStage.setScene(scene);
+            chatStage.setOnCloseRequest(e -> controller.cleanup());
+            chatStage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error opening chat: " + e.getMessage());
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir le chat: " + e.getMessage());
+        }
     }
 
     private void navigateToEventDetail(JPO event) {
@@ -228,7 +296,6 @@ public class InvestorListMyJPOController {
             Parent detailView = loader.load();
 
             InvestorEventDetailController controller = loader.getController();
-            // UPDATED: Pass NavigationHistory.MY_EVENTS so back button works
             controller.setEvent(event, mainController, NavigationHistory.MY_EVENTS);
 
             mainController.showEventDetail(detailView);
@@ -239,9 +306,6 @@ public class InvestorListMyJPOController {
         }
     }
 
-    /**
-     * FIXED: Convert Date to LocalDateTime using getTime() which works for both java.util.Date and java.sql.Date
-     */
     private String formatEventDate(Date date) {
         LocalDateTime dateTime = LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(date.getTime()),
@@ -250,9 +314,6 @@ public class InvestorListMyJPOController {
         return dateTime.format(DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy 'à' HH:mm"));
     }
 
-    /**
-     * FIXED: Convert Date to LocalDateTime for comparison
-     */
     private LocalDateTime convertToLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(date.getTime()),
@@ -325,7 +386,6 @@ public class InvestorListMyJPOController {
 
     private void handleCancel(JPO event) {
         try {
-            // Check if participation exists and badge status via service
             Participation p = serviceParticipation.getParticipation(
                     event.getId_evenement(),
                     currentUser.getIdUtilisateur()
@@ -336,14 +396,12 @@ public class InvestorListMyJPOController {
                 return;
             }
 
-            // Check badge generation
             if (p.isBadgeGenere()) {
                 showAlert("⛔ Action impossible",
                         "Vous ne pouvez pas annuler après avoir généré votre badge.");
                 return;
             }
 
-            // FIXED: Use proper conversion for time check
             LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
 
             if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {

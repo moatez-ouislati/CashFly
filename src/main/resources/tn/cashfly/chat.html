@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashFly Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #0D2440 0%, #2E5E99 100%);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .online-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .online-icon {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            animation: slideIn 0.3s ease;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.own {
+            align-self: flex-end;
+            background: #2E5E99;
+            color: white;
+        }
+
+        .message.other {
+            align-self: flex-start;
+            background: white;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        /* EDITED MESSAGE STYLES */
+        .message.edited {
+            border: 2px solid #ffc107;
+        }
+
+        .message.own.edited {
+            background: linear-gradient(135deg, #2E5E99 0%, #1e4a7a 100%);
+            box-shadow: 0 4px 12px rgba(46, 94, 153, 0.3);
+        }
+
+        .message.other.edited {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%);
+            border-left: 4px solid #ffc107;
+        }
+
+        .edited-badge {
+            font-size: 10px;
+            color: #d39e00;
+            font-style: italic;
+            margin-left: 8px;
+            font-weight: 600;
+        }
+
+        .message.own .edited-badge {
+            color: #ffd700;
+        }
+
+        .message.system {
+            align-self: center;
+            background: #E7F0FA;
+            color: #0D2440;
+            font-size: 12px;
+            padding: 6px 16px;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+
+        .message.own .message-header {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message.other .message-header {
+            color: #666;
+        }
+
+        .role-badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .role-proprietaire {
+            background: #ffc107;
+            color: #0D2440;
+        }
+
+        .role-investisseur {
+            background: #28a745;
+            color: white;
+        }
+
+        .crown-icon {
+            color: #ffc107;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.4;
+            word-break: break-word;
+            min-height: 20px;
+        }
+
+        .message-time {
+            font-size: 11px;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
+        /* Reply styles */
+        .reply-preview {
+            background: rgba(0, 0, 0, 0.05);
+            border-left: 3px solid #2E5E99;
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .message.own .reply-preview {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .reply-preview-author {
+            font-weight: 600;
+            color: #2E5E99;
+            margin-bottom: 2px;
+        }
+
+        .message.own .reply-preview-author {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .reply-preview-text {
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message.own .reply-preview-text {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Action buttons container */
+        .message-actions {
+            position: absolute;
+            bottom: 5px;
+            /* Changed from top: 5px */
+            right: 5px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            background: rgba(0, 0, 0, 0.1);
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .message.own .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .message.own .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Edit mode styles */
+        .edit-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .edit-input {
+            border: 1px solid #e0e4e8;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            resize: none;
+        }
+
+        .message.own .edit-input {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .edit-btn {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .edit-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .edit-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .input-area {
+            background: #f0f2f5;
+            border-top: 1px solid #e0e4e8;
+        }
+
+        .reply-bar {
+            background: white;
+            padding: 8px 20px;
+            border-bottom: 1px solid #e0e4e8;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reply-bar.active {
+            display: flex;
+        }
+
+        .reply-bar-info {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .reply-bar-author {
+            font-weight: 600;
+            color: #2E5E99;
+        }
+
+        .reply-bar-text {
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .reply-bar-close {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0 5px;
+        }
+
+        .input-container {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            border: 1px solid #e0e4e8;
+            border-radius: 24px;
+            padding: 12px 20px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #2E5E99;
+        }
+
+        .send-btn {
+            background: #2E5E99;
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .send-btn:hover {
+            background: #1e4a7a;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .connection-status {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc3545;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: none;
+            z-index: 100;
+        }
+
+        .connection-status.offline {
+            display: block;
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #666;
+        }
+
+        .message.deleted {
+            opacity: 0.6;
+            font-style: italic;
+        }
+
+        .message.deleted .message-content {
+            color: #999;
+        }
+
+        .message.own.deleted {
+            background: #6c757d;
+        }
+
+        /* Edit flash animation */
+        @keyframes editFlash {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(255, 193, 7, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+            }
+        }
+
+        .message.just-edited {
+            animation: editFlash 1s ease-out;
+        }
+
+        /* Custom Delete Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 320px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            animation: slideUp 0.2s;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .modal-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .modal-cancel {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .modal-cancel:hover {
+            background: #e4e6e9;
+        }
+
+        .modal-confirm {
+            background: #dc3545;
+            color: white;
+        }
+
+        .modal-confirm:hover {
+            background: #c82333;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="connection-status" id="connectionStatus">Déconnecté</div>
+
+    <div class="chat-header">
+        <h2>
+            <span class="chat-icon"><i class="fa-solid fa-comments"></i></span>
+            <span>Chat de l'événement</span>
+        </h2>
+        <span class="online-count">
+            <span class="online-icon"></span>
+            <span id="onlineCount">0</span> en ligne
+        </span>
+    </div>
+
+    <div class="loading" id="loading">
+        <div>Connexion en cours...</div>
+    </div>
+
+    <div class="messages-container" id="messagesContainer" style="display: none;"></div>
+
+    <div class="input-area">
+        <div class="reply-bar" id="replyBar">
+            <div class="reply-bar-info">
+                <div class="reply-bar-author" id="replyBarAuthor"></div>
+                <div class="reply-bar-text" id="replyBarText"></div>
+            </div>
+            <button class="reply-bar-close" onclick="cancelReply()">×</button>
+        </div>
+        <div class="input-container" id="inputContainer" style="display: none;">
+            <input type="text" class="message-input" id="messageInput" placeholder="Écrivez votre message..."
+                maxlength="500">
+            <button class="send-btn" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- Custom Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-title">Supprimer le message ?</div>
+            <div class="modal-text">Cette action est irréversible.</div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-cancel" onclick="closeDeleteModal()">Annuler</button>
+                <button class="modal-btn modal-confirm" id="confirmDeleteBtn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        let messageToDelete = null;
+
+        function openDeleteModal(messageId) {
+            messageToDelete = messageId;
+            document.getElementById('deleteModal').style.display = 'flex';
+        }
+
+        function closeDeleteModal() {
+            messageToDelete = null;
+            document.getElementById('deleteModal').style.display = 'none';
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+            if (messageToDelete) {
+                socket.emit('delete_message', { messageId: messageToDelete });
+                closeDeleteModal();
+            }
+        });
+
+        let socket = null;
+        let auth = null;
+        let currentReplyTo = null;
+        let currentlyEditing = null; // Track which message is being edited
+
+        const loadingDiv = document.getElementById('loading');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const onlineCount = document.getElementById('onlineCount');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const inputContainer = document.getElementById('inputContainer');
+        const replyBar = document.getElementById('replyBar');
+        const replyBarAuthor = document.getElementById('replyBarAuthor');
+        const replyBarText = document.getElementById('replyBarText');
+
+        function initChat(authData) {
+            if (!authData) return;
+            auth = authData;
+
+            loadingDiv.style.display = 'none';
+            messagesContainer.style.display = 'flex';
+            inputContainer.style.display = 'flex';
+
+            connectSocket();
+        }
+
+        function connectSocket() {
+            socket = io('http://localhost:4500', {
+                transports: ['websocket', 'polling'],
+                timeout: 10000,
+                reconnection: true,
+                reconnectionAttempts: 5,
+                forceNew: true
+            });
+
+            socket.on('message_deleted', (data) => {
+                console.log('Message deleted event received:', data);
+                updateDeletedMessageInUI(data);
+            });
+
+            socket.on('delete_confirmed', (data) => {
+                console.log('Delete confirmed for message:', data.messageId);
+            });
+
+            socket.on('error', (data) => {
+                console.error('Server error:', data);
+                alert('Error: ' + data.message);
+            });
+
+            socket.on('connect', () => {
+                connectionStatus.style.display = 'none';
+                const token = generateToken(auth);
+                socket.emit('authenticate', {
+                    token: token,
+                    eventId: auth.eventId
+                });
+            });
+
+            socket.on('disconnect', () => {
+                connectionStatus.className = 'connection-status offline';
+                connectionStatus.style.display = 'block';
+            });
+
+            socket.on('connect_error', () => {
+                connectionStatus.className = 'connection-status offline';
+                connectionStatus.style.display = 'block';
+            });
+
+            socket.on('recent_messages', (messages) => {
+                messagesContainer.innerHTML = '';
+                messages.forEach(msg => addMessage(msg));
+                scrollToBottom();
+            });
+
+            socket.on('new_message', (message) => {
+                addMessage(message);
+                scrollToBottom();
+            });
+
+            // NEW: Handle message edited event
+            socket.on('message_edited', (message) => {
+                updateMessageInUI(message);
+            });
+
+            socket.on('edit_confirmed', (data) => {
+                console.log('Edit confirmed for message:', data.messageId);
+            });
+
+            socket.on('user_joined', (data) => {
+                addSystemMessage(data.userName + ' a rejoint le chat');
+            });
+
+            socket.on('user_left', (data) => {
+                addSystemMessage(data.userName + ' a quitté le chat');
+            });
+
+            socket.on('online_users', (users) => {
+                onlineCount.textContent = users ? users.length : 0;
+            });
+
+            socket.on('error', (data) => {
+                console.error('Server error:', data);
+                alert('Error: ' + data.message);
+            });
+        }
+
+        function generateToken(authData) {
+            const header = btoa(JSON.stringify({ alg: 'none', typ: 'JWT' }));
+            const payload = btoa(JSON.stringify({
+                id: authData.userId,
+                name: authData.fullName || authData.userName,
+                role: authData.userRole
+            }));
+            return header + '.' + payload + '.';
+        }
+
+        function addMessage(msg) {
+            console.log('addMessage:', { id: msg.id, userId: msg.userId, authUserId: auth?.userId, isEdited: msg.isEdited });
+
+            const isOwn = msg.userId === auth.userId;
+            const isDeleted = parseInt(msg.isEdited, 10) === 2 || msg.status === 'deleted' || msg.content === '[Message supprimé]';
+
+            console.log('Checks:', { isOwn, isDeleted, willShowDelete: isOwn && !isDeleted });
+
+            const isProprietaire = msg.userRole === 'proprietaire';
+            const div = document.createElement('div');
+
+
+
+            // Add classes
+            let className = 'message ' + (isOwn ? 'own' : 'other');
+            if (msg.isEdited) {
+                className += ' edited';
+            }
+            div.className = className;
+
+            const messageId = parseInt(msg.id, 10);
+            div.dataset.messageId = messageId;
+
+            const roleClass = isProprietaire ? 'role-proprietaire' : 'role-investisseur';
+            const roleLabel = isProprietaire ? 'Propriétaire' : 'Investisseur';
+            const crownIcon = isProprietaire ? '<span class="crown-icon"><i class="fa-solid fa-crown"></i></span>' : '';
+
+            const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('fr-FR', {
+                hour: '2-digit', minute: '2-digit'
+            }) : '';
+
+            const displayName = (msg.userName || 'Inconnu').replace(' 👑', '');
+
+            // Edited badge
+            const editedBadge = msg.isEdited ?
+                `<span class="edited-badge" title="Modifié le ${msg.editedAt ? new Date(msg.editedAt).toLocaleString('fr-FR') : ''}">(modifié)</span>` : '';
+
+            let replyHtml = '';
+            if (msg.replyTo) {
+                const replyContent = escapeHtml(msg.replyTo.content || '').substring(0, 50);
+                const replyAuthor = escapeHtml(msg.replyTo.userName || 'Inconnu');
+                replyHtml = `
+                    <div class="reply-preview" onclick="scrollToMessage(${msg.replyTo.id})">
+                        <div class="reply-preview-author">${escapeHtml(replyAuthor)}</div>
+                        <div class="reply-preview-text">${replyContent}${(msg.replyTo.content || '').length > 50 ? '...' : ''}</div>
+                    </div>
+                `;
+            }
+
+            div.innerHTML = `
+            ${replyHtml}
+            <div class="message-header">
+                ${crownIcon}
+                <strong>${escapeHtml(displayName)}</strong>
+                ${editedBadge}
+                <span class="role-badge ${roleClass}">${roleLabel}</span>
+            </div>
+            <div class="message-content" id="content-${messageId}">${escapeHtml(msg.content || '')}</div>
+            <div class="message-footer" style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                <div class="message-time">${time}</div>
+                <!-- Action buttons will be inserted here -->
+            </div>
+        `;
+
+            // Action buttons container
+            const actionsDiv = document.createElement('div');
+            actionsDiv.className = 'message-actions';
+
+            // Reply button (for all messages)
+            const replyBtn = document.createElement('button');
+            replyBtn.className = 'action-btn';
+            replyBtn.innerHTML = '<i class="fa-solid fa-reply"></i>';
+            replyBtn.title = 'Répondre';
+            replyBtn.onclick = function (e) {
+                e.stopPropagation();
+                startReply(messageId, displayName, msg.content || '');
+            };
+            actionsDiv.appendChild(replyBtn);
+
+            // Edit button (only for own messages)
+            if (isOwn && !isDeleted) {
+                const editBtn = document.createElement('button');
+                editBtn.className = 'action-btn';
+                editBtn.innerHTML = '<i class="fa-solid fa-pen"></i>';
+                editBtn.title = 'Modifier';
+                editBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    startEdit(messageId, msg.content || '');
+                };
+                actionsDiv.appendChild(editBtn);
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn';
+                deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                deleteBtn.title = 'Supprimer';
+                deleteBtn.onclick = function (e) {
+                    e.stopPropagation();
+                    openDeleteModal(messageId);
+                };
+                actionsDiv.appendChild(deleteBtn);
+            }
+
+            const footer = div.querySelector('.message-footer');
+            footer.appendChild(actionsDiv);
+            messagesContainer.appendChild(div);
+        }
+
+        function updateDeletedMessageInUI(data) {
+            console.log('Updating deleted message in UI:', data);
+            const messageId = data.id;
+            const messageDiv = document.querySelector(`[data-message-id="${messageId}"]`);
+
+            if (!messageDiv) {
+                console.log('Message div not found for ID:', messageId);
+                return;
+            }
+
+            messageDiv.classList.add('deleted');
+
+            const contentDiv = messageDiv.querySelector(`[id^="content-"]`);
+            if (contentDiv) {
+                contentDiv.textContent = '[Message supprimé]';
+                contentDiv.style.fontStyle = 'italic';
+                contentDiv.style.color = '#999';
+            }
+
+            // Remove edit and delete buttons, keep only reply
+            const actionsDiv = messageDiv.querySelector('.message-actions');
+            if (actionsDiv) {
+                const buttons = actionsDiv.querySelectorAll('button');
+                buttons.forEach(btn => {
+                    if (btn.title !== 'Répondre') {
+                        btn.remove();
+                    }
+                });
+            }
+
+            console.log('Message marked as deleted:', messageId);
+        }
+
+        // NEW: Update existing message in UI (for edits)
+        function updateMessageInUI(msg) {
+            const messageDiv = document.querySelector(`[data-message-id="${msg.id}"]`);
+            if (!messageDiv) {
+                console.log('Message not found in UI:', msg.id);
+                return;
+            }
+
+            // Update content
+            const contentDiv = messageDiv.querySelector(`#content-${msg.id}`);
+            if (contentDiv) {
+                contentDiv.textContent = msg.content;
+            }
+
+            // Add edited class and badge
+            messageDiv.classList.add('edited', 'just-edited');
+
+            // Update or add edited badge
+            const header = messageDiv.querySelector('.message-header');
+            let editedBadge = header.querySelector('.edited-badge');
+            if (!editedBadge) {
+                editedBadge = document.createElement('span');
+                editedBadge.className = 'edited-badge';
+                // Insert after the name (before role badge)
+                const roleBadge = header.querySelector('.role-badge');
+                header.insertBefore(editedBadge, roleBadge);
+            }
+            editedBadge.textContent = '(modifié)';
+            editedBadge.title = 'Modifié le ' + (msg.editedAt ? new Date(msg.editedAt).toLocaleString('fr-FR') : '');
+
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                messageDiv.classList.remove('just-edited');
+            }, 1000);
+
+            console.log('Message updated in UI:', msg.id);
+        }
+
+        // NEW: Start editing a message
+        function startEdit(messageId, currentContent) {
+            // Cancel any existing edit or reply
+            if (currentlyEditing) {
+                cancelEdit();
+            }
+            cancelReply();
+
+            currentlyEditing = messageId;
+            const messageDiv = document.querySelector(`[data-message-id="${messageId}"]`);
+            const contentDiv = messageDiv.querySelector(`#content-${messageId}`);
+
+            // Replace content with edit interface
+            const originalContent = contentDiv.textContent;
+
+            const editContainer = document.createElement('div');
+            editContainer.className = 'edit-container';
+            editContainer.innerHTML = `
+            <textarea class="edit-input" id="edit-input-${messageId}" rows="2" maxlength="500">${escapeHtml(originalContent)}</textarea>
+            <div class="edit-actions">
+                <button class="edit-btn edit-cancel" onclick="cancelEdit()">Annuler</button>
+                <button class="edit-btn edit-save" onclick="saveEdit(${messageId})">Enregistrer</button>
+            </div>
+        `;
+
+            contentDiv.innerHTML = '';
+            contentDiv.appendChild(editContainer);
+
+            // Focus the textarea
+            const textarea = document.getElementById(`edit-input-${messageId}`);
+            textarea.focus();
+            textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+        }
+
+        // NEW: Cancel editing
+        function cancelEdit() {
+            if (!currentlyEditing) return;
+
+            const messageDiv = document.querySelector(`[data-message-id="${currentlyEditing}"]`);
+            const contentDiv = messageDiv.querySelector(`#content-${currentlyEditing}`);
+
+            // Restore original content by re-fetching from server or storing locally
+            // For simplicity, we'll reload the message from the last known state
+            // In a production app, you'd want to store the original content before editing
+
+            currentlyEditing = null;
+
+            // Request fresh message data from server or reload page
+            // For now, we'll just reload the chat to get fresh data
+            location.reload();
+        }
+
+        // NEW: Save edited message
+        function saveEdit(messageId) {
+            const textarea = document.getElementById(`edit-input-${messageId}`);
+            const newContent = textarea.value.trim();
+
+            if (!newContent) {
+                alert('Le message ne peut pas être vide');
+                return;
+            }
+
+            if (newContent.length > 500) {
+                alert('Le message est trop long (max 500 caractères)');
+                return;
+            }
+
+            console.log('Sending edit request:', { messageId, newContent });
+
+            socket.emit('edit_message', {
+                messageId: messageId,
+                newContent: newContent
+            });
+
+            currentlyEditing = null;
+        }
+
+        function addSystemMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'message system';
+            div.textContent = text;
+            messagesContainer.appendChild(div);
+            scrollToBottom();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function escapeJs(text) {
+            if (!text) return '';
+            return text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"');
+        }
+
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function scrollToMessage(messageId) {
+            const msgElement = document.querySelector(`[data-message-id="${messageId}"]`);
+            if (msgElement) {
+                msgElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                msgElement.style.animation = 'none';
+                msgElement.offsetHeight;
+                msgElement.style.animation = 'slideIn 0.3s ease';
+            }
+        }
+
+        function startReply(messageId, author, content) {
+            // Cancel any existing edit
+            if (currentlyEditing) {
+                cancelEdit();
+            }
+
+            const parsedId = parseInt(messageId, 10);
+            if (!parsedId || parsedId <= 0 || isNaN(parsedId)) {
+                console.error('Invalid messageId for reply:', messageId);
+                return;
+            }
+
+            currentReplyTo = parsedId;
+
+            replyBarAuthor.textContent = 'Répondre à ' + author;
+            replyBarText.textContent = content.substring(0, 60) + (content.length > 60 ? '...' : '');
+            replyBar.classList.add('active');
+            messageInput.focus();
+        }
+
+        function cancelReply() {
+            currentReplyTo = null;
+            replyBar.classList.remove('active');
+        }
+
+        function sendMessage() {
+            const content = messageInput.value.trim();
+
+            if (!content || !socket || !socket.connected) return;
+
+            const messageData = { content: content };
+
+            if (currentReplyTo && typeof currentReplyTo === 'number' && currentReplyTo > 0) {
+                messageData.replyTo = currentReplyTo;
+            }
+
+            socket.emit('send_message', messageData);
+            messageInput.value = '';
+            cancelReply();
+        }
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Expose initChat globally for JavaFX
+        window.initChat = initChat;
+    </script>
+</body>
+
+</html>

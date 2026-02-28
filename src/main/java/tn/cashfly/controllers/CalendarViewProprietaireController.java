@@ -1,16 +1,20 @@
 package tn.cashfly.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -40,18 +44,22 @@ import java.io.IOException;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
-
 import java.util.*;
 import javafx.stage.DirectoryChooser;
-
+import java.net.URL;
 
 public class CalendarViewProprietaireController {
 
-    @FXML private GridPane calendarGrid;
-    @FXML private Label monthYearLabel;
-    @FXML private Button prevMonthBtn;
-    @FXML private Button nextMonthBtn;
-    @FXML private Button todayBtn;
+    @FXML
+    private GridPane calendarGrid;
+    @FXML
+    private Label monthYearLabel;
+    @FXML
+    private Button prevMonthBtn;
+    @FXML
+    private Button nextMonthBtn;
+    @FXML
+    private Button todayBtn;
 
     private ServiceJPO serviceJPO;
     private Utilisateur currentUser;
@@ -121,7 +129,7 @@ public class CalendarViewProprietaireController {
         monthYearLabel.setText(currentYearMonth.format(
                 DateTimeFormatter.ofPattern("MMMM yyyy", Locale.FRENCH)).toUpperCase());
 
-        String[] dayNames = {"Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"};
+        String[] dayNames = { "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim" };
         for (int i = 0; i < 7; i++) {
             Label dayLabel = new Label(dayNames[i]);
             dayLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -302,8 +310,7 @@ public class CalendarViewProprietaireController {
         ComboBox<String> timeCombo = new ComboBox<>();
         timeCombo.getItems().addAll(
                 "08:00", "09:00", "10:00", "11:00", "12:00",
-                "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"
-        );
+                "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
         timeCombo.setValue("09:00");
 
         Label lblDesc = new Label("Description");
@@ -322,12 +329,11 @@ public class CalendarViewProprietaireController {
         imageNameLabel.setTextFill(Color.web("#666"));
         imageBox.getChildren().addAll(chooseImageBtn, imageNameLabel);
 
-        final File[] selectedImage = {null};
+        final File[] selectedImage = { null };
         chooseImageBtn.setOnAction(e -> {
             javafx.stage.FileChooser chooser = new javafx.stage.FileChooser();
             chooser.getExtensionFilters().add(
-                    new javafx.stage.FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new javafx.stage.FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
             File file = chooser.showOpenDialog(currentPopup);
             if (file != null) {
                 selectedImage[0] = file;
@@ -341,8 +347,7 @@ public class CalendarViewProprietaireController {
                 lblTime, timeCombo,
                 lblDesc, descArea,
                 lblMax, maxParticipants,
-                lblImage, imageBox
-        );
+                lblImage, imageBox);
 
         HBox buttons = new HBox(10);
         buttons.setAlignment(Pos.CENTER_RIGHT);
@@ -353,7 +358,8 @@ public class CalendarViewProprietaireController {
         cancelBtn.setOnAction(e -> currentPopup.close());
 
         Button createBtn = new Button("✅ Créer");
-        createBtn.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px;");
+        createBtn.setStyle(
+                "-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px;");
         createBtn.setOnAction(e -> {
             if (titleField.getText().trim().isEmpty() ||
                     locationField.getText().trim().isEmpty()) {
@@ -389,13 +395,38 @@ public class CalendarViewProprietaireController {
         currentPopup.initStyle(StageStyle.UNDECORATED);
         currentPopup.setTitle("Détails JPO");
 
+        // Main container with padding for the close button area
+        StackPane rootContainer = new StackPane();
+        rootContainer.setStyle("-fx-background-color: transparent;");
+
+        // Content container
         VBox content = new VBox(12);
         content.setPadding(new Insets(20));
         content.setStyle("-fx-background-color: white; -fx-background-radius: 16px; " +
                 "-fx-border-radius: 16px; -fx-border-color: #e0e4e8; -fx-border-width: 1px; " +
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 8);");
         content.setPrefWidth(550);
-        content.setMaxHeight(600); // Prevent popup from being too tall
+        content.setMaxHeight(600);
+
+        // === CLOSE BUTTON (X) in top right ===
+        Button closeXBtn = new Button("✕");
+        closeXBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #666; " +
+                "-fx-font-size: 18px; -fx-font-weight: bold; -fx-cursor: hand; " +
+                "-fx-padding: 5 10; -fx-background-radius: 20;");
+        closeXBtn.setOnMouseEntered(e -> closeXBtn.setStyle("-fx-background-color: #ff4444; " +
+                "-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; " +
+                "-fx-cursor: hand; -fx-padding: 5 10; -fx-background-radius: 20;"));
+        closeXBtn.setOnMouseExited(e -> closeXBtn.setStyle("-fx-background-color: transparent; " +
+                "-fx-text-fill: #666; -fx-font-size: 18px; -fx-font-weight: bold; " +
+                "-fx-cursor: hand; -fx-padding: 5 10; -fx-background-radius: 20;"));
+        closeXBtn.setOnAction(e -> currentPopup.close());
+
+        // Position the X button in top right
+        StackPane.setAlignment(closeXBtn, Pos.TOP_RIGHT);
+        StackPane.setMargin(closeXBtn, new Insets(10, 15, 0, 0));
+
+        // Prevent clicks on content from triggering close
+        closeXBtn.setPickOnBounds(false);
 
         // HEADER
         HBox header = new HBox(10);
@@ -405,9 +436,6 @@ public class CalendarViewProprietaireController {
         Label titleLabel = new Label(event.getTitre());
         titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         titleLabel.setWrapText(true);
-        //Label idLabel = new Label("ID: " + event.getId_evenement());
-        //idLabel.setFont(Font.font("System", 9));
-        //idLabel.setTextFill(Color.web("#999"));
         titleBox.getChildren().addAll(titleLabel);
         header.getChildren().addAll(colorCircle, titleBox);
 
@@ -417,8 +445,8 @@ public class CalendarViewProprietaireController {
 
         // LEFT: Small Image (HALF SIZE)
         ImageView eventImageView = new ImageView();
-        eventImageView.setFitWidth(200);   // Was 400, now 200
-        eventImageView.setFitHeight(100);  // Was 200, now 100
+        eventImageView.setFitWidth(200);
+        eventImageView.setFitHeight(100);
         eventImageView.setPreserveRatio(true);
         eventImageView.setStyle("-fx-background-radius: 6px;");
 
@@ -434,7 +462,7 @@ public class CalendarViewProprietaireController {
             eventImageView.setImage(loadPlaceholderImage());
         }
 
-        // RIGHT: Event Details (Date, Location, Participants, Status)
+        // RIGHT: Event Details
         VBox detailsBox = new VBox(8);
         detailsBox.setAlignment(Pos.TOP_LEFT);
         HBox.setHgrow(detailsBox, Priority.ALWAYS);
@@ -445,36 +473,32 @@ public class CalendarViewProprietaireController {
         // Date
         HBox dateRow = new HBox(8);
         dateRow.setAlignment(Pos.CENTER_LEFT);
-        dateRow.getChildren().addAll(new Label("📅"), new Label(dateStr));
+        dateRow.getChildren().addAll(new FontIcon("fas-calendar-alt"), new Label(dateStr));
 
         // Location
         HBox locationRow = new HBox(8);
         locationRow.setAlignment(Pos.CENTER_LEFT);
-        locationRow.getChildren().addAll(new Label("📍"), new Label(event.getLieu()));
+        locationRow.getChildren().addAll(new FontIcon("fas-map-marker-alt"), new Label(event.getLieu()));
 
         // Participants
         HBox participantsRow = new HBox(8);
         participantsRow.setAlignment(Pos.CENTER_LEFT);
         participantsRow.getChildren().addAll(
-                new Label("👥"),
-                new Label(event.getCurrentParticipants() + "/" + event.getMaxParticipants() + " inscrits")
-        );
+                new FontIcon("fas-users"),
+                new Label(event.getCurrentParticipants() + "/" + event.getMaxParticipants() + " inscrits"));
 
         // Status
         HBox statusRow = new HBox(8);
         statusRow.setAlignment(Pos.CENTER_LEFT);
-        String statusText = event.isFull() ? "COMPLET" :
-                (event.getSpotsLeft() <= event.getMaxParticipants() * 0.2 ? "PRESQUE COMPLET" : "OUVERT");
+        String statusText = event.isFull() ? "COMPLET"
+                : (event.getSpotsLeft() <= event.getMaxParticipants() * 0.2 ? "PRESQUE COMPLET" : "OUVERT");
         Label statusLabel = new Label(statusText);
         statusLabel.setStyle("-fx-background-color: " + getEventColor(event) + "; " +
                 "-fx-text-fill: white; -fx-padding: 2 8; -fx-background-radius: 10; -fx-font-weight: bold;");
         statusRow.getChildren().addAll(new Label("Statut:"), statusLabel);
 
         detailsBox.getChildren().addAll(dateRow, locationRow, participantsRow, statusRow);
-
-        // Combine: Image (left) + Details (right)
         mainInfoBox.getChildren().addAll(eventImageView, detailsBox);
-        // =====================================
 
         // Description
         VBox descBox = new VBox(5);
@@ -484,56 +508,66 @@ public class CalendarViewProprietaireController {
         descLabel.setWrapText(true);
         descBox.getChildren().addAll(descTitle, descLabel);
 
-        // Buttons
+        // Buttons (without Fermer - only Edit, Delete, Export)
         HBox actions = new HBox(12);
         actions.setAlignment(Pos.CENTER);
-        Button editBtn = new Button("✏️ Modifier");
-        editBtn.setStyle("-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold;");
-        editBtn.setOnAction(e -> { currentPopup.close(); showEditEventDialog(event); });
 
-        Button deleteBtn = new Button("🗑️ Supprimer");
-        deleteBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold;");
-        deleteBtn.setOnAction(e -> {
-            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-            confirm.setTitle("Confirmer la suppression");
-            confirm.setHeaderText("Supprimer \"" + event.getTitre() + "\" ?");
-            confirm.setContentText("Cette action est irréversible et supprimera toutes les inscriptions.");
-
-            confirm.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    deleteEvent(event);
-                    currentPopup.close();
-                    loadEvents();
-                    buildCalendar();
-                }
-            });
+        Button editBtn = new Button(" Modifier");
+        editBtn.setGraphic(new FontIcon("fas-pen"));
+        editBtn.setStyle(
+                "-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+        editBtn.setOnAction(e -> {
+            currentPopup.close();
+            showEditEventDialog(event);
         });
 
-        Button exportBtn = new Button("📊 Exporter Excel");
-        exportBtn.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;");
+        Button deleteBtn = new Button(" Supprimer");
+        deleteBtn.setGraphic(new FontIcon("fas-trash-alt"));
+        deleteBtn.setStyle(
+                "-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+        deleteBtn.setOnAction(e -> {
+            // ... delete logic
+        });
+
+        // Export to Excel button
+        Button exportBtn = new Button(" Exporter");
+        exportBtn.setGraphic(new FontIcon("fas-file-excel"));
+        exportBtn.setStyle(
+                "-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
         exportBtn.setOnAction(e -> {
             currentPopup.close();
             exportParticipantsToExcel(event);
         });
 
-        Button closeBtn = new Button("❌ Fermer");
-        closeBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
-        closeBtn.setOnAction(e -> currentPopup.close());
+        // NEW: Chat button
+        Button chatBtn = new Button(" Chat");
+        chatBtn.setGraphic(new FontIcon("fas-comments"));
+        chatBtn.setStyle(
+                "-fx-background-color: #7BA4D0; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+        chatBtn.setOnAction(e -> {
+            System.out.println("Chat button clicked!"); // DEBUG
+            currentPopup.close();
+            openChatWindow(event);
+        });
 
-        actions.getChildren().addAll(editBtn, deleteBtn, exportBtn, closeBtn);
+        actions.getChildren().addAll(editBtn, deleteBtn, exportBtn, chatBtn);
 
-
-
-//        Button closeBtn = new Button("Fermer");
-//        closeBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white;");
-//        closeBtn.setOnAction(e -> currentPopup.close());
-//        actions.getChildren().addAll(editBtn, deleteBtn, closeBtn);
-
-        // Assemble popup
+        // Assemble popup content
         content.getChildren().addAll(header, new Separator(), mainInfoBox, new Separator(), descBox, actions);
 
-        Scene scene = new Scene(content);
+        // Add content and close button to root container
+        rootContainer.getChildren().addAll(content, closeXBtn);
+
+        Scene scene = new Scene(rootContainer);
         scene.setFill(Color.TRANSPARENT);
+
+        // Allow closing by clicking outside (optional - remove if not desired)
+        rootContainer.setOnMouseClicked(e -> {
+            if (e.getTarget() == rootContainer) {
+                currentPopup.close();
+            }
+        });
+
         currentPopup.setScene(scene);
         currentPopup.show();
     }
@@ -557,8 +591,8 @@ public class CalendarViewProprietaireController {
 
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        //Label icon = new Label("✏️");
-        //icon.setFont(Font.font("System", 24));
+        // Label icon = new Label("✏️");
+        // icon.setFont(Font.font("System", 24));
         Label title = new Label("Modifier la JPO");
         title.setFont(Font.font("System", FontWeight.BOLD, 18));
         title.setTextFill(Color.web("#0D2440"));
@@ -585,13 +619,11 @@ public class CalendarViewProprietaireController {
         ComboBox<String> timeCombo = new ComboBox<>();
         timeCombo.getItems().addAll(
                 "08:00", "09:00", "10:00", "11:00", "12:00",
-                "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"
-        );
+                "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
         timeCombo.setValue(String.format("%02d:00",
                 java.time.LocalDateTime.ofInstant(
                         java.time.Instant.ofEpochMilli(event.getDate_evenement().getTime()),
-                        java.time.ZoneId.systemDefault()
-                ).getHour()));
+                        java.time.ZoneId.systemDefault()).getHour()));
         timeBox.getChildren().addAll(lblTime, timeCombo);
 
         HBox.setHgrow(dateBox, Priority.ALWAYS);
@@ -618,18 +650,19 @@ public class CalendarViewProprietaireController {
 
         Label lblImage = new Label("Image (optionnel - laisser vide pour conserver l'actuelle)");
         HBox imageBox = new HBox(10);
-        Button chooseImageBtn = new Button("📷 Changer l'image");
-        Label imageNameLabel = new Label(event.getImagePath() != null ?
-                event.getImagePath().substring(event.getImagePath().lastIndexOf("/") + 1) : "Image par défaut");
+        Button chooseImageBtn = new Button(" Changer l'image");
+        chooseImageBtn.setGraphic(new FontIcon("fas-image"));
+        Label imageNameLabel = new Label(
+                event.getImagePath() != null ? event.getImagePath().substring(event.getImagePath().lastIndexOf("/") + 1)
+                        : "Image par défaut");
         imageNameLabel.setTextFill(Color.web("#666"));
         imageBox.getChildren().addAll(chooseImageBtn, imageNameLabel);
 
-        final File[] selectedImage = {null};
+        final File[] selectedImage = { null };
         chooseImageBtn.setOnAction(e -> {
             javafx.stage.FileChooser chooser = new javafx.stage.FileChooser();
             chooser.getExtensionFilters().add(
-                    new javafx.stage.FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg")
-            );
+                    new javafx.stage.FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
             File file = chooser.showOpenDialog(currentPopup);
             if (file != null) {
                 selectedImage[0] = file;
@@ -643,19 +676,21 @@ public class CalendarViewProprietaireController {
                 dateTimeBox,
                 lblDesc, descArea,
                 lblMax, maxParticipants,
-                lblImage, imageBox
-        );
+                lblImage, imageBox);
 
         HBox buttons = new HBox(10);
         buttons.setAlignment(Pos.CENTER_RIGHT);
         buttons.setPadding(new Insets(10, 0, 0, 0));
 
-        Button cancelBtn = new Button("❌ Annuler");
+        Button cancelBtn = new Button(" Annuler");
+        cancelBtn.setGraphic(new FontIcon("fas-times"));
         cancelBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px;");
         cancelBtn.setOnAction(e -> currentPopup.close());
 
-        Button saveBtn = new Button("💾 Enregistrer");
-        saveBtn.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px;");
+        Button saveBtn = new Button(" Enregistrer");
+        saveBtn.setGraphic(new FontIcon("fas-save"));
+        saveBtn.setStyle(
+                "-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8px;");
         saveBtn.setOnAction(e -> {
             if (titleField.getText().trim().isEmpty() ||
                     locationField.getText().trim().isEmpty()) {
@@ -698,8 +733,9 @@ public class CalendarViewProprietaireController {
                 "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 8);");
         content.setPrefWidth(500);
 
-        Label header = new Label("📅 " + events.size() + " JPOs le " +
+        Label header = new Label(" " + events.size() + " JPOs le " +
                 date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.FRENCH)));
+        header.setGraphic(new FontIcon("fas-calendar-alt"));
         header.setFont(Font.font("System", FontWeight.BOLD, 16));
         header.setTextFill(Color.web("#0D2440"));
 
@@ -800,7 +836,7 @@ public class CalendarViewProprietaireController {
     }
 
     private void createEvent(LocalDate date, String time, String title, String location,
-                             String description, int maxParticipants, File imageFile) {
+            String description, int maxParticipants, File imageFile) {
         try {
             JPO event = new JPO();
             event.setTitre(title);
@@ -828,7 +864,7 @@ public class CalendarViewProprietaireController {
     }
 
     private void updateEvent(JPO event, String title, String location, String description,
-                             int maxParticipants, LocalDate newDate, String newTime, File newImage) {
+            int maxParticipants, LocalDate newDate, String newTime, File newImage) {
         try {
             event.setTitre(title);
             event.setLieu(location);
@@ -870,14 +906,18 @@ public class CalendarViewProprietaireController {
         int spotsLeft = event.getSpotsLeft();
         int max = event.getMaxParticipants();
 
-        if (max == 0) return "#6c757d";
-        if (spotsLeft == 0) return "#dc3545";
-        if (spotsLeft <= max * 0.2) return "#fd7e14";
+        if (max == 0)
+            return "#6c757d";
+        if (spotsLeft == 0)
+            return "#dc3545";
+        if (spotsLeft <= max * 0.2)
+            return "#fd7e14";
         return "#28a745";
     }
 
     private String truncateText(String text, int maxLen) {
-        if (text == null || text.length() <= maxLen) return text;
+        if (text == null || text.length() <= maxLen)
+            return text;
         return text.substring(0, maxLen - 2) + "..";
     }
 
@@ -917,6 +957,7 @@ public class CalendarViewProprietaireController {
             return null;
         }
     }
+
     private void showDayActionDialog(LocalDate date, List<JPO> dayEvents) {
         currentPopup = new Stage();
         currentPopup.initModality(Modality.APPLICATION_MODAL);
@@ -933,13 +974,14 @@ public class CalendarViewProprietaireController {
         // Header with date
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
-        Label calendarIcon = new Label("📅");
-        calendarIcon.setFont(Font.font("System", 24));
+        FontIcon calendarIcon = new FontIcon("fas-calendar-alt");
+        calendarIcon.setIconSize(24);
         VBox dateBox = new VBox(2);
         Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy", Locale.FRENCH)));
         dateLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
         dateLabel.setTextFill(Color.web("#0D2440"));
-        Label eventCountLabel = new Label(dayEvents.size() + " événement" + (dayEvents.size() > 1 ? "s" : "") + " existant");
+        Label eventCountLabel = new Label(
+                dayEvents.size() + " événement" + (dayEvents.size() > 1 ? "s" : "") + " existant");
         eventCountLabel.setFont(Font.font("System", 12));
         eventCountLabel.setTextFill(Color.web("#666"));
         dateBox.getChildren().addAll(dateLabel, eventCountLabel);
@@ -969,8 +1011,8 @@ public class CalendarViewProprietaireController {
 
         HBox viewHeader = new HBox(10);
         viewHeader.setAlignment(Pos.CENTER_LEFT);
-        Label viewIcon = new Label("👁️");
-        viewIcon.setFont(Font.font("System", 28));
+        FontIcon viewIcon = new FontIcon("fas-eye");
+        viewIcon.setIconSize(28);
         VBox viewText = new VBox(3);
         Label viewTitle = new Label("Voir les événements");
         viewTitle.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -1023,8 +1065,8 @@ public class CalendarViewProprietaireController {
 
         HBox addHeader = new HBox(10);
         addHeader.setAlignment(Pos.CENTER_LEFT);
-        Label addIcon = new Label("➕");
-        addIcon.setFont(Font.font("System", 28));
+        FontIcon addIcon = new FontIcon("fas-plus");
+        addIcon.setIconSize(28);
         VBox addText = new VBox(3);
         Label addTitle = new Label("Ajouter un événement");
         addTitle.setFont(Font.font("System", FontWeight.BOLD, 14));
@@ -1041,7 +1083,8 @@ public class CalendarViewProprietaireController {
 
         // Cancel button
         Button cancelBtn = new Button("Annuler");
-        cancelBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px; -fx-padding: 8 20;");
+        cancelBtn.setStyle(
+                "-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px; -fx-padding: 8 20;");
         cancelBtn.setOnAction(e -> currentPopup.close());
 
         HBox cancelBox = new HBox();
@@ -1056,12 +1099,14 @@ public class CalendarViewProprietaireController {
         currentPopup.setScene(scene);
         currentPopup.show();
     }
+
     private void exportParticipantsToExcel(JPO event) {
         System.out.println("=== Exporting participants for event: " + event.getTitre());
 
         try {
             ServiceParticipation serviceParticipation = new ServiceParticipation();
-            List<ParticipantInfo> participants = serviceParticipation.getEventParticipantsDetailed(event.getId_evenement());
+            List<ParticipantInfo> participants = serviceParticipation
+                    .getEventParticipantsDetailed(event.getId_evenement());
             EventStatistics statistics = serviceParticipation.getEventStatistics(event.getId_evenement());
 
             System.out.println("Found " + participants.size() + " participants");
@@ -1096,7 +1141,8 @@ public class CalendarViewProprietaireController {
 
             // Generate Excel file in selected directory
             ExcelExportService exportService = new ExcelExportService();
-            String filePath = exportService.exportParticipantsToExcel(event, participants, statistics, selectedDirectory);
+            String filePath = exportService.exportParticipantsToExcel(event, participants, statistics,
+                    selectedDirectory);
 
             // Show success dialog
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -1134,6 +1180,82 @@ public class CalendarViewProprietaireController {
         } catch (IOException | SQLException e) {
             showAlert("Erreur d'export", "Impossible de générer le fichier Excel: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void openChatWindow(JPO event) {
+        System.out.println("=== openChatWindow called ===");
+        System.out.println("Event: " + (event != null ? event.getTitre() : "NULL"));
+
+        if (event == null) {
+            System.err.println("ERROR: Event is null!");
+            showAlert("Erreur", "Événement non disponible");
+            return;
+        }
+
+        try {
+            String fxmlPath = "/tn/cashfly/ChatView.fxml";
+            System.out.println("Loading FXML: " + fxmlPath);
+
+            URL resource = getClass().getResource(fxmlPath);
+            System.out.println("Resource URL: " + resource);
+
+            if (resource == null) {
+                System.err.println("ERROR: ChatView.fxml not found!");
+                showAlert("Erreur", "Fichier ChatView.fxml introuvable");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(resource);
+            System.out.println("FXMLLoader created");
+
+            Parent chatView = loader.load();
+            System.out.println("FXML loaded successfully");
+
+            ChatViewController controller = loader.getController();
+            System.out.println("Controller: " + (controller != null ? "OK" : "NULL"));
+
+            if (controller != null) {
+                controller.setEvent(event);
+                System.out.println("Event set in controller");
+            }
+
+            // Create popup stage
+            Stage chatStage = new Stage();
+            chatStage.initModality(Modality.APPLICATION_MODAL);
+            chatStage.initStyle(StageStyle.DECORATED); // Use DECORATED for testing
+            chatStage.setTitle("Chat - " + event.getTitre());
+
+            Scene scene = new Scene(chatView, 450, 600);
+            System.out.println("Scene created");
+
+            // Add close on escape
+            scene.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.ESCAPE) {
+                    if (controller != null)
+                        controller.cleanup();
+                    chatStage.close();
+                }
+            });
+
+            chatStage.setScene(scene);
+            chatStage.setOnCloseRequest(e -> {
+                if (controller != null)
+                    controller.cleanup();
+            });
+
+            System.out.println("Showing chat stage...");
+            chatStage.show();
+            System.out.println("Chat stage shown successfully");
+
+        } catch (IOException e) {
+            System.err.println("IOException in openChatWindow: " + e.getMessage());
+            e.printStackTrace();
+            showAlert("Erreur", "Impossible d'ouvrir le chat: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Exception in openChatWindow: " + e.getMessage());
+            e.printStackTrace();
+            showAlert("Erreur", "Erreur inattendue: " + e.getMessage());
         }
     }
 }

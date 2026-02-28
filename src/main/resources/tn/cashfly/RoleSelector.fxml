@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.RoleSelectorController">
 
@@ -63,7 +64,7 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
-                    <Label style="-fx-font-size: 36px;" text="🏢" />
+                    <FontIcon iconColor="white" iconLiteral="fas-building" iconSize="36" />
                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="Propriétaire" />
                     <Button onAction="#openPME" prefHeight="40.0" prefWidth="140.0" styleClass="btn-primary" text="Accéder" />
                 </VBox>
@@ -73,7 +74,7 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
-                    <Label style="-fx-font-size: 36px;" text="💼" />
+                    <FontIcon iconColor="white" iconLiteral="fas-briefcase" iconSize="36" />
                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="Investisseur" />
                     <Button onAction="#openInvestor" prefHeight="40.0" prefWidth="140.0" styleClass="btn-primary" text="Accéder" />
                 </VBox>
@@ -83,7 +84,7 @@
                     <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </padding>
-                    <Label style="-fx-font-size: 36px;" text="⚙️" />
+                    <FontIcon iconColor="white" iconLiteral="fas-cog" iconSize="36" />
                     <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;" text="Admin" />
                     <Button onAction="#openAdmin" prefHeight="40.0" prefWidth="140.0" styleClass="btn-secondary" text="Bientôt" disable="true" />
                 </VBox>

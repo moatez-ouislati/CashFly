@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="root" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.MainJPOController">
 
@@ -28,7 +29,11 @@
 
       <Region VBox.vgrow="ALWAYS" />
 
-      <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text="🚪 Déconnexion" />
+      <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text=" Déconnexion">
+         <graphic>
+             <FontIcon iconLiteral="fas-sign-out-alt" />
+         </graphic>
+      </Button>
    </VBox>
 
    <!-- Content Area -->
@@ -52,8 +57,9 @@
 
          <Label styleClass="text-muted" text="Sélectionnez une action dans le menu de gauche pour commencer." wrapText="true" alignment="CENTER" />
 
-         <HBox alignment="CENTER" spacing="15.0">
-            <Label styleClass="text-success" text="✓ Système opérationnel" />
+         <HBox alignment="CENTER" spacing="10.0">
+            <FontIcon iconColor="#28a745" iconLiteral="fas-check" />
+            <Label styleClass="text-success" text="Système opérationnel" />
          </HBox>
       </VBox>
    </AnchorPane>

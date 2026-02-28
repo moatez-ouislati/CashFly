@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import org.kordamp.ikonli.javafx.FontIcon;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.entities.Utilisateur;
 import tn.cashfly.services.ServiceJPO;
@@ -36,12 +37,18 @@ import java.util.stream.Collectors;
 
 public class InvestorListAllJPOController {
 
-    @FXML private TextField searchField;
-    @FXML private ComboBox<String> sortComboBox;
-    @FXML private ComboBox<String> filterAvailabilityCombo;
-    @FXML private Button applyFiltersBtn;
-    @FXML private TilePane eventsTilePane;
-    @FXML private Label resultCountLabel;
+    @FXML
+    private TextField searchField;
+    @FXML
+    private ComboBox<String> sortComboBox;
+    @FXML
+    private ComboBox<String> filterAvailabilityCombo;
+    @FXML
+    private Button applyFiltersBtn;
+    @FXML
+    private TilePane eventsTilePane;
+    @FXML
+    private Label resultCountLabel;
 
     private ServiceJPO serviceJPO;
     private ServiceParticipation serviceParticipation;
@@ -70,15 +77,13 @@ public class InvestorListAllJPOController {
                 "Date (lointain → prochain)",
                 "Places disponibles (plus → moins)",
                 "Places disponibles (moins → plus)",
-                "Nom (A → Z)"
-        );
+                "Nom (A → Z)");
         sortComboBox.setValue("Date (prochain → lointain)");
 
         filterAvailabilityCombo.getItems().addAll(
                 "Tous les événements",
                 "Places disponibles",
-                "Complet / Liste d'attente"
-        );
+                "Complet / Liste d'attente");
         filterAvailabilityCombo.setValue("Tous les événements");
 
         applyFiltersBtn.setOnAction(e -> applyFilters());
@@ -104,7 +109,8 @@ public class InvestorListAllJPOController {
     }
 
     private void applyFilters() {
-        if (allEvents == null) return;
+        if (allEvents == null)
+            return;
 
         filteredEvents = new ArrayList<>(allEvents);
 
@@ -205,11 +211,17 @@ public class InvestorListAllJPOController {
         title.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         title.setWrapText(true);
 
-        // Date & Location - FIXED conversion
+        // Date & Location
         String dateStr = formatDate(event.getDate_evenement());
-        Label dateLoc = new Label("📅 " + dateStr + "\n📍 " + event.getLieu());
-        dateLoc.setStyle("-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;");
-        dateLoc.setWrapText(true);
+        VBox dateLocBox = new VBox(5);
+        Label dateLabel = new Label(" " + dateStr);
+        dateLabel.setGraphic(new FontIcon("fas-calendar-alt"));
+        dateLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;");
+        Label locLabel = new Label(" " + event.getLieu());
+        locLabel.setGraphic(new FontIcon("fas-map-marker-alt"));
+        locLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;");
+        locLabel.setWrapText(true);
+        dateLocBox.getChildren().addAll(dateLabel, locLabel);
 
         // Participants indicator
         HBox participantsBox = new HBox(10);
@@ -221,18 +233,28 @@ public class InvestorListAllJPOController {
 
         if (spots > 0) {
             double ratio = (double) (max - spots) / max;
+            FontIcon circleIcon = new FontIcon("fas-circle");
+            circleIcon.setIconSize(10);
             if (ratio < 0.5) {
-                spotsLabel.setText("🟢 " + spots + " places disponibles");
+                spotsLabel.setText(" " + spots + " places disponibles");
+                circleIcon.setIconColor(javafx.scene.paint.Color.web("#28a745"));
                 spotsLabel.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
             } else if (ratio < 0.8) {
-                spotsLabel.setText("🟡 " + spots + " places restantes");
+                spotsLabel.setText(" " + spots + " places restantes");
+                circleIcon.setIconColor(javafx.scene.paint.Color.web("#fd7e14"));
                 spotsLabel.setStyle("-fx-text-fill: #fd7e14; -fx-font-weight: bold;");
             } else {
-                spotsLabel.setText("🟠 " + spots + " places restantes");
+                spotsLabel.setText(" " + spots + " places restantes");
+                circleIcon.setIconColor(javafx.scene.paint.Color.web("#ff6b35"));
                 spotsLabel.setStyle("-fx-text-fill: #ff6b35; -fx-font-weight: bold;");
             }
+            spotsLabel.setGraphic(circleIcon);
         } else {
-            spotsLabel.setText("🔴 Complet - Liste d'attente");
+            FontIcon circleIcon = new FontIcon("fas-circle");
+            circleIcon.setIconSize(10);
+            circleIcon.setIconColor(javafx.scene.paint.Color.web("#dc3545"));
+            spotsLabel.setText(" Complet - Liste d'attente");
+            spotsLabel.setGraphic(circleIcon);
             spotsLabel.setStyle("-fx-text-fill: #dc3545; -fx-font-weight: bold;");
         }
         participantsBox.getChildren().add(spotsLabel);
@@ -243,10 +265,12 @@ public class InvestorListAllJPOController {
         actionBtn.setStyle("-fx-padding: 10;");
 
         try {
-            boolean isRegistered = serviceParticipation.isRegistered(event.getId_evenement(), currentUser.getIdUtilisateur());
+            boolean isRegistered = serviceParticipation.isRegistered(event.getId_evenement(),
+                    currentUser.getIdUtilisateur());
 
             if (isRegistered) {
-                actionBtn.setText("✓ Inscrit - Voir détails");
+                actionBtn.setText(" Inscrit - Voir détails");
+                actionBtn.setGraphic(new FontIcon("fas-check"));
                 actionBtn.getStyleClass().add("btn-secondary");
                 final JPO evt = event;
                 // Stop propagation to prevent double navigation
@@ -255,7 +279,8 @@ public class InvestorListAllJPOController {
                     navigateToEventDetail(evt);
                 });
             } else if (spots > 0) {
-                actionBtn.setText("S'inscrire");
+                actionBtn.setText(" S'inscrire");
+                actionBtn.setGraphic(new FontIcon("fas-pencil-alt"));
                 actionBtn.getStyleClass().add("btn-primary");
                 final JPO evt = event;
                 actionBtn.setOnAction(e -> {
@@ -263,7 +288,8 @@ public class InvestorListAllJPOController {
                     handleRegister(evt);
                 });
             } else {
-                actionBtn.setText("Rejoindre la liste d'attente");
+                actionBtn.setText(" Rejoindre la liste d'attente");
+                actionBtn.setGraphic(new FontIcon("fas-clock"));
                 actionBtn.getStyleClass().add("btn-secondary");
                 final JPO evt = event;
                 actionBtn.setOnAction(e -> {
@@ -277,7 +303,7 @@ public class InvestorListAllJPOController {
             actionBtn.setDisable(true);
         }
 
-        card.getChildren().addAll(imgView, title, dateLoc, participantsBox, actionBtn);
+        card.getChildren().addAll(imgView, title, dateLocBox, participantsBox, actionBtn);
         return card;
     }
 
@@ -308,28 +334,28 @@ public class InvestorListAllJPOController {
     }
 
     /**
-     * FIXED: Convert java.util.Date (which might actually be java.sql.Date) to LocalDateTime
+     * FIXED: Convert java.util.Date (which might actually be java.sql.Date) to
+     * LocalDateTime
      * java.sql.Date does NOT support toInstant(), so we use getTime() instead
      */
     private String formatDate(Date date) {
         // Use getTime() which works for both java.util.Date and java.sql.Date
         LocalDateTime dateTime = LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(date.getTime()),
-                ZoneId.systemDefault()
-        );
+                ZoneId.systemDefault());
         return dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 
     /**
      * FIXED: Convert Date to LocalDateTime for comparison
      */
-//    private LocalDateTime convertToLocalDateTime(Date date) {
-//        // Use getTime() which works for both java.util.Date and java.sql.Date
-//        return LocalDateTime.ofInstant(
-//                Instant.ofEpochMilli(date.getTime()),
-//                ZoneId.systemDefault()
-//        );
-//    }
+    // private LocalDateTime convertToLocalDateTime(Date date) {
+    // // Use getTime() which works for both java.util.Date and java.sql.Date
+    // return LocalDateTime.ofInstant(
+    // Instant.ofEpochMilli(date.getTime()),
+    // ZoneId.systemDefault()
+    // );
+    // }
 
     private void handleRegister(JPO event) {
         try {
@@ -343,31 +369,34 @@ public class InvestorListAllJPOController {
         }
     }
 
-//    private void handleCancel(JPO event) {
-//        // FIXED: Use proper conversion method that handles java.sql.Date
-//        LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
-//
-//        if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {
-//            showAlert("⛔ Impossible", "Désinscription impossible moins de 24h avant l'événement.");
-//            return;
-//        }
-//
-//        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-//        confirm.setTitle("Confirmation");
-//        confirm.setHeaderText("Se désinscrire de \"" + event.getTitre() + "\" ?");
-//        confirm.setContentText("Cette action est irréversible.");
-//
-//        Optional<ButtonType> result = confirm.showAndWait();
-//        if (result.isPresent() && result.get() == ButtonType.OK) {
-//            try {
-//                serviceParticipation.cancel(event.getId_evenement(), currentUser.getIdUtilisateur());
-//                showAlert("✅ Désinscription confirmée", "Vous êtes désinscrit de l'événement.");
-//                loadEvents(); // Refresh
-//            } catch (SQLException e) {
-//                showAlert("❌ Erreur", "Impossible de se désinscrire: " + e.getMessage());
-//            }
-//        }
-//    }
+    // private void handleCancel(JPO event) {
+    // // FIXED: Use proper conversion method that handles java.sql.Date
+    // LocalDateTime eventDate = convertToLocalDateTime(event.getDate_evenement());
+    //
+    // if (LocalDateTime.now().plusHours(24).isAfter(eventDate)) {
+    // showAlert("⛔ Impossible", "Désinscription impossible moins de 24h avant
+    // l'événement.");
+    // return;
+    // }
+    //
+    // Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+    // confirm.setTitle("Confirmation");
+    // confirm.setHeaderText("Se désinscrire de \"" + event.getTitre() + "\" ?");
+    // confirm.setContentText("Cette action est irréversible.");
+    //
+    // Optional<ButtonType> result = confirm.showAndWait();
+    // if (result.isPresent() && result.get() == ButtonType.OK) {
+    // try {
+    // serviceParticipation.cancel(event.getId_evenement(),
+    // currentUser.getIdUtilisateur());
+    // showAlert("✅ Désinscription confirmée", "Vous êtes désinscrit de
+    // l'événement.");
+    // loadEvents(); // Refresh
+    // } catch (SQLException e) {
+    // showAlert("❌ Erreur", "Impossible de se désinscrire: " + e.getMessage());
+    // }
+    // }
+    // }
 
     private void showAlert(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
