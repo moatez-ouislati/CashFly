@@ -27,18 +27,11 @@ public class MainJPOController {
 
     @FXML
     public void initialize() {
-        System.out.println("=== MainJPOController.initialize() START ===");
 
-        System.out.println("contentArea = " + contentArea);
-        System.out.println("welcomeView = " + welcomeView);
-        System.out.println("addJPO = " + addJPO);
-        System.out.println("logoutBtn = " + logoutBtn);
 
         currentUser = SessionManager.getCurrentUser();
-        System.out.println("currentUser = " + (currentUser != null ? currentUser.getNomComplet() : "null"));
 
         if (!SessionManager.isLoggedIn() || !"proprietaire".equals(SessionManager.getCurrentUserRole())) {
-            System.out.println("Unauthorized access - redirecting to login");
             navigateToLogin();
             return;
         }
@@ -49,14 +42,11 @@ public class MainJPOController {
         if (addJPO != null) addJPO.setOnAction(e -> showCalendarView());
         if (logoutBtn != null) logoutBtn.setOnAction(e -> handleLogout());
 
-        System.out.println("Showing calendar view...");
         showCalendarView();
 
-        System.out.println("=== MainJPOController.initialize() END ===");
     }
 
     public void showCalendarView() {
-        System.out.println("=== showCalendarView() START ===");
 
         if (contentArea == null) {
             System.err.println("ERROR: contentArea is null! Check that fx:id=\"contentArea\" exists in MainJPO.fxml");
@@ -64,7 +54,6 @@ public class MainJPOController {
         }
 
         try {
-            System.out.println("Loading CalendarViewProprietaire.fxml...");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/CalendarViewProprietaire.fxml"));
 
             if (loader.getLocation() == null) {
@@ -74,12 +63,10 @@ public class MainJPOController {
             }
 
             Parent calendarView = loader.load();
-            System.out.println("Calendar view loaded successfully");
 
             CalendarViewProprietaireController controller = loader.getController();
             if (controller != null) {
                 controller.setMainController(this);
-                System.out.println("Calendar controller set");
             } else {
                 System.err.println("WARNING: Calendar controller is null");
             }
@@ -95,17 +82,14 @@ public class MainJPOController {
             resetAllButtons();
             if (addJPO != null) addJPO.getStyleClass().add("btn-active");
 
-            System.out.println("=== showCalendarView() SUCCESS ===");
 
         } catch (IOException e) {
             System.err.println("ERROR loading calendar: " + e.getMessage());
-            e.printStackTrace();
             showWelcomeFallback();
         }
     }
 
     private void showWelcomeFallback() {
-        System.out.println("=== showWelcomeFallback() ===");
 
         if (contentArea == null) {
             System.err.println("CRITICAL: contentArea is null, cannot show any view");
@@ -119,7 +103,6 @@ public class MainJPOController {
             AnchorPane.setBottomAnchor(welcomeView, 0.0);
             AnchorPane.setLeftAnchor(welcomeView, 0.0);
             AnchorPane.setRightAnchor(welcomeView, 0.0);
-            System.out.println("Welcome view shown as fallback");
         } else {
             System.err.println("WARNING: welcomeView is also null, showing empty content area");
         }
@@ -141,7 +124,6 @@ public class MainJPOController {
                 NavigationUtil.navigateTo(stage, "RoleSelector.fxml");
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -163,7 +145,6 @@ public class MainJPOController {
                 NavigationUtil.navigateTo(stage, "RoleSelector.fxml");
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

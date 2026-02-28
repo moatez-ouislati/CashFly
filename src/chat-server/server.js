@@ -43,7 +43,6 @@ const io = socketIo(server, {
 });
 
 io.on('connection', (socket) => {
-    console.log('New socket connection:', socket.id);
 
     socket.on('authenticate', async (data) => {
         const { token, eventId } = data;
@@ -273,7 +272,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('delete_message', async (data) => {
-        console.log('=== DELETE MESSAGE RECEIVED ===', data);
 
         if (!socket.userId || !socket.eventId) {
             socket.emit('error', { message: 'Not authenticated' });
@@ -347,10 +345,9 @@ const PORT = process.env.PORT || 4500;
 
 pool.getConnection()
     .then(conn => {
-        console.log('Database connected');
         conn.release();
         server.listen(PORT, '0.0.0.0', () => {
-            console.log(`Server running on http://localhost:${PORT}`);
+            console.log(`Chat server running on port ${PORT}`);
         });
     })
     .catch(err => {

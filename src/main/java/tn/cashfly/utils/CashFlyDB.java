@@ -14,11 +14,9 @@ public class CashFlyDB {
         try {
             connection = DriverManager.getConnection(URL,USERNAME,PASSWORD);
 
-            System.out.println("Base de donnees CashFlyDB est connectée ...");
 
         } catch(SQLException e)
         {
-            System.out.println(e.getMessage());
         }
     }
 
@@ -35,7 +33,6 @@ public class CashFlyDB {
                 connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
         }
         return connection;
     }

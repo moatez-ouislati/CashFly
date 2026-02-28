@@ -24,18 +24,18 @@
         <Label styleClass="sidebar-title" text="MENU" />
 
         <Button fx:id="consulterBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text=" Tous les événements">
-            <graphic>
-                <FontIcon iconLiteral="fas-search" />
-            </graphic>
+<!--            <graphic>-->
+<!--                <FontIcon iconLiteral="fas-search" />-->
+<!--            </graphic>-->
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>
         </Button>
 
         <Button fx:id="gererBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text=" Mes inscriptions">
-             <graphic>
-                 <FontIcon iconLiteral="fas-clipboard-list" />
-             </graphic>
+<!--             <graphic>-->
+<!--                 <FontIcon iconLiteral="fas-clipboard-list" />-->
+<!--             </graphic>-->
         </Button>
 
         <Region VBox.vgrow="ALWAYS" />

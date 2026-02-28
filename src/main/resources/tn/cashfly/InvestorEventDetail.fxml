@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.ImageView?>
@@ -10,10 +11,11 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.Rectangle?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<AnchorPane prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.InvestorEventDetailController">
+<AnchorPane fx:id="rootPane" prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.InvestorEventDetailController">
 
     <VBox spacing="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
 
@@ -34,8 +36,8 @@
                 <VBox spacing="0">
 
                     <!-- Hero image -->
-                    <StackPane prefHeight="260">
-                        <ImageView fx:id="heroImage" fitHeight="260" fitWidth="1060" preserveRatio="false" smooth="true" style="-fx-opacity: 0.92;" />
+                    <StackPane prefHeight="260" style="-fx-background-color: #0D2440;">
+                        <ImageView fx:id="heroImage" fitHeight="260" fitWidth="1060" preserveRatio="true" smooth="true" style="-fx-opacity: 0.92;" />
                         <Rectangle height="260" style="-fx-fill: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.72) 100%);" width="1060" />
                         <VBox alignment="BOTTOM_LEFT" style="-fx-padding: 0 40 28 40;">
                             <Label fx:id="titleOverlay" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 8, 0, 0, 2);" wrapText="true" />
@@ -52,7 +54,7 @@
                             <HBox alignment="CENTER_LEFT" spacing="10">
                                 <Label fx:id="statusBadge" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 6 16; -fx-background-radius: 20;" text=" Places disponibles">
                                     <graphic>
-                                        <FontIcon iconLiteral="fas-circle" iconSize="10" />
+                                        <Circle fx:id="statusDot" radius="5.0" fill="gray" />
                                     </graphic>
                                 </Label>
                             </HBox>
@@ -109,28 +111,33 @@
                                 </HBox>
                             </VBox>
 
-                            <!-- Action card body -->
-                            <VBox spacing="12" style="-fx-padding: 20;">
+                            <VBox fx:id="actionButtonContainer" spacing="12" style="-fx-padding: 20;">
 
                                 <!-- Register button -->
                                 <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="45.0" prefWidth="280.0" styleClass="btn-primary" text="S'inscrire" />
 
                                 <!-- Cancel button -->
-                                <Button fx:id="cancelButton" onAction="#handleCancelRegistration" prefHeight="45.0" prefWidth="280.0" styleClass="btn-danger" text="Annuler inscription" visible="false" />
+                                <Button fx:id="cancelButton" onAction="#handleCancelRegistration" prefHeight="45.0" prefWidth="280.0" styleClass="btn-danger" text="Annuler inscription" visible="false" managed="false" />
 
                                 <!-- Generate badge button -->
-                                <Button fx:id="generateBadgeButton" onAction="#handleGenerateBadge" prefHeight="45.0" prefWidth="280.0" style="-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold; -fx-background-radius: 6;" text=" Générer badge" visible="false">
+                                <Button fx:id="generateBadgeButton" onAction="#handleGenerateBadge" prefHeight="45.0" prefWidth="280.0" style="-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold; -fx-background-radius: 6;" text=" Générer badge" visible="false" managed="false">
                                     <graphic>
                                         <FontIcon iconLiteral="fas-ticket-alt" />
                                     </graphic>
                                 </Button>
 
                                 <!-- Download badge button -->
-                                <Button fx:id="downloadBadgeButton" onAction="#handleDownloadBadge" prefHeight="45.0" prefWidth="280.0" styleClass="btn-secondary" text=" Télécharger badge" visible="false">
+                                <Button fx:id="downloadBadgeButton" onAction="#handleDownloadBadge" prefHeight="45.0" prefWidth="280.0" styleClass="btn-secondary" text=" Télécharger badge" visible="false" managed="false">
                                     <graphic>
                                         <FontIcon iconLiteral="fas-download" />
                                     </graphic>
                                 </Button>
+
+                                <!-- Loading State (NEW) -->
+                                <VBox fx:id="badgeLoadingBox" alignment="CENTER" spacing="10" visible="false" managed="false">
+                                    <ProgressIndicator fx:id="badgeProgressIndicator" prefHeight="40" prefWidth="40" />
+                                    <Label fx:id="badgeLoadingLabel" style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;" text="Génération de votre badge..." />
+                                </VBox>
 
                             </VBox>
 

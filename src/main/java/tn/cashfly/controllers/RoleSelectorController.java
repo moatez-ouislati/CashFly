@@ -49,7 +49,6 @@ public class RoleSelectorController {
 
         } catch (SQLException e) {
             showError("Erreur de connexion à la base de données");
-            e.printStackTrace();
         }
     }
 
@@ -66,7 +65,6 @@ public class RoleSelectorController {
     @FXML
     private void openAdmin() {
         // Future implementation
-        System.out.println("Admin access - Coming soon");
     }
 
     private void redirectBasedOnRole(String role) {
@@ -80,7 +78,6 @@ public class RoleSelectorController {
             Stage stage = (Stage) emailField.getScene().getWindow();
             NavigationUtil.navigateTo(stage, target);
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
@@ -100,7 +97,6 @@ public class RoleSelectorController {
             NavigationUtil.navigateTo(stage, fxml);
 
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

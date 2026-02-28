@@ -16,12 +16,18 @@ import java.io.IOException;
 
 public class InvestorMainController {
 
-    @FXML private Button consulterBtn;
-    @FXML private Button gererBtn;
-    @FXML private Button logoutBtn;
-    @FXML private AnchorPane contentArea;
-    @FXML private VBox welcomeView;
-    @FXML private Label welcomeLabel;
+    @FXML
+    private Button consulterBtn;
+    @FXML
+    private Button gererBtn;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private AnchorPane contentArea;
+    @FXML
+    private VBox welcomeView;
+    @FXML
+    private Label welcomeLabel;
 
     private Utilisateur currentUser;
 
@@ -83,6 +89,9 @@ public class InvestorMainController {
         AnchorPane.setLeftAnchor(newView, 0.0);
         AnchorPane.setRightAnchor(newView, 0.0);
 
+        // --- NEW: Add navigation animation ---
+        tn.cashfly.utils.AnimationUtils.fadeIn(newView, 400);
+
         // Update button styles
         resetButtonStyles();
         if (activeButton != null) {
@@ -111,6 +120,9 @@ public class InvestorMainController {
         AnchorPane.setLeftAnchor(previousView, 0.0);
         AnchorPane.setRightAnchor(previousView, 0.0);
 
+        // --- NEW: Add navigation animation ---
+        tn.cashfly.utils.AnimationUtils.fadeIn(previousView, 400);
+
         // Update button styles based on title
         resetButtonStyles();
         if (title != null) {
@@ -137,7 +149,6 @@ public class InvestorMainController {
 
             navigateToView(allEventsView, "Tous les événements", consulterBtn);
         } catch (IOException e) {
-            e.printStackTrace();
             showError("Impossible de charger la page des événements");
         }
     }
@@ -152,7 +163,6 @@ public class InvestorMainController {
 
             navigateToView(myEventsView, "Mes inscriptions", gererBtn);
         } catch (IOException e) {
-            e.printStackTrace();
             showError("Impossible de charger la page de vos inscriptions");
         }
     }
@@ -170,6 +180,9 @@ public class InvestorMainController {
         AnchorPane.setLeftAnchor(detailView, 0.0);
         AnchorPane.setRightAnchor(detailView, 0.0);
 
+        // --- NEW: Add navigation animation ---
+        tn.cashfly.utils.AnimationUtils.fadeIn(detailView, 400);
+
         resetButtonStyles();
     }
 
@@ -184,7 +197,6 @@ public class InvestorMainController {
         try {
             NavigationUtil.navigateTo((Stage) logoutBtn.getScene().getWindow(), "RoleSelector.fxml");
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

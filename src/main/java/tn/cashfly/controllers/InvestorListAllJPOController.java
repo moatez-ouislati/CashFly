@@ -14,6 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import org.kordamp.ikonli.javafx.FontIcon;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.entities.Utilisateur;
@@ -103,7 +105,6 @@ public class InvestorListAllJPOController {
             filteredEvents = new ArrayList<>(allEvents);
             applyFilters();
         } catch (SQLException e) {
-            e.printStackTrace();
             showAlert("Erreur", "Impossible de charger les événements: " + e.getMessage());
         }
     }
@@ -169,6 +170,9 @@ public class InvestorListAllJPOController {
 
         displayEvents();
         resultCountLabel.setText(filteredEvents.size() + " événement" + (filteredEvents.size() > 1 ? "s" : ""));
+
+        // --- NEW: Add animations ---
+        tn.cashfly.utils.AnimationUtils.staggerFadeIn(eventsTilePane.getChildren(), 500, 50);
     }
 
     private void displayEvents() {
@@ -198,6 +202,9 @@ public class InvestorListAllJPOController {
         // Make card clickable for details
         card.setOnMouseClicked(e -> handleEventClick(event));
         card.setStyle(card.getStyle() + "-fx-cursor: hand;");
+
+        // --- NEW: Add hover animation ---
+        tn.cashfly.utils.AnimationUtils.addHoverScale(card, 1.02, 150);
 
         // Image
         ImageView imgView = new ImageView(ImageStorage.loadImage(event.getImagePath()));
@@ -233,28 +240,26 @@ public class InvestorListAllJPOController {
 
         if (spots > 0) {
             double ratio = (double) (max - spots) / max;
-            FontIcon circleIcon = new FontIcon("fas-circle");
-            circleIcon.setIconSize(10);
+            Circle circleDot = new Circle(5);
             if (ratio < 0.5) {
                 spotsLabel.setText(" " + spots + " places disponibles");
-                circleIcon.setIconColor(javafx.scene.paint.Color.web("#28a745"));
+                circleDot.setFill(Color.web("#28a745"));
                 spotsLabel.setStyle("-fx-text-fill: #28a745; -fx-font-weight: bold;");
             } else if (ratio < 0.8) {
                 spotsLabel.setText(" " + spots + " places restantes");
-                circleIcon.setIconColor(javafx.scene.paint.Color.web("#fd7e14"));
+                circleDot.setFill(Color.web("#fd7e14"));
                 spotsLabel.setStyle("-fx-text-fill: #fd7e14; -fx-font-weight: bold;");
             } else {
                 spotsLabel.setText(" " + spots + " places restantes");
-                circleIcon.setIconColor(javafx.scene.paint.Color.web("#ff6b35"));
+                circleDot.setFill(Color.web("#ff6b35"));
                 spotsLabel.setStyle("-fx-text-fill: #ff6b35; -fx-font-weight: bold;");
             }
-            spotsLabel.setGraphic(circleIcon);
+            spotsLabel.setGraphic(circleDot);
         } else {
-            FontIcon circleIcon = new FontIcon("fas-circle");
-            circleIcon.setIconSize(10);
-            circleIcon.setIconColor(javafx.scene.paint.Color.web("#dc3545"));
+            Circle circleDot = new Circle(5);
+            circleDot.setFill(Color.web("#dc3545"));
             spotsLabel.setText(" Complet - Liste d'attente");
-            spotsLabel.setGraphic(circleIcon);
+            spotsLabel.setGraphic(circleDot);
             spotsLabel.setStyle("-fx-text-fill: #dc3545; -fx-font-weight: bold;");
         }
         participantsBox.getChildren().add(spotsLabel);
@@ -328,7 +333,6 @@ public class InvestorListAllJPOController {
             mainController.showEventDetail(detailView);
 
         } catch (IOException e) {
-            e.printStackTrace();
             showAlert("Erreur", "Impossible de charger les détails de l'événement: " + e.getMessage());
         }
     }

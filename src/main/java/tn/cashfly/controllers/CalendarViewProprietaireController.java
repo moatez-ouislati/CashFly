@@ -18,6 +18,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.DirectoryChooser;
+import java.net.URL;
 import tn.cashfly.entities.JPO;
 import tn.cashfly.entities.Utilisateur;
 import tn.cashfly.services.ServiceJPO;
@@ -40,13 +42,6 @@ import tn.cashfly.services.ExcelExportService;
 import tn.cashfly.entities.EventStatistics;
 import tn.cashfly.entities.ParticipantInfo;
 import java.io.IOException;
-
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-
-import java.util.*;
-import javafx.stage.DirectoryChooser;
-import java.net.URL;
 
 public class CalendarViewProprietaireController {
 
@@ -117,7 +112,6 @@ public class CalendarViewProprietaireController {
                 eventsByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(event);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
             allEvents = new ArrayList<>();
             eventsByDate = new HashMap<>();
         }
@@ -508,7 +502,7 @@ public class CalendarViewProprietaireController {
         descLabel.setWrapText(true);
         descBox.getChildren().addAll(descTitle, descLabel);
 
-        // Buttons (without Fermer - only Edit, Delete, Export)
+        // Buttons (without Fermer - only Edit, Delete, Export, Chat)
         HBox actions = new HBox(12);
         actions.setAlignment(Pos.CENTER);
 
@@ -516,36 +510,96 @@ public class CalendarViewProprietaireController {
         editBtn.setGraphic(new FontIcon("fas-pen"));
         editBtn.setStyle(
                 "-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+
+        Button deleteBtn = new Button("Supprimer");
+        deleteBtn.setGraphic(new FontIcon("fas-trash-alt"));
+        deleteBtn.setStyle(
+                "-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+
+        Button exportBtn = new Button(" Exporter");
+        exportBtn.setGraphic(new FontIcon("fas-file-excel"));
+        exportBtn.setStyle(
+                "-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+
+        Button chatBtn = new Button(" Chat");
+        chatBtn.setGraphic(new FontIcon("fas-comments"));
+        chatBtn.setStyle(
+                "-fx-background-color: #7BA4D0; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
+
+        // --- Permissions, Past Date & 24h Check ---
+        int currentUserId = SessionManager.getCurrentUser().getIdUtilisateur();
+        boolean isCreator = (event.getIdCreateur() == currentUserId);
+
+        long now = System.currentTimeMillis();
+        long eventTime = event.getDate_evenement().getTime();
+        boolean isPastOrWithin24h = eventTime < (now + 24 * 60 * 60 * 1000);
+
+        // Visibility based on creator status
+        if (!isCreator) {
+            editBtn.setVisible(false);
+            editBtn.setManaged(false);
+            deleteBtn.setVisible(false);
+            deleteBtn.setManaged(false);
+            exportBtn.setVisible(false);
+            exportBtn.setManaged(false);
+            chatBtn.setVisible(false);
+            chatBtn.setManaged(false);
+        } else {
+            // If creator, further restrict edit/delete by time
+            if (isPastOrWithin24h) {
+                editBtn.setVisible(false);
+                editBtn.setManaged(false);
+                deleteBtn.setVisible(false);
+                deleteBtn.setManaged(false);
+            }
+        }
+
         editBtn.setOnAction(e -> {
             currentPopup.close();
             showEditEventDialog(event);
         });
 
-        Button deleteBtn = new Button(" Supprimer");
-        deleteBtn.setGraphic(new FontIcon("fas-trash-alt"));
-        deleteBtn.setStyle(
-                "-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
         deleteBtn.setOnAction(e -> {
-            // ... delete logic
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirmer la suppression");
+            confirm.setHeaderText("Supprimer \"" + event.getTitre() + "\" ?");
+            confirm.setContentText(
+                    "Cette action est irréversible et supprimera toutes les inscriptions correspondantes.");
+
+            confirm.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.OK) {
+                    try {
+                        // Delete image file if exists
+                        if (event.getImagePath() != null && !event.getImagePath().isEmpty()) {
+                            ImageStorage.deleteImage(event.getImagePath());
+                        }
+
+                        // Delete from database (handles cascade)
+                        serviceJPO.delete(event);
+
+                        // Close popup
+                        currentPopup.close();
+
+                        // Refresh calendar
+                        loadEvents();
+                        buildCalendar();
+
+                        showAlert("Succès", "JPO supprimée avec succès.");
+
+                    } catch (SQLException ex) {
+                        showAlert("Erreur", "Impossible de supprimer: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
+                }
+            });
         });
 
-        // Export to Excel button
-        Button exportBtn = new Button(" Exporter");
-        exportBtn.setGraphic(new FontIcon("fas-file-excel"));
-        exportBtn.setStyle(
-                "-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
         exportBtn.setOnAction(e -> {
             currentPopup.close();
             exportParticipantsToExcel(event);
         });
 
-        // NEW: Chat button
-        Button chatBtn = new Button(" Chat");
-        chatBtn.setGraphic(new FontIcon("fas-comments"));
-        chatBtn.setStyle(
-                "-fx-background-color: #7BA4D0; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
         chatBtn.setOnAction(e -> {
-            System.out.println("Chat button clicked!"); // DEBUG
             currentPopup.close();
             openChatWindow(event);
         });
@@ -788,9 +842,30 @@ public class CalendarViewProprietaireController {
                 showEditEventDialog(event);
             });
 
-            Button deleteBtn = new Button("Delete");
+            Button deleteBtn = new Button("Supprimer");
             deleteBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; " +
                     "-fx-background-radius: 6px; -fx-min-width: 40px;");
+
+            // --- Permissions, Past Date & 24h Check ---
+            int currentUserId = SessionManager.getCurrentUser().getIdUtilisateur();
+            boolean isCreator = (event.getIdCreateur() == currentUserId);
+
+            long now = System.currentTimeMillis();
+            long eventTime = event.getDate_evenement().getTime();
+            boolean isPastOrWithin24h = eventTime < (now + 24 * 60 * 60 * 1000);
+
+            if (!isCreator) {
+                editBtn.setVisible(false);
+                editBtn.setManaged(false);
+                deleteBtn.setVisible(false);
+                deleteBtn.setManaged(false);
+            } else if (isPastOrWithin24h) {
+                editBtn.setDisable(true);
+                editBtn.setOpacity(0.5);
+                deleteBtn.setDisable(true);
+                deleteBtn.setOpacity(0.5);
+            }
+
             deleteBtn.setOnAction(e -> {
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
                 confirm.setTitle("Confirmer");
@@ -849,6 +924,7 @@ public class CalendarViewProprietaireController {
 
             event.setMaxParticipants(maxParticipants);
             event.setCurrentParticipants(0);
+            event.setIdCreateur(SessionManager.getCurrentUser().getIdUtilisateur());
 
             if (imageFile != null) {
                 String imagePath = ImageStorage.saveImage(imageFile);
@@ -859,7 +935,6 @@ public class CalendarViewProprietaireController {
             showAlert("Succès", "Journée Portes Ouvertes créée avec succès !");
         } catch (Exception e) {
             showAlert("Erreur", "Impossible de créer l'événement: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -887,7 +962,6 @@ public class CalendarViewProprietaireController {
             showAlert("Succès", "JPO mise à jour avec succès !");
         } catch (Exception e) {
             showAlert("Erreur", "Impossible de modifier: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -898,7 +972,6 @@ public class CalendarViewProprietaireController {
             showAlert("Succès", "JPO supprimée définitivement.");
         } catch (SQLException e) {
             showAlert("Erreur", "Impossible de supprimer: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -940,7 +1013,6 @@ public class CalendarViewProprietaireController {
             if (mainController != null) {
             }
         } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -1101,15 +1173,12 @@ public class CalendarViewProprietaireController {
     }
 
     private void exportParticipantsToExcel(JPO event) {
-        System.out.println("=== Exporting participants for event: " + event.getTitre());
 
         try {
             ServiceParticipation serviceParticipation = new ServiceParticipation();
             List<ParticipantInfo> participants = serviceParticipation
                     .getEventParticipantsDetailed(event.getId_evenement());
             EventStatistics statistics = serviceParticipation.getEventStatistics(event.getId_evenement());
-
-            System.out.println("Found " + participants.size() + " participants");
 
             if (participants.isEmpty()) {
                 showAlert("Information", "Aucun participant inscrit à cet événement.");
@@ -1133,11 +1202,8 @@ public class CalendarViewProprietaireController {
 
             // User cancelled the dialog
             if (selectedDirectory == null) {
-                System.out.println("User cancelled directory selection");
                 return;
             }
-
-            System.out.println("Selected directory: " + selectedDirectory.getAbsolutePath());
 
             // Generate Excel file in selected directory
             ExcelExportService exportService = new ExcelExportService();
@@ -1179,13 +1245,10 @@ public class CalendarViewProprietaireController {
 
         } catch (IOException | SQLException e) {
             showAlert("Erreur d'export", "Impossible de générer le fichier Excel: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
     private void openChatWindow(JPO event) {
-        System.out.println("=== openChatWindow called ===");
-        System.out.println("Event: " + (event != null ? event.getTitre() : "NULL"));
 
         if (event == null) {
             System.err.println("ERROR: Event is null!");
@@ -1195,10 +1258,8 @@ public class CalendarViewProprietaireController {
 
         try {
             String fxmlPath = "/tn/cashfly/ChatView.fxml";
-            System.out.println("Loading FXML: " + fxmlPath);
 
             URL resource = getClass().getResource(fxmlPath);
-            System.out.println("Resource URL: " + resource);
 
             if (resource == null) {
                 System.err.println("ERROR: ChatView.fxml not found!");
@@ -1207,17 +1268,13 @@ public class CalendarViewProprietaireController {
             }
 
             FXMLLoader loader = new FXMLLoader(resource);
-            System.out.println("FXMLLoader created");
 
             Parent chatView = loader.load();
-            System.out.println("FXML loaded successfully");
 
             ChatViewController controller = loader.getController();
-            System.out.println("Controller: " + (controller != null ? "OK" : "NULL"));
 
             if (controller != null) {
                 controller.setEvent(event);
-                System.out.println("Event set in controller");
             }
 
             // Create popup stage
@@ -1227,7 +1284,6 @@ public class CalendarViewProprietaireController {
             chatStage.setTitle("Chat - " + event.getTitre());
 
             Scene scene = new Scene(chatView, 450, 600);
-            System.out.println("Scene created");
 
             // Add close on escape
             scene.setOnKeyPressed(e -> {
@@ -1244,17 +1300,13 @@ public class CalendarViewProprietaireController {
                     controller.cleanup();
             });
 
-            System.out.println("Showing chat stage...");
             chatStage.show();
-            System.out.println("Chat stage shown successfully");
 
         } catch (IOException e) {
             System.err.println("IOException in openChatWindow: " + e.getMessage());
-            e.printStackTrace();
             showAlert("Erreur", "Impossible d'ouvrir le chat: " + e.getMessage());
         } catch (Exception e) {
             System.err.println("Exception in openChatWindow: " + e.getMessage());
-            e.printStackTrace();
             showAlert("Erreur", "Erreur inattendue: " + e.getMessage());
         }
     }

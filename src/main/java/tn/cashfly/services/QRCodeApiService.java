@@ -41,8 +41,6 @@ public class QRCodeApiService {
         try {
             // Build the data payload
             String qrData = buildQRData(user, event, participation);
-            System.out.println("DEBUG - QR Data length: " + qrData.length());
-            System.out.println("DEBUG - QR Data preview: " + qrData.substring(0, Math.min(100, qrData.length())));
 
             // URL encode the data
             String encodedData = URLEncoder.encode(qrData, StandardCharsets.UTF_8);
@@ -51,7 +49,6 @@ public class QRCodeApiService {
             String apiUrl = String.format("%s?size=%dx%d&color=0D2440&bgcolor=E7F0FA&margin=10&data=%s",
                     GOQR_API_URL, size, size, encodedData);
 
-            System.out.println("DEBUG - Calling QR API: " + apiUrl.substring(0, Math.min(150, apiUrl.length())) + "...");
 
             // Make HTTP request with timeout
             HttpRequest request = HttpRequest.newBuilder()
@@ -62,9 +59,7 @@ public class QRCodeApiService {
 
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-            System.out.println("DEBUG - API Response status: " + response.statusCode());
-            System.out.println("DEBUG - API Response content-type: " +
-                    response.headers().firstValue("Content-Type").orElse("unknown"));
+                    response.headers().firstValue("Content-Type").orElse("unknown");
 
             if (response.statusCode() != 200) {
                 String errorBody = new String(response.body(), StandardCharsets.UTF_8);
@@ -91,14 +86,11 @@ public class QRCodeApiService {
                 fos.write(response.body());
             }
 
-            System.out.println("DEBUG - QR code saved to: " + filepath);
-            System.out.println("DEBUG - File size: " + response.body().length + " bytes");
 
             return filepath;
 
         } catch (IOException | InterruptedException e) {
             System.err.println("ERROR in generateQRCode: " + e.getClass().getSimpleName() + " - " + e.getMessage());
-            e.printStackTrace();
             throw e;
         }
     }
@@ -133,25 +125,21 @@ public class QRCodeApiService {
      */
     private String formatEventDateSafe(java.util.Date date) {
         if (date == null) {
-            System.out.println("DEBUG - Date is null, returning N/A");
             return "N/A";
         }
 
         try {
             // Use getTime() which works for BOTH java.util.Date and java.sql.Date
             long epochMillis = date.getTime();
-            System.out.println("DEBUG - Date epoch millis: " + epochMillis);
 
             String formatted = java.time.Instant.ofEpochMilli(epochMillis)
                     .atZone(java.time.ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm"));
 
-            System.out.println("DEBUG - Formatted date: " + formatted);
             return formatted;
 
         } catch (Exception e) {
             System.err.println("ERROR formatting date: " + e.getMessage());
-            e.printStackTrace();
             return date.toString(); // Fallback
         }
     }

@@ -70,30 +70,20 @@ public class BadgeGenerator {
     public static String generateBadge(Utilisateur user, JPO event, Participation participation)
             throws Exception {
 
-        System.out.println("=== BadgeGenerator.generateBadge() START ===");
-
         try {
             // Step 1: Generate QR code via API (can be done on background thread)
-            System.out.println("Step 1: Generating QR code via API...");
             String qrFilePath = generateQRCodeViaApi(user, event, participation, QR_SIZE);
-            System.out.println("QR code saved at: " + qrFilePath);
 
             // Step 2: Create badge design (must be on FX thread)
-            System.out.println("Step 2: Creating badge canvas on FX thread...");
             Canvas canvas = createCanvasOnFxThread(user, event, participation, qrFilePath);
-            System.out.println("Badge canvas created");
 
             // Step 3: Snapshot and save (must be on FX thread)
-            System.out.println("Step 3: Saving badge on FX thread...");
             String badgePath = saveCanvasOnFxThread(canvas, participation.getIdParticipation());
-            System.out.println("Badge saved at: " + badgePath);
 
-            System.out.println("=== BadgeGenerator.generateBadge() SUCCESS ===");
             return badgePath;
 
         } catch (Exception e) {
             System.err.println("=== BadgeGenerator.generateBadge() FAILED ===");
-            e.printStackTrace();
             throw e;
         }
     }
@@ -105,15 +95,11 @@ public class BadgeGenerator {
     public static String generateStandaloneQR(Utilisateur user, JPO event, Participation participation, int size)
             throws IOException, InterruptedException, WriterException {
 
-        System.out.println("=== BadgeGenerator.generateStandaloneQR() START ===");
-
         try {
             String qrPath = generateQRCodeViaApi(user, event, participation, size);
-            System.out.println("=== BadgeGenerator.generateStandaloneQR() SUCCESS ===");
             return qrPath;
         } catch (Exception e) {
             System.err.println("=== BadgeGenerator.generateStandaloneQR() FAILED ===");
-            e.printStackTrace();
             throw e;
         }
     }
@@ -203,17 +189,13 @@ public class BadgeGenerator {
 
         try {
             String qrData = buildQRDataPayload(user, event, participation);
-            System.out.println("DEBUG - QR data length: " + qrData.length());
 
             String encodedData = URLEncoder.encode(qrData, StandardCharsets.UTF_8);
 
             String apiUrl = String.format("%s?size=%dx%d&color=0D2440&bgcolor=E7F0FA&margin=10&ecc=M&data=%s",
                     GOQR_API_URL, size, size, encodedData);
 
-            System.out.println("DEBUG - API URL length: " + apiUrl.length());
-
             if (apiUrl.length() > 2000) {
-                System.out.println("WARN - URL too long, falling back to local ZXing");
                 return generateQRCodeLocal(user, event, participation, size);
             }
 
@@ -223,10 +205,7 @@ public class BadgeGenerator {
                     .GET()
                     .build();
 
-            System.out.println("DEBUG - Sending HTTP request...");
             HttpResponse<byte[]> response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
-
-            System.out.println("DEBUG - Response status: " + response.statusCode());
 
             if (response.statusCode() != 200) {
                 String errorBody = new String(response.body(), StandardCharsets.UTF_8);
@@ -252,7 +231,6 @@ public class BadgeGenerator {
                 fos.write(response.body());
             }
 
-            System.out.println("DEBUG - QR saved: " + filepath + " (" + response.body().length + " bytes)");
             return filepath;
 
         } catch (java.net.UnknownHostException | java.net.ConnectException e) {
@@ -266,8 +244,6 @@ public class BadgeGenerator {
      */
     private static String generateQRCodeLocal(Utilisateur user, JPO event, Participation participation, int size)
             throws WriterException, IOException {
-
-        System.out.println("=== Using LOCAL ZXing fallback ===");
 
         String qrData = buildQRDataPayload(user, event, participation);
 
@@ -298,7 +274,6 @@ public class BadgeGenerator {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         ImageIO.write(bufferedImage, "png", new File(filepath));
 
-        System.out.println("DEBUG - Local QR saved: " + filepath);
         return filepath;
     }
 
@@ -376,11 +351,6 @@ public class BadgeGenerator {
         gc.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 16));
         gc.fillText("Scanner pour validation sécurisée", 670, 570);
 
-        // Registration ID footer
-        gc.setFill(Color.web("#7BA4D0"));
-        gc.setFont(Font.font("Segoe UI", FontWeight.NORMAL, 14));
-        gc.fillText("CashFly JPO  •  ID Inscription : " + participation.getIdParticipation(), 50, 610);
-
         return canvas;
     }
 
@@ -422,7 +392,6 @@ public class BadgeGenerator {
         payload.append("Date: ").append(formatEventDateSafe(event.getDate_evenement())).append("\n");
         payload.append("Location: ").append(event.getLieu()).append("\n");
         payload.append("---\n");
-        payload.append("Reg.ID: ").append(participation.getIdParticipation()).append("\n");
         payload.append("Verified: YES\n");
         payload.append("CashFly - JPO System");
 

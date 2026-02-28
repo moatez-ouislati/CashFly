@@ -104,7 +104,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        /* EDITED MESSAGE STYLES */
+        
         .message.edited {
             border: 2px solid #ffc107;
         }
@@ -191,7 +191,7 @@
             opacity: 0.7;
         }
 
-        /* Reply styles */
+        
         .reply-preview {
             background: rgba(0, 0, 0, 0.05);
             border-left: 3px solid #2E5E99;
@@ -228,11 +228,11 @@
             color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Action buttons container */
+        
         .message-actions {
             position: absolute;
             bottom: 5px;
-            /* Changed from top: 5px */
+            
             right: 5px;
             display: flex;
             gap: 4px;
@@ -268,7 +268,7 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Edit mode styles */
+        
         .edit-container {
             display: flex;
             flex-direction: column;
@@ -443,7 +443,7 @@
             background: #6c757d;
         }
 
-        /* Edit flash animation */
+        
         @keyframes editFlash {
             0% {
                 box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
@@ -462,7 +462,7 @@
             animation: editFlash 1s ease-out;
         }
 
-        /* Custom Delete Modal */
+        
         .modal-overlay {
             display: none;
             position: fixed;
@@ -663,12 +663,10 @@
             });
 
             socket.on('message_deleted', (data) => {
-                console.log('Message deleted event received:', data);
                 updateDeletedMessageInUI(data);
             });
 
             socket.on('delete_confirmed', (data) => {
-                console.log('Delete confirmed for message:', data.messageId);
             });
 
             socket.on('error', (data) => {
@@ -712,7 +710,6 @@
             });
 
             socket.on('edit_confirmed', (data) => {
-                console.log('Edit confirmed for message:', data.messageId);
             });
 
             socket.on('user_joined', (data) => {
@@ -744,12 +741,10 @@
         }
 
         function addMessage(msg) {
-            console.log('addMessage:', { id: msg.id, userId: msg.userId, authUserId: auth?.userId, isEdited: msg.isEdited });
 
             const isOwn = msg.userId === auth.userId;
             const isDeleted = parseInt(msg.isEdited, 10) === 2 || msg.status === 'deleted' || msg.content === '[Message supprimé]';
 
-            console.log('Checks:', { isOwn, isDeleted, willShowDelete: isOwn && !isDeleted });
 
             const isProprietaire = msg.userRole === 'proprietaire';
             const div = document.createElement('div');
@@ -851,12 +846,10 @@
         }
 
         function updateDeletedMessageInUI(data) {
-            console.log('Updating deleted message in UI:', data);
             const messageId = data.id;
             const messageDiv = document.querySelector(`[data-message-id="${messageId}"]`);
 
             if (!messageDiv) {
-                console.log('Message div not found for ID:', messageId);
                 return;
             }
 
@@ -880,14 +873,12 @@
                 });
             }
 
-            console.log('Message marked as deleted:', messageId);
         }
 
         // NEW: Update existing message in UI (for edits)
         function updateMessageInUI(msg) {
             const messageDiv = document.querySelector(`[data-message-id="${msg.id}"]`);
             if (!messageDiv) {
-                console.log('Message not found in UI:', msg.id);
                 return;
             }
 
@@ -918,7 +909,6 @@
                 messageDiv.classList.remove('just-edited');
             }, 1000);
 
-            console.log('Message updated in UI:', msg.id);
         }
 
         // NEW: Start editing a message
@@ -988,7 +978,6 @@
                 return;
             }
 
-            console.log('Sending edit request:', { messageId, newContent });
 
             socket.emit('edit_message', {
                 messageId: messageId,
@@ -1086,3 +1075,4 @@
 </body>
 
 </html>
+

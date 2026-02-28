@@ -95,7 +95,6 @@ public class ServiceParticipation {
 
         if (previousParticipation != null && "annulé".equals(previousParticipation.getStatut())) {
             // RE-REGISTRATION: Update existing cancelled participation
-            System.out.println("DEBUG: Re-registering user " + idUtilisateur + " for event " + idEvenement);
 
             String updateQuery = "UPDATE participation_jpo SET statut = ?, date_inscription = NOW(), badge_genere = FALSE WHERE id_participation = ?";
             PreparedStatement updatePs = connection.prepareStatement(updateQuery);
@@ -106,7 +105,6 @@ public class ServiceParticipation {
 
         } else {
             // NEW REGISTRATION: Insert new participation
-            System.out.println("DEBUG: New registration for user " + idUtilisateur + " for event " + idEvenement);
 
             String insertQuery = "INSERT INTO participation_jpo (id_evenement, id_utilisateur, statut, date_inscription, badge_genere) VALUES (?, ?, ?, NOW(), FALSE)";
             PreparedStatement insertPs = connection.prepareStatement(insertQuery);
@@ -155,7 +153,6 @@ public class ServiceParticipation {
             throw new SQLException("Échec de l'annulation");
         }
 
-        System.out.println("DEBUG: Cancelled participation " + participationId + " (was: " + currentStatus + ")");
 
         // Decrease counter if was confirmed
         if ("confirmé".equals(currentStatus)) {
@@ -182,7 +179,6 @@ public class ServiceParticipation {
 
             if (updated > 0) {
                 updateParticipantCount(idEvenement, 1);
-                System.out.println("DEBUG: Promoted user " + idUser + " from waitlist");
             }
         }
 

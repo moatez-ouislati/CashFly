@@ -19,7 +19,7 @@
             flex-direction: column;
         }
 
-        /* Header */
+        
         .chat-header {
             background: linear-gradient(135deg, #0D2440 0%, #2E5E99 100%);
             color: white;
@@ -41,7 +41,7 @@
             font-size: 12px;
         }
 
-        /* Messages Area */
+        
         .messages-container {
             flex: 1;
             overflow-y: auto;
@@ -143,7 +143,7 @@
             opacity: 0.7;
         }
 
-        /* Typing Indicator */
+        
         .typing-indicator {
             align-self: flex-start;
             background: white;
@@ -181,7 +181,7 @@
             40% { transform: scale(1); }
         }
 
-        /* Input Area */
+        
         .input-container {
             background: white;
             padding: 15px 20px;
@@ -228,7 +228,7 @@
             cursor: not-allowed;
         }
 
-        /* Connection Status */
+        
         .connection-status {
             position: absolute;
             top: 60px;
@@ -247,7 +247,7 @@
             display: block;
         }
 
-        /* Loading indicator */
+        
         .loading {
             position: absolute;
             top: 50%;
@@ -271,7 +271,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Scrollbar */
+        
         .messages-container::-webkit-scrollbar {
             width: 6px;
         }
@@ -347,7 +347,6 @@
 
     // Called by JavaFX after injecting auth data
     function initChat() {
-        console.log('initChat called');
 
         // Get auth from window object (injected by JavaFX)
         auth = window.chatAuth;
@@ -358,7 +357,6 @@
             return;
         }
 
-        console.log('Auth data:', auth);
 
         // Hide loading, show chat
         loadingDiv.style.display = 'none';
@@ -370,14 +368,12 @@
     }
 
     function connectSocket() {
-        console.log('Connecting to socket...');
 
         socket = io({
             transports: ['polling', 'websocket']
         });
 
         socket.on('connect', () => {
-            console.log('Socket connected:', socket.id);
             connectionStatus.classList.remove('offline');
 
             // Authenticate
@@ -389,7 +385,6 @@
         });
 
         socket.on('disconnect', () => {
-            console.log('Socket disconnected');
             connectionStatus.classList.add('offline');
         });
 
@@ -399,7 +394,6 @@
         });
 
         socket.on('recent_messages', (messages) => {
-            console.log('Received messages:', messages);
             messages.forEach(msg => addMessage(msg));
             scrollToBottom();
         });
@@ -543,3 +537,4 @@
 </script>
 </body>
 </html>
+

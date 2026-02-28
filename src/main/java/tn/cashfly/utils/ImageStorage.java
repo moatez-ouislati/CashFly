@@ -66,7 +66,6 @@ public class ImageStorage {
 
         // Copy file
         Files.copy(sourceFile.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        System.out.println("[ImageStorage] Saved to: " + targetFile.getAbsolutePath());
 
         // Return web path (stored in database)
         return WEB_PATH_PREFIX + filename;
@@ -85,7 +84,6 @@ public class ImageStorage {
             File file = new File(physicalPath);
             if (file.exists()) {
                 if (file.delete()) {
-                    System.out.println("[ImageStorage] Deleted: " + file.getAbsolutePath());
                 }
             }
         } catch (Exception e) {
@@ -104,7 +102,6 @@ public class ImageStorage {
         try {
             // Try HTTP first
             String fullUrl = buildFullUrl(imagePath);
-            System.out.println("[ImageStorage] Loading: " + fullUrl);
 
             if (fullUrl.startsWith("http://")) {
                 try {
@@ -120,7 +117,6 @@ public class ImageStorage {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("[ImageStorage] HTTP failed, trying local file");
                 }
             }
 
@@ -154,13 +150,6 @@ public class ImageStorage {
      * Prints configuration for debugging
      */
     public static void printConfig() {
-        System.out.println("╔════════════════════════════════════════════════════════╗");
-        System.out.println("║  ImageStorage Configuration                            ║");
-        System.out.println("╠════════════════════════════════════════════════════════╣");
-        System.out.println("║ HTDOCS_PATH:  " + HTDOCS_PATH);
-        System.out.println("║ WEB_URL:      " + WEB_BASE_URL);
-        System.out.println("║ STORAGE:     " + STORAGE_DIR);
-        System.out.println("╚════════════════════════════════════════════════════════╝");
     }
 
     // ============================================

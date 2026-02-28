@@ -29,7 +29,7 @@
 
       <Region VBox.vgrow="ALWAYS" />
 
-      <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-icon" text=" Déconnexion">
+      <Button fx:id="logoutBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" styleClass="btn-secondary" text=" Déconnexion">
          <graphic>
              <FontIcon iconLiteral="fas-sign-out-alt" />
          </graphic>

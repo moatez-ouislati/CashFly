@@ -1,5 +1,6 @@
 package tn.cashfly.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -24,6 +25,7 @@ import tn.cashfly.entities.Participation;
 import tn.cashfly.entities.Utilisateur;
 import tn.cashfly.services.ServiceJPO;
 import tn.cashfly.services.ServiceParticipation;
+import tn.cashfly.utils.BadgeGenerator;
 import tn.cashfly.utils.ImageStorage;
 import tn.cashfly.utils.NavigationHistory;
 import tn.cashfly.utils.SessionManager;
@@ -40,15 +42,17 @@ import java.util.Optional;
 
 public class InvestorListMyJPOController {
 
-    @FXML private VBox eventsContainer;
-    @FXML private Label countLabel;
-    @FXML private Label emptyMessage;
+    @FXML
+    private VBox eventsContainer;
+    @FXML
+    private Label countLabel;
+    @FXML
+    private Label emptyMessage;
 
     private ServiceJPO serviceJPO;
     private ServiceParticipation serviceParticipation;
     private Utilisateur currentUser;
     private InvestorMainController mainController;
-
 
     @FXML
     public void initialize() {
@@ -67,7 +71,8 @@ public class InvestorListMyJPOController {
         try {
             eventsContainer.getChildren().clear();
 
-            List<Participation> participations = serviceParticipation.getUserParticipationsWithEvents(currentUser.getIdUtilisateur());
+            List<Participation> participations = serviceParticipation
+                    .getUserParticipationsWithEvents(currentUser.getIdUtilisateur());
 
             countLabel.setText("(" + participations.size() + ")");
 
@@ -87,7 +92,8 @@ public class InvestorListMyJPOController {
                     JPO e2 = serviceJPO.getAll().stream()
                             .filter(j -> j.getId_evenement() == p2.getIdEvenement())
                             .findFirst().orElse(null);
-                    if (e1 == null || e2 == null) return 0;
+                    if (e1 == null || e2 == null)
+                        return 0;
                     return e1.getDate_evenement().compareTo(e2.getDate_evenement());
                 } catch (Exception e) {
                     return 0;
@@ -105,8 +111,10 @@ public class InvestorListMyJPOController {
                 }
             }
 
+            // --- NEW: Add animations ---
+            tn.cashfly.utils.AnimationUtils.staggerFadeIn(eventsContainer.getChildren(), 500, 50);
+
         } catch (SQLException e) {
-            e.printStackTrace();
             showAlert("Erreur", "Impossible de charger vos inscriptions: " + e.getMessage());
         }
     }
@@ -130,6 +138,9 @@ public class InvestorListMyJPOController {
     private VBox createEventCard(Participation participation, JPO event) {
         VBox card = new VBox(12);
         card.getStyleClass().add("my-event-card");
+
+        // --- NEW: Add hover animation ---
+        tn.cashfly.utils.AnimationUtils.addHoverScale(card, 1.02, 150);
         card.setPadding(new Insets(18));
         card.setStyle("-fx-background-color: -color-bg-overlay; -fx-background-radius: 12; " +
                 "-fx-border-radius: 12; -fx-border-color: -color-border-default; " +
@@ -193,7 +204,9 @@ public class InvestorListMyJPOController {
                 badgeBtn.setStyle("-fx-font-size: 12px; -fx-padding: 8 15;");
                 badgeBtn.setOnAction(e -> {
                     e.consume();
-                    generateBadge(participation);
+                    badgeBtn.setDisable(true);
+                    badgeBtn.setText("⏳ Génération...");
+                    generateBadge(participation, badgeBtn);
                 });
                 actionRow.getChildren().add(badgeBtn);
             } else {
@@ -207,7 +220,8 @@ public class InvestorListMyJPOController {
         if (!isPast && !"annulé".equals(participation.getStatut())) {
             Button chatBtn = new Button("💬 Chat");
             chatBtn.getStyleClass().add("btn-secondary");
-            chatBtn.setStyle("-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #7BA4D0; -fx-text-fill: white;");
+            chatBtn.setStyle(
+                    "-fx-font-size: 12px; -fx-padding: 8 15; -fx-background-color: #7BA4D0; -fx-text-fill: white;");
             chatBtn.setOnAction(e -> {
                 e.consume(); // Prevent card click
                 openChatWindow(event);
@@ -246,7 +260,6 @@ public class InvestorListMyJPOController {
      * NEW: Open chat window for event
      */
     private void openChatWindow(JPO event) {
-        System.out.println("Opening chat for event: " + event.getTitre());
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/tn/cashfly/ChatView.fxml"));
             Parent chatView = loader.load();
@@ -280,7 +293,6 @@ public class InvestorListMyJPOController {
 
         } catch (IOException e) {
             System.err.println("Error opening chat: " + e.getMessage());
-            e.printStackTrace();
             showAlert("Erreur", "Impossible d'ouvrir le chat: " + e.getMessage());
         }
     }
@@ -301,7 +313,6 @@ public class InvestorListMyJPOController {
             mainController.showEventDetail(detailView);
 
         } catch (IOException e) {
-            e.printStackTrace();
             showAlert("Erreur", "Impossible de charger les détails de l'événement: " + e.getMessage());
         }
     }
@@ -309,16 +320,14 @@ public class InvestorListMyJPOController {
     private String formatEventDate(Date date) {
         LocalDateTime dateTime = LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(date.getTime()),
-                ZoneId.systemDefault()
-        );
+                ZoneId.systemDefault());
         return dateTime.format(DateTimeFormatter.ofPattern("EEEE dd MMMM yyyy 'à' HH:mm"));
     }
 
     private LocalDateTime convertToLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(date.getTime()),
-                ZoneId.systemDefault()
-        );
+                ZoneId.systemDefault());
     }
 
     private Label createStatusBadge(String status) {
@@ -344,7 +353,8 @@ public class InvestorListMyJPOController {
                 break;
             default:
                 badge.setText(status);
-                badge.setStyle(badge.getStyle() + "-fx-text-fill: -color-fg-default; -fx-background-color: -color-bg-subtle;");
+                badge.setStyle(
+                        badge.getStyle() + "-fx-text-fill: -color-fg-default; -fx-background-color: -color-bg-subtle;");
         }
         return badge;
     }
@@ -357,7 +367,8 @@ public class InvestorListMyJPOController {
 
         if (max <= 0) {
             badge.setText("Places illimitées");
-            badge.setStyle(badge.getStyle() + "-fx-text-fill: -color-fg-muted; -fx-background-color: -color-bg-subtle;");
+            badge.setStyle(
+                    badge.getStyle() + "-fx-text-fill: -color-fg-muted; -fx-background-color: -color-bg-subtle;");
         } else if (available <= 0) {
             badge.setText("COMPLET");
             badge.setStyle(badge.getStyle() + "-fx-text-fill: white; -fx-background-color: #dc3545;");
@@ -374,22 +385,37 @@ public class InvestorListMyJPOController {
         return badge;
     }
 
-    private void generateBadge(Participation participation) {
-        try {
-            serviceParticipation.markBadgeGenerated(participation.getIdParticipation());
-            showAlert("Badge généré", "Votre badge a été généré avec succès !");
-            loadMyEvents();
-        } catch (SQLException e) {
-            showAlert("Erreur", "Impossible de générer le badge: " + e.getMessage());
-        }
+    private void generateBadge(Participation participation, Button btn) {
+        new Thread(() -> {
+            try {
+                JPO event = serviceJPO.getAll().stream()
+                        .filter(j -> j.getId_evenement() == participation.getIdEvenement())
+                        .findFirst().orElse(null);
+
+                if (event != null) {
+                    BadgeGenerator.generateBadge(currentUser, event, participation);
+                    serviceParticipation.markBadgeGenerated(participation.getIdParticipation());
+
+                    Platform.runLater(() -> {
+                        showAlert("Succès", "Votre badge a été généré avec succès !");
+                        loadMyEvents();
+                    });
+                }
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    showAlert("Erreur", "Impossible de générer le badge: " + e.getMessage());
+                    btn.setDisable(false);
+                    btn.setText("🎫 Générer mon badge");
+                });
+            }
+        }).start();
     }
 
     private void handleCancel(JPO event) {
         try {
             Participation p = serviceParticipation.getParticipation(
                     event.getId_evenement(),
-                    currentUser.getIdUtilisateur()
-            );
+                    currentUser.getIdUtilisateur());
 
             if (p == null) {
                 showAlert("Erreur", "Inscription non trouvée.");

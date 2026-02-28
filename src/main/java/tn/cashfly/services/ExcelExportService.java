@@ -23,9 +23,9 @@ import java.util.List;
 public class ExcelExportService {
 
     private static final String[] HEADERS = {
-            "N°", "ID Participation", "Nom Complet", "Email", "Rôle",
+            "N°", "Nom Complet", "Email", "Rôle",
             "Date Inscription", "Statut Inscription", "Badge Généré",
-            "Délai Inscription", "ID Utilisateur"
+            "Délai Inscription"
     };
 
     private static final String[] STAT_HEADERS = {
@@ -34,14 +34,15 @@ public class ExcelExportService {
 
     /**
      * Export participants to Excel file with custom directory
-     * @param event The JPO event
+     * 
+     * @param event        The JPO event
      * @param participants List of participants
-     * @param statistics Event statistics
-     * @param customDir Custom directory to save the file (null for default)
+     * @param statistics   Event statistics
+     * @param customDir    Custom directory to save the file (null for default)
      * @return Path to the generated file
      */
     public String exportParticipantsToExcel(JPO event, List<ParticipantInfo> participants,
-                                            EventStatistics statistics, File customDir) throws IOException {
+            EventStatistics statistics, File customDir) throws IOException {
 
         Workbook workbook = new XSSFWorkbook();
 
@@ -125,20 +126,18 @@ public class ExcelExportService {
             Row row = mainSheet.createRow(rowNum++);
 
             row.createCell(0).setCellValue(participantNum++);
-            row.createCell(1).setCellValue(p.getParticipationId());
-            row.createCell(2).setCellValue(p.getNomComplet());
-            row.createCell(3).setCellValue(p.getEmail());
-            row.createCell(4).setCellValue(p.getRole());
+            row.createCell(1).setCellValue(p.getNomComplet());
+            row.createCell(2).setCellValue(p.getEmail());
+            row.createCell(3).setCellValue(p.getRole());
 
-            Cell dateCell = row.createCell(5);
+            Cell dateCell = row.createCell(4);
             if (p.getDateInscription() != null) {
                 dateCell.setCellValue(dateFormat.format(p.getDateInscription()));
             }
 
-            row.createCell(6).setCellValue(p.getConfirmationStatus());
-            row.createCell(7).setCellValue(p.getStatutBadge());
-            row.createCell(8).setCellValue(p.getDelaiInscription());
-            row.createCell(9).setCellValue(p.getUserId());
+            row.createCell(5).setCellValue(p.getConfirmationStatus());
+            row.createCell(6).setCellValue(p.getStatutBadge());
+            row.createCell(7).setCellValue(p.getDelaiInscription());
 
             // Apply data style to all cells
             for (int i = 0; i < HEADERS.length; i++) {
@@ -168,13 +167,13 @@ public class ExcelExportService {
      * Legacy method - uses default directory
      */
     public String exportParticipantsToExcel(JPO event, List<ParticipantInfo> participants,
-                                            EventStatistics statistics) throws IOException {
+            EventStatistics statistics) throws IOException {
         return exportParticipantsToExcel(event, participants, statistics, null);
     }
 
     private void createDetailsByStatusSheet(Sheet sheet, List<ParticipantInfo> participants,
-                                            CellStyle headerStyle, CellStyle dataStyle,
-                                            SimpleDateFormat dateFormat) {
+            CellStyle headerStyle, CellStyle dataStyle,
+            SimpleDateFormat dateFormat) {
         int rowNum = 0;
 
         // Group by status
@@ -201,12 +200,12 @@ public class ExcelExportService {
     }
 
     private int addParticipantList(Sheet sheet, int startRow, List<ParticipantInfo> list,
-                                   SimpleDateFormat dateFormat, CellStyle dataStyle) {
+            SimpleDateFormat dateFormat, CellStyle dataStyle) {
         int rowNum = startRow;
 
         // Sub-headers
         Row subHeader = sheet.createRow(rowNum++);
-        String[] subHeaders = {"N°", "Nom", "Email", "Date d'inscription", "Badge"};
+        String[] subHeaders = { "N°", "Nom", "Email", "Date d'inscription", "Badge" };
         for (int i = 0; i < subHeaders.length; i++) {
             Cell cell = subHeader.createCell(i);
             cell.setCellValue(subHeaders[i]);
@@ -220,8 +219,8 @@ public class ExcelExportService {
             row.createCell(0).setCellValue(num++);
             row.createCell(1).setCellValue(p.getNomComplet());
             row.createCell(2).setCellValue(p.getEmail());
-            row.createCell(3).setCellValue(p.getDateInscription() != null ?
-                    dateFormat.format(p.getDateInscription()) : "N/A");
+            row.createCell(3)
+                    .setCellValue(p.getDateInscription() != null ? dateFormat.format(p.getDateInscription()) : "N/A");
             row.createCell(4).setCellValue(p.getStatutBadge());
         }
 
@@ -292,7 +291,8 @@ public class ExcelExportService {
     }
 
     private String formatDate(Date date) {
-        if (date == null) return "N/A";
+        if (date == null)
+            return "N/A";
         return new SimpleDateFormat("EEEE dd MMMM yyyy 'à' HH:mm").format(date);
     }
 
