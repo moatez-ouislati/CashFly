@@ -18,7 +18,7 @@ public class ServiceRendement implements Service<RendementInvestissement> {
         connection = CashFlyDB.getInstance().getConnection();
     }
 
-    // CREATE
+    // CREATE Rendement
     @Override
     public void add(RendementInvestissement r) throws SQLException {
         String req = "INSERT INTO rendement_investissement (id_investissement, date_calcul, gain, perte, valeur_portefeuille) VALUES (?,?,?,?,?)";
