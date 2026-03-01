@@ -2,6 +2,9 @@
 
 Cashlfy is a modern financial management desktop application built with **Java**, **JDBC**, and **JavaFX**, designed to help users track expenses, manage budgets and investments, and optimize cash flow efficiently.
 
+<img width="1080" height="1020" alt="image" src="https://github.com/user-attachments/assets/3a1d149d-d1c5-4386-856c-7e7ced9af0f7" />
+
+
 ## Table of Contents
 
 * [Installation](#installation)
