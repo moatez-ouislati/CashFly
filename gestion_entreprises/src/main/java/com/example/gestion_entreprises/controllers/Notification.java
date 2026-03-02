@@ -48,8 +48,8 @@ public class Notification extends StackPane {
         initialize();
     }
 
-    private void initialize("") {
-        cross.getStyleClass().add("small-hyperlink-label");
+    private void initialize() {
+        cross.getStyleClass().add("small-hyperlink-labels");
         cross.setOnMouseClicked(e -> onRemove.run());
     }
 
