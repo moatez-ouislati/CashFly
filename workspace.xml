@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5f9e2cba-604b-4cb4-ac36-3c627ed998ad" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="CSS File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="39WKRvz0uGCRbpWMAONLZMg5nIY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Maven.operationfinanciere [org.openjfx:javafx-maven-plugin:0.0.8:run].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/hp/Downloads/Projet3AJava-CASHFLY/Projet3AJava-CASHFLY",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "C:/Users/ergue/Desktop/operation/operation financiere/src/main/java/tn/esprit/Main.java",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.JavaFX",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ergue\Desktop\operation\operation financiereCopy\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="tn.cashfly.Main" />
+      <module name="operationfinanciere" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="tn.cashfly.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <module name="operationfinanciere" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.25557.131" />
+        <option value="bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-IU-252.25557.131" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5f9e2cba-604b-4cb4-ac36-3c627ed998ad" name="Changes" comment="" />
+      <created>1770806384448</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1770806384448</updated>
+      <workItem from="1770806385984" duration="3037000" />
+      <workItem from="1770813070522" duration="3793000" />
+      <workItem from="1770842158029" duration="704000" />
+      <workItem from="1770895702030" duration="181000" />
+      <workItem from="1770896064339" duration="485000" />
+      <workItem from="1770898840580" duration="26000" />
+      <workItem from="1770899808319" duration="113000" />
+      <workItem from="1770978474944" duration="1357000" />
+      <workItem from="1770980012919" duration="438000" />
+      <workItem from="1770980927161" duration="279000" />
+      <workItem from="1770981269895" duration="2313000" />
+      <workItem from="1770993488610" duration="2784000" />
+      <workItem from="1771059666304" duration="4408000" />
+      <workItem from="1771065477013" duration="3608000" />
+      <workItem from="1771070604487" duration="11000" />
+      <workItem from="1771076970953" duration="1732000" />
+      <workItem from="1771078931231" duration="488000" />
+      <workItem from="1771147018785" duration="9347000" />
+      <workItem from="1771920309954" duration="2309000" />
+      <workItem from="1771976842666" duration="1539000" />
+      <workItem from="1772017599669" duration="407000" />
+      <workItem from="1772019508776" duration="6628000" />
+      <workItem from="1772033263478" duration="3102000" />
+      <workItem from="1772101693095" duration="1834000" />
+      <workItem from="1772104217525" duration="3050000" />
+      <workItem from="1772109710136" duration="8221000" />
+      <workItem from="1772138859663" duration="7982000" />
+      <workItem from="1772230136386" duration="537000" />
+      <workItem from="1772231169338" duration="778000" />
+      <workItem from="1772236531172" duration="148000" />
+      <workItem from="1772236699221" duration="9323000" />
+      <workItem from="1772280138893" duration="9652000" />
+      <workItem from="1772320036130" duration="447000" />
+      <workItem from="1772323219074" duration="76000" />
+      <workItem from="1772323676242" duration="87000" />
+      <workItem from="1772327779016" duration="510000" />
+      <workItem from="1772367203340" duration="265000" />
+      <workItem from="1772367629416" duration="322000" />
+      <workItem from="1772369146695" duration="1769000" />
+      <workItem from="1772371909387" duration="81000" />
+      <workItem from="1772372162654" duration="321000" />
+      <workItem from="1772372505051" duration="275000" />
+      <workItem from="1772372807327" duration="626000" />
+      <workItem from="1772373452899" duration="697000" />
+      <workItem from="1772374220902" duration="323000" />
+      <workItem from="1772389704092" duration="34000" />
+      <workItem from="1772389887025" duration="641000" />
+      <workItem from="1772390544207" duration="117000" />
+      <workItem from="1772392432703" duration="652000" />
+      <workItem from="1772393838536" duration="395000" />
+      <workItem from="1772394255980" duration="610000" />
+      <workItem from="1772395219905" duration="246000" />
+      <workItem from="1772438790342" duration="3300000" />
+      <workItem from="1772440552902" duration="2431000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
