@@ -48,7 +48,7 @@ public class Notification extends StackPane {
         initialize();
     }
 
-    private void initialize() {
+    private void initialize("") {
         cross.getStyleClass().add("small-hyperlink-label");
         cross.setOnMouseClicked(e -> onRemove.run());
     }
@@ -56,5 +56,5 @@ public class Notification extends StackPane {
     public void setOnRemove(Runnable onRemove) {
         this.onRemove = onRemove;
         //commenttesteeee
-    }aaanknaaa
-};
+    }
+}
