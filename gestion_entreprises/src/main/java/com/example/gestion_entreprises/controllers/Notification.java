@@ -49,12 +49,12 @@ public class Notification extends StackPane {
     }
 
     private void initialize() {
-        cross.getStyleClass().add("small-hyperlink-label");
+        cross.getStyleClass().add("small-hyperlink-label");//kkkk
         cross.setOnMouseClicked(e -> onRemove.run());
     }
 
     public void setOnRemove(Runnable onRemove) {
         this.onRemove = onRemove;
-        //initialisation1231aaaaaaa
+
     }
 }
