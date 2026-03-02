@@ -55,6 +55,6 @@ public class Notification extends StackPane {
 
     public void setOnRemove(Runnable onRemove) {
         this.onRemove = onRemove;
-        //initialisation1231
+        //initialisation1231aaaaaaa
     }
 }
