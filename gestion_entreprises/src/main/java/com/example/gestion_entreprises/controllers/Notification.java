@@ -57,4 +57,4 @@ public class Notification extends StackPane {
         this.onRemove = onRemove;
         //commenttesteeee
     }aaankn
-}
+};
