@@ -56,5 +56,5 @@ public class Notification extends StackPane {
     public void setOnRemove(Runnable onRemove) {
         this.onRemove = onRemove;
         //commenttesteeee
-    }aaankn
+    }aaanknaaa
 };
