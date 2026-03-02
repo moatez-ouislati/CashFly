@@ -40,7 +40,7 @@ public class MapController implements Initializable {
     private double lastMouseX, lastMouseY;
 
     private static final int TILE_SIZE = 256;
-    private static final String API_KEY = "pk.eyJ1IjoibWVkZGVic291aGlyIiwiYSI6ImNtbTBjY252azBlaGkzZHF2MXBjc3cyZG0ifQ.MQ8wqoyUdDszzD2lipLHdQ";
+    private static final String API_KEY = "MAPBOX_API_KEY";
     private final java.util.Map<String, Image> tileCache = new java.util.HashMap<>();
 
     @Override

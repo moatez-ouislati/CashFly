@@ -7,7 +7,7 @@ import java.net.URL;
 
 public class WeatherService {
 
-    private static final String API_KEY = "17b5dff300384b65bfc2acc837425db4";
+    private static final String API_KEY = "WEATHER";
 
     public static String getWeather(double lat, double lon) {
 
