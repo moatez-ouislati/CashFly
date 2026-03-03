@@ -1,24 +1,19 @@
-/* ============================================
-   AtlantaFX Modern Theme - CashFly JPO
-   Sapphire Veil Color Palette
-   ============================================ */
-
-/* Sapphire Veil Colors:
-   - #E7F0FA - Light ice blue (backgrounds, subtle highlights)
-   - #7BA4D0 - Medium soft blue (secondary buttons, hover states)
-   - #2E5E99 - Deep sapphire blue (primary buttons, accents)
-   - #0D2440 - Dark navy blue (headers, sidebar, dark elements)
+/* Modern Dark Blue & Indigo Theme:
+   - #0f172a - Deep dark blue (backgrounds)
+   - #1e293b - Slate blue (subtle highlights)
+   - #6366f1 - Indigo accent (primary elements)
+   - #334155 - Slate border (borders)
 */
 
 /* Root & Global */
 .root {
-    -color-primary: #2E5E99;
+    -color-primary: #6366f1;
 }
 
-/* Header - Dark navy background */
+/* Header - Dark deep blue background */
 .app-header {
-    -fx-background-color: #0D2440;
-    -fx-border-color: #2E5E99;
+    -fx-background-color: #0f172a;
+    -fx-border-color: #334155;
     -fx-border-width: 0 0 1 0;
 }
 
@@ -29,17 +24,17 @@
     -fx-text-fill: #E7F0FA;
 }
 
-/* Sidebar - Dark navy background */
+/* Sidebar - Dark deep blue background */
 .sidebar {
-    -fx-background-color: #0D2440;
-    -fx-border-color: #2E5E99;
+    -fx-background-color: #0f172a;
+    -fx-border-color: #334155;
     -fx-border-width: 0 1 0 0;
 }
 
 .sidebar-title {
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-text-fill: #7BA4D0;
+    -fx-text-fill: #94a3b8;
     -fx-padding: 0 0 15 0;
 }
 
@@ -59,19 +54,20 @@
 
 /* Hover State */
 .btn-icon:hover {
-    -fx-background-color: #2E5E99;
-    -fx-text-fill: white;
+    -fx-background-color: #1e293b;
+    -fx-text-fill: #6366f1;
+    -fx-border-color: #6366f1;
 }
 
-/* Active button state - Sapphire blue highlight when clicked */
+/* Active button state - Indigo highlight */
 .btn-active {
-    -fx-background-color: #2E5E99;
+    -fx-background-color: #6366f1;
     -fx-text-fill: white;
     -fx-font-weight: bold;
 }
 
 .btn-active:hover {
-    -fx-background-color: #7BA4D0;
+    -fx-background-color: #818cf8;
     -fx-text-fill: white;
 }
 
@@ -127,13 +123,13 @@
 
 /* Primary Button (Save/Update) */
 .btn-primary {
-    -fx-background-color: linear-gradient(to bottom right, #2E5E99, #1e4a7a);
+    -fx-background-color: linear-gradient(to bottom right, #6366f1, #4f46e5);
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-padding: 10 20;
     -fx-background-radius: 8px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.3), 8, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.3), 8, 0, 0, 3);
 }
 
 .btn-primary:hover {

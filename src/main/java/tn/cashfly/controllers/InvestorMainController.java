@@ -7,9 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import tn.cashfly.entities.Utilisateur;
-import tn.cashfly.utils.NavigationUtil;
+import tn.cashfly.tools.SceneManager;
 import tn.cashfly.utils.SessionManager;
 
 import java.io.IOException;
@@ -194,10 +193,7 @@ public class InvestorMainController {
     @FXML
     private void handleLogout() {
         SessionManager.clearSession();
-        try {
-            NavigationUtil.navigateTo((Stage) logoutBtn.getScene().getWindow(), "RoleSelector.fxml");
-        } catch (IOException e) {
-        }
+        SceneManager.switchScene("tn/cashfly/authentification.fxml");
     }
 
     private void showError(String message) {

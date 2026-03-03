@@ -104,7 +104,11 @@ public class CalendarViewProprietaireController {
 
     private void loadEvents() {
         try {
-            allEvents = serviceJPO.getAll();
+            int currentUserId = SessionManager.getCurrentUser().getId();
+            allEvents = serviceJPO.getAll().stream()
+                    .filter(event -> event.getIdCreateur() == currentUserId)
+                    .collect(Collectors.toList());
+
             eventsByDate = new HashMap<>();
             for (JPO event : allEvents) {
                 LocalDate date = new java.sql.Date(event.getDate_evenement().getTime())
@@ -192,7 +196,7 @@ public class CalendarViewProprietaireController {
 
         Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
         dayLabel.setFont(Font.font("System", date.equals(LocalDate.now()) ? FontWeight.BOLD : FontWeight.NORMAL, 16));
-        dayLabel.setTextFill(date.equals(LocalDate.now()) ? Color.web("#2E5E99") : Color.web("#333"));
+        dayLabel.setTextFill(date.equals(LocalDate.now()) ? Color.web("#6366f1") : Color.web("#333"));
         StackPane.setAlignment(dayLabel, Pos.TOP_LEFT);
         StackPane.setMargin(dayLabel, new Insets(8, 0, 0, 12));
 
@@ -203,7 +207,7 @@ public class CalendarViewProprietaireController {
         if (dayEvents.isEmpty()) {
             Label plusLabel = new Label("+");
             plusLabel.setFont(Font.font("System", FontWeight.BOLD, 24));
-            plusLabel.setTextFill(Color.web("#2E5E99"));
+            plusLabel.setTextFill(Color.web("#6366f1"));
             plusLabel.setOpacity(0);
             StackPane.setAlignment(plusLabel, Pos.CENTER);
 
@@ -252,14 +256,14 @@ public class CalendarViewProprietaireController {
 
         if (dayEvents.isEmpty()) {
             // No events - directly show create dialog
-            showCreateEventDialog(date);
+            showCreateEventDialog(date, null);
         } else {
             // Has events - show action choice dialog
             showDayActionDialog(date, dayEvents);
         }
     }
 
-    private void showCreateEventDialog(LocalDate date) {
+    private void showCreateEventDialog(LocalDate date, Runnable backAction) {
         if (currentPopup != null && currentPopup.isShowing()) {
             currentPopup.close();
         }
@@ -349,7 +353,11 @@ public class CalendarViewProprietaireController {
 
         Button cancelBtn = new Button("❌ Annuler");
         cancelBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px;");
-        cancelBtn.setOnAction(e -> currentPopup.close());
+        cancelBtn.setOnAction(e -> {
+            currentPopup.close();
+            if (backAction != null)
+                backAction.run();
+        });
 
         Button createBtn = new Button("✅ Créer");
         createBtn.setStyle(
@@ -379,7 +387,7 @@ public class CalendarViewProprietaireController {
         currentPopup.show();
     }
 
-    private void showEventDetailsPopup(JPO event) {
+    private void showEventDetailsPopup(JPO event, Runnable backAction) {
         if (currentPopup != null && currentPopup.isShowing()) {
             currentPopup.close();
         }
@@ -425,6 +433,18 @@ public class CalendarViewProprietaireController {
         // HEADER
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
+
+        if (backAction != null) {
+            Button backBtn = new Button();
+            backBtn.setGraphic(new FontIcon("fas-arrow-left"));
+            backBtn.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0 5 0 0;");
+            backBtn.setOnAction(e -> {
+                currentPopup.close();
+                backAction.run();
+            });
+            header.getChildren().add(backBtn);
+        }
+
         Circle colorCircle = new Circle(8, Color.web(getEventColor(event)));
         VBox titleBox = new VBox(2);
         Label titleLabel = new Label(event.getTitre());
@@ -527,7 +547,7 @@ public class CalendarViewProprietaireController {
                 "-fx-background-color: #7BA4D0; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 16; -fx-background-radius: 6;");
 
         // --- Permissions, Past Date & 24h Check ---
-        int currentUserId = SessionManager.getCurrentUser().getIdUtilisateur();
+        int currentUserId = SessionManager.getCurrentUser().getId();
         boolean isCreator = (event.getIdCreateur() == currentUserId);
 
         long now = System.currentTimeMillis();
@@ -556,7 +576,7 @@ public class CalendarViewProprietaireController {
 
         editBtn.setOnAction(e -> {
             currentPopup.close();
-            showEditEventDialog(event);
+            showEditEventDialog(event, () -> showEventDetailsPopup(event, backAction));
         });
 
         deleteBtn.setOnAction(e -> {
@@ -626,7 +646,7 @@ public class CalendarViewProprietaireController {
         currentPopup.show();
     }
 
-    private void showEditEventDialog(JPO event) {
+    private void showEditEventDialog(JPO event, Runnable backAction) {
         if (currentPopup != null && currentPopup.isShowing()) {
             currentPopup.close();
         }
@@ -739,7 +759,11 @@ public class CalendarViewProprietaireController {
         Button cancelBtn = new Button(" Annuler");
         cancelBtn.setGraphic(new FontIcon("fas-times"));
         cancelBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px;");
-        cancelBtn.setOnAction(e -> currentPopup.close());
+        cancelBtn.setOnAction(e -> {
+            currentPopup.close();
+            if (backAction != null)
+                backAction.run();
+        });
 
         Button saveBtn = new Button(" Enregistrer");
         saveBtn.setGraphic(new FontIcon("fas-save"));
@@ -770,7 +794,7 @@ public class CalendarViewProprietaireController {
         currentPopup.show();
     }
 
-    private void showEventSelectionDialog(LocalDate date, List<JPO> events) {
+    private void showEventSelectionDialog(LocalDate date, List<JPO> events, Runnable backAction) {
         if (currentPopup != null && currentPopup.isShowing()) {
             currentPopup.close();
         }
@@ -834,20 +858,25 @@ public class CalendarViewProprietaireController {
             textBox.getChildren().addAll(title, subtitle);
             HBox.setHgrow(textBox, Priority.ALWAYS);
 
-            Button editBtn = new Button("Edit");
-            editBtn.setStyle("-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold; " +
-                    "-fx-background-radius: 6px; -fx-min-width: 40px;");
+            Button editBtn = new Button();
+            editBtn.setGraphic(new FontIcon("fas-pen"));
+            editBtn.setTooltip(new Tooltip("Modifier la JPO"));
+            editBtn.setStyle("-fx-background-color: #ffc107; -fx-text-fill: #0D2440; " +
+                    "-fx-background-radius: 6px; -fx-min-width: 35px; -fx-min-height: 35px;");
             editBtn.setOnAction(e -> {
+                e.consume(); // Prevent parent click
                 currentPopup.close();
-                showEditEventDialog(event);
+                showEditEventDialog(event, () -> showEventSelectionDialog(date, events, backAction));
             });
 
-            Button deleteBtn = new Button("Supprimer");
-            deleteBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-weight: bold; " +
-                    "-fx-background-radius: 6px; -fx-min-width: 40px;");
+            Button deleteBtn = new Button();
+            deleteBtn.setGraphic(new FontIcon("fas-trash-alt"));
+            deleteBtn.setTooltip(new Tooltip("Supprimer la JPO"));
+            deleteBtn.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; " +
+                    "-fx-background-radius: 6px; -fx-min-width: 35px; -fx-min-height: 35px;");
 
             // --- Permissions, Past Date & 24h Check ---
-            int currentUserId = SessionManager.getCurrentUser().getIdUtilisateur();
+            int currentUserId = SessionManager.getCurrentUser().getId();
             boolean isCreator = (event.getIdCreateur() == currentUserId);
 
             long now = System.currentTimeMillis();
@@ -867,6 +896,7 @@ public class CalendarViewProprietaireController {
             }
 
             deleteBtn.setOnAction(e -> {
+                e.consume(); // Prevent parent click
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
                 confirm.setTitle("Confirmer");
                 confirm.setHeaderText("Supprimer \"" + event.getTitre() + "\" ?");
@@ -880,9 +910,23 @@ public class CalendarViewProprietaireController {
                         buildCalendar();
                         showEventSelectionDialog(date, events.stream()
                                 .filter(ev -> ev.getId_evenement() != event.getId_evenement())
-                                .collect(Collectors.toList()));
+                                .collect(Collectors.toList()), backAction);
                     }
                 });
+            });
+
+            // Make entire row clickable
+            eventRow.setStyle(eventRow.getStyle() + "-fx-cursor: hand;");
+            eventRow.setOnMouseEntered(
+                    e -> eventRow.setStyle("-fx-background-color: #e9ecef; -fx-background-radius: 10px; " +
+                            "-fx-border-color: #ced4da; -fx-border-radius: 10px; -fx-border-width: 1px;"));
+            eventRow.setOnMouseExited(
+                    e -> eventRow.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10px; " +
+                            "-fx-border-color: #e0e4e8; -fx-border-radius: 10px; -fx-border-width: 1px;"));
+
+            eventRow.setOnMouseClicked(e -> {
+                currentPopup.close();
+                showEventDetailsPopup(event, () -> showEventSelectionDialog(date, events, backAction));
             });
 
             // Add thumbnail to row (before indicator)
@@ -895,11 +939,23 @@ public class CalendarViewProprietaireController {
         scrollPane.setPrefHeight(350);
         scrollPane.setStyle("-fx-background-color: transparent;");
 
+        Button backBtn = new Button("Retour");
+        if (backAction == null) {
+            backBtn.setVisible(false);
+            backBtn.setManaged(false);
+        } else {
+            backBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px;");
+            backBtn.setOnAction(e -> {
+                currentPopup.close();
+                backAction.run();
+            });
+        }
+
         Button closeBtn = new Button("Fermer");
         closeBtn.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 8px;");
         closeBtn.setOnAction(e -> currentPopup.close());
 
-        HBox buttons = new HBox(10, closeBtn);
+        HBox buttons = new HBox(10, backBtn, closeBtn);
         buttons.setAlignment(Pos.CENTER_RIGHT);
 
         content.getChildren().addAll(header, scrollPane, buttons);
@@ -924,7 +980,7 @@ public class CalendarViewProprietaireController {
 
             event.setMaxParticipants(maxParticipants);
             event.setCurrentParticipants(0);
-            event.setIdCreateur(SessionManager.getCurrentUser().getIdUtilisateur());
+            event.setIdCreateur(SessionManager.getCurrentUser().getId());
 
             if (imageFile != null) {
                 String imagePath = ImageStorage.saveImage(imageFile);
@@ -1009,11 +1065,7 @@ public class CalendarViewProprietaireController {
 
     private void handleLogout() {
         SessionManager.clearSession();
-        try {
-            if (mainController != null) {
-            }
-        } catch (Exception e) {
-        }
+        tn.cashfly.tools.SceneManager.switchScene("tn/cashfly/authentification.fxml");
     }
 
     private Image loadPlaceholderImage() {
@@ -1069,9 +1121,9 @@ public class CalendarViewProprietaireController {
         viewOption.setOnMouseClicked(e -> {
             currentPopup.close();
             if (dayEvents.size() == 1) {
-                showEventDetailsPopup(dayEvents.get(0));
+                showEventDetailsPopup(dayEvents.get(0), () -> showDayActionDialog(date, dayEvents));
             } else {
-                showEventSelectionDialog(date, dayEvents);
+                showEventSelectionDialog(date, dayEvents, () -> showDayActionDialog(date, dayEvents));
             }
         });
         viewOption.setOnMouseEntered(e -> viewOption.setStyle(
@@ -1126,7 +1178,7 @@ public class CalendarViewProprietaireController {
                 "-fx-border-color: #28a745; -fx-border-radius: 12px; -fx-cursor: hand;");
         addOption.setOnMouseClicked(e -> {
             currentPopup.close();
-            showCreateEventDialog(date);
+            showCreateEventDialog(date, () -> showDayActionDialog(date, dayEvents));
         });
         addOption.setOnMouseEntered(e -> addOption.setStyle(
                 "-fx-background-color: #d4edda; -fx-background-radius: 12px; " +

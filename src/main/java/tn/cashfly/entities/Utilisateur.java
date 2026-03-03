@@ -3,38 +3,191 @@ package tn.cashfly.entities;
 import java.util.Date;
 
 public class Utilisateur {
-    private int idUtilisateur;
-    private String nomComplet;
+
+    private int id;
+    private int cin;
+    private String tel;
+    private String nom;
+    private String prenom;
     private String email;
-    private String motDePasse;
-    private String role; // 'proprietaire', 'investisseur', 'administrateur'
+    private String password;
+    private String roles;
+    private String nomComplet;
+
+    private String yearsExperience;
+    private String highestProfit;
+    private String budget;
+    private String faceImage;
     private Date dateCreation;
 
-    public Utilisateur() {}
+    // 🔒 1 = actif | 0 = bloqué
+    private int active;
 
-    public Utilisateur(int idUtilisateur, String nomComplet, String email, String role) {
-        this.idUtilisateur = idUtilisateur;
-        this.nomComplet = nomComplet;
-        this.email = email;
-        this.role = role;
+    public Utilisateur() {
     }
 
-    // Getters & Setters
-    public int getIdUtilisateur() { return idUtilisateur; }
-    public void setIdUtilisateur(int idUtilisateur) { this.idUtilisateur = idUtilisateur; }
+    public Utilisateur(int idUtilisateur, String nomComplet, String email, String role) {
+        this.id = idUtilisateur;
+        this.nomComplet = nomComplet;
+        this.email = email;
+        this.roles = role;
+    }
 
-    public String getNomComplet() { return nomComplet; }
-    public void setNomComplet(String nomComplet) { this.nomComplet = nomComplet; }
+    public String getFaceImage() {
+        return faceImage;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setFaceImage(String faceImage) {
+        this.faceImage = faceImage;
+    }
 
-    public String getMotDePasse() { return motDePasse; }
-    public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
+    /* ================= GETTERS / SETTERS ================= */
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    public int getId() {
+        return id;
+    }
 
-    public Date getDateCreation() { return dateCreation; }
-    public void setDateCreation(Date dateCreation) { this.dateCreation = dateCreation; }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCin() {
+        return cin;
+    }
+
+    public void setCin(int cin) {
+        this.cin = cin;
+    }
+
+    public String getNomComplet() {
+        return nomComplet;
+    }
+
+    public void setNomComplet(String nomComplet) {
+        this.nomComplet = nomComplet;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
+    public String getYearsExperience() {
+        return yearsExperience;
+    }
+
+    public void setYearsExperience(String yearsExperience) {
+        this.yearsExperience = yearsExperience;
+    }
+
+    public String getHighestProfit() {
+        return highestProfit;
+    }
+
+    public void setHighestProfit(String highestProfit) {
+        this.highestProfit = highestProfit;
+    }
+
+    public String getBudget() {
+        return budget;
+    }
+
+    public void setBudget(String budget) {
+        this.budget = budget;
+    }
+
+    public Date getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public int getActive() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
+    public String getRole() {
+        return roles;
+    }
+
+    public void setRole(String role) {
+        this.roles = role;
+    }
+
+    /* ================= ROLES ================= */
+
+    public boolean hasRole(String role) {
+        return roles != null && roles.contains(role);
+    }
+
+    public boolean isAdmin() {
+        return "administrateur".equals(roles);
+    }
+
+    public boolean isInvestisseur() {
+        return "investisseur".equals(roles);
+    }
+
+    public boolean isProprietaire() {
+        return "proprietaire".equals(roles);
+    }
+
+    /* ================= DEBUG (OPTIONNEL) ================= */
+    @Override
+    public String toString() {
+        return "Utilisateur{" +
+                "email='" + email + '\'' +
+                ", roles='" + roles + '\'' +
+                ", active=" + active +
+                '}';
+    }
 }

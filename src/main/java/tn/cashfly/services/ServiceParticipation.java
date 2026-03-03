@@ -1,16 +1,9 @@
 package tn.cashfly.services;
 
 import tn.cashfly.entities.Participation;
-import tn.cashfly.utils.CashFlyDB;
-
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import tn.cashfly.entities.Participation;
 import tn.cashfly.entities.ParticipantInfo;
 import tn.cashfly.entities.EventStatistics;
-import tn.cashfly.utils.CashFlyDB;
+import tn.cashfly.utils.MyDataBase;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +14,7 @@ public class ServiceParticipation {
     private final Connection connection;
 
     public ServiceParticipation() {
-        connection = CashFlyDB.getInstance().getConnection();
+        connection = MyDataBase.getInstance().getConnection();
     }
 
     // Check if user has an active registration (not cancelled)
@@ -63,7 +56,8 @@ public class ServiceParticipation {
     }
 
     /**
-     * FIXED: Register for event - handles both new registration and re-registration after cancellation
+     * FIXED: Register for event - handles both new registration and re-registration
+     * after cancellation
      */
     public boolean register(int idEvenement, int idUtilisateur) throws SQLException {
         // Check if already has active registration
@@ -153,7 +147,6 @@ public class ServiceParticipation {
             throw new SQLException("Échec de l'annulation");
         }
 
-
         // Decrease counter if was confirmed
         if ("confirmé".equals(currentStatus)) {
             updateParticipantCount(idEvenement, -1);
@@ -196,11 +189,13 @@ public class ServiceParticipation {
     }
 
     /**
-     * Get user participations with event details - EXCLUDES cancelled ones for display
+     * Get user participations with event details - EXCLUDES cancelled ones for
+     * display
      */
     public List<Participation> getUserParticipationsWithEvents(int idUtilisateur) throws SQLException {
         List<Participation> list = new ArrayList<>();
-        String query = "SELECT p.*, j.titre, j.date_evenement, j.lieu, j.description, j.image_path, j.max_participants, j.current_participants " +
+        String query = "SELECT p.*, j.titre, j.date_evenement, j.lieu, j.description, j.image_path, j.max_participants, j.current_participants "
+                +
                 "FROM participation_jpo p " +
                 "JOIN journées_portes_ouvertes j ON p.id_evenement = j.id_evenement " +
                 "WHERE p.id_utilisateur = ? AND p.statut != 'annulé' " +
@@ -233,6 +228,7 @@ public class ServiceParticipation {
         ps.executeUpdate();
         ps.close();
     }
+
     public Participation getParticipation(int idEvenement, int idUtilisateur) throws SQLException {
         String query = "SELECT * FROM participation_jpo WHERE id_evenement = ? AND id_utilisateur = ? AND statut != 'annulé'";
         PreparedStatement ps = connection.prepareStatement(query);
@@ -254,6 +250,7 @@ public class ServiceParticipation {
         ps.close();
         return p;
     }
+
     public List<ParticipantInfo> getEventParticipantsDetailed(int idEvenement) throws SQLException {
         List<ParticipantInfo> participants = new ArrayList<>();
 

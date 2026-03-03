@@ -72,7 +72,7 @@ public class InvestorListMyJPOController {
             eventsContainer.getChildren().clear();
 
             List<Participation> participations = serviceParticipation
-                    .getUserParticipationsWithEvents(currentUser.getIdUtilisateur());
+                    .getUserParticipationsWithEvents(currentUser.getId());
 
             countLabel.setText("(" + participations.size() + ")");
 
@@ -415,7 +415,7 @@ public class InvestorListMyJPOController {
         try {
             Participation p = serviceParticipation.getParticipation(
                     event.getId_evenement(),
-                    currentUser.getIdUtilisateur());
+                    currentUser.getId());
 
             if (p == null) {
                 showAlert("Erreur", "Inscription non trouvée.");
@@ -442,7 +442,7 @@ public class InvestorListMyJPOController {
 
             Optional<ButtonType> result = confirm.showAndWait();
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                serviceParticipation.cancel(event.getId_evenement(), currentUser.getIdUtilisateur());
+                serviceParticipation.cancel(event.getId_evenement(), currentUser.getId());
                 showAlert("✅ Désinscription confirmée", "Vous êtes désinscrit de l'événement.");
                 loadMyEvents();
             }

@@ -1,7 +1,7 @@
 package tn.cashfly.services;
 
 import tn.cashfly.entities.Utilisateur;
-import tn.cashfly.utils.CashFlyDB;
+import tn.cashfly.utils.MyDataBase;
 
 import java.sql.*;
 
@@ -10,7 +10,7 @@ public class ServiceUtilisateur {
     private final Connection connection;
 
     public ServiceUtilisateur() {
-        connection = CashFlyDB.getInstance().getConnection();
+        connection = MyDataBase.getInstance().getConnection();
     }
 
     public Utilisateur authenticate(String email, String password) throws SQLException {
@@ -24,7 +24,7 @@ public class ServiceUtilisateur {
 
         if (rs.next()) {
             Utilisateur user = new Utilisateur();
-            user.setIdUtilisateur(rs.getInt("id_utilisateur"));
+            user.setId(rs.getInt("id_utilisateur"));
             user.setNomComplet(rs.getString("nom_complet"));
             user.setEmail(rs.getString("email"));
             user.setRole(rs.getString("role"));
@@ -46,7 +46,7 @@ public class ServiceUtilisateur {
 
         if (rs.next()) {
             Utilisateur user = new Utilisateur();
-            user.setIdUtilisateur(rs.getInt("id_utilisateur"));
+            user.setId(rs.getInt("id_utilisateur"));
             user.setNomComplet(rs.getString("nom_complet"));
             user.setEmail(rs.getString("email"));
             user.setRole(rs.getString("role"));

@@ -6,9 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import tn.cashfly.entities.Utilisateur;
-import tn.cashfly.utils.NavigationUtil;
+import tn.cashfly.tools.SceneManager;
 import tn.cashfly.utils.SessionManager;
 
 import java.io.IOException;
@@ -17,17 +16,20 @@ import java.util.List;
 
 public class MainJPOController {
 
-    @FXML private Button addJPO;
-    @FXML private Button logoutBtn;
-    @FXML private AnchorPane contentArea;
-    @FXML private VBox welcomeView;
+    @FXML
+    private Button addJPO;
+    @FXML
+    private Button logoutBtn;
+    @FXML
+    private AnchorPane contentArea;
+    @FXML
+    private VBox welcomeView;
 
     private List<Button> allButtons;
     private Utilisateur currentUser;
 
     @FXML
     public void initialize() {
-
 
         currentUser = SessionManager.getCurrentUser();
 
@@ -39,8 +41,10 @@ public class MainJPOController {
         allButtons = Arrays.asList(addJPO);
         resetAllButtons();
 
-        if (addJPO != null) addJPO.setOnAction(e -> showCalendarView());
-        if (logoutBtn != null) logoutBtn.setOnAction(e -> handleLogout());
+        if (addJPO != null)
+            addJPO.setOnAction(e -> showCalendarView());
+        if (logoutBtn != null)
+            logoutBtn.setOnAction(e -> handleLogout());
 
         showCalendarView();
 
@@ -80,8 +84,8 @@ public class MainJPOController {
             AnchorPane.setRightAnchor(calendarView, 0.0);
 
             resetAllButtons();
-            if (addJPO != null) addJPO.getStyleClass().add("btn-active");
-
+            if (addJPO != null)
+                addJPO.getStyleClass().add("btn-active");
 
         } catch (IOException e) {
             System.err.println("ERROR loading calendar: " + e.getMessage());
@@ -117,18 +121,12 @@ public class MainJPOController {
     @FXML
     private void handleLogout() {
         SessionManager.clearSession();
-        try {
-            Stage stage = (Stage) (logoutBtn != null ? logoutBtn.getScene().getWindow() :
-                    (addJPO != null ? addJPO.getScene().getWindow() : null));
-            if (stage != null) {
-                NavigationUtil.navigateTo(stage, "RoleSelector.fxml");
-            }
-        } catch (IOException e) {
-        }
+        SceneManager.switchScene("tn/cashfly/authentification.fxml");
     }
 
     private void resetAllButtons() {
-        if (allButtons == null) return;
+        if (allButtons == null)
+            return;
         for (Button btn : allButtons) {
             if (btn != null) {
                 btn.getStyleClass().remove("btn-active");
@@ -138,13 +136,6 @@ public class MainJPOController {
     }
 
     private void navigateToLogin() {
-        try {
-            Stage stage = (Stage) (addJPO != null ? addJPO.getScene().getWindow() :
-                    (logoutBtn != null ? logoutBtn.getScene().getWindow() : null));
-            if (stage != null) {
-                NavigationUtil.navigateTo(stage, "RoleSelector.fxml");
-            }
-        } catch (IOException e) {
-        }
+        SceneManager.switchScene("tn/cashfly/authentification.fxml");
     }
 }

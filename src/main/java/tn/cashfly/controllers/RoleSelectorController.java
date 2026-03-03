@@ -15,9 +15,12 @@ import java.sql.SQLException;
 
 public class RoleSelectorController {
 
-    @FXML private TextField emailField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Label errorLabel;
 
     private ServiceUtilisateur serviceUtilisateur;
 
@@ -86,7 +89,7 @@ public class RoleSelectorController {
             // For demo purposes, create a mock user if not logged in
             if (!SessionManager.isLoggedIn()) {
                 Utilisateur demoUser = new Utilisateur();
-                demoUser.setIdUtilisateur(1);
+                demoUser.setId(1);
                 demoUser.setNomComplet("Utilisateur " + demoRole);
                 demoUser.setEmail("demo@cashfly.tn");
                 demoUser.setRole(demoRole);

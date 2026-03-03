@@ -64,7 +64,7 @@ public class ChatViewController implements Initializable {
 
         String authData = String.format(
                 "{userId: %d, userName: '%s', fullName: '%s', userRole: '%s', eventId: %d}",
-                currentUser.getIdUtilisateur(),
+                currentUser.getId(),
                 escapeJs(currentUser.getNomComplet()),
                 escapeJs(currentUser.getNomComplet()),
                 currentUser.getRole(),

@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -271,7 +273,7 @@ public class InvestorListAllJPOController {
 
         try {
             boolean isRegistered = serviceParticipation.isRegistered(event.getId_evenement(),
-                    currentUser.getIdUtilisateur());
+                    currentUser.getId());
 
             if (isRegistered) {
                 actionBtn.setText(" Inscrit - Voir détails");
@@ -308,7 +310,14 @@ public class InvestorListAllJPOController {
             actionBtn.setDisable(true);
         }
 
-        card.getChildren().addAll(imgView, title, dateLocBox, participantsBox, actionBtn);
+        // Spacer to push button to bottom
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        // Add margin to button
+        VBox.setMargin(actionBtn, new Insets(10, 0, 0, 0));
+
+        card.getChildren().addAll(imgView, title, dateLocBox, participantsBox, spacer, actionBtn);
         return card;
     }
 
@@ -363,7 +372,7 @@ public class InvestorListAllJPOController {
 
     private void handleRegister(JPO event) {
         try {
-            boolean confirmed = serviceParticipation.register(event.getId_evenement(), currentUser.getIdUtilisateur());
+            boolean confirmed = serviceParticipation.register(event.getId_evenement(), currentUser.getId());
             showAlert(confirmed ? "✅ Inscription confirmée" : "⏳ Liste d'attente",
                     confirmed ? "Vous êtes inscrit à \"" + event.getTitre() + "\" !"
                             : "Événement complet. Vous êtes en liste d'attente.");

@@ -20,21 +20,21 @@
 
 .calendar-day-cell:hover {
     -fx-background-color: #ffffff;
-    -fx-border-color: #2E5E99;
+    -fx-border-color: #6366f1;
     -fx-border-width: 1px;
-    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.25), 12, 0, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.25), 12, 0, 0, 4);
 }
 
 .calendar-day-cell.today {
-    -fx-background-color: #E7F0FA;
-    /* Lighter soft blue for visibility */
-    -fx-border-color: #2E5E99;
-    /* Deep sapphire blue border */
-    -fx-border-width: 3px;
-    /* Thicker border */
+    -fx-background-color: #f1f2ff;
+    /* Soft indigo tinted background */
+    -fx-border-color: #6366f1;
+    /* Indigo primary accent */
+    -fx-border-width: 4px;
+    /* Even thicker border for high visibility */
     -fx-border-radius: 12px;
     -fx-background-radius: 12px;
-    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.4), 15, 0.1, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.5), 18, 0.1, 0, 6);
 }
 
 .calendar-day-cell.other-month {
@@ -50,7 +50,7 @@
 
 .calendar-nav-btn {
     -fx-background-color: white;
-    -fx-text-fill: #2E5E99;
+    -fx-text-fill: #6366f1;
     -fx-font-size: 16px;
     -fx-min-width: 38px;
     -fx-min-height: 38px;
@@ -63,10 +63,10 @@
 }
 
 .calendar-nav-btn:hover {
-    -fx-background-color: #2E5E99;
+    -fx-background-color: #6366f1;
     -fx-text-fill: white;
-    -fx-border-color: #2E5E99;
-    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.3), 8, 0, 0, 3);
+    -fx-border-color: #6366f1;
+    -fx-effect: dropshadow(gaussian, rgba(99, 102, 241, 0.3), 8, 0, 0, 3);
 }
 
 .btn-primary {

@@ -2,7 +2,7 @@ package tn.cashfly.services;
 
 import tn.cashfly.entities.JPO;
 import tn.cashfly.interfaces.Service;
-import tn.cashfly.utils.CashFlyDB;
+import tn.cashfly.utils.MyDataBase;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public class ServiceJPO implements Service<JPO> {
     private final Connection connection;
 
     public ServiceJPO() {
-        connection = CashFlyDB.getInstance().getConnection();
+        connection = MyDataBase.getInstance().getConnection();
     }
 
     @Override
