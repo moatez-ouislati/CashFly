@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Virement Interne | CashFly{% endblock %}
+
+{% block header_title %}Virement Interne{% endblock %}
+{% block header_subtitle %}Transférez des fonds entre vos différents comptes de trésorerie.{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/10">
+    <div class="flex justify-between items-center mb-8">
+        <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Effectuer un transfert</h3>
+        <a href="{{ path('app_tresorerie_index') }}" class="flex items-center gap-2 text-secondary px-4 py-2 rounded-lg font-bold text-sm hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+            Retour
+        </a>
+    </div>
+
+    {% for message in app.flashes('error') %}
+        <div class="bg-red-100 text-red-700 border border-red-200 p-4 rounded-xl mb-6 text-sm font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined">error</span>
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+        <div class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    {{ form_label(form.source) }}
+                    {{ form_widget(form.source) }}
+                    {{ form_errors(form.source) }}
+                </div>
+                <div class="space-y-1.5">
+                    {{ form_label(form.destination) }}
+                    {{ form_widget(form.destination) }}
+                    {{ form_errors(form.destination) }}
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.montant) }}
+                {{ form_widget(form.montant) }}
+                {{ form_errors(form.montant) }}
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+        </div>
+
+        <div class="mt-10">
+            <button class="w-full bg-primary text-white px-8 py-4 rounded-xl font-black text-sm hover:bg-primary-container transition-all flex items-center justify-center gap-3 group shadow-xl shadow-primary/20">
+                Confirmer le virement
+                <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">swap_horiz</span>
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
+
+<div class="max-w-2xl mx-auto mt-8 p-6 bg-primary/5 rounded-2xl border border-primary/10">
+    <div class="flex gap-4">
+        <span class="material-symbols-outlined text-primary">info</span>
+        <div>
+            <p class="text-sm font-bold text-on-surface">Comment ça marche ?</p>
+            <p class="text-xs text-secondary mt-1">Le virement interne va créer automatiquement deux opérations : une dépense sur le compte source et un revenu sur le compte destination. Les soldes seront mis à jour instantanément.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

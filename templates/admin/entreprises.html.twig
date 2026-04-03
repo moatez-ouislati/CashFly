@@ -1,0 +1,74 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Entreprises | Admin | CashFly{% endblock %}
+
+{% block header_title %}Gestion des PMEs{% endblock %}
+{% block header_subtitle %}Supervision de toutes les entités commerciales enregistrées.{% endblock %}
+
+{% block body %}
+<section class="admin-glass rounded-[2rem] border border-white/5 overflow-hidden">
+    <div class="px-8 py-6 flex justify-between items-center border-b border-white/5 bg-white/[0.02]">
+        <h3 class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Liste des Entreprises</h3>
+        <div class="flex gap-2">
+            <span class="px-3 py-1 bg-admin-primary/10 text-admin-primary text-[10px] font-black rounded-full border border-admin-primary/20">
+                {{ entreprises|length }} ENTITÉS
+            </span>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-white/[0.01]">
+                    <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Entreprise</th>
+                    <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Secteur</th>
+                    <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Capital</th>
+                    <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Adresse</th>
+                    <th class="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-500">Propriétaire</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/[0.03]">
+                {% for entreprise in entreprises %}
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-8 py-5">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 font-black border border-purple-500/20 group-hover:scale-110 transition-transform">
+                                    {{ entreprise.nom|first }}
+                                </div>
+                                <span class="font-bold text-white group-hover:text-admin-primary transition-colors">{{ entreprise.nom }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5">
+                            <span class="text-xs font-medium text-slate-400">{{ entreprise.secteur }}</span>
+                        </td>
+                        <td class="px-8 py-5">
+                            <span class="text-sm font-black text-white tracking-tight">{{ entreprise.capital|number_format(2, ',', ' ') }} <span class="text-[10px] opacity-50">TND</span></span>
+                        </td>
+                        <td class="px-8 py-5 text-xs text-slate-500 italic">{{ entreprise.adresse }}</td>
+                        <td class="px-8 py-5">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-400 border border-white/10">
+                                    {{ entreprise.proprietaire.prenom|first }}{{ entreprise.proprietaire.nom|first }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-bold text-white">{{ entreprise.proprietaire.prenom }} {{ entreprise.proprietaire.nom }}</span>
+                                    <span class="text-[10px] text-slate-500">{{ entreprise.proprietaire.email }}</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="px-8 py-20 text-center">
+                            <div class="flex flex-col items-center gap-4">
+                                <span class="material-symbols-outlined text-5xl text-slate-700">domain_disabled</span>
+                                <p class="text-slate-500 font-bold uppercase tracking-widest text-xs">Aucune entreprise enregistrée</p>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

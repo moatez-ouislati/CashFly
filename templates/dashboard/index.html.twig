@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de bord | CashFly{% endblock %}
+
+{% block header_title %}Vue d'ensemble{% endblock %}
+{% block header_subtitle %}Ravi de vous revoir, {{ app.user.prenom }}. Vous avez {{ total_operations }} opérations enregistrées au total.{% endblock %}
+
+{% block body %}
+<!-- Top Grid: Balance & Analytics -->
+<div class="grid grid-cols-12 gap-8 mb-8">
+    <!-- Account Balance Card -->
+    <div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-3xl p-8 shadow-sm flex flex-col justify-between relative overflow-hidden group border border-outline-variant/10">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-primary/10 transition-colors duration-500"></div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <span class="text-[11px] font-black uppercase tracking-[0.2em] text-primary mb-1 block">Solde Total Combiné</span>
+                    <h2 class="text-6xl font-black tracking-tighter text-on-surface">
+                        <span class="text-primary-container/30">TND</span> {{ total_balance|number_format(2, ',', ' ') }}
+                    </h2>
+                </div>
+                <div class="flex flex-col items-end">
+                    <div class="flex items-center gap-1 text-tertiary font-bold bg-tertiary-fixed/20 px-3 py-1 rounded-full text-xs">
+                        <span class="material-symbols-outlined text-sm">payments</span>
+                        {{ total_operations }} Opérations
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4">
+                <a href="{{ path('app_entreprise_index') }}" class="p-4 bg-surface-container-low rounded-2xl hover:bg-primary/10 transition-colors group border border-outline-variant/5">
+                    <p class="text-[10px] font-bold text-outline uppercase tracking-widest mb-1">PMEs</p>
+                    <p class="text-xl font-black text-on-surface group-hover:text-primary transition-colors">{{ entreprises_count }}</p>
+                </a>
+                <a href="{{ path('app_tresorerie_index') }}" class="p-4 bg-surface-container-low rounded-2xl hover:bg-primary/10 transition-colors group border border-outline-variant/5">
+                    <p class="text-[10px] font-bold text-outline uppercase tracking-widest mb-1">Comptes</p>
+                    <p class="text-xl font-black text-on-surface group-hover:text-primary transition-colors">{{ tresoreries_count }}</p>
+                </a>
+                <a href="{{ path('app_operation_index', {'type': 'revenu'}) }}" class="p-4 bg-surface-container-low rounded-2xl hover:bg-tertiary/10 transition-colors group border border-outline-variant/5">
+                    <p class="text-[10px] font-bold text-outline uppercase tracking-widest mb-1">Revenus</p>
+                    <p class="text-xl font-black text-tertiary">{{ income_count }}</p>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- Mini Analytics -->
+    <div class="col-span-12 lg:col-span-4 bg-surface-container-high rounded-3xl p-8 flex flex-col justify-between border border-outline-variant/10">
+        <div>
+            <h3 class="text-sm font-black uppercase tracking-widest text-on-surface mb-6">Répartition des Flux</h3>
+            <div class="space-y-4">
+                {% set total_io = income_count + expense_count %}
+                {% if total_io > 0 %}
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-secondary">Revenus</span>
+                        <span class="text-sm font-bold text-on-surface">{{ ((income_count / total_io) * 100)|round }}%</span>
+                    </div>
+                    <div class="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-tertiary h-full rounded-full" style="width: {{ (income_count / total_io) * 100 }}%"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-secondary">Dépenses</span>
+                        <span class="text-sm font-bold text-on-surface">{{ ((expense_count / total_io) * 100)|round }}%</span>
+                    </div>
+                    <div class="w-full bg-outline-variant/20 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-error h-full rounded-full" style="width: {{ (expense_count / total_io) * 100 }}%"></div>
+                    </div>
+                {% else %}
+                    <p class="text-xs text-secondary text-center py-10">Aucune donnée disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+        <a href="{{ path('app_operation_index') }}" class="w-full py-4 text-center text-primary text-xs font-black uppercase tracking-[0.2em] border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors mt-6">
+            Voir toutes les transactions
+        </a>
+    </div>
+</div>
+
+<!-- Middle Grid: Quick Actions & Recent Transactions -->
+<div class="grid grid-cols-12 gap-8 mb-8">
+    {% if is_granted('ROLE_PROPRIETAIRE') %}
+    <!-- Favorite Accounts -->
+    <div class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-on-surface/60 px-2">Comptes Favoris</h3>
+        {% for t in fav_tresoreries %}
+            <a href="{{ path('app_operation_index', {'tresorerie': t.id}) }}" class="flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl group hover:bg-primary transition-all duration-300 active:scale-95 shadow-sm border border-outline-variant/5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary group-hover:bg-white/20 group-hover:text-white transition-colors">
+                        <span class="material-symbols-outlined">account_balance</span>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-on-surface group-hover:text-white transition-colors">{{ t.nomCompte }}</p>
+                        <p class="text-[10px] font-bold text-outline uppercase tracking-wider group-hover:text-white/70 transition-colors">{{ t.solde|number_format(2, ',', ' ') }} TND</p>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined text-yellow-500 group-hover:text-white transition-colors">star</span>
+            </a>
+        {% else %}
+            <div class="p-8 text-center bg-surface-container-low rounded-2xl border-2 border-dashed border-outline-variant/20">
+                <p class="text-xs text-secondary font-bold uppercase tracking-widest">Aucun compte</p>
+            </div>
+        {% endfor %}
+        
+        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-on-surface/60 px-2 mt-4">Actions Rapides</h3>
+        <a href="{{ path('app_entreprise_index') }}" class="flex items-center justify-between p-5 bg-surface-container-lowest rounded-2xl group hover:bg-primary transition-all duration-300 active:scale-95 shadow-sm border border-outline-variant/5">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center text-primary group-hover:bg-white/20 group-hover:text-white transition-colors">
+                    <span class="material-symbols-outlined">business</span>
+                </div>
+                <div class="text-left">
+                    <p class="font-bold text-on-surface group-hover:text-white transition-colors">Sélectionner une PME</p>
+                    <p class="text-xs text-secondary group-hover:text-white/70 transition-colors">Voir vos entreprises</p>
+                </div>
+            </div>
+            <span class="material-symbols-outlined text-outline group-hover:text-white transition-colors">chevron_right</span>
+        </a>
+    </div>
+    {% endif %}
+    
+    <!-- Recent Activity -->
+    <div class="col-span-12 lg:col-span-{% if is_granted('ROLE_PROPRIETAIRE') %}8{% else %}12{% endif %} bg-surface-container-lowest rounded-3xl p-8 shadow-sm border border-outline-variant/10">
+        <div class="flex justify-between items-center mb-8">
+            <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Activité Récente</h3>
+            <a href="{{ path('app_operation_index') }}" class="text-primary text-xs font-bold hover:underline">Voir tout l'historique</a>
+        </div>
+        <div class="space-y-1">
+            {% for op in recent_operations %}
+                <div class="flex items-center justify-between p-4 hover:bg-surface-container-low rounded-2xl transition-colors group cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-xl">{{ op.type == 'revenu' ? 'trending_up' : 'trending_down' }}</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm">{{ op.reference|default('Opération #' ~ op.id) }}</p>
+                            <p class="text-[10px] font-bold text-outline uppercase tracking-wider">{{ op.categorie }} • {{ op.dateOperation|date('d M') }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black {{ op.type == 'revenu' ? 'text-tertiary' : 'text-error' }}">
+                            {{ op.type == 'revenu' ? '+' : '-' }}{{ op.montant|number_format(2, ',', ' ') }} TND
+                        </p>
+                        <p class="text-[10px] font-bold text-outline uppercase tracking-wider">{{ op.tresorerie.nomCompte }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-20 bg-surface-container-low rounded-2xl">
+                    <p class="text-secondary text-sm">Aucune opération récente.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

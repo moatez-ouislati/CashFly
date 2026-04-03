@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la PME | CashFly{% endblock %}
+
+{% block header_title %}Modifier la PME{% endblock %}
+{% block header_subtitle %}Mettez à jour les informations de {{ entreprise.nom }}.{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/10">
+    <div class="flex justify-between items-center mb-8">
+        <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Formulaire de modification</h3>
+        <a href="{{ path('app_entreprise_index') }}" class="flex items-center gap-2 text-secondary px-4 py-2 rounded-lg font-bold text-sm hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+            Retour à la liste
+        </a>
+    </div>
+
+    {{ form_start(form) }}
+        <div class="space-y-6">
+            <div class="space-y-1.5">
+                {{ form_label(form.nom) }}
+                {{ form_widget(form.nom) }}
+                {{ form_errors(form.nom) }}
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    {{ form_label(form.secteur) }}
+                    {{ form_widget(form.secteur) }}
+                    {{ form_errors(form.secteur) }}
+                </div>
+                <div class="space-y-1.5">
+                    {{ form_label(form.forme_juridique) }}
+                    {{ form_widget(form.forme_juridique) }}
+                    {{ form_errors(form.forme_juridique) }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    {{ form_label(form.capital) }}
+                    {{ form_widget(form.capital) }}
+                    {{ form_errors(form.capital) }}
+                </div>
+                <div class="space-y-1.5">
+                    {{ form_label(form.date_creation) }}
+                    {{ form_widget(form.date_creation) }}
+                    {{ form_errors(form.date_creation) }}
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.adresse) }}
+                {{ form_widget(form.adresse) }}
+                {{ form_errors(form.adresse) }}
+            </div>
+        </div>
+
+        <div class="mt-10 flex justify-end">
+            <button class="bg-primary text-white px-8 py-4 rounded-xl font-black text-sm hover:bg-primary-container transition-all flex items-center gap-2 group shadow-xl shadow-primary/20">
+                Enregistrer les modifications
+                <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">save</span>
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

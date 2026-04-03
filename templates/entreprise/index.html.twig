@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entreprises | CashFly{% endblock %}
+
+{% block header_title %}Gestion des Entreprises{% endblock %}
+{% block header_subtitle %}Liste de toutes les PMEs enregistrées dans votre portefeuille.{% endblock %}
+
+{% block body %}
+<div class="mb-8 flex justify-end">
+    <a href="{{ path('app_entreprise_new') }}" class="flex items-center gap-2 px-6 py-4 bg-primary text-white font-black rounded-xl shadow-xl shadow-primary/20 hover:bg-primary-container transition-all active:scale-95 whitespace-nowrap">
+        <span class="material-symbols-outlined">add_business</span>
+        Ajouter une PME
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for entreprise in entreprises %}
+        <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow group border border-outline-variant/10">
+            <div class="flex justify-between items-start mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">business</span>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-outline">Capital</p>
+                    <p class="text-sm font-black text-on-surface">{{ entreprise.capital|number_format(2, ',', ' ') }} TND</p>
+                </div>
+            </div>
+            
+            <h3 class="text-xl font-black text-on-surface mb-2">{{ entreprise.nom }}</h3>
+            <p class="text-secondary text-sm mb-6">{{ entreprise.secteur }} • {{ entreprise.forme_juridique }}</p>
+            
+            <div class="space-y-3 mb-8">
+                <div class="flex items-center gap-3 text-sm text-secondary">
+                    <span class="material-symbols-outlined text-sm">location_on</span>
+                    {{ entreprise.adresse }}
+                </div>
+                <div class="flex items-center gap-3 text-sm text-secondary">
+                    <span class="material-symbols-outlined text-sm">person</span>
+                    Propriétaire: {{ entreprise.proprietaire.prenom }} {{ entreprise.proprietaire.nom }}
+                </div>
+            </div>
+            
+            <div class="flex gap-3">
+                <a href="{{ path('app_tresorerie_index', {'entreprise': entreprise.id}) }}" class="flex-1 py-3 text-center bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-primary-container transition-all shadow-md shadow-primary/10">
+                    Voir les comptes
+                </a>
+                <a href="{{ path('app_entreprise_show', {'id': entreprise.id}) }}" class="p-3 bg-surface-container-high text-on-surface rounded-xl hover:bg-slate-200 transition-all" title="Détails">
+                    <span class="material-symbols-outlined text-sm">info</span>
+                </a>
+                <a href="{{ path('app_entreprise_edit', {'id': entreprise.id}) }}" class="p-3 bg-primary/5 text-primary rounded-xl hover:bg-primary/10 transition-all" title="Modifier">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                </a>
+                <form method="post" action="{{ path('app_entreprise_delete', {'id': entreprise.id}) }}" onsubmit="return confirm('Confirmer la suppression ?');" class="inline">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ entreprise.id) }}">
+                    <button class="p-3 text-error bg-error/5 rounded-xl hover:bg-error/10 transition-all" title="Supprimer">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    {% else %}
+        <div class="col-span-full text-center py-20 bg-surface-container-lowest rounded-3xl border-2 border-dashed border-outline-variant/30">
+            <span class="material-symbols-outlined text-6xl text-outline mb-4">search_off</span>
+            <p class="text-secondary font-medium">Aucune entreprise trouvée.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

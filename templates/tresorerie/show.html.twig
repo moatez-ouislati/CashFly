@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ tresorerie.nomCompte }} | FinArchitect{% endblock %}
+
+{% block header_title %}{{ tresorerie.nomCompte }}{% endblock %}
+{% block header_subtitle %}{{ tresorerie.typeCompte }} • {{ tresorerie.entreprise.nom }}{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-12 gap-8">
+    <!-- Main Info -->
+    <div class="col-span-12 lg:col-span-8 space-y-8">
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm">
+            <h3 class="text-sm font-black uppercase tracking-widest text-on-surface mb-8">Account Details</h3>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-outline">Balance</p>
+                    <p class="text-2xl font-black text-primary">{{ tresorerie.solde|number_format(2, '.', ',') }} {{ tresorerie.devise }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-outline">Last Updated</p>
+                    <p class="text-sm font-bold text-on-surface">{{ tresorerie.derniereMaj ? tresorerie.derniereMaj|date('M d, Y H:i') : 'Never' }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-outline">RIB</p>
+                    <p class="text-sm font-bold text-on-surface">{{ tresorerie.rib|default('N/A') }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-outline">Account Number</p>
+                    <p class="text-sm font-bold text-on-surface">{{ tresorerie.numeroCompte|default('N/A') }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Operations linked to this tresorerie -->
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Recent Transactions</h3>
+                <a href="{{ path('app_operation_new', {'tresorerie': tresorerie.id}) }}" class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary-container transition-all">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    New Transaction
+                </a>
+            </div>
+            
+            <div class="space-y-1">
+                {% for op in operations %}
+                    <div class="flex items-center justify-between p-4 hover:bg-surface-container-low rounded-2xl transition-colors group cursor-pointer" onclick="window.location.href='{{ path('app_operation_show', {'id': op.id}) }}'">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-xl">{{ op.type == 'revenu' ? 'trending_up' : 'trending_down' }}</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-sm text-on-surface">{{ op.reference|default('Operation #' ~ op.id) }}</p>
+                                <p class="text-[10px] font-bold text-outline uppercase tracking-wider">{{ op.categorie }} • {{ op.dateOperation|date('M d, Y') }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-black {{ op.type == 'revenu' ? 'text-tertiary' : 'text-error' }}">
+                                {{ op.type == 'revenu' ? '+' : '-' }}{{ op.montant|number_format(2, '.', ',') }} TND
+                            </p>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-10 bg-surface-container-low rounded-2xl">
+                        <p class="text-secondary text-sm">No transactions yet for this account.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-span-12 lg:col-span-4 space-y-8">
+        <div class="bg-surface-container-high rounded-3xl p-8 shadow-sm">
+            <h3 class="text-sm font-black uppercase tracking-widest text-on-surface mb-6">Associated PME</h3>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                    <span class="material-symbols-outlined">business</span>
+                </div>
+                <div>
+                    <p class="font-bold text-on-surface">{{ tresorerie.entreprise.nom }}</p>
+                    <p class="text-xs text-secondary">{{ tresorerie.entreprise.secteur }}</p>
+                </div>
+            </div>
+            <a href="{{ path('app_entreprise_show', {'id': tresorerie.entreprise.id}) }}" class="block w-full py-3 text-center bg-white text-primary text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all border border-outline-variant/30">
+                View Company Profile
+            </a>
+        </div>
+        
+        <div class="flex flex-col gap-3">
+            <a href="{{ path('app_tresorerie_edit', {'id': tresorerie.id}) }}" class="flex items-center justify-center gap-3 w-full py-4 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-95">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                Edit Account
+            </a>
+            <a href="{{ path('app_tresorerie_index') }}" class="flex items-center justify-center gap-3 w-full py-4 bg-white border border-outline-variant/30 text-secondary text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Back to List
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

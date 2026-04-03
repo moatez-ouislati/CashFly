@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Opérations | CashFly{% endblock %}
+
+{% block header_title %}Gestion des Opérations{% endblock %}
+{% block header_subtitle %}Suivez tous les revenus et dépenses de vos comptes.{% endblock %}
+
+{% block body %}
+<div class="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <form id="filter-form" class="flex flex-wrap items-end gap-4 bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/10 w-full lg:w-auto">
+        <div class="flex flex-col gap-1.5 min-w-[200px]">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Recherche</label>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                <input type="text" name="search" value="{{ search }}" placeholder="Référence, desc..." class="w-full bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/40 text-on-surface placeholder-outline/50">
+            </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">PME</label>
+            <select name="entreprise" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 min-w-[150px] {{ entrepriseId ? 'text-primary ring-1 ring-primary/20' : 'text-on-surface' }}">
+                <option value="">Toutes les PMEs</option>
+                {% for ent in entreprises %}
+                    <option value="{{ ent.id }}" {{ entrepriseId == ent.id ? 'selected' : '' }}>{{ ent.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Compte</label>
+            <select name="tresorerie" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 min-w-[150px] {{ tresorerieId ? 'text-primary ring-1 ring-primary/20' : 'text-on-surface' }}">
+                <option value="">Tous les Comptes</option>
+                {% for t in tresoreries %}
+                    <option value="{{ t.id }}" {{ tresorerieId == t.id ? 'selected' : '' }}>{{ t.nomCompte }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Type</label>
+            <select name="type" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 min-w-[120px] {{ type ? 'text-primary ring-1 ring-primary/20' : 'text-on-surface' }}">
+                <option value="">Tous les Types</option>
+                <option value="revenu" {{ type == 'revenu' ? 'selected' : '' }}>Revenu</option>
+                <option value="depense" {{ type == 'depense' ? 'selected' : '' }}>Dépense</option>
+            </select>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Date</label>
+            <input type="date" name="date" value="{{ date }}" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 text-on-surface">
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="p-2.5 bg-primary text-white rounded-xl hover:bg-primary-container transition-all shadow-md shadow-primary/10">
+                <span class="material-symbols-outlined text-lg">filter_alt</span>
+            </button>
+            <a href="{{ path('app_operation_index') }}" class="p-2.5 bg-surface-container-high text-on-surface rounded-xl hover:bg-slate-200 transition-all border border-outline-variant/10">
+                <span class="material-symbols-outlined text-lg">restart_alt</span>
+            </a>
+        </div>
+    </form>
+    <a href="{{ path('app_operation_new', {'tresorerie': selected_tresorerie.id|default('')}) }}" class="flex items-center gap-2 px-6 py-4 bg-primary text-white font-black rounded-xl shadow-xl shadow-primary/20 hover:bg-primary-container transition-all active:scale-95 whitespace-nowrap">
+        <span class="material-symbols-outlined">add</span>
+        Nouvelle Opération
+    </a>
+</div>
+
+{% if selected_tresorerie %}
+    <div class="mb-6 flex items-center gap-3 px-6 py-3 bg-primary/5 border border-primary/10 rounded-2xl">
+        <span class="material-symbols-outlined text-primary">account_balance</span>
+        <span class="text-sm font-bold text-on-surface">Affichage des opérations pour <span class="text-primary">{{ selected_tresorerie.nomCompte }}</span> ({{ selected_tresorerie.entreprise.nom }})</span>
+    </div>
+{% endif %}
+
+{% for message in app.flashes('success') %}
+    <div class="bg-green-100 text-green-700 border border-green-200 p-4 rounded-xl mb-6 text-sm font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined">check_circle</span>
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-sm border border-outline-variant/10">
+    <div class="flex justify-between items-center mb-8">
+        <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Historique Financier</h3>
+        <button class="flex items-center gap-2 text-xs font-bold text-secondary hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-lg">download</span>
+            Exporter en CSV
+        </button>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-[10px] font-black uppercase tracking-widest text-outline border-b border-outline-variant/10">
+                    <th class="px-4 py-4">Référence</th>
+                    <th class="px-4 py-4">Compte</th>
+                    <th class="px-4 py-4">Type</th>
+                    <th class="px-4 py-4">Montant</th>
+                    <th class="px-4 py-4">Catégorie</th>
+                    <th class="px-4 py-4">Date</th>
+                    <th class="px-4 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/5">
+                {% for operation in operations %}
+                    <tr class="group hover:bg-surface-container-low transition-colors">
+                        <td class="px-4 py-5">
+                            <span class="font-bold text-sm text-on-surface">{{ operation.reference|default('N/A') }}</span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-sm text-secondary">{{ operation.tresorerie.nomCompte }}</span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest {{ operation.type == 'revenu' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                {{ operation.type == 'revenu' ? 'REVENU' : 'DÉPENSE' }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="font-black text-sm {{ operation.type == 'revenu' ? 'text-green-600' : 'text-red-600' }}">
+                                {{ operation.type == 'revenu' ? '+' : '-' }}{{ operation.montant|number_format(2, ',', ' ') }} TND
+                            </span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-xs font-bold text-outline">{{ operation.categorie|default('N/A') }}</span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-xs text-secondary">{{ operation.dateOperation ? operation.dateOperation|date('d M Y') : 'N/A' }}</span>
+                        </td>
+                        <td class="px-4 py-5 text-right flex items-center justify-end gap-2">
+                            <a href="{{ path('app_operation_pdf', {'id': operation.id}) }}" target="_blank" title="Générer Facture" class="p-2 bg-surface-container-high rounded-lg text-secondary hover:text-primary hover:bg-primary/5 transition-all">
+                                <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                            </a>
+                            <a href="{{ path('app_operation_show', {'id': operation.id}) }}" class="p-2 bg-surface-container-high rounded-lg text-secondary hover:text-primary hover:bg-primary/5 transition-all">
+                                <span class="material-symbols-outlined text-lg">visibility</span>
+                            </a>
+                            <a href="{{ path('app_operation_edit', {'id': operation.id}) }}" class="p-2 bg-surface-container-high rounded-lg text-secondary hover:text-primary hover:bg-primary/5 transition-all">
+                                <span class="material-symbols-outlined text-lg">edit</span>
+                            </a>
+                            <form method="post" action="{{ path('app_operation_delete', {'id': operation.id}) }}" onsubmit="return confirm('Confirmer la suppression ?');" class="inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ operation.id) }}">
+                                <button class="p-2 bg-surface-container-high rounded-lg text-secondary hover:text-error hover:bg-error/5 transition-all">
+                                    <span class="material-symbols-outlined text-lg">delete</span>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="px-4 py-20 text-center">
+                            <span class="material-symbols-outlined text-6xl text-outline mb-4">receipt_long</span>
+                            <p class="text-secondary font-medium">Aucune opération trouvée.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

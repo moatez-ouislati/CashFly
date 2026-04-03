@@ -1,24 +1,172 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}CashFly | Gestion de Trésorerie{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#008486",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#002020",
+                        "surface-dim": "#ccdaf8",
+                        "on-tertiary-container": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#005ac4",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#aec6ff",
+                        "on-surface": "#0d1c32",
+                        "secondary": "#515f78",
+                        "inverse-on-surface": "#ecf0ff",
+                        "surface-container": "#e8eeff",
+                        "surface-container-highest": "#d6e3ff",
+                        "primary-container": "#1171ef",
+                        "outline-variant": "#c2c6d7",
+                        "tertiary-fixed-dim": "#2ddbde",
+                        "on-primary-container": "#ffffff",
+                        "on-surface-variant": "#414754",
+                        "background": "#f9f9ff",
+                        "outline": "#727786",
+                        "surface-variant": "#d6e3ff",
+                        "tertiary": "#00696a",
+                        "primary-fixed-dim": "#aec6ff",
+                        "on-tertiary-fixed-variant": "#004f51",
+                        "on-primary-fixed": "#001a42",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#0d1c32",
+                        "on-primary-fixed-variant": "#004396",
+                        "secondary-fixed-dim": "#b9c7e4",
+                        "surface": "#f9f9ff",
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#55637d",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-bright": "#f9f9ff",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#d6e3ff",
+                        "primary": "#0059c3",
+                        "on-primary": "#ffffff",
+                        "secondary-container": "#d2e0fe",
+                        "surface-container-low": "#f0f3ff",
+                        "surface-container-high": "#dfe8ff",
+                        "on-secondary-fixed": "#0d1c32",
+                        "on-secondary-fixed-variant": "#39475f",
+                        "tertiary-fixed": "#5af8fb",
+                        "inverse-surface": "#233148",
+                        "on-error": "#ffffff"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex">
+    <!-- SideNavBar -->
+    <aside class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-slate-100 dark:bg-slate-900 border-r border-outline-variant/10 shadow-lg z-50">
+        <div class="text-2xl font-black text-primary dark:text-slate-50 px-6 py-8 font-headline tracking-tighter flex items-center gap-2">
+            <span class="material-symbols-outlined text-3xl">architecture</span>
+            CashFly
+        </div>
+        <div class="px-6 mb-4">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-secondary opacity-60 mb-1">Espace</div>
+            <div class="text-sm font-bold text-on-surface">
+                {% if is_granted('ROLE_ADMIN') %}Administration{% else %}Gestion de Trésorerie{% endif %}
+            </div>
+        </div>
+        <nav class="flex flex-col gap-1 py-4 flex-grow overflow-y-auto">
+            <a class="flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all duration-200 {% if app.request.attributes.get('_route') == 'app_dashboard' %}bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]{% else %}text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800{% endif %}" href="{{ path('app_dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-inter text-sm font-semibold">Tableau de bord</span>
+            </a>
+            
+            {% if is_granted('ROLE_PROPRIETAIRE') %}
+                <a class="flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all duration-200 {% if app.request.attributes.get('_route') starts with 'app_entreprise' %}bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]{% else %}text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800{% endif %}" href="{{ path('app_entreprise_index') }}">
+                    <span class="material-symbols-outlined">business</span>
+                    <span class="font-inter text-sm font-semibold">Mes Entreprises</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all duration-200 {% if app.request.attributes.get('_route') starts with 'app_tresorerie' %}bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]{% else %}text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800{% endif %}" href="{{ path('app_tresorerie_index') }}">
+                    <span class="material-symbols-outlined">account_balance</span>
+                    <span class="font-inter text-sm font-semibold">Trésoreries</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 mx-2 rounded-lg transition-all duration-200 {% if app.request.attributes.get('_route') starts with 'app_operation' %}bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]{% else %}text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-800{% endif %}" href="{{ path('app_operation_index') }}">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <span class="font-inter text-sm font-semibold">Opérations</span>
+                </a>
+            {% endif %}
+        </nav>
+        <div class="border-t border-outline-variant/10 p-4">
+            <div class="flex items-center gap-3 px-4 py-3 mb-2">
+                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                    {{ app.user.prenom|first }}{{ app.user.nom|first }}
+                </div>
+                <div class="flex-grow min-w-0">
+                    <p class="text-xs font-bold text-on-surface truncate">{{ app.user.prenom }} {{ app.user.nom }}</p>
+                    <p class="text-[10px] text-secondary truncate">{{ app.user.email }}</p>
+                </div>
+            </div>
+            <a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-error transition-colors rounded-lg hover:bg-error/5" href="{{ path('app_logout') }}">
+                <span class="material-symbols-outlined text-lg">logout</span>
+                <span class="text-xs font-bold uppercase tracking-widest">Déconnexion</span>
+            </a>
+        </div>
+    </aside>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+    <!-- Main Content Area -->
+    <main class="flex-1 ml-64 min-h-screen bg-surface p-8 lg:p-12 pb-24">
+        <!-- Header Section -->
+        <header class="flex justify-between items-end mb-12">
+            <div>
+                <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">{% block header_title %}Vue d'ensemble{% endblock %}</h1>
+                <p class="text-secondary font-medium">{% block header_subtitle %}Ravi de vous revoir, {{ app.user.prenom }}.{% endblock %}</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-outline">Rôle Actif</p>
+                    <p class="text-sm font-bold">
+                        {% if app.user.dbRole == 'administrateur' %}Administrateur
+                        {% elseif app.user.dbRole == 'proprietaire' %}Propriétaire PME
+                        {% elseif app.user.dbRole == 'investisseur' %}Investisseur
+                        {% else %}{{ app.user.dbRole|capitalize }}{% endif %}
+                    </p>
+                </div>
+                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20 p-0.5 shadow-sm">
+                    <img alt="Profil Utilisateur" class="w-full h-full object-cover rounded-full" src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=0059c3&color=fff"/>
+                </div>
+            </div>
+        </header>
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
         {% block body %}{% endblock %}
-    </body>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="fixed bottom-0 left-64 right-0 glass-effect border-t border-outline-variant/10 px-12 py-4 flex justify-between items-center z-40">
+        <div class="text-[10px] font-inter uppercase tracking-widest text-slate-500">
+            © 2024 CashFly Gestion de Trésorerie de Précision. Tous droits réservés.
+        </div>
+    </footer>
+    {% block scripts %}{% endblock %}
+</body>
 </html>
