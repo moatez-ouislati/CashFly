@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\OperationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OperationRepository::class)]
 #[ORM\Table(name: 'opérations')]
@@ -16,9 +17,11 @@ class Operation
     private ?int $id = null;
 
     #[ORM\Column(length: 30, unique: true, nullable: true)]
+    #[Assert\Length(max: 30, maxMessage: 'La référence ne peut pas dépasser {{ limit }} caractères')]
     private ?string $reference = null;
 
     #[ORM\Column(length: 50, unique: true, nullable: true)]
+    #[Assert\Length(max: 50, maxMessage: 'Le numéro de facture ne peut pas dépasser {{ limit }} caractères')]
     private ?string $facture = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -26,18 +29,26 @@ class Operation
 
     #[ORM\ManyToOne(targetEntity: Tresorerie::class)]
     #[ORM\JoinColumn(name: 'id_tresorerie', referencedColumnName: 'id_tresorerie', nullable: false)]
+    #[Assert\NotNull(message: 'Veuillez sélectionner un compte de trésorerie')]
     private ?Tresorerie $tresorerie = null;
 
     #[ORM\Column(type: 'string', length: 20)]
+    #[Assert\NotBlank(message: 'Le type de transaction est obligatoire')]
+    #[Assert\Choice(choices: ['revenu', 'depense'], message: 'Type de transaction invalide')]
     private ?string $type = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 15, scale: 2)]
+    #[Assert\NotBlank(message: 'Le montant est obligatoire')]
+    #[Assert\Positive(message: 'Le montant doit être supérieur à zéro')]
     private ?string $montant = null;
 
     #[ORM\Column(length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'La catégorie est obligatoire')]
     private ?string $categorie = null;
 
     #[ORM\Column(name: 'date_operation', type: Types::DATETIME_MUTABLE, nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    #[Assert\NotNull(message: 'La date est obligatoire')]
+    #[Assert\LessThanOrEqual('today', message: 'La date ne peut pas être dans le futur')]
     private ?\DateTimeInterface $date_operation = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]

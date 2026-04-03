@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EntrepriseRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EntrepriseRepository::class)]
 #[ORM\Table(name: 'entreprises')]
@@ -16,18 +17,26 @@ class Entreprise
     private ?int $id = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'Le nom de l\'entreprise est obligatoire')]
+    #[Assert\Length(min: 2, max: 150, minMessage: 'Le nom doit comporter au moins {{ limit }} caractères')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\NotBlank(message: 'Le secteur d\'activité est obligatoire')]
     private ?string $secteur = null;
 
     #[ORM\Column(name: 'forme_juridique', length: 50, nullable: true)]
+    #[Assert\NotBlank(message: 'La forme juridique est obligatoire')]
     private ?string $forme_juridique = null;
 
     #[ORM\Column(name: 'date_creation', type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\NotNull(message: 'La date de création est obligatoire')]
+    #[Assert\LessThanOrEqual('today', message: 'La date de création ne peut pas être dans le futur')]
     private ?\DateTimeInterface $date_creation = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 15, scale: 2, options: ['default' => '0.00'])]
+    #[Assert\NotBlank(message: 'Le capital est obligatoire')]
+    #[Assert\PositiveOrZero(message: 'Le capital doit être positif ou nul')]
     private ?string $capital = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]

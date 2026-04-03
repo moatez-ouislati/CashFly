@@ -7,9 +7,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'utilisateurs')]
+#[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,24 +21,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 100, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire')]
+    #[Assert\Email(message: 'L\'email {{ value }} n\'est pas un email valide.')]
     private ?string $email = null;
 
     #[ORM\Column(name: 'mot_de_passe', length: 255)]
     private ?string $password = null;
 
     #[ORM\Column(name: 'role', type: 'string', length: 50)]
+    #[Assert\NotBlank(message: 'Le rôle est obligatoire')]
     private ?string $dbRole = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Length(min: 8, max: 8, exactMessage: 'Le CIN doit comporter exactement {{ limit }} chiffres')]
     private ?int $cin = null;
 
     #[ORM\Column(length: 11, nullable: true)]
+    #[Assert\Regex(pattern: '/^[0-9]{8}$/', message: 'Le numéro de téléphone doit comporter 8 chiffres')]
     private ?string $tel = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire')]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(message: 'Le prénom est obligatoire')]
     private ?string $prenom = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]

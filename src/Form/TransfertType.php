@@ -65,6 +65,7 @@ class TransfertType extends AbstractType
     {
         $resolver->setDefaults([
             'user' => null,
+            'attr' => ['novalidate' => 'novalidate'],
         ]);
     }
 }
