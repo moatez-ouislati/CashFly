@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Entreprise;
 use App\Entity\Tresorerie;
+use App\Entity\Operation;
 use App\Repository\EntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,6 +49,20 @@ class EntrepriseController extends AbstractController
             $tresorerie->setDerniereMaj(new \DateTime());
             
             $entityManager->persist($tresorerie);
+
+            // Créer une opération initiale pour le capital
+            if ((float)$entreprise->getCapital() > 0) {
+                $operation = new Operation();
+                $operation->setTresorerie($tresorerie);
+                $operation->setType('revenu');
+                $operation->setMontant($entreprise->getCapital());
+                $operation->setReference('CAPITAL-' . $entreprise->getId());
+                $operation->setCategorie('Capital Social');
+                $operation->setDescription('Apport initial au capital social de ' . $entreprise->getNom());
+                $operation->setDateOperation(new \DateTime());
+                $entityManager->persist($operation);
+            }
+
             $entityManager->flush();
 
             $this->addFlash('success', 'Entreprise ajoutée avec succès et compte de trésorerie créé.');

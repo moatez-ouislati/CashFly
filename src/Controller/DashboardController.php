@@ -55,6 +55,15 @@ class DashboardController extends AbstractController
         $totalOperations = count($operations);
         $incomeCount = 0;
         $expenseCount = 0;
+        $lowBalanceAccounts = [];
+
+        foreach ($tresoreries as $t) {
+            $totalBalance += (float)$t->getSolde();
+            if ((float)$t->getSolde() < 100) {
+                $lowBalanceAccounts[] = $t;
+            }
+        }
+
         foreach ($operations as $o) {
             if ($o->getType() === 'revenu') {
                 $incomeCount++;
@@ -82,6 +91,7 @@ class DashboardController extends AbstractController
             'expense_count' => $expenseCount,
             'recent_operations' => array_slice($operations, 0, 5),
             'fav_tresoreries' => $favTresoreries,
+            'low_balance_accounts' => $lowBalanceAccounts,
         ]);
     }
 }

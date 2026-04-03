@@ -6,6 +6,22 @@
 {% block header_subtitle %}Ravi de vous revoir, {{ app.user.prenom }}. Vous avez {{ total_operations }} opérations enregistrées au total.{% endblock %}
 
 {% block body %}
+<!-- Permanent Low Balance Alerts -->
+{% for account in low_balance_accounts %}
+    <div class="mb-6 flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-2xl shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
+        <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-amber-600">warning</span>
+            <div>
+                <p class="text-sm font-bold text-amber-900">Solde Critique : {{ account.nomCompte }}</p>
+                <p class="text-xs text-amber-700">Il ne reste que {{ account.solde|number_format(2, ',', ' ') }} TND sur ce compte.</p>
+            </div>
+        </div>
+        <a href="{{ path('app_operation_new', {'tresorerie': account.id}) }}" class="px-4 py-2 bg-amber-600 text-white text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-amber-700 transition-colors">
+            Réapprovisionner
+        </a>
+    </div>
+{% endfor %}
+
 <!-- Top Grid: Balance & Analytics -->
 <div class="grid grid-cols-12 gap-8 mb-8">
     <!-- Account Balance Card -->

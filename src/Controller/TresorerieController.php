@@ -138,6 +138,20 @@ class TresorerieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $tresorerie->setDerniereMaj(new \DateTime());
             $entityManager->persist($tresorerie);
+
+            // Créer une opération initiale si le solde est > 0
+            if ((float)$tresorerie->getSolde() > 0) {
+                $operation = new Operation();
+                $operation->setTresorerie($tresorerie);
+                $operation->setType('revenu');
+                $operation->setMontant($tresorerie->getSolde());
+                $operation->setReference('SOLDE-INIT-' . date('Ymd-His'));
+                $operation->setCategorie('Solde Initial');
+                $operation->setDescription('Ouverture du compte ' . $tresorerie->getNomCompte() . ' avec un solde initial.');
+                $operation->setDateOperation(new \DateTime());
+                $entityManager->persist($operation);
+            }
+
             $entityManager->flush();
 
             $this->addFlash('success', 'Trésorerie created successfully.');
