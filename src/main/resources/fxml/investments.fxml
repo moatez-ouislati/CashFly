@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20.0" styleClass="main-content" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.InvestmentsController">
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+    <children>
+
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <children>
+                <VBox>
+                    <Label styleClass="page-title" text="Gestionnaire d'Investissements" />
+                    <Label styleClass="page-subtitle" text="Consultez et gérez vos prises de participation." />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="txtSearch" promptText="🔍 Rechercher..." styleClass="search-field" prefWidth="220" />
+                <Label fx:id="lblCount" styleClass="page-subtitle" />
+            </children>
+        </HBox>
+
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <children>
+
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="scroll-pane" vbarPolicy="AS_NEEDED">
+                    <content>
+                        <FlowPane fx:id="cardsContainer" hgap="16" vgap="16" prefWrapLength="700">
+                            <padding><Insets top="4" /></padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+
+                <VBox prefWidth="320.0" spacing="14.0" styleClass="sidebar-profile" style="-fx-background-color: white;">
+                    <children>
+                        <Label styleClass="section-title" text="📝 Détails Investissement" />
+                        <Separator style="-fx-opacity:0.15;" />
+
+                        <VBox spacing="4.0">
+                            <Label text="Description" styleClass="page-subtitle" />
+                            <TextField fx:id="txtDescription" styleClass="text-field" promptText="Description" />
+                        </VBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Montant (TND)" styleClass="page-subtitle" />
+                                <TextField fx:id="txtMontant" styleClass="text-field" promptText="0.00" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Statut" styleClass="page-subtitle" />
+                                <TextField fx:id="txtStatut" styleClass="text-field" promptText="Actif" />
+                            </VBox>
+                        </HBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Taux (%)" styleClass="page-subtitle" />
+                                <TextField fx:id="txtTaux" styleClass="text-field" promptText="5.0" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Durée (Mois)" styleClass="page-subtitle" />
+                                <TextField fx:id="txtDuree" styleClass="text-field" promptText="12" />
+                            </VBox>
+                        </HBox>
+
+                        <VBox spacing="4.0">
+                            <Label text="Entreprise à financer" styleClass="page-subtitle" />
+                            <ComboBox fx:id="cbEntreprise" styleClass="combo-box" promptText="Choisir une PME..." maxWidth="Infinity" />
+                        </VBox>
+
+                        <Pane VBox.vgrow="ALWAYS" />
+
+                        <HBox spacing="10.0">
+                            <Button maxWidth="Infinity" mnemonicParsing="false"
+                                    onAction="#handleAdd" styleClass="btn-primary" text="✚ Ajouter"
+                                    HBox.hgrow="ALWAYS" />
+                            <Button maxWidth="Infinity" mnemonicParsing="false"
+                                    onAction="#handleUpdate" styleClass="btn-secondary" text="✎ Modifier"
+                                    HBox.hgrow="ALWAYS" />
+                        </HBox>
+                        <Button maxWidth="Infinity" mnemonicParsing="false"
+                                onAction="#handleDelete" styleClass="btn-danger" text="✕ Supprimer" />
+                        <Button maxWidth="Infinity" mnemonicParsing="false"
+                                onAction="#handleClear" styleClass="btn-secondary" text="↺ Vider" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

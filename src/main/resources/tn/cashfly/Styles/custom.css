@@ -1,0 +1,391 @@
+/* ============================================
+   AtlantaFX Modern Theme - CashFly JPO
+   Sapphire Veil Color Palette
+   ============================================ */
+
+/* Sapphire Veil Colors:
+   - #E7F0FA - Light ice blue (backgrounds, subtle highlights)
+   - #7BA4D0 - Medium soft blue (secondary buttons, hover states)
+   - #2E5E99 - Deep sapphire blue (primary buttons, accents)
+   - #0D2440 - Dark navy blue (headers, sidebar, dark elements)
+*/
+
+/* Root & Global */
+.root {
+    -color-primary: #2E5E99;
+    -color-fg-default: #0f172a;
+    -color-fg-muted: #64748b;
+    -color-bg-default: #f8fafc;
+    -color-bg-subtle: #f5f8fc;
+    -color-bg-overlay: #ffffff;
+    -color-border-default: #e2e8f0;
+    -color-success-fg: #10b981;
+    -color-success-subtle: #d1fae5;
+    -color-danger-fg: #ef4444;
+    -color-danger-subtle: #fee2e2;
+    -color-accent-subtle: #E7F0FA;
+    -color-accent-emphasis: #2E5E99;
+    -color-danger-emphasis: #dc2626;
+}
+
+* {
+    -color-primary: #2E5E99;
+    -color-fg-default: #0f172a;
+    -color-fg-muted: #64748b;
+    -color-bg-default: #f8fafc;
+    -color-bg-subtle: #f5f8fc;
+    -color-bg-overlay: #ffffff;
+    -color-border-default: #e2e8f0;
+    -color-success-fg: #10b981;
+    -color-success-subtle: #d1fae5;
+    -color-danger-fg: #ef4444;
+    -color-danger-subtle: #fee2e2;
+    -color-accent-subtle: #E7F0FA;
+    -color-accent-emphasis: #2E5E99;
+    -color-danger-emphasis: #dc2626;
+}
+
+/* Header - Light, professional style aligned with app */
+.app-header {
+    -fx-background-color: white;
+    -fx-padding: 20 30;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.03), 0, 5, 0, 0);
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 0 0 1 0;
+}
+
+.app-header .label {
+    -fx-text-fill: #0f172a;
+}
+
+.app-header-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+/* Sidebar - Dark navy background */
+.sidebar {
+    -fx-background-color: #0D2440;
+    -fx-border-color: #2E5E99;
+    -fx-border-width: 0 1 0 0;
+}
+
+.sidebar-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #7BA4D0;
+    -fx-padding: 0 0 15 0;
+}
+
+.btn-icon {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12 16;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+    -fx-text-fill: #E7F0FA;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+}
+
+.btn-icon:hover {
+    -fx-background-color: #2E5E99;
+    -fx-text-fill: white;
+}
+
+.btn-active {
+    -fx-background-color: #2E5E99;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.btn-active:hover {
+    -fx-background-color: #7BA4D0;
+    -fx-text-fill: white;
+}
+
+.content-area {
+    -fx-background-color: linear-gradient(to bottom right, #f5f8fc, #ebf1f6);
+}
+
+.card {
+    -fx-background-color: -color-bg-overlay;
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(46, 94, 153, 0.15);
+    -fx-border-radius: 14px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 12, 0, 0, 4);
+}
+
+.text-muted {
+    -fx-text-fill: -color-fg-muted;
+}
+
+.col-center {
+    -fx-alignment: CENTER;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.message-success {
+    -fx-text-fill: -color-success-fg;
+    -fx-background-color: -color-success-subtle;
+    -fx-padding: 12 16;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.message-error {
+    -fx-text-fill: -color-danger-fg;
+    -fx-background-color: -color-danger-subtle;
+    -fx-padding: 12 16;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #2E5E99, #1e4a7a);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.3), 8, 0, 0, 3);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom right, #3a75bf, #2E5E99);
+    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.4), 12, 0, 0, 4);
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.btn-secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: -color-fg-default;
+    -fx-border-color: rgba(46, 94, 153, 0.3);
+    -fx-border-width: 1.5px;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-radius: 8px;
+    -fx-font-weight: bold;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(231, 240, 250, 0.6);
+    -fx-border-color: #2E5E99;
+}
+
+.text-field {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+}
+
+.text-field:focused {
+    -fx-border-color: #2E5E99;
+    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.3), 4, 0, 0, 0);
+}
+
+.date-picker {
+    -fx-background-color: transparent;
+}
+
+.date-picker .text-field {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.text-area {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+}
+
+.text-area:focused {
+    -fx-border-color: #2E5E99;
+}
+
+.card:disabled {
+    -fx-opacity: 0.6;
+}
+
+.btn-danger {
+    -fx-background-color: linear-gradient(to bottom right, #dc3545, #b02a37);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(220, 53, 69, 0.3), 8, 0, 0, 3);
+}
+
+.btn-danger:hover {
+    -fx-background-color: linear-gradient(to bottom right, #e4606d, #dc3545);
+    -fx-effect: dropshadow(gaussian, rgba(220, 53, 69, 0.4), 12, 0, 0, 4);
+}
+
+GridPane .label {
+    -fx-font-size: 14px;
+}
+
+.table-view {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.table-view .column-header {
+    -fx-background-color: -color-bg-subtle;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-row-cell:odd {
+    -fx-background-color: -color-bg-default;
+}
+
+.table-view .table-row-cell:even {
+    -fx-background-color: -color-bg-overlay;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #E7F0FA;
+    -fx-text-fill: #0D2440;
+}
+
+.text-danger {
+    -fx-text-fill: -color-danger-fg;
+}
+
+.text-success {
+    -fx-text-fill: -color-success-fg;
+}
+
+.event-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-border-color: rgba(46, 94, 153, 0.1);
+    -fx-border-radius: 12px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.05), 10, 0, 0, 3);
+}
+
+.event-card:hover {
+    -fx-border-color: #7BA4D0;
+    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.15), 16, 0, 0, 6);
+    -fx-scale-x: 1.01;
+    -fx-scale-y: 1.01;
+}
+
+.event-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.event-location {
+    -fx-font-size: 13px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.list-view {
+    -fx-background-color: transparent;
+}
+
+.list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 5 0 5 0;
+}
+
+.list-view .list-cell:empty {
+    -fx-opacity: 0;
+}
+
+.calendar-day {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-font-size: 12px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.calendar-day-has-event {
+    -fx-background-color: -color-accent-subtle;
+    -fx-border-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-emphasis;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.calendar-day-today {
+    -fx-border-color: -color-danger-emphasis;
+    -fx-border-width: 2px;
+    -fx-background-radius: 12px;
+    -fx-border-radius: 12px;
+}
+
+.calendar-day:hover {
+    -fx-background-color: -color-bg-subtle;
+}
+
+.event-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16px;
+    -fx-border-color: rgba(46, 94, 153, 0.1);
+    -fx-border-radius: 16px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.06), 12, 0, 0, 4);
+}
+
+.event-card:hover {
+    -fx-border-color: #7BA4D0;
+    -fx-effect: dropshadow(gaussian, rgba(46, 94, 153, 0.2), 20, 0, 0, 6);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.event-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.event-location {
+    -fx-font-size: 12px;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.calendar-day {
+    -fx-background-color: -color-bg-overlay;
+    -fx-border-color: -color-border-default;
+    -fx-font-size: 12px;
+}
+
+.calendar-day-has-event {
+    -fx-background-color: -color-accent-subtle;
+    -fx-border-color: -color-accent-emphasis;
+    -fx-text-fill: -color-accent-emphasis;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+.calendar-day-today {
+}

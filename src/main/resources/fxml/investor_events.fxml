@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20.0" styleClass="main-content" stylesheets="@../style.css"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.InvestorEventsController">
+
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+
+    <children>
+
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <children>
+                <VBox>
+                    <children>
+                        <Label styleClass="page-title" text="Événements JPO" />
+                        <Label styleClass="page-subtitle"
+                               text="Découvrez les journées portes ouvertes et inscrivez-vous aux événements." />
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane" vbarPolicy="AS_NEEDED">
+            <content>
+                <FlowPane fx:id="eventsContainer" hgap="16" vgap="16" prefWrapLength="900">
+                    <padding>
+                        <Insets top="4" />
+                    </padding>
+                </FlowPane>
+            </content>
+        </ScrollPane>
+
+    </children>
+</VBox>
+

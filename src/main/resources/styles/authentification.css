@@ -1,0 +1,230 @@
+/* ================= ROOT ================= */
+.profile-root,
+.auth-root {
+    -fx-background-color: #05091b;
+}
+
+/* ================= LEFT PANEL ================= */
+.profile-left,
+.auth-left {
+    -fx-background-color: linear-gradient(to bottom right, #05091b, #0f172a);
+    -fx-padding: 40;
+    -fx-alignment: CENTER;
+    -fx-spacing: 15;
+}
+
+.profile-avatar {
+    -fx-fill: white;
+}
+
+.profile-welcome {
+    -fx-text-fill: #cfd4ff;
+    -fx-font-size: 14px;
+}
+
+.profile-name {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+/* ================= RIGHT CARD ================= */
+.profile-card,
+.auth-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 35 45;
+    -fx-spacing: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 25, 0, 0, 6);
+}
+
+/* ================= TITLES ================= */
+.auth-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.auth-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+}
+
+/* ================= LABELS ================= */
+.profile-label {
+    -fx-text-fill: #555;
+    -fx-font-size: 13px;
+}
+
+/* ================= INPUTS ================= */
+.text-field,
+.password-field {
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #ddd;
+    -fx-padding: 10 14;
+}
+
+/* ================= BUTTONS ================= */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #6366f1, #4f46e5);
+    -fx-text-fill: white;
+    -fx-background-radius: 16;
+    -fx-padding: 10 40;
+    -fx-font-weight: bold;
+}
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #6366f1;
+    -fx-text-fill: #6366f1;
+    -fx-background-radius: 16;
+    -fx-padding: 10 40;
+}
+
+.auth-left {
+    -fx-background-color: linear-gradient(to bottom, #05091b, #0f172a);
+}
+
+.auth-logo {
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.auth-slogan {
+    -fx-text-fill: #c7d2fe;
+}
+
+.auth-right {
+    -fx-background-color: #0f172a;
+}
+
+.auth-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.auth-link {
+    -fx-text-fill: #2563eb;
+}
+
+.auth-message {
+    -fx-text-fill: red;
+}
+
+/* ===== LEFT BLUE PANEL ===== */
+.left-pane {
+    -fx-background-color: linear-gradient(to bottom right, #05091b, #0f172a);
+    -fx-alignment: CENTER;
+}
+
+.app-name {
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.slogan {
+    -fx-text-fill: #c7d2fe;
+    -fx-font-size: 13px;
+}
+
+/* ===== RIGHT SIDE ===== */
+.title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #8ba3c7;
+}
+
+.error {
+    -fx-text-fill: red;
+}
+/* ================= TITLES ================= */
+.auth-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.auth-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+}
+
+/* ================= INPUTS ================= */
+.text-field,
+.password-field {
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #d1d5db;
+    -fx-padding: 12 16;
+}
+
+.text-field:focused,
+.password-field:focused {
+    -fx-border-color: #6366f1;
+    -fx-effect: dropshadow(gaussian, rgba(99,102,241,0.35), 6, 0, 0, 0);
+}
+
+.primary-button,
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #6366f1, #4f46e5);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-padding: 12 40;
+}
+
+.primary-button:hover,
+.btn-primary:hover {
+    -fx-background-color: #4f46e5;
+}
+
+/* ================= LINKS ================= */
+.auth-link {
+    -fx-text-fill: #8ba3c7;
+    -fx-font-size: 13px;
+}
+.google-button {
+    -fx-background-color: white;
+    -fx-border-color: #dadce0;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-padding: 8 16 8 16;
+    -fx-font-size: 14px;
+    -fx-font-family: "Arial";
+    -fx-text-fill: #3c4043;
+    -fx-font-weight: bold;
+}
+
+.google-button:hover {
+    -fx-background-color: #f7f8f8;
+}
+
+.google-button .image-view {
+    -fx-padding: 0 8 0 0;
+}
+.btn-captcha {
+    -fx-background-color: linear-gradient(to right, #6366f1, #4f46e5);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 24 8 24;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-captcha:hover {
+    -fx-background-color: linear-gradient(to right, #818cf8, #6366f1);
+}
+
+.btn-captcha:pressed {
+    -fx-background-color: #1e3a8a;
+}

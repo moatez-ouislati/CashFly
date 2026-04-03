@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.ProfileSettingsController">
+    <content>
+        <VBox spacing="25.0" styleClass="content-view">
+            <children>
+        <VBox spacing="10.0" styleClass="card">
+            <children>
+                <Label text="Informations Personnelles" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #1e293b;" />
+                <Label text="Mettez à jour vos informations de compte." style="-fx-text-fill: #64748b; -fx-font-size: 13px;" />
+                
+                <VBox spacing="15.0" maxWidth="500.0">
+                    <padding>
+                        <Insets top="20.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="CIN" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <TextField fx:id="tfCin" styleClass="form-field" />
+                            </children>
+                        </VBox>
+                        
+                        <HBox spacing="15.0">
+                            <children>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label text="NOM" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                        <TextField fx:id="tfNom" styleClass="form-field" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label text="PRÉNOM" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                        <TextField fx:id="tfPrenom" styleClass="form-field" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="EMAIL" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <TextField fx:id="tfEmail" styleClass="form-field" />
+                            </children>
+                        </VBox>
+                        
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="TÉLÉPHONE" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <TextField fx:id="tfTel" styleClass="form-field" />
+                            </children>
+                        </VBox>
+
+                        <Button fx:id="btnSaveProfile" mnemonicParsing="false" onAction="#saveProfile" styleClass="btn-primary" text="Enregistrer les modifications" />
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            </padding>
+        </VBox>
+
+        <VBox spacing="10.0" styleClass="card">
+            <children>
+                <Label text="Réclamation" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #1e293b;" />
+                <Label text="Envoyez une demande à l'administrateur pour modifier votre CIN. Expliquez clairement la raison et indiquez le nouveau numéro souhaité." style="-fx-text-fill: #64748b; -fx-font-size: 13px; -fx-wrap-text: true;" />
+
+                <VBox spacing="15.0" maxWidth="500.0">
+                    <padding>
+                        <Insets top="20.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="NOUVEAU CIN SOUHAITÉ" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <TextField fx:id="tfReclamationCin" styleClass="form-field" promptText="Entrez le CIN à demander" />
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="MOTIF DE LA RÉCLAMATION" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <TextField fx:id="tfReclamationMessage" styleClass="form-field" promptText="Expliquez pourquoi vous souhaitez modifier votre CIN" />
+                            </children>
+                        </VBox>
+
+                        <Button fx:id="btnSendReclamation" mnemonicParsing="false" onAction="#sendCinReclamation" styleClass="btn-secondary" text="Envoyer la réclamation" />
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            </padding>
+        </VBox>
+
+        <VBox spacing="10.0" styleClass="card">
+            <children>
+                <Label text="Sécurité" style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #1e293b;" />
+                <Label text="Changez votre mot de passe pour sécuriser votre compte." style="-fx-text-fill: #64748b; -fx-font-size: 13px;" />
+                
+                <VBox spacing="15.0" maxWidth="500.0">
+                    <padding>
+                        <Insets top="20.0" />
+                    </padding>
+                    <children>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="NOUVEAU MOT DE PASSE" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <PasswordField fx:id="pfNewPassword" styleClass="form-field" />
+                            </children>
+                        </VBox>
+                        
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="CONFIRMER LE MOT DE PASSE" style="-fx-font-weight: bold; -fx-font-size: 12px; -fx-text-fill: #64748b;" />
+                                <PasswordField fx:id="pfConfirmPassword" styleClass="form-field" />
+                            </children>
+                        </VBox>
+
+                        <Button fx:id="btnChangePassword" mnemonicParsing="false" onAction="#changePassword" styleClass="btn-primary" text="Changer le mot de passe" />
+                    </children>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            </padding>
+        </VBox>
+            </children>
+            <padding>
+                <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+            </padding>
+        </VBox>
+    </content>
+</ScrollPane>

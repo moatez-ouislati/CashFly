@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<StackPane xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.DocumentController">
+
+    <children>
+
+        <TabPane prefHeight="614.0" prefWidth="820.0" tabClosingPolicy="UNAVAILABLE">
+
+            <tabs>
+                <Tab text="Ajouter Document">
+                    <content>
+                        <AnchorPane prefHeight="546.0" prefWidth="707.0">
+
+                            <children>
+
+                                <Label layoutX="20.0" layoutY="15.0" text="Ajouter un Document" textFill="#013b63">
+                                    <font>
+                                        <Font name="System Bold" size="18.0" />
+                                    </font>
+                                </Label>
+
+                                <!-- 🔔 NOTIFICATION ICON -->
+                                <Label fx:id="notificationsIcon" layoutX="760.0" layoutY="15.0" style="-fx-font-size: 22px;" text="🔔" textFill="#013b63" />
+
+                                <!-- TYPE DOCUMENT -->
+                                <Label layoutX="80.0" layoutY="90.0" text="Type du document :" />
+                                <ChoiceBox fx:id="cbTypeDocument" layoutX="240.0" layoutY="86.0" prefWidth="220.0" />
+
+                                <!-- NOM FICHIER -->
+                                <Label layoutX="80.0" layoutY="140.0" text="Nom du fichier :" />
+                                <TextField fx:id="txtNomFichier" layoutX="240.0" layoutY="136.0" prefWidth="220.0" />
+
+                                <!-- CHEMIN -->
+                                <Label layoutX="80.0" layoutY="190.0" text="Chemin du fichier :" />
+                                <TextField fx:id="txtCheminFichier" layoutX="240.0" layoutY="186.0" prefWidth="220.0" />
+
+                                <!-- DESCRIPTION -->
+                                <Label layoutX="80.0" layoutY="240.0" text="Description :" />
+                                <TextField fx:id="txtDescription" layoutX="240.0" layoutY="236.0" prefWidth="220.0" />
+
+                                <!-- Entreprise -->
+                                <Label layoutX="80.0" layoutY="290.0" text="Entreprise  :" />
+                                <ChoiceBox fx:id="cbEntreprise" layoutX="240.0" layoutY="286.0" prefWidth="220.0" />
+
+                                <!-- STATUT -->
+                                <Label layoutX="80.0" layoutY="340.0" text="Statut :" />
+                                <ChoiceBox fx:id="cbStatut" layoutX="240.0" layoutY="336.0" prefWidth="220.0" />
+
+                                <!-- ACTIONS -->
+                                <Button fx:id="btnSave" layoutX="223.0" layoutY="400.0" onAction="#createDocument" prefHeight="42.0" prefWidth="101.0" style="-fx-background-color: #013b63;" text="Enregistrer" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="13.0" />
+                           </font></Button>
+
+                                <Button fx:id="btnRetour" layoutX="360.0" layoutY="400.0" onAction="#retour" prefHeight="43.0" prefWidth="86.0" style="-fx-background-color: #B10F0F;" text="Retour" textFill="#f7f5f5">
+                           <font>
+                              <Font size="13.0" />
+                           </font></Button>
+                                <Button layoutX="470.0" layoutY="186.0" onAction="#chooseFile" text="Choisir Fichier" />
+
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+
+    </children>
+</StackPane>

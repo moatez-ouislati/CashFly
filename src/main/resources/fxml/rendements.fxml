@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20.0" styleClass="main-content" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.RendementsController">
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+    <children>
+
+        <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <children>
+                <VBox>
+                    <Label styleClass="page-title" text="Analyse des Rendements" />
+                    <Label styleClass="page-subtitle" text="Suivez l'évolution de vos gains et projections." />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <VBox alignment="CENTER_RIGHT">
+                    <Label text="Résultat Net Total" styleClass="page-subtitle" />
+                    <Label fx:id="lblNetResult" text="0.00 TND" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+                </VBox>
+            </children>
+        </HBox>
+
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+            <children>
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" styleClass="scroll-pane" vbarPolicy="AS_NEEDED">
+                    <content>
+                        <FlowPane fx:id="cardsContainer" hgap="16" vgap="16" prefWrapLength="700">
+                            <padding><Insets top="4" /></padding>
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+
+                <VBox prefWidth="320.0" spacing="14.0" styleClass="sidebar-profile" style="-fx-background-color: white;">
+                    <children>
+                        <Label styleClass="section-title" text="📊 Détails Rendement" />
+                        <Separator style="-fx-opacity:0.15;" />
+
+                        <VBox spacing="4.0">
+                            <Label text="Investissement concerné" styleClass="page-subtitle" />
+                            <ComboBox fx:id="cbInvestissement" styleClass="combo-box" promptText="Choisir un investissement..." maxWidth="Infinity" />
+                        </VBox>
+
+                        <VBox spacing="4.0">
+                            <Label text="Date Calcul (YYYY-MM-DD)" styleClass="page-subtitle" />
+                            <TextField fx:id="txtDateCalcul" styleClass="text-field" promptText="2024-03-01" />
+                        </VBox>
+
+                        <HBox spacing="10.0">
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Gain" styleClass="page-subtitle" />
+                                <TextField fx:id="txtGain" styleClass="text-field" promptText="0.00" />
+                            </VBox>
+                            <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                <Label text="Perte" styleClass="page-subtitle" />
+                                <TextField fx:id="txtPerte" styleClass="text-field" promptText="0.00" />
+                            </VBox>
+                        </HBox>
+
+
+                        <Pane VBox.vgrow="ALWAYS" />
+
+                        <HBox spacing="10.0">
+                            <Button maxWidth="Infinity" mnemonicParsing="false"
+                                    onAction="#handleAddRendement" styleClass="btn-primary" text="✚ Ajouter"
+                                    HBox.hgrow="ALWAYS" />
+                            <Button maxWidth="Infinity" mnemonicParsing="false"
+                                    onAction="#handleUpdateRendement" styleClass="btn-secondary" text="✎ Modifier"
+                                    HBox.hgrow="ALWAYS" />
+                        </HBox>
+                        <Button maxWidth="Infinity" mnemonicParsing="false"
+                                onAction="#handleDeleteRendement" styleClass="btn-danger" text="✕ Supprimer" />
+                        <Button maxWidth="Infinity" mnemonicParsing="false"
+                                onAction="#handleClearRendement" styleClass="btn-secondary" text="↺ Vider" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</VBox>

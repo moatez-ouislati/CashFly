@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane fx:id="rootPane" prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.jpo.controllers.InvestorEventDetailController">
+
+    <VBox spacing="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
+
+        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 14 24; -fx-background-color: -color-bg-overlay; -fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;">
+            <Button fx:id="backButton" onAction="#handleBack" styleClass="btn-secondary" text=" Retour aux événements">
+                <graphic>
+                    <FontIcon iconLiteral="fas-arrow-left" />
+                </graphic>
+            </Button>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;" text="Tous les événements  ›  Détail" />
+        </HBox>
+
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-padding: 0;" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox spacing="0">
+
+                    <StackPane prefHeight="260" style="-fx-background-color: #0D2440;">
+                        <ImageView fx:id="heroImage" fitHeight="260" fitWidth="1060" preserveRatio="true" smooth="true" style="-fx-opacity: 0.92;" />
+                        <Rectangle height="260" style="-fx-fill: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.72) 100%);" width="1060" />
+                        <VBox alignment="BOTTOM_LEFT" style="-fx-padding: 0 40 28 40;">
+                            <Label fx:id="titleOverlay" style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: white; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 8, 0, 0, 2);" wrapText="true" />
+                        </VBox>
+                    </StackPane>
+
+                    <HBox spacing="0" style="-fx-padding: 30 40;">
+
+                        <VBox prefWidth="650.0" spacing="22" style="-fx-padding: 0 30 0 0;" HBox.hgrow="ALWAYS">
+
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label fx:id="statusBadge" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 6 16; -fx-background-radius: 20;" text=" Places disponibles">
+                                    <graphic>
+                                        <Circle fx:id="statusDot" radius="5.0" fill="gray" />
+                                    </graphic>
+                                </Label>
+                            </HBox>
+
+                            <HBox spacing="12">
+                                <VBox style="-fx-background-color: -color-bg-overlay; -fx-padding: 12 16; -fx-background-radius: 8; -fx-border-color: -color-border-default; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: -color-fg-muted; -fx-font-weight: bold; -fx-padding: 0 0 4 0;" text="DATE" />
+                                    <Label fx:id="dateLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -color-fg-default;" wrapText="true" />
+                                </VBox>
+                                <VBox style="-fx-background-color: -color-bg-overlay; -fx-padding: 12 16; -fx-background-radius: 8; -fx-border-color: -color-border-default; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: -color-fg-muted; -fx-font-weight: bold; -fx-padding: 0 0 4 0;" text="LIEU" />
+                                    <Label fx:id="lieuLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -color-fg-default;" wrapText="true" />
+                                </VBox>
+                                <VBox style="-fx-background-color: -color-bg-overlay; -fx-padding: 12 16; -fx-background-radius: 8; -fx-border-color: -color-border-default; -fx-border-radius: 8;" HBox.hgrow="ALWAYS">
+                                    <Label style="-fx-font-size: 11px; -fx-text-fill: -color-fg-muted; -fx-font-weight: bold; -fx-padding: 0 0 4 0;" text="PARTICIPANTS" />
+                                    <Label fx:id="participantsLabel" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -color-fg-default;" />
+                                </VBox>
+                            </HBox>
+
+                            <VBox spacing="6">
+                                <HBox>
+                                    <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -color-fg-default;" text="Disponibilité" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label fx:id="spotsRemainingLabel" style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;" />
+                                </HBox>
+                                <StackPane alignment="CENTER_LEFT" prefHeight="10">
+                                    <Rectangle fx:id="progressTrack" arcHeight="10" arcWidth="10" height="10" style="-fx-fill: -color-bg-subtle;" width="650" />
+                                    <Rectangle fx:id="progressBar" arcHeight="10" arcWidth="10" height="10" style="-fx-fill: #28a745;" />
+                                </StackPane>
+                            </VBox>
+
+                            <Separator />
+
+                            <VBox spacing="10">
+                                <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -color-fg-default;" text="À propos de cet événement" />
+                                <Label fx:id="descriptionLabel" style="-fx-font-size: 14px; -fx-text-fill: -color-fg-muted; -fx-line-spacing: 4;" wrapText="true" />
+                            </VBox>
+                        </VBox>
+
+                        <VBox prefWidth="320.0" spacing="0" style="-fx-background-color: -color-bg-overlay; -fx-background-radius: 12; -fx-border-color: -color-border-default; -fx-border-radius: 12; -fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 4);">
+
+                            <VBox style="-fx-background-color: -color-accent-subtle; -fx-background-radius: 12 12 0 0; -fx-padding: 20;">
+                                <HBox alignment="CENTER_LEFT" spacing="12">
+                                    <FontIcon fx:id="registrationStatusIcon" iconLiteral="fas-lock-open" iconSize="24" />
+                                    <VBox spacing="2">
+                                        <Label fx:id="actionTitle" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -color-fg-default;" text="Inscription ouverte" />
+                                        <Label fx:id="actionSubtitle" style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;" text="Réservez votre place" />
+                                    </VBox>
+                                </HBox>
+                            </VBox>
+
+                            <VBox fx:id="actionButtonContainer" spacing="12" style="-fx-padding: 20;">
+
+                                <Button fx:id="registerButton" onAction="#handleRegister" prefHeight="45.0" prefWidth="280.0" styleClass="btn-primary" text="S'inscrire" />
+
+                                <Button fx:id="cancelButton" onAction="#handleCancelRegistration" prefHeight="45.0" prefWidth="280.0" styleClass="btn-danger" text="Annuler inscription" visible="false" managed="false" />
+
+                                <Button fx:id="generateBadgeButton" onAction="#handleGenerateBadge" prefHeight="45.0" prefWidth="280.0" style="-fx-background-color: #ffc107; -fx-text-fill: #0D2440; -fx-font-weight: bold; -fx-background-radius: 6;" text=" Générer badge" visible="false" managed="false">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-ticket-alt" />
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="chatButton" onAction="#handleOpenChat" prefHeight="45.0" prefWidth="280.0" styleClass="btn-secondary" text=" Chat">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-comments" />
+                                    </graphic>
+                                </Button>
+
+                                <Button fx:id="downloadBadgeButton" onAction="#handleDownloadBadge" prefHeight="45.0" prefWidth="280.0" styleClass="btn-secondary" text=" Télécharger badge" visible="false" managed="false">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-download" />
+                                    </graphic>
+                                </Button>
+
+                                <VBox fx:id="badgeLoadingBox" alignment="CENTER" spacing="10" visible="false" managed="false">
+                                    <ProgressIndicator fx:id="badgeProgressIndicator" prefHeight="40" prefWidth="40" />
+                                    <Label fx:id="badgeLoadingLabel" style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;" text="Génération de votre badge..." />
+                                </VBox>
+
+                            </VBox>
+
+                            <VBox alignment="CENTER_LEFT" spacing="8" style="-fx-background-color: -color-bg-subtle; -fx-background-radius: 0 0 12 12; -fx-padding: 16 20;">
+                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                    <FontIcon iconLiteral="fas-info-circle" iconColor="#6c757d" />
+                                    <Label style="-fx-font-size: 12px; -fx-text-fill: -color-fg-muted; -fx-wrap-text: true;" text="Après génération du badge, l'annulation n'est plus possible." />
+                                </HBox>
+                            </VBox>
+                        </VBox>
+
+                    </HBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>

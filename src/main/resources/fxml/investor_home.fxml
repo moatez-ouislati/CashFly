@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" stylesheets="@../style.css" vbarPolicy="AS_NEEDED" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.InvestorHomeController">
+    <content>
+        <VBox spacing="24.0" styleClass="main-content">
+            <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /></padding>
+            <children>
+
+                <!-- KPI Row -->
+                <HBox spacing="20.0">
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="💰" style="-fx-font-size: 24;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label text="Capital" styleClass="page-subtitle" />
+                        </HBox>
+                        <Label styleClass="page-subtitle" text="Capital Investi">
+                            <VBox.margin><Insets top="12.0" /></VBox.margin>
+                        </Label>
+                        <Label fx:id="lblTotalInvested" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1e293b;" text="— TND" />
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="📈" style="-fx-font-size: 24;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label text="Gains" styleClass="page-subtitle" />
+                        </HBox>
+                        <Label styleClass="page-subtitle" text="Gains Totaux">
+                            <VBox.margin><Insets top="12.0" /></VBox.margin>
+                        </Label>
+                        <Label fx:id="lblTotalGain" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #10b981;" text="+0 TND" />
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="⚖️" style="-fx-font-size: 24;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label text="Net" styleClass="page-subtitle" />
+                        </HBox>
+                        <Label styleClass="page-subtitle" text="Résultat Net">
+                            <VBox.margin><Insets top="12.0" /></VBox.margin>
+                        </Label>
+                        <Label fx:id="lblNetResult" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #6366f1;" text="0 TND" />
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="🏢" style="-fx-font-size: 24;" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label text="Actifs" styleClass="page-subtitle" />
+                        </HBox>
+                        <Label styleClass="page-subtitle" text="Investissements Actifs">
+                            <VBox.margin><Insets top="12.0" /></VBox.margin>
+                        </Label>
+                        <Label fx:id="lblActiveCount" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1e293b;" text="0" />
+                    </VBox>
+                </HBox>
+
+                <!-- Charts + AI Row -->
+                <HBox spacing="20.0">
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="section-title" text="Répartition des Investissements" />
+                        <PieChart fx:id="pieChart" prefHeight="280.0" VBox.vgrow="ALWAYS" />
+                    </VBox>
+
+                    <VBox prefWidth="340.0" styleClass="notification-panel" spacing="12.0" style="-fx-background-radius: 16;">
+                        <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="🤖" style="-fx-font-size: 20;" />
+                            <Label text="Conseils IA" styleClass="notification-title" style="-fx-font-size: 16px;" />
+                        </HBox>
+                        <Label fx:id="aiLoadingLabel" text="⏳ Chargement..." styleClass="notification-date" />
+                        <VBox fx:id="aiRecommendationsBox" spacing="10.0" VBox.vgrow="ALWAYS" />
+                        <Button fx:id="btnPdf" maxWidth="Infinity" styleClass="btn-primary" text="Générer Rapport PDF" onAction="#generateAiPdfReport" />
+                    </VBox>
+                </HBox>
+
+                <!-- Bar + Line chart row -->
+                <HBox spacing="20.0">
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="section-title" text="Évolution des Montants" />
+                        <BarChart fx:id="barChart" prefHeight="220.0" VBox.vgrow="ALWAYS">
+                            <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                            <yAxis><NumberAxis side="LEFT" /></yAxis>
+                        </BarChart>
+                    </VBox>
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                        <Label styleClass="section-title" text="Gains Cumulés" />
+                        <AreaChart fx:id="areaChart" prefHeight="220.0" VBox.vgrow="ALWAYS">
+                            <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                            <yAxis><NumberAxis side="LEFT" /></yAxis>
+                        </AreaChart>
+                    </VBox>
+                </HBox>
+
+                <!-- Market Row (Currency) -->
+                <HBox spacing="20.0">
+                    <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="12.0">
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Label text="🌍" style="-fx-font-size: 20;" />
+                                <VBox spacing="2.0">
+                                    <children>
+                                        <Label styleClass="section-title" text="Cours des Devises (BCT)" />
+                                        <Label text="Taux moyens du jour fournis par la BCT" styleClass="stat-label" />
+                                    </children>
+                                </VBox>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label text="Change :" styleClass="stat-label" />
+                                <ComboBox fx:id="currencySelector" prefWidth="130.0" styleClass="exchange-currency-combo" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="24.0" styleClass="exchange-rate-box">
+                            <children>
+                                <HBox alignment="CENTER" spacing="6.0">
+                                    <children>
+                                        <Label text="1" styleClass="exchange-unit-label" />
+                                        <Label fx:id="lblSelectedCurrency" text="USD" styleClass="exchange-symbol-label" />
+                                    </children>
+                                </HBox>
+                                <Label text="=" styleClass="exchange-equal-label" />
+                                <Label fx:id="lblDynamicRate" text="— TND" styleClass="exchange-value-label" />
+                            </children>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <!-- News Feed -->
+                <VBox styleClass="notification-panel" spacing="14.0" style="-fx-background-radius: 16;">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <HBox alignment="CENTER_LEFT">
+                        <Label text="📰 Actualités Financières" styleClass="notification-title" style="-fx-font-size: 16px;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="newsLoadingLabel" text="⏳ Chargement..." styleClass="notification-date" />
+                    </HBox>
+                    <ScrollPane fitToWidth="true" prefHeight="350.0" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-background: transparent;">
+                        <content>
+                            <VBox fx:id="newsContainer" spacing="12.0" style="-fx-background-color: transparent;">
+                                <padding><Insets top="4" bottom="10"/></padding>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </VBox>
+
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>

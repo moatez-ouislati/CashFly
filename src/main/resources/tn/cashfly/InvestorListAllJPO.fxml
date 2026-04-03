@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<AnchorPane prefHeight="640.0" prefWidth="1060.0" styleClass="content-area" stylesheets="@Styles/custom.css" xmlns="http://javafx.com/javafx/17.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.jpo.controllers.InvestorListAllJPOController">
+
+    <VBox spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+
+        <VBox spacing="4">
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <FontIcon iconLiteral="fas-calendar-alt" iconSize="24" />
+                <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Tous les événements à venir" />
+            </HBox>
+            <Label style="-fx-font-size: 13px; -fx-text-fill: -color-fg-muted;"
+                   text="Découvrez les prochaines Journées Portes Ouvertes et réservez votre place." />
+        </VBox>
+
+        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-background-color: -color-bg-overlay; -fx-padding: 15; -fx-background-radius: 8;">
+            <Label text="🔍" style="-fx-font-size: 16px;" />
+            <TextField fx:id="searchField" promptText="Rechercher un événement..." prefWidth="260" />
+
+            <Region prefWidth="15" />
+
+            <Label text="Trier:" style="-fx-font-weight: bold;" />
+            <ComboBox fx:id="sortComboBox" prefWidth="200" />
+
+            <Region prefWidth="15" />
+
+            <Label text="Filtrer:" style="-fx-font-weight: bold;" />
+            <ComboBox fx:id="filterAvailabilityCombo" prefWidth="180" />
+
+            <Button fx:id="applyFiltersBtn" text=" Actualiser" styleClass="btn-secondary">
+                <graphic>
+                    <FontIcon iconLiteral="fas-sync-alt" />
+                </graphic>
+            </Button>
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <Label fx:id="resultCountLabel" style="-fx-text-fill: -color-fg-muted; -fx-font-weight: bold;" text="" />
+        </HBox>
+
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+            <content>
+                <TilePane fx:id="eventsTilePane" hgap="20.0" vgap="20.0" prefColumns="3" />
+            </content>
+        </ScrollPane>
+    </VBox>
+</AnchorPane>

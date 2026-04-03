@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import java.net.URL?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.OperationUIController"
+      spacing="16.0" style="-fx-background-color: #f8fafc;"
+      styleClass="root-pane">
+    <stylesheets>
+        <URL value="@style.css" />
+    </stylesheets>
+    <padding>
+        <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
+    </padding>
+
+    <HBox spacing="12.0" alignment="CENTER_LEFT">
+        <children>
+            <Label text="Opérations" style="-fx-text-fill: #0f172a;">
+                <font>
+                    <Font name="System Bold" size="20.0"/>
+                </font>
+            </Label>
+            <Label fx:id="currentContextLabel" text="Aucune trésorerie sélectionnée" textFill="#6b7280">
+                <font>
+                    <Font size="12.0"/>
+                </font>
+            </Label>
+            <Label fx:id="currentBalanceLabel" text="" textFill="#059669">
+                <font>
+                    <Font name="System Bold" size="14.0"/>
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="typeFilterBox" promptText="Type (revenu / depense)" prefWidth="180.0"/>
+            <TextField fx:id="minMontantField" promptText="Montant min" prefWidth="100.0"/>
+            <TextField fx:id="maxMontantField" promptText="Montant max" prefWidth="100.0"/>
+            <TextField fx:id="keywordField" promptText="Catégorie / description" prefWidth="200.0"/>
+        </children>
+    </HBox>
+
+    <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+        <children>
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+                <children>
+                    <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <!-- Revenus Column -->
+                            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                <children>
+                                    <Label text="Revenus" style="-fx-font-weight: bold; -fx-text-fill: #2ecc71;"/>
+                                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                                        <content>
+                                            <VBox fx:id="revenuCardsContainer" spacing="10.0" style="-fx-padding: 5;"/>
+                                        </content>
+                                    </ScrollPane>
+                                </children>
+                            </VBox>
+                            
+                            <Separator orientation="VERTICAL" />
+
+                            <!-- Depenses Column -->
+                            <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                <children>
+                                    <Label text="Dépenses" style="-fx-font-weight: bold; -fx-text-fill: #e74c3c;"/>
+                                    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
+                                        <content>
+                                            <VBox fx:id="depenseCardsContainer" spacing="10.0" style="-fx-padding: 5;"/>
+                                        </content>
+                                    </ScrollPane>
+                                </children>
+                            </VBox>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+
+            <VBox spacing="8.0" prefWidth="260.0">
+                <children>
+                    <Label text="Formulaire" styleClass="panel-header"/>
+                    <ComboBox fx:id="typeBox" promptText="Type d'opération" prefWidth="260.0"/>
+                    <TextField fx:id="referenceField" promptText="Référence"/>
+                    <TextField fx:id="factureField" promptText="Numéro de facture"/>
+                    <HBox spacing="4.0">
+                         <TextField fx:id="pdfUrlField" promptText="Lien PDF (ou généré)" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                    <TextField fx:id="montantField" promptText="Montant"/>
+                    <HBox spacing="8.0">
+                        <ComboBox fx:id="operationCurrencyBox" prefWidth="80.0" promptText="Devise"/>
+                    </HBox>
+                    <TextField fx:id="categorieField" promptText="Catégorie"/>
+                    <TextField fx:id="descriptionField" promptText="Description"/>
+                    <HBox spacing="8.0">
+                        <children>
+                            <Button text="Ajouter" onAction="#onAdd" styleClass="btn-primary"/>
+                            <Button text="Modifier" onAction="#onUpdate" styleClass="btn-primary"/>
+                            <Button text="Supprimer" onAction="#onDelete" styleClass="btn-danger"/>
+                        </children>
+                    </HBox>
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</VBox>

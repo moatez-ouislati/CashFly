@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+
+<BorderPane prefHeight="700.0" prefWidth="1100.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.AfficherE">
+
+    <top>
+        <VBox spacing="15" styleClass="header" style="-fx-background-color: white; -fx-padding: 20; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 0, 10, 0, 0);">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15">
+                    <children>
+                        <TextField fx:id="txtSearch" prefWidth="300" promptText="Rechercher une entreprise..." styleClass="search-field" />
+                        <ComboBox fx:id="cbSort" onAction="#sortEntreprise" prefWidth="180" promptText="Trier par" styleClass="form-field" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#refresh" styleClass="btn-secondary" text="Actualiser" />
+                        <Button onAction="#showAjouter" styleClass="btn-primary" text="+ Ajouter Entreprise" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox spacing="20" style="-fx-padding: 20;">
+            <children>
+                <!-- Main Cards Grid -->
+                <ScrollPane fitToWidth="true" HBox.hgrow="ALWAYS" style="-fx-background-color: transparent;">
+                    <content>
+                        <FlowPane fx:id="cardsContainer" hgap="20" vgap="20" style="-fx-padding: 10;">
+                            <!-- Cards will be injected here -->
+                        </FlowPane>
+                    </content>
+                </ScrollPane>
+
+                <!-- Sidebar Details (Stats + Weather) -->
+                <VBox prefWidth="320" spacing="20">
+                    <children>
+                        <!-- Statistics Card -->
+                        <VBox fx:id="statsCard" spacing="15" styleClass="card" style="-fx-padding: 20;">
+                            <children>
+                                <Label styleClass="section-title" text="Statistiques Rapides" />
+                                <Separator />
+                                <VBox spacing="10">
+                                    <children>
+                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                            <Label text="Revenus:" styleClass="stat-label" />
+                                            <Region HBox.hgrow="ALWAYS" />
+                                            <Label fx:id="labelTotalRevenu" text="0.00 TND" style="-fx-text-fill: #2ecc71; -fx-font-weight: bold;" />
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                            <Label text="Dépenses:" styleClass="stat-label" />
+                                            <Region HBox.hgrow="ALWAYS" />
+                                            <Label fx:id="labelTotalDepense" text="0.00 TND" style="-fx-text-fill: #e74c3c; -fx-font-weight: bold;" />
+                                        </HBox>
+                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                            <Label text="Documents:" styleClass="stat-label" />
+                                            <Region HBox.hgrow="ALWAYS" />
+                                            <Label fx:id="labelTotalDocs" text="0" style="-fx-font-weight: bold;" />
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                        <!-- Weather Card -->
+                        <VBox fx:id="weatherCard" spacing="15" styleClass="card" style="-fx-padding: 20; -fx-background-color: linear-gradient(to bottom right, #4facfe, #00f2fe);">
+                            <children>
+                                <Label styleClass="section-title-light" text="Météo Locale" />
+                                <HBox alignment="CENTER" spacing="10">
+                                    <children>
+                                        <ImageView fx:id="weatherIcon" fitHeight="60" fitWidth="60" />
+                                        <Label fx:id="labelTemperature" style="-fx-text-fill: white; -fx-font-size: 28; -fx-font-weight: bold;" text="--°C" />
+                                    </children>
+                                </HBox>
+                                <VBox alignment="CENTER" spacing="5">
+                                    <children>
+                                        <Label fx:id="labelDescription" style="-fx-text-fill: white; -fx-font-size: 14;" text="Description" />
+                                        <HBox alignment="CENTER" spacing="15">
+                                            <children>
+                                                <Label fx:id="labelHumidity" style="-fx-text-fill: white; -fx-font-size: 12;" text="H: --%" />
+                                                <Label fx:id="labelWind" style="-fx-text-fill: white; -fx-font-size: 12;" text="V: --m/s" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </center>
+
+</BorderPane>

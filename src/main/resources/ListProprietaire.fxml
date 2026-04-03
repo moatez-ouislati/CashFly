@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1100.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/20.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.cashfly.controllers.ListProprietaireController">
+    <children>
+        <VBox spacing="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <!-- Header with Search -->
+                <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header" style="-fx-background-color: white; -fx-padding: 20 30; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 0, 5, 0, 0);">
+                    <children>
+                        <VBox alignment="CENTER_LEFT">
+                            <children>
+                                <Label fx:id="pageTitle" styleClass="page-title" text="Propriétaires d'Entreprises" />
+                                <Label fx:id="pageSubtitle" styleClass="page-subtitle" text="Consultez la liste des partenaires et leurs contacts." />
+                            </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="txtSearch" prefHeight="40.0" prefWidth="300.0" promptText="Rechercher par nom..." styleClass="search-field" />
+                    </children>
+                </HBox>
+
+                <VBox spacing="20.0" VBox.vgrow="ALWAYS" style="-fx-padding: 0 30 30 30;">
+                    <children>
+                        <!-- Grid Container -->
+                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                            <content>
+                                <FlowPane fx:id="cardContainer" hgap="25.0" vgap="25.0" style="-fx-padding: 10 0;">
+                                    <!-- Propriétaire Cards will be injected here -->
+                                </FlowPane>
+                            </content>
+                        </ScrollPane>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

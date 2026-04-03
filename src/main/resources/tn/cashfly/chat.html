@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CashFly Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f7fa; height: 100vh; display: flex; flex-direction: column; }
+        .chat-header { background: linear-gradient(135deg, #0D2440 0%, #2E5E99 100%); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .chat-header h2 { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .chat-icon { font-size: 20px; line-height: 1; }
+        .online-count { background: rgba(255, 255, 255, 0.2); padding: 4px 12px; border-radius: 20px; font-size: 12px; display: flex; align-items: center; gap: 5px; }
+        .online-icon { width: 8px; height: 8px; background: #28a745; border-radius: 50%; display: inline-block; }
+        .messages-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 12px; animation: slideIn 0.3s ease; position: relative; transition: all 0.3s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.own { align-self: flex-end; background: #2E5E99; color: white; }
+        .message.other { align-self: flex-start; background: white; color: #333; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08); }
+        .message.edited { border: 2px solid #ffc107; }
+        .message.own.edited { background: linear-gradient(135deg, #2E5E99 0%, #1e4a7a 100%); box-shadow: 0 4px 12px rgba(46, 94, 153, 0.3); }
+        .message.other.edited { background: linear-gradient(135deg, #fff9e6 0%, #ffffff 100%); border-left: 4px solid #ffc107; }
+        .edited-badge { font-size: 10px; color: #d39e00; font-style: italic; margin-left: 8px; font-weight: 600; }
+        .message.own .edited-badge { color: #ffd700; }
+        .message.system { align-self: center; background: #E7F0FA; color: #0D2440; font-size: 12px; padding: 6px 16px; }
+        .message-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 12px; }
+        .message.own .message-header { color: rgba(255, 255, 255, 0.8); }
+        .message.other .message-header { color: #666; }
+        .role-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .role-proprietaire { background: #ffc107; color: #0D2440; }
+        .role-investisseur { background: #28a745; color: white; }
+        .crown-icon { color: #ffc107; font-size: 12px; font-weight: bold; }
+        .message-content { font-size: 14px; line-height: 1.4; word-break: break-word; min-height: 20px; }
+        .message-time { font-size: 11px; margin-top: 4px; opacity: 0.7; }
+        .reply-preview { background: rgba(0, 0, 0, 0.05); border-left: 3px solid #2E5E99; padding: 6px 10px; margin-bottom: 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .message.own .reply-preview { background: rgba(255, 255, 255, 0.15); border-left-color: rgba(255, 255, 255, 0.5); }
+        .reply-preview-author { font-weight: 600; color: #2E5E99; margin-bottom: 2px; }
+        .message.own .reply-preview-author { color: rgba(255, 255, 255, 0.9); }
+        .reply-preview-text { color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .message.own .reply-preview-text { color: rgba(255, 255, 255, 0.8); }
+        .message-actions { position: absolute; bottom: 5px; right: 5px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+        .message:hover .message-actions { opacity: 1; }
+        .action-btn { background: rgba(0, 0, 0, 0.1); border: none; color: inherit; cursor: pointer; font-size: 12px; padding: 4px 6px; border-radius: 4px; transition: all 0.2s; }
+        .action-btn:hover { background: rgba(0, 0, 0, 0.2); }
+        .message.own .action-btn { background: rgba(255, 255, 255, 0.2); color: white; }
+        .message.own .action-btn:hover { background: rgba(255, 255, 255, 0.3); }
+        .edit-container { display: flex; flex-direction: column; gap: 8px; }
+        .edit-input { border: 1px solid #e0e4e8; border-radius: 8px; padding: 8px 12px; font-size: 14px; outline: none; width: 100%; resize: none; }
+        .message.own .edit-input { background: rgba(255, 255, 255, 0.9); color: #333; }
+        .edit-actions { display: flex; gap: 8px; justify-content: flex-end; }
+        .edit-btn { padding: 4px 12px; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .edit-save { background: #28a745; color: white; }
+        .edit-cancel { background: #6c757d; color: white; }
+        .input-area { background: #f0f2f5; border-top: 1px solid #e0e4e8; }
+        .reply-bar { background: white; padding: 8px 20px; border-bottom: 1px solid #e0e4e8; display: none; align-items: center; gap: 10px; }
+        .reply-bar.active { display: flex; }
+        .reply-bar-info { flex: 1; font-size: 13px; }
+        .reply-bar-author { font-weight: 600; color: #2E5E99; }
+        .reply-bar-text { color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .reply-bar-close { background: none; border: none; color: #666; cursor: pointer; font-size: 18px; padding: 0 5px; }
+        .input-container { background: white; padding: 15px 20px; display: flex; gap: 12px; align-items: center; }
+        .message-input { flex: 1; border: 1px solid #e0e4e8; border-radius: 24px; padding: 12px 20px; font-size: 14px; outline: none; }
+        .message-input:focus { border-color: #2E5E99; }
+        .send-btn { background: #2E5E99; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .send-btn:hover { background: #1e4a7a; }
+    </style>
+</head>
+<body>
+    <div class="chat-header">
+        <h2><span class="chat-icon">💬</span> CashFly Chat</h2>
+        <div class="online-count">
+            <span class="online-icon"></span>
+            <span id="onlineCount">0 en ligne</span>
+        </div>
+    </div>
+    <div id="messages" class="messages-container"></div>
+    <div class="input-area">
+        <div id="replyBar" class="reply-bar">
+            <div class="reply-bar-info">
+                Répondre à <span id="replyAuthor" class="reply-bar-author"></span>:
+                <span id="replyText" class="reply-bar-text"></span>
+            </div>
+            <button class="reply-bar-close" onclick="cancelReply()">×</button>
+        </div>
+        <div class="input-container">
+            <input id="messageInput" class="message-input" type="text" placeholder="Écrire un message..." onkeydown="handleKey(event)" />
+            <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script>
+        let socket = null;
+        let auth = null;
+        let typingTimeout = null;
+
+        const messagesEl = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const onlineCountEl = document.getElementById('onlineCount');
+        const replyBarEl = document.getElementById('replyBar');
+        const replyAuthorEl = document.getElementById('replyAuthor');
+        const replyTextEl = document.getElementById('replyText');
+
+        let currentReplyTo = null;
+
+        function initChat(authData) {
+            auth = authData || {
+                userId: 0,
+                userName: "Utilisateur",
+                fullName: "Utilisateur",
+                userRole: "proprietaire",
+                eventId: 0
+            };
+            addSystemMessage("Chat initialisé pour l’événement #" + auth.eventId);
+            connectSocket();
+        }
+
+        function connectSocket() {
+            if (typeof io === "undefined") {
+                addSystemMessage("Serveur de chat indisponible. Vérifiez que chat-server tourne sur http://127.0.0.1:4500.", true);
+                return;
+            }
+            try {
+                socket = io("http://127.0.0.1:4500", {
+                    transports: ["websocket"],
+                    timeout: 20000
+                });
+                window.socket = socket;
+
+                socket.on("connect", () => {
+                    const token = generateToken(auth);
+                    socket.emit("authenticate", {
+                        token: token,
+                        eventId: auth.eventId
+                    });
+                });
+
+                socket.on("disconnect", () => {
+                    addSystemMessage("Déconnecté du serveur de chat.");
+                });
+
+                socket.on("connect_error", (err) => {
+                    addSystemMessage("Erreur de connexion: " + (err && err.message ? err.message : err), true);
+                });
+
+                socket.on("recent_messages", (messages) => {
+                    clearMessages();
+                    messages.forEach(addMessageFromServer);
+                    scrollToBottom();
+                });
+
+                socket.on("new_message", (message) => {
+                    addMessageFromServer(message);
+                    scrollToBottom();
+                });
+
+                socket.on("online_users", (users) => {
+                    updateOnlineCount(users.length);
+                });
+
+                socket.on("user_joined", (data) => {
+                    addSystemMessage(data.userName + " a rejoint le chat");
+                });
+
+                socket.on("user_left", (data) => {
+                    addSystemMessage(data.userName + " a quitté le chat");
+                });
+
+                socket.on("user_typing", (data) => {
+                    if (!auth || data.userId === auth.userId) return;
+                });
+
+                socket.on("error", (data) => {
+                    const msg = data && data.message ? data.message : "Erreur serveur";
+                    addSystemMessage(msg, true);
+                });
+            } catch (e) {
+                addSystemMessage("Impossible de se connecter au chat: " + e, true);
+            }
+        }
+
+        function generateToken(authData) {
+            const header = btoa(JSON.stringify({ alg: "none", typ: "JWT" }));
+            const payload = btoa(JSON.stringify({
+                id: authData.userId,
+                name: authData.fullName || authData.userName,
+                role: authData.userRole
+            }));
+            return header + "." + payload + ".";
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (!text || !socket) return;
+            const payload = { content: text };
+            if (currentReplyTo && currentReplyTo.id) {
+                payload.replyTo = currentReplyTo.id;
+            }
+            socket.emit("send_message", payload);
+            messageInput.value = "";
+            clearReply();
+        }
+
+        function handleKey(e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function addMessageFromServer(msg) {
+            const own = auth && msg.userId === auth.userId;
+            const div = document.createElement("div");
+            div.className = "message " + (own ? "own" : "other");
+            if (msg.isEdited) {
+                div.classList.add("edited");
+            }
+            const roleClass = msg.userRole === "proprietaire" ? "role-proprietaire" : "role-investisseur";
+            const roleLabel = msg.userRole === "proprietaire" ? "Propriétaire" : "Investisseur";
+            const displayName = (msg.userName || "").replace(" 👑", "");
+            const time = msg.timestamp ? new Date(msg.timestamp) : new Date();
+            const timeLabel = time.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+
+            let replyHtml = "";
+            if (msg.replyTo) {
+                replyHtml =
+                    '<div class="reply-preview" onclick="scrollToMessage(' + msg.replyTo.id + ')">' +
+                    '<div class="reply-preview-author">' + escapeHtml(msg.replyTo.userName || "") + "</div>" +
+                    '<div class="reply-preview-text">' + escapeHtml(msg.replyTo.content || "") + "</div>" +
+                    "</div>";
+            }
+
+            let editedBadge = "";
+            if (msg.isEdited === 1) {
+                editedBadge = '<span class="edited-badge">(modifié)</span>';
+            } else if (msg.isEdited === 2) {
+                editedBadge = '<span class="edited-badge">(supprimé)</span>';
+            }
+
+            div.setAttribute("data-message-id", msg.id);
+
+            div.innerHTML =
+                replyHtml +
+                '<div class="message-header">' +
+                "<span>" + escapeHtml(displayName || "Utilisateur") + "</span>" +
+                '<span class="role-badge ' + roleClass + '">' + roleLabel + "</span>" +
+                editedBadge +
+                "</div>" +
+                '<div class="message-content">' + escapeHtml(msg.content || "") + "</div>" +
+                '<div class="message-time">' + timeLabel + "</div>";
+
+            messagesEl.appendChild(div);
+        }
+
+        function scrollToMessage(id) {
+            const el = messagesEl.querySelector('[data-message-id="' + id + '"]');
+            if (el) {
+                el.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
+
+        function addSystemMessage(text, isError) {
+            const div = document.createElement("div");
+            div.className = "message system";
+            if (isError) {
+                div.style.background = "#ffebee";
+            }
+            div.textContent = text;
+            messagesEl.appendChild(div);
+            scrollToBottom();
+        }
+
+        function clearMessages() {
+            messagesEl.innerHTML = "";
+        }
+
+        function scrollToBottom() {
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function updateOnlineCount(n) {
+            onlineCountEl.textContent = n + " en ligne";
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text || "";
+            return div.innerHTML;
+        }
+
+        function startReply(messageId, author, content) {
+            currentReplyTo = { id: messageId, author: author, content: content };
+            replyAuthorEl.textContent = author;
+            replyTextEl.textContent = content;
+            replyBarEl.classList.add("active");
+        }
+
+        function cancelReply() {
+            clearReply();
+        }
+
+        function clearReply() {
+            currentReplyTo = null;
+            replyAuthorEl.textContent = "";
+            replyTextEl.textContent = "";
+            replyBarEl.classList.remove("active");
+        }
+
+        window.handleKey = handleKey;
+        window.sendMessage = sendMessage;
+        window.initChat = initChat;
+        window.startReply = startReply;
+        window.cancelReply = cancelReply;
+    </script>
+</body>
+</html>

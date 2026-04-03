@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="tn.cashfly.controllers.StatistiqueUIController"
+      spacing="16.0" style="-fx-background-color: #f8fafc;"
+      stylesheets="@style.css" styleClass="root-pane">
+    <padding>
+        <Insets top="24.0" right="32.0" bottom="24.0" left="32.0"/>
+    </padding>
+
+    <HBox spacing="12.0" alignment="CENTER_LEFT">
+        <children>
+            <Label text="Statistiques" style="-fx-text-fill: #0f172a;">
+                <font><Font name="System Bold" size="20.0"/></font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Périmètre"/>
+            <ComboBox fx:id="scopeBox" prefWidth="160.0"/>
+            <Label text="De"/>
+            <DatePicker fx:id="fromDate"/>
+            <Label text="à"/>
+            <DatePicker fx:id="toDate"/>
+            <Button text="Mettre à jour" onAction="#onRefresh" styleClass="btn-primary"/>
+        </children>
+    </HBox>
+
+    <HBox spacing="16.0" VBox.vgrow="ALWAYS">
+        <children>
+            <!-- Financial Section -->
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS" styleClass="card">
+                <children>
+                    <Label text="Performance Financière" styleClass="section-title"/>
+                    <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                        <tabs>
+                            <Tab text="Répartition">
+                                <VBox spacing="10">
+                                    <PieChart fx:id="pieChart" prefHeight="300.0"/>
+                                    <HBox spacing="16.0" alignment="CENTER">
+                                        <children>
+                                            <Label text="Revenus:" styleClass="stat-label"/>
+                                            <Label fx:id="revenusLabel" text="0 TND" style="-fx-font-weight: bold; -fx-text-fill: #10b981;"/>
+                                            <Label text="Dépenses:" styleClass="stat-label"/>
+                                            <Label fx:id="depensesLabel" text="0 TND" style="-fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                                            <Label text="Solde:" styleClass="stat-label"/>
+                                            <Label fx:id="soldeLabel" text="0 TND" style="-fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+                                        </children>
+                                    </HBox>
+                                </VBox>
+                            </Tab>
+                            <Tab text="Évolution">
+                                <LineChart fx:id="lineChart" prefHeight="300.0">
+                                    <xAxis><CategoryAxis label="Mois"/></xAxis>
+                                    <yAxis><NumberAxis label="Montant"/></yAxis>
+                                </LineChart>
+                            </Tab>
+                            <Tab text="Catégories">
+                                <BarChart fx:id="barChart" prefHeight="300.0">
+                                    <xAxis><CategoryAxis label="Catégorie"/></xAxis>
+                                    <yAxis><NumberAxis label="Montant (TND)"/></yAxis>
+                                </BarChart>
+                            </Tab>
+                        </tabs>
+                    </TabPane>
+                    <Separator/>
+                    <Label text="Prédiction financière" styleClass="stat-label"/>
+                    <VBox style="-fx-background-color: #f8fafc; -fx-padding: 15; -fx-background-radius: 10; -fx-border-color: #e2e8f0; -fx-border-radius: 10;">
+                        <children>
+                            <Label fx:id="predictionLabel" text="Analyse en cours..." wrapText="true" style="-fx-text-fill: #1e293b; -fx-font-style: italic;"/>
+                        </children>
+                    </VBox>
+                </children>
+            </VBox>
+
+            <!-- Documents & Entreprises Section -->
+            <VBox spacing="12.0" prefWidth="450.0" styleClass="card">
+                <children>
+                    <Label text="Documents &amp; Entreprises" styleClass="section-title"/>
+                    
+                    <HBox spacing="10" alignment="CENTER">
+                        <VBox style="-fx-background-color: #f0f9ff; -fx-padding: 10; -fx-background-radius: 8; -fx-alignment: center;" HBox.hgrow="ALWAYS">
+                            <Label text="Entreprises" style="-fx-text-fill: #0369a1; -fx-font-size: 12px;"/>
+                            <Label fx:id="totalEntreprisesLabel" text="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #0c4a6e;"/>
+                        </VBox>
+                        <VBox style="-fx-background-color: #f0fdf4; -fx-padding: 10; -fx-background-radius: 8; -fx-alignment: center;" HBox.hgrow="ALWAYS">
+                            <Label text="Documents" style="-fx-text-fill: #15803d; -fx-font-size: 12px;"/>
+                            <Label fx:id="totalDocumentsLabel" text="0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #064e3b;"/>
+                        </VBox>
+                    </HBox>
+
+                    <VBox spacing="15" VBox.vgrow="ALWAYS">
+                        <children>
+                            <VBox spacing="5">
+                                <Label text="Documents par Entreprise" styleClass="stat-label"/>
+                                <BarChart fx:id="docsBarChart" prefHeight="250.0" legendVisible="false">
+                                    <xAxis><CategoryAxis label="Entreprise"/></xAxis>
+                                    <yAxis><NumberAxis label="Nb Documents"/></yAxis>
+                                </BarChart>
+                            </VBox>
+                            <Separator/>
+                            <VBox spacing="5">
+                                <Label text="Répartition par Secteur" styleClass="stat-label"/>
+                                <PieChart fx:id="sectorPieChart" prefHeight="250.0" legendVisible="false"/>
+                            </VBox>
+                        </children>
+                    </VBox>
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</VBox>
