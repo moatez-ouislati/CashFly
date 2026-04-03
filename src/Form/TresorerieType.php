@@ -16,6 +16,8 @@ class TresorerieType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $options['user'];
+
         $builder
             ->add('nom_compte', TextType::class, [
                 'label' => 'Account Name',
@@ -51,7 +53,12 @@ class TresorerieType extends AbstractType
                 'class' => Entreprise::class,
                 'choice_label' => 'nom',
                 'label' => 'Select PME',
-                'placeholder' => '--- Select a Company ---'
+                'placeholder' => '--- Select a Company ---',
+                'query_builder' => function (\App\Repository\EntrepriseRepository $er) use ($user) {
+                    return $er->createQueryBuilder('e')
+                        ->where('e.proprietaire = :user')
+                        ->setParameter('user', $user);
+                },
             ])
         ;
     }
@@ -61,6 +68,7 @@ class TresorerieType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Tresorerie::class,
             'attr' => ['novalidate' => 'novalidate'],
+            'user' => null,
         ]);
     }
 }

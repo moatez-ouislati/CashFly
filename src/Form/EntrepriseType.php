@@ -58,6 +58,6 @@ class EntrepriseType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Entreprise::class,
             'attr' => ['novalidate' => 'novalidate'],
-41        ]);
+        ]);
     }
 }

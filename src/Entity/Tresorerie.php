@@ -5,9 +5,12 @@ namespace App\Entity;
 use App\Repository\TresorerieRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: TresorerieRepository::class)]
 #[ORM\Table(name: 'trésorerie')]
+#[UniqueEntity(fields: ['numero_compte'], message: 'Ce numéro de compte existe déjà.')]
 class Tresorerie
 {
     #[ORM\Id]
@@ -17,15 +20,20 @@ class Tresorerie
 
     #[ORM\ManyToOne(targetEntity: Entreprise::class)]
     #[ORM\JoinColumn(name: 'id_entreprise', referencedColumnName: 'id_entreprise', nullable: false)]
+    #[Assert\NotNull(message: 'Veuillez sélectionner une entreprise')]
     private ?Entreprise $entreprise = null;
 
     #[ORM\Column(name: 'nom_compte', length: 100)]
+    #[Assert\NotBlank(message: 'Le nom du compte est obligatoire')]
+    #[Assert\Length(min: 3, max: 100, minMessage: 'Le nom du compte doit comporter au moins {{ limit }} caractères')]
     private ?string $nom_compte = null;
 
     #[ORM\Column(name: 'type_compte', type: 'string', length: 20)]
+    #[Assert\NotBlank(message: 'Le type de compte est obligatoire')]
     private ?string $type_compte = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 15, scale: 2, options: ['default' => '0.00'])]
+    #[Assert\NotBlank(message: 'Le solde initial est obligatoire')]
     private ?string $solde = null;
 
     #[ORM\Column(length: 3, options: ['default' => 'EUR'])]

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Entreprise;
+use App\Entity\Tresorerie;
 use App\Repository\EntrepriseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,9 +37,20 @@ class EntrepriseController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entreprise->setProprietaire($this->getUser());
             $entityManager->persist($entreprise);
+
+            // Automatiquement créer un compte de trésorerie avec le capital
+            $tresorerie = new Tresorerie();
+            $tresorerie->setEntreprise($entreprise);
+            $tresorerie->setNomCompte('Compte Capital Social');
+            $tresorerie->setTypeCompte('BANQUE');
+            $tresorerie->setSolde($entreprise->getCapital());
+            $tresorerie->setDevise('TND');
+            $tresorerie->setDerniereMaj(new \DateTime());
+            
+            $entityManager->persist($tresorerie);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Entreprise ajoutée avec succès.');
+            $this->addFlash('success', 'Entreprise ajoutée avec succès et compte de trésorerie créé.');
             return $this->redirectToRoute('app_entreprise_index');
         }
 

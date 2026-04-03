@@ -31,7 +31,7 @@ class Entreprise
 
     #[ORM\Column(name: 'date_creation', type: Types::DATE_MUTABLE, nullable: true)]
     #[Assert\NotNull(message: 'La date de création est obligatoire')]
-    #[Assert\LessThanOrEqual('today', message: 'La date de création ne peut pas être dans le futur')]
+    #[Assert\LessThanOrEqual('now', message: 'La date de création ne peut pas être dans le futur')]
     private ?\DateTimeInterface $date_creation = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 15, scale: 2, options: ['default' => '0.00'])]

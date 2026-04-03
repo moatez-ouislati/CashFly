@@ -18,6 +18,8 @@ class OperationType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $options['user'];
+
         $builder
             ->add('reference', TextType::class, [
                 'required' => false,
@@ -41,11 +43,6 @@ class OperationType extends AbstractType
                 'label' => 'Category',
                 'attr' => ['placeholder' => 'e.g. Sales, Rent, Utilities']
             ])
-            ->add('date_operation', DateTimeType::class, [
-                'widget' => 'single_text',
-                'label' => 'Date of Operation',
-                'data' => new \DateTime(),
-            ])
             ->add('description', TextareaType::class, [
                 'required' => false,
                 'label' => 'Description',
@@ -55,7 +52,13 @@ class OperationType extends AbstractType
                 'class' => Tresorerie::class,
                 'choice_label' => 'nom_compte',
                 'label' => 'Select Account',
-                'placeholder' => '--- Select an Account ---'
+                'placeholder' => '--- Select an Account ---',
+                'query_builder' => function (\App\Repository\TresorerieRepository $tr) use ($user) {
+                    return $tr->createQueryBuilder('t')
+                        ->join('t.entreprise', 'e')
+                        ->where('e.proprietaire = :user')
+                        ->setParameter('user', $user);
+                },
             ])
         ;
     }
@@ -65,6 +68,7 @@ class OperationType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Operation::class,
             'attr' => ['novalidate' => 'novalidate'],
+            'user' => null,
         ]);
     }
 }

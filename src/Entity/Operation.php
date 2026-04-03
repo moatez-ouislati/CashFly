@@ -48,11 +48,16 @@ class Operation
 
     #[ORM\Column(name: 'date_operation', type: Types::DATETIME_MUTABLE, nullable: true, options: ['default' => 'CURRENT_TIMESTAMP'])]
     #[Assert\NotNull(message: 'La date est obligatoire')]
-    #[Assert\LessThanOrEqual('today', message: 'La date ne peut pas être dans le futur')]
+    #[Assert\LessThanOrEqual('now', message: 'La date ne peut pas être dans le futur')]
     private ?\DateTimeInterface $date_operation = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    public function __construct()
+    {
+        $this->date_operation = new \DateTime();
+    }
 
     public function getId(): ?int
     {

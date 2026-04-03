@@ -95,15 +95,29 @@ class OperationController extends AbstractController
             }
         }
 
-        $form = $this->createForm(OperationType::class, $operation);
+        $form = $this->createForm(OperationType::class, $operation, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Update tresorerie balance
             $tresorerie = $operation->getTresorerie();
             $amount = (float) $operation->getMontant();
             $currentSolde = (float) $tresorerie->getSolde();
             
+            // Métier 1: Vérification du solde pour les dépenses
+            if ($operation->getType() === 'depense' && $currentSolde < $amount) {
+                $this->addFlash('error', 'Opération refusée : Solde insuffisant sur le compte ' . $tresorerie->getNomCompte() . '.');
+                return $this->render('operation/new.html.twig', [
+                    'operation' => $operation,
+                    'form' => $form->createView(),
+                ]);
+            }
+
+            // Métier 2: Génération automatique de référence si vide
+            if (!$operation->getReference()) {
+                $operation->setReference('OP-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4)));
+            }
+
+            // Update tresorerie balance
             if ($operation->getType() === 'revenu') {
                 $tresorerie->setSolde((string) ($currentSolde + $amount));
             } else {
@@ -113,6 +127,11 @@ class OperationController extends AbstractController
 
             $entityManager->persist($operation);
             $entityManager->flush();
+
+            // Métier 3: Alerte solde bas
+            if ((float)$tresorerie->getSolde() < 100) {
+                $this->addFlash('warning', 'Attention : Le solde du compte ' . $tresorerie->getNomCompte() . ' est très bas (' . $tresorerie->getSolde() . ' TND).');
+            }
 
             $this->addFlash('success', 'Transaction recorded successfully.');
             return $this->redirectToRoute('app_operation_index', [], Response::HTTP_SEE_OTHER);
@@ -147,21 +166,41 @@ class OperationController extends AbstractController
         $oldAmount = $operation->getMontant();
         $oldTresorerie = $operation->getTresorerie();
 
-        $form = $this->createForm(OperationType::class, $operation);
+        $form = $this->createForm(OperationType::class, $operation, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Revert old balance
             $oldCurrentSolde = (float) $oldTresorerie->getSolde();
-            if ($oldType === 'revenu') {
-                $oldTresorerie->setSolde((string) ($oldCurrentSolde - (float)$oldAmount));
-            } else {
-                $oldTresorerie->setSolde((string) ($oldCurrentSolde + (float)$oldAmount));
-            }
+            $revertedSolde = ($oldType === 'revenu') 
+                ? ($oldCurrentSolde - (float)$oldAmount) 
+                : ($oldCurrentSolde + (float)$oldAmount);
 
-            // Apply new balance
+            // Apply new balance check
             $newTresorerie = $operation->getTresorerie();
             $newAmount = (float) $operation->getMontant();
+            
+            // Si c'est le même compte, on vérifie sur le solde inversé
+            // Si c'est un nouveau compte, on vérifie sur son solde actuel
+            $checkSolde = ($newTresorerie->getId() === $oldTresorerie->getId()) ? $revertedSolde : (float)$newTresorerie->getSolde();
+
+            if ($operation->getType() === 'depense' && $checkSolde < $newAmount) {
+                $this->addFlash('error', 'Modification refusée : Solde insuffisant sur le compte ' . $newTresorerie->getNomCompte() . '.');
+                return $this->render('operation/edit.html.twig', [
+                    'operation' => $operation,
+                    'form' => $form->createView(),
+                ]);
+            }
+
+            // Génération automatique de référence si vide lors de l'édition
+            if (!$operation->getReference()) {
+                $operation->setReference('OP-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4)));
+            }
+
+            // Update old account
+            $oldTresorerie->setSolde((string) $revertedSolde);
+
+            // Update new account
             $newCurrentSolde = (float) $newTresorerie->getSolde();
             if ($operation->getType() === 'revenu') {
                 $newTresorerie->setSolde((string) ($newCurrentSolde + $newAmount));
@@ -171,6 +210,11 @@ class OperationController extends AbstractController
             $newTresorerie->setDerniereMaj(new \DateTime());
 
             $entityManager->flush();
+
+            // Métier 3: Alerte solde bas
+            if ((float)$newTresorerie->getSolde() < 100) {
+                $this->addFlash('warning', 'Attention : Le solde du compte ' . $newTresorerie->getNomCompte() . ' est très bas (' . $newTresorerie->getSolde() . ' TND).');
+            }
 
             $this->addFlash('success', 'Transaction updated successfully.');
             return $this->redirectToRoute('app_operation_index', [], Response::HTTP_SEE_OTHER);

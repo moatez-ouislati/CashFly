@@ -158,6 +158,24 @@
             </div>
         </header>
 
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mb-6 flex items-center gap-3 p-4 rounded-2xl border font-bold text-sm shadow-sm animate-in fade-in slide-in-from-top-4 duration-300
+                    {% if label == 'success' %}bg-green-50 text-green-700 border-green-100
+                    {% elseif label == 'error' %}bg-red-50 text-red-700 border-red-100
+                    {% elseif label == 'warning' %}bg-amber-50 text-amber-700 border-amber-100
+                    {% else %}bg-blue-50 text-blue-700 border-blue-100{% endif %}">
+                    <span class="material-symbols-outlined">
+                        {% if label == 'success' %}check_circle
+                        {% elseif label == 'error' %}error
+                        {% elseif label == 'warning' %}warning
+                        {% else %}info{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
         {% block body %}{% endblock %}
     </main>
 

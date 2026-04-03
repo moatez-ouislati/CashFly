@@ -132,7 +132,7 @@ class TresorerieController extends AbstractController
             }
         }
 
-        $form = $this->createForm(TresorerieType::class, $tresorerie);
+        $form = $this->createForm(TresorerieType::class, $tresorerie, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -168,7 +168,7 @@ class TresorerieController extends AbstractController
     #[Route('/{id}/edit', name: 'app_tresorerie_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Tresorerie $tresorerie, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(TresorerieType::class, $tresorerie);
+        $form = $this->createForm(TresorerieType::class, $tresorerie, ['user' => $this->getUser()]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

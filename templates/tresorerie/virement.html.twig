@@ -15,14 +15,10 @@
         </a>
     </div>
 
-    {% for message in app.flashes('error') %}
-        <div class="bg-red-100 text-red-700 border border-red-200 p-4 rounded-xl mb-6 text-sm font-bold flex items-center gap-2">
-            <span class="material-symbols-outlined">error</span>
-            {{ message }}
-        </div>
-    {% endfor %}
-
     {{ form_start(form) }}
+        <div class="text-error text-sm mb-4">
+            {{ form_errors(form) }}
+        </div>
         <div class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-1.5">
