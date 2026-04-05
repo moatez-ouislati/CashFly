@@ -1,0 +1,101 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}{{ action == 'create' ? 'Nouvel Utilisateur' : 'Modifier Utilisateur' }} - CashFly Admin{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-6">
+            <h1 class="fs-3 mb-1">{{ action == 'create' ? 'Nouvel Utilisateur' : 'Modifier Utilisateur' }}</h1>
+            <p class="text-muted mb-0">
+                <a href="{{ path('app_admin_users') }}" class="text-decoration-none"><i class="ti ti-arrow-left me-1"></i>Retour a la liste</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="mb-0">Informations de l'utilisateur</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nom *</label>
+                            <input type="text" name="nom" class="form-control" value="{{ user.nom|default('') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Prenom *</label>
+                            <input type="text" name="prenom" class="form-control" value="{{ user.prenom|default('') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email *</label>
+                            <input type="email" name="email" class="form-control" value="{{ user.email|default('') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">CIN *</label>
+                            <input type="text" name="cin" class="form-control" value="{{ user.cin|default('') }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Telephone</label>
+                            <input type="tel" name="tel" class="form-control" value="{{ user.tel|default('') }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Role *</label>
+                            <select name="role" class="form-select" required>
+                                <option value="investisseur" {% if user and user.role == 'investisseur' %}selected{% endif %}>Investisseur</option>
+                                <option value="proprietaire" {% if user and user.role == 'proprietaire' %}selected{% endif %}>Proprietaire</option>
+                                <option value="administrateur" {% if user and user.role == 'administrateur' %}selected{% endif %}>Administrateur</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">{{ action == 'create' ? 'Mot de passe *' : 'Nouveau mot de passe' }}</label>
+                            <input type="password" name="password" class="form-control" {{ action == 'create' ? 'required' : '' }}>
+                            {% if action != 'create' %}
+                            <small class="text-muted">Laissez vide pour ne pas changer</small>
+                            {% endif %}
+                        </div>
+                        {% if action == 'edit' %}
+                        <div class="col-md-6">
+                            <label class="form-label">Statut</label>
+                            <select name="active" class="form-select">
+                                <option value="1" {% if user and user.active == 1 %}selected{% endif %}>Actif</option>
+                                <option value="0" {% if user and user.active == 0 %}selected{% endif %}>Inactif</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <hr class="my-4">
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-device-floppy me-2"></i>{{ action == 'create' ? 'Creer' : 'Enregistrer' }}
+                        </button>
+                        <a href="{{ path('app_admin_users') }}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="mb-0">Informations</h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">
+                    Les champs marques d'un * sont obligatoires.<br><br>
+                    Les roles determinent les permissions de l'utilisateur:
+                    <ul class="small mt-2">
+                        <li><strong>Investisseur:</strong> Peut investir dans des entreprises</li>
+                        <li><strong>Proprietaire:</strong> Peut creer et gerer des entreprises</li>
+                        <li><strong>Administrateur:</strong> Acces complet au systeme</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Dashboard Admin - CashFly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div>
+            <h1 class="fs-3 mb-1">Dashboard Administrateur</h1>
+            <p class="text-muted mb-0">Supervision globale de la plateforme</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-shape icon-lg bg-primary text-white rounded-3 me-3">
+                    <i class="ti ti-users fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-1 small">Total Utilisateurs</p>
+                    <h2 class="mb-0">{{ stats.totalUsers }}</h2>
+                    <small class="text-success">{{ stats.activeUsers }} actifs</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-shape icon-lg bg-success text-white rounded-3 me-3">
+                    <i class="ti ti-building fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-1 small">Entreprises</p>
+                    <h2 class="mb-0">{{ stats.totalEntreprises }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-shape icon-lg bg-warning text-white rounded-3 me-3">
+                    <i class="ti ti-chart-line fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-1 small">Investissements</p>
+                    <h2 class="mb-0">{{ stats.totalInvesti|number_format(0, ',', ' ') }}</h2>
+                    <small class="text-muted">TND</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex align-items-center">
+                <div class="icon-shape icon-lg bg-info text-white rounded-3 me-3">
+                    <i class="ti ti-arrows-exchange fs-4"></i>
+                </div>
+                <div>
+                    <p class="text-muted mb-1 small">Operations</p>
+                    <h2 class="mb-0">{{ stats.totalOperations }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Revenus vs Depenses</h5>
+            </div>
+            <div class="row text-center">
+                <div class="col-6 border-end">
+                    <h3 class="text-success mb-1">{{ stats.totalRevenus|number_format(2, ',', ' ') }}</h3>
+                    <p class="text-muted mb-0 small">Total Revenus (TND)</p>
+                </div>
+                <div class="col-6">
+                    <h3 class="text-danger mb-1">{{ stats.totalDepenses|number_format(2, ',', ' ') }}</h3>
+                    <p class="text-muted mb-0 small">Total Depenses (TND)</p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <h4 class="mb-1 {% if stats.totalRevenus - stats.totalDepenses >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{ (stats.totalRevenus - stats.totalDepenses)|number_format(2, ',', ' ') }} TND
+                </h4>
+                <p class="text-muted mb-0 small">Balance Nette</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card p-4 h-100">
+            <h5 class="mb-4">Repartition par Role</h5>
+            <div class="row text-center mb-4">
+                {% for role in usersByRole %}
+                <div class="col-4">
+                    <h3 class="mb-1">{{ role.count }}</h3>
+                    <p class="text-muted mb-0 small text-capitalize">{{ role.role }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div id="usersPieChart" height="200"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    {% if usersByRole|length > 0 %}
+    var usersData = [
+        {% for role in usersByRole %}
+        {{ role.count }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    var usersLabels = [
+        {% for role in usersByRole %}
+        "{{ role.role|capitalize }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    if (usersData.length > 0) {
+        var options = {
+            chart: { type: 'donut', height: 200 },
+            series: usersData,
+            labels: usersLabels,
+            colors: ['#E66239', '#00C951', '#00B8DB'],
+            legend: { position: 'bottom' },
+            dataLabels: { enabled: true }
+        };
+        var chart = new ApexCharts(document.querySelector('#usersPieChart'), options);
+        chart.render();
+    }
+    {% endif %}
+});
+</script>
+{% endblock %}

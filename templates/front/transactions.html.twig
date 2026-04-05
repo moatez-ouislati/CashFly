@@ -1,0 +1,141 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Transactions - CashFly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-6 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Transactions</h1>
+                <p class="text-muted mb-0">Historique de toutes vos operations</p>
+            </div>
+            <div>
+                <a href="#" class="btn btn-primary">
+                    <i class="ti ti-plus me-2"></i>Nouvelle Transaction
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-transparent py-3">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="ti ti-search"></i></span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Rechercher une transaction...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="typeFilter">
+                    <option value="">Tous les types</option>
+                    <option value="revenu">Revenus</option>
+                    <option value="depense">Depenses</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="date" class="form-control" id="dateFilter">
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="transactionsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 px-4 py-3">Reference</th>
+                        <th class="border-0 px-4 py-3">Type</th>
+                        <th class="border-0 px-4 py-3">Montant</th>
+                        <th class="border-0 px-4 py-3">Categorie</th>
+                        <th class="border-0 px-4 py-3">Description</th>
+                        <th class="border-0 px-4 py-3">Date</th>
+                        <th class="border-0 px-4 py-3 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for operation in operations %}
+                    <tr data-type="{{ operation.type }}">
+                        <td class="px-4 py-3">
+                            <span class="fw-semibold">{{ operation.reference|default('N/A') }}</span>
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if operation.type == 'revenu' %}
+                            <span class="badge bg-success-subtle text-success border border-success">Revenu</span>
+                            {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger">Depense</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 fw-semibold {% if operation.type == 'revenu' %}text-success{% else %}text-danger{% endif %}">
+                            {{ operation.montant|number_format(2, ',', ' ') }} TND
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="badge bg-secondary-subtle text-secondary">{{ operation.categorie|default('N/A') }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-muted small" style="max-width: 200px;">
+                            {{ operation.description|default('N/A') }}
+                        </td>
+                        <td class="px-4 py-3 text-muted small">
+                            {{ operation.dateOperation|date('d/m/Y H:i') }}
+                        </td>
+                        <td class="px-4 py-3 text-end">
+                            <div class="btn-group btn-group-sm">
+                                <a href="#" class="btn btn-outline-secondary" title="Voir"><i class="ti ti-eye"></i></a>
+                                <a href="#" class="btn btn-outline-secondary" title="Modifier"><i class="ti ti-pencil"></i></a>
+                                <a href="#" class="btn btn-outline-danger" title="Supprimer"><i class="ti ti-trash"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                            <i class="ti ti-receipt fs-1 mb-3 d-block opacity-50"></i>
+                            <p>Aucune transaction trouvee</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if operations|length > 0 %}
+    <div class="card-footer bg-transparent py-3">
+        <nav>
+            <ul class="pagination justify-content-end mb-0">
+                <li class="page-item disabled"><a class="page-link" href="#">Precedent</a></li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">Suivant</a></li>
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        filterTable();
+    });
+    document.getElementById('typeFilter').addEventListener('change', function() {
+        filterTable();
+    });
+    
+    function filterTable() {
+        var search = document.getElementById('searchInput').value.toLowerCase();
+        var type = document.getElementById('typeFilter').value;
+        var rows = document.querySelectorAll('#transactionsTable tbody tr');
+        
+        rows.forEach(function(row) {
+            var text = row.textContent.toLowerCase();
+            var rowType = row.dataset.type;
+            var show = text.includes(search) && (type === '' || rowType === type);
+            row.style.display = show ? '' : 'none';
+        });
+    }
+});
+</script>
+{% endblock %}

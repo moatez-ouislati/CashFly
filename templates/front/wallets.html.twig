@@ -1,0 +1,116 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Portefeuilles - CashFly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-6 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Portefeuilles</h1>
+                <p class="text-muted mb-0">Gestion de vos comptes et soldes</p>
+            </div>
+            <div>
+                <a href="#" class="btn btn-primary">
+                    <i class="ti ti-plus me-2"></i>Nouveau Portefeuille
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-12">
+        <div class="card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-primary text-white rounded-2">
+                    <i class="ti ti-wallet"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">Solde Total</p>
+                    <h3 class="fw-bold mb-0">{{ totalSolde|number_format(2, ',', ' ') }} TND</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for type in soldeByType %}
+    <div class="col-lg-3 col-12">
+        <div class="card p-4 bg-light rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-secondary text-white rounded-2">
+                    <i class="ti {% if type.typeCompte == 'CAISSE' %}ti-cash{% elseif type.typeCompte == 'BANQUE' %}ti-building-bank{% elseif type.typeCompte == 'CARTE' %}ti-credit-card{% else %}ti-wallet{% endif %}"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">{{ type.typeCompte }}</p>
+                    <h4 class="fw-bold mb-0">{{ type.total|number_format(2, ',', ' ') }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row g-3">
+    {% for wallet in wallets %}
+    <div class="col-lg-4 col-md-6">
+        <div class="card h-100">
+            <div class="card-header bg-transparent py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="icon-shape icon-sm bg-primary text-white rounded-2">
+                            <i class="ti {% if wallet.typeCompte == 'CAISSE' %}ti-cash{% elseif wallet.typeCompte == 'BANQUE' %}ti-building-bank{% elseif wallet.typeCompte == 'CARTE' %}ti-credit-card{% else %}ti-wallet{% endif %}"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0">{{ wallet.nomCompte|default('Compte') }}</h5>
+                            <small class="text-muted">{{ wallet.typeCompte }}</small>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-sm btn-light" data-bs-toggle="dropdown"><i class="ti ti-dots-vertical"></i></a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#"><i class="ti ti-pencil me-2"></i>Modifier</a>
+                            <a class="dropdown-item" href="#"><i class="ti ti-arrows-exchange me-2"></i>Transaction</a>
+                            <hr class="dropdown-divider">
+                            <a class="dropdown-item text-danger" href="#"><i class="ti ti-trash me-2"></i>Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-4">
+                    <p class="text-muted mb-2">Solde actuel</p>
+                    <h2 class="fw-bold text-primary mb-0">{{ wallet.solde|number_format(2, ',', ' ') }} {{ wallet.devise }}</h2>
+                </div>
+                <div class="row text-center border-top pt-3 mt-3">
+                    <div class="col-6">
+                        <p class="mb-1 text-muted small">RIB</p>
+                        <p class="mb-0 fw-semibold small">{{ wallet.rib|default('N/A') }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-1 text-muted small">Numero</p>
+                        <p class="mb-0 fw-semibold small">{{ wallet.numeroCompte }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent border-0 pt-0">
+                <div class="d-flex gap-2">
+                    <a href="#" class="btn btn-primary btn-sm flex-fill"><i class="ti ti-plus me-1"></i>Depot</a>
+                    <a href="#" class="btn btn-outline-secondary btn-sm flex-fill"><i class="ti ti-minus me-1"></i>Retrait</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center py-5">
+                <i class="ti ti-wallet fs-1 mb-3 d-block opacity-50 text-muted"></i>
+                <h5 class="text-muted">Aucun portefeuille</h5>
+                <p class="text-muted mb-4">Creez votre premier portefeuille pour commencer</p>
+                <a href="#" class="btn btn-primary"><i class="ti ti-plus me-2"></i>Creer un portefeuille</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

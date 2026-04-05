@@ -1,0 +1,132 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Entreprises - CashFly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-6 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Entreprises</h1>
+                <p class="text-muted mb-0">Decouvrez et investissez dans des entreprises</p>
+            </div>
+            {% if user and user.role == 'proprietaire' %}
+            <div>
+                <a href="#" class="btn btn-primary">
+                    <i class="ti ti-plus me-2"></i>Creer une Entreprise
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-12">
+        <div class="card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-primary text-white rounded-2">
+                    <i class="ti ti-building"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">Total Entreprises</p>
+                    <h3 class="fw-bold mb-0">{{ entreprises|length }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-12">
+        <div class="card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-success text-white rounded-2">
+                    <i class="ti ti-chart-pie"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">Investissements</p>
+                    <h3 class="fw-bold mb-0">{{ totalInvestissements|default(0) }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-transparent py-3">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="searchCompany" placeholder="Rechercher une entreprise...">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if entreprises|length > 0 %}
+        <div class="row g-4" id="companiesGrid">
+            {% for entreprise in entreprises %}
+            <div class="col-lg-4 col-md-6 company-card" data-name="{{ entreprise.nom|lower }}">
+                <div class="card h-100 border">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start justify-content-between mb-3">
+                            <div class="icon-shape icon-lg bg-primary bg-opacity-10 text-primary rounded-2">
+                                <i class="ti ti-building"></i>
+                            </div>
+                            <span class="badge bg-success-subtle text-success border border-success">Actif</span>
+                        </div>
+                        <h5 class="mb-2">{{ entreprise.nom }}</h5>
+                        <p class="text-muted small mb-2">{% if entreprise.secteur %}Secteur: {{ entreprise.secteur }}{% endif %}</p>
+                        <p class="text-muted small mb-3">{% if entreprise.formeJuridique %}Forme: {{ entreprise.formeJuridique }}{% endif %}</p>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between small mb-1">
+                                <span>Capital</span>
+                                <span class="fw-semibold">{{ entreprise.capital|number_format(0, ',', ' ') }} TND</span>
+                            </div>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="row text-center border-top pt-3">
+                            <div class="col-6">
+                                <p class="mb-0 fw-semibold">{{ entreprise.capital|number_format(0, ',', ' ') }}</p>
+                                <small class="text-muted">Capital (TND)</small>
+                            </div>
+                            <div class="col-6">
+                                <p class="mb-0 fw-semibold">{% if entreprise.dateCreation %}{{ entreprise.dateCreation|date('Y') }}{% else %}N/A{% endif %}</p>
+                                <small class="text-muted">Annee</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 pt-0">
+                        <a href="{{ path('app_investments') }}" class="btn btn-primary w-100">Investir</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="ti ti-building fs-1 mb-3 d-block opacity-50"></i>
+            <p>Aucune entreprise trouvee</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('searchCompany');
+    var cards = document.querySelectorAll('.company-card');
+    
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            var query = this.value.toLowerCase();
+            
+            cards.forEach(function(card) {
+                var name = card.getAttribute('data-name') || '';
+                card.style.display = name.includes(query) ? '' : 'none';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

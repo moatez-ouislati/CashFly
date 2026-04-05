@@ -1,0 +1,171 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}Gestion des Utilisateurs - Admin CashFly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Gestion des Utilisateurs</h1>
+                <p class="text-muted mb-0">CRUD &bull; Blocage &bull; Roles &bull; Export</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button onclick="exportPDF()" class="btn btn-outline-danger">
+                    <i class="ti ti-file-type-pdf me-2"></i>Export PDF
+                </button>
+                <a href="{{ path('app_admin_users_new') }}" class="btn btn-primary">
+                    <i class="ti ti-plus me-2"></i>Nouvel Utilisateur
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for message in app.flashes('success') %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+
+<div class="card">
+    <div class="card-header bg-transparent py-3">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="ti ti-search"></i></span>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Rechercher...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="roleFilter">
+                    <option value="">Tous les roles</option>
+                    <option value="administrateur">Administrateur</option>
+                    <option value="investisseur">Investisseur</option>
+                    <option value="proprietaire">Proprietaire</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="statusFilter">
+                    <option value="">Tous les statuts</option>
+                    <option value="1">Actif</option>
+                    <option value="0">Inactif</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="usersTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 px-4 py-3">Utilisateur</th>
+                        <th class="border-0 px-4 py-3">Email</th>
+                        <th class="border-0 px-4 py-3">CIN</th>
+                        <th class="border-0 px-4 py-3">Telephone</th>
+                        <th class="border-0 px-4 py-3">Role</th>
+                        <th class="border-0 px-4 py-3">Statut</th>
+                        <th class="border-0 px-4 py-3">Date Creation</th>
+                        <th class="border-0 px-4 py-3 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr data-role="{{ u.role }}" data-status="{{ u.active }}">
+                        <td class="px-4 py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <img src="{{ asset('assets/images/images/avatar/profile-avatar.png') }}" alt="" class="avatar avatar-sm rounded-circle">
+                                <div>
+                                    <span class="fw-semibold">{{ u.fullName }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3">{{ u.email }}</td>
+                        <td class="px-4 py-3">{{ u.cin }}</td>
+                        <td class="px-4 py-3">{{ u.tel|default('N/A') }}</td>
+                        <td class="px-4 py-3">
+                            <form action="{{ path('app_admin_users_edit', {id: u.id}) }}" method="GET" class="d-inline">
+                                <input type="hidden" name="role_only" value="1">
+                                <select name="new_role" onchange="this.form.submit()" class="form-select form-select-sm" style="width: auto;">
+                                    <option value="administrateur" {% if u.role == 'administrateur' %}selected{% endif %}>Admin</option>
+                                    <option value="investisseur" {% if u.role == 'investisseur' %}selected{% endif %}>Investisseur</option>
+                                    <option value="proprietaire" {% if u.role == 'proprietaire' %}selected{% endif %}>Proprietaire</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if u.active == 1 %}
+                            <span class="badge bg-success">Actif</span>
+                            {% else %}
+                            <span class="badge bg-danger">Bloque</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-muted small">
+                            {{ u.dateCreation|date('d/m/Y') }}
+                        </td>
+                        <td class="px-4 py-3 text-end">
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ path('app_admin_users_edit', {id: u.id}) }}" class="btn btn-outline-primary" title="Modifier">
+                                    <i class="ti ti-pencil"></i>
+                                </a>
+                                <form action="{{ path('app_admin_users_toggle', {id: u.id}) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-{{ u.active == 1 ? 'warning' : 'success' }}" title="{{ u.active == 1 ? 'Bloquer' : 'Debloquer' }}">
+                                        <i class="ti ti-{{ u.active == 1 ? 'lock' : 'lock-open' }}"></i>
+                                    </button>
+                                </form>
+                                <form action="{{ path('app_admin_users_delete', {id: u.id}) }}" method="POST" class="d-inline" onsubmit="return confirm('Etes-vous sur de vouloir supprimer cet utilisateur?')">
+                                    <button type="submit" class="btn btn-outline-danger" title="Supprimer">
+                                        <i class="ti ti-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="ti ti-users fs-1 mb-3 d-block opacity-50"></i>
+                            <p>Aucun utilisateur trouve</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('searchInput').addEventListener('keyup', filterTable);
+    document.getElementById('roleFilter').addEventListener('change', filterTable);
+    document.getElementById('statusFilter').addEventListener('change', filterTable);
+    
+    function filterTable() {
+        var search = document.getElementById('searchInput').value.toLowerCase();
+        var role = document.getElementById('roleFilter').value;
+        var status = document.getElementById('statusFilter').value;
+        var rows = document.querySelectorAll('#usersTable tbody tr');
+        
+        rows.forEach(function(row) {
+            var text = row.textContent.toLowerCase();
+            var rowRole = row.dataset.role || '';
+            var rowStatus = row.dataset.status || '';
+            
+            var show = text.includes(search) && 
+                       (role === '' || rowRole === role) && 
+                       (status === '' || rowStatus === status);
+            row.style.display = show ? '' : 'none';
+        });
+    }
+});
+
+function exportPDF() {
+    window.print();
+}
+</script>
+{% endblock %}

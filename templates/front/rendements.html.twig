@@ -1,0 +1,235 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Analyse des Rendements - CashFly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Analyse des Rendements</h1>
+                <p class="text-muted mb-0">Suivez l'evolution de vos gains et projections.</p>
+            </div>
+            <div class="text-end">
+                <p class="mb-0 text-muted small">Resultat Net Total</p>
+                <h3 class="mb-0 {% if rendementNet >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{ rendementNet|number_format(2, ',', ' ') }} TND
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="mb-0"><i class="ti ti-chart-line me-2"></i>Rendements par Investissement</h5>
+            </div>
+            <div class="card-body">
+                {% if rendements|length > 0 %}
+                <div class="row g-3">
+                    {% for rendement in rendements %}
+                    <div class="col-md-6 col-xl-4">
+                        <div class="card border h-100 Rendement-card" data-id="{{ rendement.idRendement }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <span class="badge bg-primary mb-2">{{ rendement.investissement.nom|default('N/A') }}</span>
+                                        <h6 class="mb-0">{{ rendement.investissement.montant|number_format(2, ',', ' ') }} TND</h6>
+                                    </div>
+                                    <span class="badge bg-{{ rendement.rendementNet >= 0 ? 'success' : 'danger' }}">
+                                        {{ rendement.rendementNet >= 0 ? '+' : '' }}{{ rendement.rendementNet|number_format(2, ',', ' ') }}
+                                    </span>
+                                </div>
+                                <div class="row g-2 small">
+                                    <div class="col-6">
+                                        <div class="text-muted">Gain</div>
+                                        <div class="text-success fw-semibold">{{ rendement.gain|number_format(2, ',', ' ') }} TND</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted">Perte</div>
+                                        <div class="text-danger fw-semibold">{{ rendement.perte|number_format(2, ',', ' ') }} TND</div>
+                                    </div>
+                                </div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-muted">Date:</span>
+                                    <span>{{ rendement.dateCalcul|date('d/m/Y') }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between small">
+                                    <span class="text-muted">Valeur Portefeuille:</span>
+                                    <span>{{ rendement.valeurPortefeuille|number_format(2, ',', ' ') }} TND</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-transparent border-0 pt-0">
+                                <div class="btn-group btn-group-sm w-100">
+                                    <button class="btn btn-outline-primary btn-edit" data-id="{{ rendement.idRendement }}">
+                                        <i class="ti ti-pencil"></i>
+                                    </button>
+                                    <form action="{{ path('app_rendements_delete', {id: rendement.idRendement}) }}" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Etes-vous sur?')">
+                                            <i class="ti ti-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="ti ti-chart-line fs-1 mb-3 d-block opacity-50"></i>
+                    <p>Aucun rendement enregistre</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if chartData is defined and chartData.rendementLabels|length > 0 %}
+        <div class="card">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="mb-0"><i class="ti ti-chart-bar me-2"></i>Evolution des Rendements</h5>
+            </div>
+            <div class="card-body">
+                <div id="rendementChart"></div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header bg-transparent py-3">
+                <h5 class="mb-0"><i class="ti ti-edit me-2"></i>Ajouter / Modifier Rendement</h5>
+            </div>
+            <div class="card-body">
+                <form action="{{ path('app_rendements_create') }}" method="POST">
+                    <input type="hidden" name="id_rendement" id="editId" value="">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Investissement</label>
+                        <select name="id_investissement" class="form-select" required>
+                            <option value="">Choisir un investissement...</option>
+                            {% for inv in investissements %}
+                            <option value="{{ inv.id }}">{{ inv.nom|default('Investissement #' ~ inv.id) }} - {{ inv.montant|number_format(2, ',', ' ') }} TND</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Date Calcul (YYYY-MM-DD)</label>
+                        <input type="date" name="date_calcul" class="form-control" id="inputDateCalcul" required>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Gain</label>
+                            <input type="number" step="0.01" name="gain" class="form-control" id="inputGain" placeholder="0.00" value="0">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Perte</label>
+                            <input type="number" step="0.01" name="perte" class="form-control" id="inputPerte" placeholder="0.00" value="0">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Valeur Portefeuille</label>
+                        <input type="number" step="0.01" name="valeur_portefeuille" class="form-control" placeholder="0.00" value="0">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-plus me-2"></i>Ajouter
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="clearForm()">
+                            <i class="ti ti-refresh me-2"></i>Vider
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="mb-3"><i class="ti ti-info-circle me-2"></i>Resume</h6>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Total Gains:</span>
+                    <span class="text-success fw-semibold">{{ totalGain|number_format(2, ',', ' ') }} TND</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted">Total Pertes:</span>
+                    <span class="text-danger fw-semibold">{{ totalPerte|number_format(2, ',', ' ') }} TND</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                    <span class="fw-semibold">Resultat Net:</span>
+                    <span class="fw-bold {% if rendementNet >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {{ rendementNet|number_format(2, ',', ' ') }} TND
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+function clearForm() {
+    document.getElementById('editId').value = '';
+    document.querySelector('select[name="id_investissement"]').value = '';
+    document.getElementById('inputDateCalcul').value = '';
+    document.getElementById('inputGain').value = '0';
+    document.getElementById('inputPerte').value = '0';
+    document.querySelector('input[name="valeur_portefeuille"]').value = '0';
+}
+
+document.querySelectorAll('.btn-edit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var id = this.dataset.id;
+        var card = document.querySelector('.Rendement-card[data-id="' + id + '"]');
+        if (card) {
+            document.getElementById('editId').value = id;
+            document.getElementById('inputGain').value = card.querySelector('.text-success')?.textContent.replace(/[^\d,.-]/g, '').replace(',', '.') || '0';
+            document.getElementById('inputPerte').value = card.querySelector('.text-danger')?.textContent.replace(/[^\d,.-]/g, '').replace(',', '.') || '0';
+            document.getElementById('inputDateCalcul').value = card.querySelector('.small span:last-child')?.textContent.split('/').reverse().join('-') || '';
+        }
+    });
+});
+
+{% if chartData is defined and chartData.rendementLabels|length > 0 %}
+var options = {
+    chart: {
+        type: 'area',
+        height: 300
+    },
+    series: [{
+        name: 'Rendement',
+        data: {{ chartData.rendementData|json_encode|raw }}
+    }],
+    xaxis: {
+        categories: {{ chartData.rendementLabels|json_encode|raw }}
+    },
+    colors: ['#E66239'],
+    fill: {
+        type: 'gradient',
+        gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.7,
+            opacityTo: 0.2,
+            stops: [0, 90, 100]
+        }
+    },
+    stroke: {
+        curve: 'smooth'
+    }
+};
+
+var chart = new ApexCharts(document.querySelector("#rendementChart"), options);
+chart.render();
+{% endif %}
+</script>
+{% endblock %}

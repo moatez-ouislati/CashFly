@@ -1,0 +1,243 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Investissements - CashFly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-6 d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Investissements</h1>
+                <p class="text-muted mb-0">Suivez et gerez vos investissements</p>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-lg" onclick="showAddModal()">
+                    <i class="ti ti-plus me-2"></i>Ajouter Investissement
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for flash in app.flashes('success') %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ flash }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-4 col-12">
+        <div class="card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-primary text-white rounded-2">
+                    <i class="ti ti-chart-line"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">Total Investi</p>
+                    <h3 class="fw-bold mb-0">{{ totalInvesti|number_format(2, ',', ' ') }} TND</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-12">
+        <div class="card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-success text-white rounded-2">
+                    <i class="ti ti-check"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">Investissements Actifs</p>
+                    <h3 class="fw-bold mb-0">{{ investissements|filter(i => i.statut == 'ACTIF')|length }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-12">
+        <div class="card p-4 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-2">
+            <div class="d-flex gap-3 align-items-center">
+                <div class="icon-shape icon-md bg-warning text-white rounded-2">
+                    <i class="ti ti-clock"></i>
+                </div>
+                <div>
+                    <p class="mb-1 text-muted small">En Attente</p>
+                    <h3 class="fw-bold mb-0">{{ investissements|filter(i => i.statut == 'EN_ATTENTE')|length }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-transparent py-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">Tous les Investissements</h4>
+            <div class="d-flex gap-2">
+                <input type="text" class="form-control" id="searchInvest" placeholder="Rechercher..." style="width: 250px;">
+                <button class="btn btn-primary" onclick="showAddModal()">
+                    <i class="ti ti-plus"></i> Nouveau
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="investmentsTable">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 px-4 py-3">Entreprise</th>
+                        <th class="border-0 px-4 py-3">Montant</th>
+                        <th class="border-0 px-4 py-3">Taux</th>
+                        <th class="border-0 px-4 py-3">Duree</th>
+                        <th class="border-0 px-4 py-3">Statut</th>
+                        <th class="border-0 px-4 py-3">Date</th>
+                        <th class="border-0 px-4 py-3 text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invest in investissements %}
+                    <tr data-entreprise="{{ invest.entreprise.nom|lower }}" data-description="{{ invest.description|lower }}">
+                        <td class="px-4 py-3">
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="icon-shape icon-sm bg-light rounded-2">
+                                    <i class="ti ti-building"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-semibold">{{ invest.entreprise.nom|default('N/A') }}</span>
+                                    <br><small class="text-muted">{{ invest.entreprise.secteur|default('') }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 fw-semibold">
+                            {{ invest.montant|number_format(2, ',', ' ') }} TND
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if invest.tauxRendementPrevu %}
+                            <span class="text-success fw-semibold">{{ invest.tauxRendementPrevu }}%</span>
+                            {% else %}
+                            <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            {% if invest.dureeMois %}
+                            {{ invest.dureeMois }} mois
+                            {% else %}
+                            <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3">
+                            <span class="badge {{ invest.statutBadgeClass }}">
+                                {{ invest.statut|replace({'_': ' '}) }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-muted small">
+                            {{ invest.dateInvestissement|date('d/m/Y') }}
+                        </td>
+                        <td class="px-4 py-3 text-end">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{{ path('app_investment_edit', {id: invest.idInvestissement}) }}" class="btn btn-sm btn-primary d-flex align-items-center gap-1" title="Modifier">
+                                    <i class="ti ti-edit"></i><span>Modifier</span>
+                                </a>
+                                <form method="POST" action="{{ path('app_investment_delete', {id: invest.idInvestissement}) }}" onsubmit="return confirm('Voulez-vous vraiment supprimer cet investissement?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1" title="Supprimer">
+                                        <i class="ti ti-trash"></i><span>Supprimer</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center py-5">
+                            <i class="ti ti-chart-line fs-1 mb-3 d-block opacity-50"></i>
+                            <p class="text-muted">Aucun investissement trouve</p>
+                            <button class="btn btn-primary" onclick="showAddModal()">
+                                <i class="ti ti-plus me-2"></i>Ajouter votre premier investissement
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="ti ti-plus me-2"></i>Nouvel Investissement
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ path('app_investment_create') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Entreprise <span class="text-danger">*</span></label>
+                        <select name="entreprise_id" class="form-select form-select-lg" required>
+                            <option value="">-- Selectionnez une entreprise --</option>
+                            {% for entreprise in entreprises %}
+                            <option value="{{ entreprise.idEntreprise }}">{{ entreprise.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Montant (TND) <span class="text-danger">*</span></label>
+                            <input type="number" step="0.01" name="montant" class="form-control form-control-lg" placeholder="0.00" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Taux de Rendement (%)</label>
+                            <input type="number" step="0.01" name="taux_rendement" class="form-control form-control-lg" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Duree (mois)</label>
+                        <input type="number" name="duree_mois" class="form-control form-control-lg" placeholder="0">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Description</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="Decrivez l'investissement..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-lg" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="ti ti-check me-2"></i>Ajouter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+function showAddModal() {
+    var modal = new bootstrap.Modal(document.getElementById('addModal'));
+    modal.show();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('searchInvest');
+    var table = document.getElementById('investmentsTable');
+    
+    if (searchInput && table) {
+        searchInput.addEventListener('keyup', function() {
+            var query = this.value.toLowerCase();
+            var rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(function(row) {
+                var entreprise = row.getAttribute('data-entreprise') || '';
+                var description = row.getAttribute('data-description') || '';
+                var match = entreprise.includes(query) || description.includes(query);
+                row.style.display = match ? '' : 'none';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
