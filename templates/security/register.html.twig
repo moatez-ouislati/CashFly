@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription — CashFly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0a0a0f; --surface: #13131a; --surface2: #1c1c27;
+            --border: #2a2a3a; --accent: #6c63ff; --accent2: #ff6584;
+            --green: #00e5a0; --text: #e8e8f0; --muted: #7a7a9a;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        .register-page {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            padding: 2rem 1rem;
+            background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(108,99,255,.18) 0%, transparent 60%);
+        }
+        .register-card {
+            width: 100%; max-width: 700px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 2.5rem;
+            box-shadow: 0 24px 64px rgba(0,0,0,.5);
+        }
+        .reg-header { margin-bottom: 2rem; }
+        .reg-header .brand {
+            font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800;
+            color: var(--text); text-decoration: none;
+            display: inline-block; margin-bottom: 1rem;
+        }
+        .reg-header .brand span { color: var(--accent); }
+        .reg-header h1 { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 700; }
+        .reg-header p { color: var(--muted); font-size: .9rem; margin-top: .3rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .form-group { margin-bottom: 1.1rem; }
+        .form-label {
+            display: block; font-size: .78rem; font-weight: 500;
+            color: var(--muted); margin-bottom: .4rem;
+            text-transform: uppercase; letter-spacing: .06em;
+        }
+        .form-control {
+            width: 100%; padding: .72rem 1rem;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: .95rem;
+            outline: none; transition: all .2s;
+        }
+        .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,99,255,.15); }
+        .form-control::placeholder { color: var(--muted); }
+        .form-control.is-invalid { border-color: var(--accent2); }
+        .invalid-feedback { color: var(--accent2); font-size: .78rem; margin-top: .3rem; display: block; }
+        .section-divider {
+            font-size: .75rem; font-weight: 600; letter-spacing: .1em;
+            color: var(--muted); text-transform: uppercase;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: .6rem; margin: 1.5rem 0 1rem;
+        }
+        .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        .role-option { position: relative; }
+        .role-option input[type=radio] { position: absolute; opacity: 0; pointer-events: none; }
+        .role-label {
+            display: block; padding: 1rem;
+            background: var(--surface2); border: 2px solid var(--border);
+            border-radius: 10px; cursor: pointer; transition: all .2s;
+            text-align: center;
+        }
+        .role-label:hover { border-color: var(--accent); }
+        .role-option input[type=radio]:checked + .role-label {
+            border-color: var(--accent);
+            background: rgba(108,99,255,.08);
+        }
+        .role-label .role-icon { font-size: 1.6rem; margin-bottom: .3rem; display: block; }
+        .role-label .role-name { font-weight: 600; font-size: .9rem; }
+        .role-label .role-desc { color: var(--muted); font-size: .78rem; margin-top: .2rem; }
+        .btn-register {
+            width: 100%; padding: .85rem; margin-top: 1rem;
+            background: var(--accent); color: #fff; border: none; border-radius: 10px;
+            font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500;
+            cursor: pointer; transition: all .2s;
+        }
+        .btn-register:hover { background: #7d75ff; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(108,99,255,.4); }
+        .login-link { text-align: center; font-size: .9rem; color: var(--muted); margin-top: 1.1rem; }
+        .login-link a { color: var(--accent); text-decoration: none; font-weight: 500; }
+        .file-hint { color: var(--muted); font-size: .78rem; margin-top: .35rem; }
+        @media (max-width: 600px) { .form-row, .role-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="register-page">
+    <div class="register-card">
+        <div class="reg-header">
+            <a href="{{ path('app_login') }}" class="brand">Cash<span>Fly</span></a>
+            <h1>Créer un compte</h1>
+            <p>Remplissez tous les champs pour vous inscrire.</p>
+        </div>
+
+        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+
+            <div class="section-divider">Informations personnelles</div>
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(registrationForm.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.nom, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
+                    {{ form_errors(registrationForm.nom) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(registrationForm.prenom, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
+                    {{ form_errors(registrationForm.prenom) }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(registrationForm.cin, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.cin, {'attr': {'class': 'form-control', 'placeholder': '12345678'}}) }}
+                    {{ form_errors(registrationForm.cin) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(registrationForm.tel, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.tel, {'attr': {'class': 'form-control', 'placeholder': '22345678'}}) }}
+                    {{ form_errors(registrationForm.tel) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'email@exemple.com'}}) }}
+                {{ form_errors(registrationForm.email) }}
+            </div>
+
+            <div class="section-divider">Sécurité</div>
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword.first, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Min. 6 caractères'}}) }}
+                    {{ form_errors(registrationForm.plainPassword.first) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(registrationForm.plainPassword.second, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Répétez'}}) }}
+                    {{ form_errors(registrationForm.plainPassword.second) }}
+                    {{ form_errors(registrationForm.plainPassword) }}
+                </div>
+            </div>
+
+            <div class="section-divider">Rôle</div>
+            <div class="role-grid">
+                <div class="role-option">
+                    <input type="radio" name="{{ registrationForm.roles.vars.full_name }}" id="role_invest" value="ROLE_INVESTISSEUR" checked>
+                    <label class="role-label" for="role_invest">
+                        <span class="role-icon">📈</span>
+                        <span class="role-name">Investisseur</span>
+                        <span class="role-desc">Gérez vos investissements</span>
+                    </label>
+                </div>
+                <div class="role-option">
+                    <input type="radio" name="{{ registrationForm.roles.vars.full_name }}" id="role_prop" value="ROLE_PROPRIETAIRE">
+                    <label class="role-label" for="role_prop">
+                        <span class="role-icon">🏠</span>
+                        <span class="role-name">Propriétaire</span>
+                        <span class="role-desc">Gérez vos propriétés</span>
+                    </label>
+                </div>
+            </div>
+            {{ form_errors(registrationForm.roles) }}
+
+            <div class="section-divider">Photo de profil (optionnel)</div>
+            <div class="form-group">
+                {{ form_widget(registrationForm.faceImageFile, {'attr': {'class': 'form-control'}}) }}
+                <p class="file-hint">JPG, PNG ou WEBP — max 2 Mo</p>
+                {{ form_errors(registrationForm.faceImageFile) }}
+            </div>
+
+            <button class="btn-register" type="submit">Créer mon compte</button>
+        {{ form_end(registrationForm) }}
+
+        <p class="login-link">Déjà inscrit ? <a href="{{ path('app_login') }}">Se connecter</a></p>
+    </div>
+</div>
+</body>
+</html>

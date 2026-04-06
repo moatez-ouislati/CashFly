@@ -1,0 +1,19 @@
+<h1>Users</h1>
+
+<table border="1" width="100%" cellspacing="0" cellpadding="6">
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Role</th>
+</tr>
+
+{% for u in users %}
+<tr>
+<td>{{ u.id }}</td>
+<td>{{ u.fullName }}</td>
+<td>{{ u.email }}</td>
+<td>{{ u.roles|join(', ') }}</td>
+</tr>
+{% endfor %}
+</table>

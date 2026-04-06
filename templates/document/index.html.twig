@@ -1,0 +1,82 @@
+{% extends 'userDashboard.html.twig' %}
+
+{% block title %}Liste des Documents{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">Gestion des Documents</h1>
+            <p class="text-secondary font-medium">Gérez tous vos documents et fichiers uploadés.</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <a href="{{ path('app_document_new') }}" class="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-95 transition-all">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Ajouter un document
+            </a>
+        </div>
+    </header>
+
+    <!-- Cards Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        {% for document in documents %}
+            <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_16px_32px_-16px_rgba(13,28,50,0.06)] border border-outline-variant/20 flex flex-col group hover:-translate-y-1 hover:shadow-xl transition-all duration-300">
+                
+                 <!-- Card Header -->
+                <div class="flex justify-between items-start mb-6">
+                    <div class="pr-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1 block">#{{ document.id }}</span>
+                        <h2 class="text-xl font-black text-on-surface leading-tight truncate">{{ document.nomDocument }}</h2>
+                    </div>
+                    <div class="flex gap-2 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0">
+                        <a href="{{ path('app_document_show', {'id': document.id}) }}" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-colors" title="Voir">
+                            <span class="material-symbols-outlined text-sm">visibility</span>
+                        </a>
+                        <a href="{{ path('app_document_edit', {'id': document.id}) }}" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-tertiary hover:bg-tertiary hover:text-white transition-colors" title="Modifier">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <!-- Card Body -->
+                <div class="flex-grow space-y-4 mb-6">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-secondary font-medium">Entreprise liée</span>
+                        {% if document.entreprise %}
+                            <span class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-100 max-w-[160px]" title="{{ document.entreprise.nom }}">
+                                <span class="material-symbols-outlined text-[14px]">domain</span>
+                                <span class="truncate text-xs font-bold">{{ document.entreprise.nom }}</span>
+                            </span>
+                        {% else %}
+                            <span class="font-semibold text-on-surface">-</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-secondary font-medium">Type</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-md text-xs font-bold">{{ document.typeDocument ?: '-' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-secondary font-medium">Statut</span>
+                        <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-md text-xs font-bold">{{ document.statut ?: '-' }}</span>
+                    </div>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="mt-auto pt-4 border-t border-outline-variant/10 flex justify-between items-center">
+                    <span class="text-xs font-bold text-secondary uppercase tracking-widest flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                        Ajouté le
+                    </span>
+                    <span class="text-sm font-semibold text-on-surface">{{ document.dateUpload ? document.dateUpload|date('d/m/Y H:i') : '-' }}</span>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full bg-surface-container-lowest rounded-3xl p-12 shadow-[0_32px_64px_-16px_rgba(13,28,50,0.06)] border border-outline-variant/20 text-center flex flex-col items-center justify-center">
+                <span class="material-symbols-outlined text-5xl mb-4 text-secondary opacity-50">description</span>
+                <h3 class="text-xl font-bold text-on-surface mb-2">Aucun document trouvé</h3>
+                <p class="text-secondary font-medium">Commencez par uploader votre premier document.</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

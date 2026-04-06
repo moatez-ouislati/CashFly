@@ -1,0 +1,103 @@
+{% extends 'userDashboard.html.twig' %}
+
+{% block title %}Détails - {{ entreprise.nom }}{% endblock %}
+
+{% block body %}
+    <!-- Style override pour le bouton de suppression généré par Symfony -->
+    <style>
+        form[action*="delete"] button {
+            background-color: #ba1a1a;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        form[action*="delete"] button:hover {
+            transform: scale(0.95);
+        }
+    </style>
+
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <a href="{{ path('app_entreprise_index') }}" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-blue-700 mb-4 inline-flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Retour à la liste
+            </a>
+            <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">Fiche Entreprise</h1>
+            <p class="text-secondary font-medium">Informations détaillées de <strong>{{ entreprise.nom }}</strong>.</p>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <a href="{{ path('app_entreprise_edit', {'id': entreprise.id}) }}" class="flex items-center gap-2 bg-slate-100 text-tertiary hover:bg-tertiary hover:text-white px-5 py-3 rounded-xl text-sm font-bold transition-all">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                Modifier
+            </a>
+            {{ include('entreprise/_delete_form.html.twig') }}
+        </div>
+    </header>
+
+    <!-- Details Section (Card) -->
+    <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-[0_32px_64px_-16px_rgba(13,28,50,0.06)] border border-outline-variant/20 mb-8 w-full">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Identifiant</span>
+                <span class="text-base font-semibold text-on-surface">#{{ entreprise.id }}</span>
+            </div>
+            
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Nom de l'entreprise</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.nom }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Secteur d'activité</span>
+                <span class="text-base font-semibold text-on-surface">
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-md text-xs font-bold">{{ entreprise.secteur }}</span>
+                </span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Forme Juridique</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.formeJuridique ?: '-' }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Date de Création</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.dateCreation ? entreprise.dateCreation|date('d/m/Y') : '-' }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Capital</span>
+                <span class="text-base font-black text-tertiary">{{ entreprise.capital ? '$' ~ entreprise.capital : '-' }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">ID Propriétaire</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.idProprietaire }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Latitude</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.latitude ?: '-' }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Longitude</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.longitude ?: '-' }}</span>
+            </div>
+
+            <div class="flex flex-col border-b border-outline-variant/10 pb-4 md:col-span-2 lg:col-span-3">
+                <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Adresse complète</span>
+                <span class="text-base font-semibold text-on-surface">{{ entreprise.adresse ?: 'Aucune adresse renseignée' }}</span>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

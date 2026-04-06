@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CashFly{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:        #0a0a0f;
+            --surface:   #13131a;
+            --surface2:  #1c1c27;
+            --border:    #2a2a3a;
+            --accent:    #58589b;
+            --accent2:   #ff6584;
+            --green:     #00e5a0;
+            --text:      #bebee2;
+            --muted:     #7a7a9a;
+            --radius:    12px;
+            --shadow:    0 8px 32px rgba(0,0,0,.45);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── NAV ── */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem;
+            height: 64px;
+            background: rgba(10,10,15,.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-brand {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800; font-size: 1.4rem;
+            color: var(--text); text-decoration: none;
+            display: flex; align-items: center; gap: .5rem;
+        }
+        .nav-brand span { color: var(--accent); }
+        .nav-links { display: flex; align-items: center; gap: .25rem; }
+        .nav-link {
+            color: var(--muted); text-decoration: none;
+            padding: .45rem .9rem; border-radius: 8px;
+            font-size: .9rem; font-weight: 500;
+            transition: all .2s;
+        }
+        .nav-link:hover { color: var(--text); background: var(--surface2); }
+        .nav-link.active { color: var(--accent); background: rgba(108,99,255,.12); }
+        .nav-badge {
+            font-size: .7rem; font-weight: 700; letter-spacing: .05em;
+            padding: .2rem .55rem; border-radius: 20px;
+            background: rgb(25, 24, 29); color: var(--accent);
+            border: 1px solid rgb(31, 31, 36);
+        }
+        .nav-badge.admin  { background: rgba(255,101,132,.15); color: var(--accent2); border-color: rgba(255,101,132,.3); }
+        .nav-badge.prop   { background: rgba(0,229,160,.12);   color: var(--green);   border-color: rgba(0,229,160,.3); }
+
+        /* ── MAIN WRAPPER ── */
+        .main { max-width: 1200px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+
+        /* ── PAGE HEADER ── */
+        .page-header { margin-bottom: 2.5rem; }
+        .page-header h1 {
+            font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .page-header p { color: var(--muted); margin-top: .35rem; }
+
+        /* ── CARDS ── */
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .6rem 1.3rem; border-radius: 8px;
+            font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 500;
+            cursor: pointer; border: none; text-decoration: none;
+            transition: all .2s; white-space: nowrap;
+        }
+        .btn-primary { background: var(--accent); color: #0b1533; }
+        .btn-primary:hover { background: #7d75ff; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(108,99,255,.4); }
+        .btn-danger  { background: rgba(255,101,132,.15); color: var(--accent2); border: 1px solid rgba(255,101,132,.25); }
+        .btn-danger:hover { background: rgba(255,101,132,.25); }
+        .btn-ghost   { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+        .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+        .btn-sm { padding: .35rem .75rem; font-size: .8rem; }
+        .btn-full { width: 100%; justify-content: center; }
+
+        /* ── FORMS ── */
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label {
+            display: block; font-size: .82rem; font-weight: 500;
+            color: var(--muted); margin-bottom: .45rem; letter-spacing: .02em;
+            text-transform: uppercase;
+        }
+        .form-control {
+            width: 100%; padding: .7rem 1rem;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: .95rem;
+            transition: border-color .2s, box-shadow .2s;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108,99,255,.15);
+        }
+        .form-control::placeholder { color: var(--muted); }
+        .form-error { color: var(--accent2); font-size: .8rem; margin-top: .35rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        /* ── ALERTS / FLASH ── */
+        .flash-wrap { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: .6rem; }
+        .alert {
+            padding: .85rem 1.1rem; border-radius: 8px;
+            font-size: .9rem; border-left: 4px solid;
+            display: flex; align-items: center; gap: .6rem;
+        }
+        .alert-success { background: rgba(0,229,160,.08); border-color: var(--green); color: var(--green); }
+        .alert-error   { background: rgba(255,101,132,.08); border-color: var(--accent2); color: var(--accent2); }
+        .alert-info    { background: rgba(108,99,255,.08); border-color: var(--accent); color: var(--accent); }
+        .alert-warning { background: rgba(255,200,0,.08); border-color: #ffc800; color: #ffc800; }
+
+        /* ── AVATAR ── */
+        .avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+            color: #201c1c; overflow: hidden; flex-shrink: 0;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-lg { width: 90px; height: 90px; font-size: 1.8rem; }
+
+        /* ── STATS GRID ── */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.4rem;
+            position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+        }
+        .stat-card.c1::before { background: var(--accent); }
+        .stat-card.c2::before { background: var(--accent2); }
+        .stat-card.c3::before { background: var(--green); }
+        .stat-card.c4::before { background: #ffc800; }
+        .stat-card.c5::before { background: #00c8ff; }
+        .stat-number { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
+        .stat-label  { color: var(--muted); font-size: .82rem; margin-top: .2rem; }
+
+        /* ── TABLE ── */
+        .table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            background: var(--surface2); padding: .85rem 1rem;
+            font-size: .78rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .06em; color: var(--muted); text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        tbody td { padding: .9rem 1rem; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: rgba(255,255,255,.02); }
+
+        /* ── TOGGLE ── */
+        .toggle { display: inline-flex; align-items: center; cursor: pointer; gap: .5rem; }
+        .toggle-track {
+            width: 44px; height: 24px; border-radius: 12px;
+            background: var(--border); position: relative; transition: background .2s;
+        }
+        .toggle-track.on { background: var(--green); }
+        .toggle-thumb {
+            position: absolute; top: 3px; left: 3px;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #25103f; transition: transform .2s;
+        }
+        .toggle-track.on .toggle-thumb { transform: translateX(20px); }
+
+        /* ── ROLE PILLS ── */
+        .role-pill {
+            display: inline-block; padding: .2rem .65rem; border-radius: 20px;
+            font-size: .75rem; font-weight: 600; letter-spacing: .04em;
+        }
+        .role-admin { background: rgba(255,101,132,.15); color: var(--accent2); border: 1px solid rgba(255,101,132,.25); }
+        .role-invest { background: rgba(108,99,255,.15); color: var(--accent); border: 1px solid rgba(108,99,255,.25); }
+        .role-prop   { background: rgba(0,229,160,.12);  color: var(--green);   border: 1px solid rgba(0,229,160,.25); }
+
+        /* ── PROFILE LAYOUT ── */
+        .profile-grid { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start; }
+        .profile-card-left { text-align: center; }
+        .profile-card-left .avatar { margin: 0 auto 1rem; }
+
+        /* ── LOGOUT LINK ── */
+        .logout-link {
+            color: var(--muted); font-size: .88rem; text-decoration: none;
+            display: flex; align-items: center; gap: .35rem;
+            padding: .45rem .9rem; border-radius: 8px; transition: all .2s;
+        }
+        .logout-link:hover { color: var(--accent2); background: rgba(255,101,132,.08); }
+
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .profile-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav { padding: 0 1rem; }
+            .main { padding: 1.5rem 1rem; }
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+{% if app.user %}
+<nav class="nav">
+    <a href="#" class="nav-brand">Cash<span>Fly</span></a>
+
+    <div class="nav-links">
+        {% if is_granted('ROLE_ADMIN') %}
+    <span class="nav-badge admin">ADMIN</span>
+    <a href="{{ path('admin_dashboard') }}" class="nav-link {% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{{ path('admin_profile') }}"   class="nav-link {% if app.request.attributes.get('_route') == 'admin_profile'    %}active{% endif %}">Profil</a>
+    <a href="{{ path('app_entreprise_admin_index') }}" class="nav-link {% if app.request.attributes.get('_route') starts with 'app_entreprise_admin' %}active{% endif %}">🏦 Entreprises</a>
+    <a href="{{ path('app_document_admin_index') }}"   class="nav-link {% if app.request.attributes.get('_route') starts with 'app_document_admin'   %}active{% endif %}">📄 Documents</a>
+        {% elseif is_granted('ROLE_PROPRIETAIRE') %}
+            <span class="nav-badge prop">PROPRIÉTAIRE</span>
+            <a href="{{ path('proprietaire_dashboard') }}" class="nav-link {% if app.request.attributes.get('_route') == 'proprietaire_dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{{ path('proprietaire_profile') }}"   class="nav-link {% if app.request.attributes.get('_route') == 'proprietaire_profile'    %}active{% endif %}">Profil</a>
+            <a href="{{ path('app_entreprise_index') }}" class="nav-link {% if app.request.attributes.get('_route') starts with 'app_entreprise' and not (app.request.attributes.get('_route') starts with 'app_entreprise_admin') %}active{% endif %}">🏦 Entreprises</a>
+<a href="{{ path('app_document_index') }}" class="nav-link {% if app.request.attributes.get('_route') starts with 'app_document' and not (app.request.attributes.get('_route') starts with 'app_document_admin') %}active{% endif %}">📄 Documents</a>
+        {% elseif is_granted('ROLE_INVESTISSEUR') %}
+            <span class="nav-badge">INVESTISSEUR</span>
+            <a href="{{ path('investisseur_dashboard') }}" class="nav-link {% if app.request.attributes.get('_route') == 'investisseur_dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{{ path('investisseur_profile') }}"   class="nav-link {% if app.request.attributes.get('_route') == 'investisseur_profile'    %}active{% endif %}">Profil</a>
+        {% endif %}
+
+        <a href="{{ path('app_logout') }}" class="logout-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Déconnexion
+        </a>
+    </div>
+</nav>
+{% endif %}
+
+<main class="main">
+    {% block flashes %}
+    {% for type, messages in app.flashes %}
+    <div class="flash-wrap">
+        {% for message in messages %}
+        <div class="alert alert-{{ type }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% endblock %}
+
+    {% block body %}{% endblock %}
+</main>
+
+{% block javascripts %}{% endblock %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+</body>
+</html>

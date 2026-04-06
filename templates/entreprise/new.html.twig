@@ -1,0 +1,23 @@
+{% extends 'userDashboard.html.twig' %}
+
+{% block title %}Créer une Entreprise{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <a href="{{ path('app_entreprise_index') }}" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-blue-700 mb-4 inline-flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Retour à la liste
+            </a>
+            <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">Nouvelle Entreprise</h1>
+            <p class="text-secondary font-medium">Ajoutez les informations de la nouvelle entreprise ci-dessous.</p>
+        </div>
+    </header>
+
+    <!-- Form Section -->
+    <!-- Suppression de max-w-3xl et ajout de w-full pour prendre toute la largeur -->
+    <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-[0_32px_64px_-16px_rgba(13,28,50,0.06)] border border-outline-variant/20 mb-8 w-full">
+        {{ include('entreprise/_form.html.twig') }}
+    </div>
+{% endblock %}

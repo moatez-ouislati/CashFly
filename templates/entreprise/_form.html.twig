@@ -1,0 +1,53 @@
+{{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
+    
+    <style>
+        /* Surcharge rapide pour styliser automatiquement tous les champs générés par Symfony */
+        form input:not([type="submit"]):not([type="radio"]):not([type="checkbox"]), 
+        form select, form textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid #c2c6d7;
+            background-color: #f9f9ff;
+            color: #0d1c32;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        form input:focus, form select:focus, form textarea:focus {
+            border-color: #0059c3;
+            box-shadow: 0 0 0 2px rgba(0, 89, 195, 0.2);
+        }
+        form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: #0d1c32;
+        }
+    </style>
+
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+        {% for field in form %}
+            {% if 'hidden' not in field.vars.block_prefixes %}
+                <div class="flex flex-col w-full">
+                    {{ form_label(field) }}
+                    {{ form_widget(field, {'attr': {'placeholder': 'Saisissez ' ~ field.vars.name|capitalize}}) }}
+                    <div class="text-red-500 text-xs mt-1">{{ form_errors(field) }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    {# Rendu des champs cachés (comme le token CSRF) #}
+    <div class="hidden">
+        {{ form_rest(form) }}
+    </div>
+
+    <div class="pt-6 border-t border-outline-variant/20 flex justify-end">
+        <button type="submit" class="flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-95 transition-all">
+            <span class="material-symbols-outlined text-sm">save</span>
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }}

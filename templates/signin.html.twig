@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign In | CashFly</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#00F0FF", // Neon Cyan from Design System
+              "deep-space": "#050B18",
+              "surface-glass": "rgba(255, 255, 255, 0.03)",
+              "border-glass": "rgba(255, 255, 255, 0.1)",
+              "glow-cyan": "rgba(0, 240, 255, 0.3)"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk", "sans-serif"],
+              "body": ["Space Grotesk", "sans-serif"],
+              "label": ["Space Grotesk", "sans-serif"]
+            },
+            borderRadius: {
+              "DEFAULT": "0.5rem",
+              "lg": "1rem",
+              "xl": "1.5rem",
+              "full": "9999px"
+            },
+            animation: {
+              'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .bg-deep-space {
+        background-color: #050B18;
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(0, 240, 255, 0.1) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(0, 240, 255, 0.05) 0px, transparent 50%);
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+      }
+      .futuristic-glow {
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+      }
+      .text-neon {
+        text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+      }
+    </style>
+</head>
+<body class="font-body bg-deep-space min-h-screen flex flex-col text-slate-200">
+<main class="flex-grow flex items-center justify-center px-6 py-12 relative overflow-hidden">
+<!-- Futuristic background elements -->
+<div class="absolute top-1/4 -left-20 w-[30rem] h-[30rem] bg-primary/20 rounded-full blur-[150px] animate-pulse-slow"></div>
+<div class="absolute bottom-1/4 -right-20 w-[40rem] h-[40rem] bg-blue-600/10 rounded-full blur-[180px]"></div>
+<div class="w-full max-w-md relative z-10">
+<!-- Branding Header -->
+<div class="text-center mb-12">
+<div class="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-2xl border border-primary/30 futuristic-glow mb-6 transform rotate-3">
+<span class="material-symbols-outlined text-primary text-5xl" data-weight="fill">rocket_launch</span>
+</div>
+<h1 class="text-4xl font-bold tracking-[0.2em] text-white mb-2 font-headline uppercase text-neon">CashFly</h1>
+<p class="text-primary/60 text-[10px] font-bold tracking-[0.4em] uppercase">Hyper-Speed Asset Management</p>
+</div>
+<!-- Login Card -->
+<div class="glass-panel p-8 md:p-10 rounded-xl">
+<div class="mb-10">
+<h2 class="text-2xl font-semibold text-white tracking-tight">Access Terminal</h2>
+<p class="text-slate-400 text-sm mt-2">Initialize secure link to your wealth nodes.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="block text-[10px] font-bold text-primary/70 uppercase tracking-[0.2em] ml-1" for="email">Neural ID / Email</label>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors text-lg">alternate_email</span>
+<input class="w-full bg-white/5 border border-white/10 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 rounded-lg py-4 pl-12 pr-4 text-white placeholder-slate-600 transition-all duration-300" id="email" placeholder="agent@network.sys" type="email"/>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center">
+<label class="block text-[10px] font-bold text-primary/70 uppercase tracking-[0.2em] ml-1" for="password">Security Code</label>
+<a class="text-[10px] font-bold text-primary/50 hover:text-primary transition-colors duration-200 uppercase tracking-widest" href="#">Reset Link</a>
+</div>
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors text-lg">vitals</span>
+<input class="w-full bg-white/5 border border-white/10 focus:border-primary/50 focus:ring-1 focus:ring-primary/20 rounded-lg py-4 pl-12 pr-12 text-white placeholder-slate-600 transition-all duration-300" id="password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary transition-colors" type="button">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+</div>
+</div>
+<!-- CTA Button -->
+<a href="{{ path('app_front') }}" class="w-full bg-primary hover:bg-primary/90 text-deep-space font-black py-4 rounded-lg futuristic-glow transform active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-3 group uppercase tracking-widest text-xs">
+    Initialize Dashboard
+    <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform duration-300">double_arrow</span>
+</a>
+</form>
+<!-- Social Logins -->
+<div class="mt-12 relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-white/5"></div>
+</div>
+<div class="relative flex justify-center text-[10px]">
+<span class="px-4 bg-[#0d1c32]/0 backdrop-blur-sm text-slate-500 font-bold uppercase tracking-[0.3em]">External Sync</span>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-white/5 border border-white/10 hover:border-primary/30 hover:bg-white/10 text-white py-3.5 rounded-lg transition-all duration-200 active:scale-[0.98]">
+<img alt="Google" class="w-5 h-5 opacity-80" data-alt="clean multi-color google icon on a transparent background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvqqWnT12N6xCAJHAxgsL64ROQh157VXXX8ptZwdLaKKDib_v-ug7PH6tN4YLh88xfoWhK-B9RDWsxAc8p0KCHicXdPq-WRTngGGnxpC9NuB4671j81Fv-0t0P11Sup7Iv3fn3FBf7BOQ6SQwasQ3MIw5fUPTM1nY30IOMkZd47IJUz_oRu9fcMf5O9XNghxquKX4pCApOnBPLYV4D1P7l045hA216AMno5hKUZ5Od622PKYSsd_3ycpZ7sQXM2TINriHcf5_xa6s"/>
+<span class="text-xs font-bold uppercase tracking-wider">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 bg-white/5 border border-white/10 hover:border-primary/30 hover:bg-white/10 text-white py-3.5 rounded-lg transition-all duration-200 active:scale-[0.98]">
+<span class="material-symbols-outlined text-xl opacity-80" data-weight="fill">ios</span>
+<span class="text-xs font-bold uppercase tracking-wider">Apple</span>
+</button>
+</div>
+<!-- Redirect to Sign Up -->
+<p class="mt-10 text-center text-slate-500 text-xs">
+                Unregistered node? 
+                <a class="text-primary font-bold hover:text-white transition-colors ml-1 uppercase tracking-widest border-b border-primary/30" href="#">Establish Link</a>
+</p>
+</div>
+<!-- Trust Indicator -->
+<div class="mt-10 flex items-center justify-center gap-8 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">enhanced_encryption</span>
+<span class="text-[9px] uppercase font-bold tracking-[0.2em] text-white">QUANTUM-SAFE</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">hub</span>
+<span class="text-[9px] uppercase font-bold tracking-[0.2em] text-white">DECENTRALIZED</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">security</span>
+<span class="text-[9px] uppercase font-bold tracking-[0.2em] text-white">SIPC PROTECTED</span>
+</div>
+</div>
+</div>
+</main>
+<footer class="w-full border-t border-white/5 bg-black/40 backdrop-blur-md flex flex-col md:flex-row justify-between items-center px-12 py-10 w-full font-headline text-[10px] uppercase tracking-[0.3em]">
+<div class="text-sm font-black text-white mb-6 md:mb-0 tracking-[0.5em] text-neon">
+        CASHFLY
+    </div>
+<div class="flex flex-col md:flex-row items-center gap-10">
+<div class="flex gap-10">
+<a class="text-slate-500 hover:text-primary transition-all" href="#">Privacy Protocol</a>
+<a class="text-slate-500 hover:text-primary transition-all" href="#">User Terms</a>
+<a class="text-slate-500 hover:text-primary transition-all" href="#">Network Status</a>
+</div>
+<p class="text-slate-600 mt-6 md:mt-0">© 2024 CashFly Technologies. Nexus Operational.</p>
+</div>
+</footer>
+</body></html>

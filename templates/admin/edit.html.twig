@@ -1,0 +1,41 @@
+{% extends 'adminDashboard.html.twig' %}
+{% block body %}
+
+<style>
+.box {
+    max-width:500px;
+    margin:60px auto;
+    padding:30px;
+    background:#0f172a;
+    border-radius:12px;
+}
+input {
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:8px;
+    background:#1e293b;
+    color:white;
+}
+button {
+    padding:10px;
+    width:100%;
+    background:#6366f1;
+    border:none;
+    border-radius:8px;
+    color:white;
+}
+</style>
+
+<div class="box">
+<h2>Edit User</h2>
+
+{{ form_start(form) }}
+{{ form_widget(form) }}
+<button>Save</button>
+{{ form_end(form) }}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}CashFly{% endblock %}</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #6fb1c7, #4ca1af);
+            color: white;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            letter-spacing: 0.3rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        .btn-secondary {
+            border: 1px solid white;
+            color: white;
+        }
+
+        /* ABOUT */
+        .about {
+            padding: 4rem 2rem;
+            background: rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        /* FOOTER */
+        .footer {
+            padding: 1rem;
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div><strong>CashFly</strong></div>
+    <div>
+        <a href="#">Accueil</a>
+        <a href="#">About</a>
+        <a href="{{ path('app_login') }}">Login</a>
+    </div>
+</div>
+
+{% block body %}{% endblock %}
+
+<!-- FOOTER -->
+<div class="footer">
+    © 2026 CashFly — All rights reserved
+</div>
+
+</body>
+</html>

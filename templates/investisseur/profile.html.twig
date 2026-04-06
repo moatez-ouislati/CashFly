@@ -1,0 +1,90 @@
+{% extends 'userDashboard2.html.twig' %}
+{% block title %}Mon Profil — Investisseur{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Mon Profil</h1>
+    <p>Gérez vos informations d'investisseur</p>
+</div>
+
+<div class="profile-grid">
+    <div class="card profile-card-left">
+        <div class="avatar avatar-lg">
+            {% if user.faceImage %}
+                <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}" alt="">
+            {% else %}
+                {{ user.prenom[0]|upper }}{{ user.nom[0]|upper }}
+            {% endif %}
+        </div>
+        <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:.25rem;">{{ user.fullName }}</h3>
+        <span class="role-pill role-invest" style="display:inline-block;margin-bottom:1rem;">Investisseur</span>
+        <p style="color:var(--muted);font-size:.85rem;">{{ user.email }}</p>
+        <hr style="border:none;border-top:1px solid var(--border);margin:1.25rem 0;">
+        <a href="{{ path('investisseur_dashboard') }}" class="btn btn-ghost" style="width:100%;justify-content:center;">← Dashboard</a>
+    </div>
+
+    <div class="card">
+        <h2 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:1.5rem;">Modifier mon profil</h2>
+
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.prenom) }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.cin, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.cin) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.tel, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.tel, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.tel) }}
+                </div>
+            </div>
+
+            <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);border-bottom:1px solid var(--border);padding-bottom:.5rem;margin:1.25rem 0 1rem;">
+                Données d'investissement
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    {{ form_label(form.yearsExperience, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.yearsExperience, {'attr': {'class': 'form-control', 'placeholder': 'ex: 5'}}) }}
+                    {{ form_errors(form.yearsExperience) }}
+                </div>
+                <div class="form-group">
+                    {{ form_label(form.highestProfit, null, {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.highestProfit, {'attr': {'class': 'form-control', 'placeholder': 'en TND'}}) }}
+                    {{ form_errors(form.highestProfit) }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.budget, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.budget, {'attr': {'class': 'form-control', 'placeholder': 'Budget disponible (TND)'}}) }}
+                {{ form_errors(form.budget) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.faceImageFile, null, {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.faceImageFile, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.faceImageFile) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top:.5rem;">Enregistrer les modifications</button>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

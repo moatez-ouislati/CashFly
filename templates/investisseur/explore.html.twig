@@ -1,0 +1,132 @@
+{% extends 'userDashboard2.html.twig' %}
+
+{% block title %}Propriétaires — CashFly{% endblock %}
+
+{% block body %}
+
+<div class="page-header">
+    <h1>Propriétaires disponibles</h1>
+    <p>Trouvez des propriétaires à contacter</p>
+</div>
+
+<input 
+    type="text" 
+    id="searchInput"
+    placeholder="🔍 Rechercher un propriétaire..."
+    style="width:100%; padding:12px; border-radius:10px; border:none; margin-bottom:1.5rem;"
+>
+
+<div id="results" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(280px,1fr)); gap:1.5rem;">
+
+{% for user in users %}
+    <div class="card">
+
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+            <div class="avatar">
+                {% if user.faceImage %}
+                    <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}">
+                {% else %}
+               {{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}
+                {% endif %}
+            </div>
+
+            <div>
+                <h3 style="margin:0;">{{ user.fullName }}</h3>
+                <span class="role-pill role-prop">Propriétaire</span>
+            </div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+            <p><strong>CIN:</strong> {{ user.cin }}</p>
+            <p><strong>Téléphone:</strong> {{ user.tel }}</p>
+        </div>
+
+        <a class="btn btn-primary"
+           target="_blank"
+           href="https://wa.me/216{{ user.tel }}">
+           💬 Contacter
+        </a>
+
+    </div>
+{% endfor %}
+
+</div>
+
+<script>
+const input = document.getElementById('searchInput');
+const results = document.getElementById('results');
+
+//  save initial state
+const initialContent = results.innerHTML;
+
+let timeout = null;
+let controller = null;
+
+input.addEventListener('input', () => {
+    clearTimeout(timeout);
+
+    timeout = setTimeout(() => {
+
+        // ✅ restore initial list
+        if (input.value.trim() === '') {
+            results.innerHTML = initialContent;
+            return;
+        }
+
+        if (controller) controller.abort();
+        controller = new AbortController();
+
+        fetch(`/investisseur/explore?q=${input.value}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            signal: controller.signal
+        })
+        .then(res => res.json())
+        .then(data => {
+            results.innerHTML = '';
+
+            if (!data.length) {
+                results.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; opacity:.7;">
+                        Aucun propriétaire trouvé
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach(user => {
+                results.innerHTML += `
+                    <div class="card">
+                        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                            <div class="avatar">
+                                ${user.faceImage 
+                                    ? `<img src="/uploads/faces/${user.faceImage}">`
+                                    : `<span>${user.prenom[0].toUpperCase()}${user.nom[0].toUpperCase()}</span>`
+                                }
+                            </div>
+
+                            <div>
+                                <h3 style="margin:0;">${user.fullName}</h3>
+                                <span class="role-pill role-prop">Propriétaire</span>
+                            </div>
+                        </div>
+
+                        <p><strong>CIN:</strong> ${user.cin}</p>
+                        <p><strong>Téléphone:</strong> ${user.tel}</p>
+
+                        <a class="btn btn-primary" target="_blank"
+                           href="https://wa.me/216${user.tel}">
+                           💬 Contacter
+                        </a>
+                    </div>
+                `;
+            });
+        })
+        .catch(err => {
+            if (err.name !== 'AbortError') console.error(err);
+        });
+
+    }, 400);
+});
+</script>
+
+{% endblock %}

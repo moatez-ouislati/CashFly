@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<style>
+.container {
+    max-width:400px;
+    margin:100px auto;
+    padding:30px;
+    background:#0f172a;
+    border-radius:12px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.5);
+}
+
+input {
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:none;
+    border-radius:8px;
+    background:#1e293b;
+    color:white;
+}
+
+button {
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(90deg,#6366f1,#a855f7);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+
+<div class="container">
+    <h2>Create Admin</h2>
+
+    <form method="post">
+        <input type="email" name="email" placeholder="Admin Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+
+        <button>Create Admin</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'userDashboard.html.twig' %}
+
+{% block title %}Modifier le Document{% endblock %}
+
+{% block body %}
+    <!-- Style override pour le bouton de suppression -->
+    <style>
+        form[action*="delete"] button {
+            background-color: #ba1a1a;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        form[action*="delete"] button:hover { transform: scale(0.95); }
+    </style>
+
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <a href="{{ path('app_document_index') }}" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-blue-700 mb-4 inline-flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Retour à la liste
+            </a>
+            <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">Modifier le Document</h1>
+            <p class="text-secondary font-medium">Mettez à jour les informations du document ci-dessous.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            {{ include('document/_delete_form.html.twig') }}
+        </div>
+    </header>
+
+    <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-[0_32px_64px_-16px_rgba(13,28,50,0.06)] border border-outline-variant/20 w-full mb-8">
+        {{ include('document/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+    </div>
+{% endblock %}

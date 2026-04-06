@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>{% block title %}CashFly Admin{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface": "#f9f9ff",
+                "surface-container-lowest": "#ffffff",
+                "surface-container-low": "#f0f3ff",
+                "surface-container": "#e8eeff",
+                "surface-container-high": "#dfe8ff",
+                "on-surface": "#0d1c32",
+                "on-surface-variant": "#414754",
+                "outline-variant": "#c2c6d7",
+                "primary": "#0059c3",
+                "on-primary": "#ffffff",
+                "primary-container": "#1171ef",
+                "tertiary": "#00696a",
+                "error": "#ba1a1a",
+                "error-container": "#ffdad6",
+                "secondary": "#515f78",
+                "secondary-container": "#d2e0fe",
+              },
+            },
+          },
+        }
+    </script>
+    <style>
+        /* ── Material Icons ── */
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* ── CSS Variables (pour les pages qui utilisent var(--bg) etc.) ── */
+        :root {
+            --bg:        #0a0a0f;
+            --surface:   #13131a;
+            --surface2:  #1c1c27;
+            --border:    #2a2a3a;
+            --accent:    #58589b;
+            --accent2:   #ff6584;
+            --green:     #00e5a0;
+            --text:      #bebee2;
+            --muted:     #7a7a9a;
+            --radius:    12px;
+            --shadow:    0 8px 32px rgba(0,0,0,.45);
+        }
+
+        /* ── Global reset ── */
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'DM Sans', sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ── Buttons (for dashboard dark section) ── */
+        .btn {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .6rem 1.3rem; border-radius: 8px;
+            font-size: .9rem; font-weight: 500;
+            cursor: pointer; border: none; text-decoration: none;
+            transition: all .2s; white-space: nowrap;
+        }
+        .edit   { background: #6366f1; color: white; }
+        .danger { background: #dc2626; color: white; }
+
+        /* ── Dashboard dark stats cards ── */
+        .stats .stat {
+            padding: 20px; border-radius: 14px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            color: #e2e8f0;
+        }
+        .stats .stat h3 { font-size: 28px; font-weight: 800; margin: 0; color: #fff; }
+        .stats .stat p  { opacity: .6; margin-top: 4px; color: #94a3b8; }
+
+        /* ── Dashboard toolbar ── */
+        .toolbar {
+            display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .toolbar input, .toolbar select {
+            padding: 10px 14px; border-radius: 10px;
+            border: 1px solid #334155; background: #1e293b;
+            color: white; font-size: 14px;
+        }
+        .toolbar input::placeholder { color: #94a3b8; }
+
+        /* ── Dashboard dark table ── */
+        .admin .table {
+            width: 100%; border-collapse: collapse;
+            background: #0f172a; border-radius: 12px; overflow: hidden;
+        }
+        .admin .table th {
+            text-align: left; padding: 14px;
+            background: #1e293b; font-size: 12px;
+            color: #94a3b8; text-transform: uppercase; letter-spacing: .06em;
+        }
+        .admin .table td {
+            padding: 16px; border-top: 1px solid #1e293b; color: #e2e8f0;
+        }
+        .admin .table tr:hover { background: #111827; }
+        .admin h1 { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-bottom: 20px; }
+
+        /* ── Profile page (dark cards from base.html.twig) ── */
+        .card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.75rem;
+            box-shadow: var(--shadow);
+        }
+        .page-header { margin-bottom: 2.5rem; }
+        .page-header h1 {
+            font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--text) 0%, var(--muted) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .page-header p { color: var(--muted); margin-top: .35rem; }
+        .avatar {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+            color: #201c1c; overflow: hidden; flex-shrink: 0;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-lg { width: 90px; height: 90px; font-size: 1.8rem; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label {
+            display: block; font-size: .82rem; font-weight: 500;
+            color: var(--muted); margin-bottom: .45rem;
+            letter-spacing: .02em; text-transform: uppercase;
+        }
+        .form-control {
+            width: 100%; padding: .7rem 1rem;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text);
+            font-family: 'DM Sans', sans-serif; font-size: .95rem;
+            transition: border-color .2s, box-shadow .2s; outline: none;
+        }
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108,99,255,.15);
+        }
+        .form-control::placeholder { color: var(--muted); }
+        .form-error { color: var(--accent2); font-size: .8rem; margin-top: .35rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .btn-primary { background: var(--accent); color: #0b1533; }
+        .btn-primary:hover { background: #7d75ff; }
+        .profile-grid { display: grid; grid-template-columns: 280px 1fr; gap: 1.5rem; align-items: start; }
+        .profile-card-left { text-align: center; }
+        .profile-card-left .avatar { margin: 0 auto 1rem; }
+        .role-admin { background: rgba(255,101,132,.15); color: var(--accent2); border: 1px solid rgba(255,101,132,.25); border-radius: 20px; padding: .2rem .65rem; font-size: .75rem; font-weight: 600; }
+
+        /* ── Flash messages ── */
+        .flash-wrap { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: .6rem; }
+        .alert {
+            padding: .85rem 1.1rem; border-radius: 8px;
+            font-size: .9rem; border-left: 4px solid;
+            display: flex; align-items: center; gap: .6rem;
+        }
+        .alert-success { background: rgba(0,229,160,.08); border-color: #00e5a0; color: #00e5a0; }
+        .alert-error   { background: rgba(255,101,132,.08); border-color: #ff6584; color: #ff6584; }
+
+        /* ── Badge (dashboard) ── */
+        .badge { padding: 5px 10px; border-radius: 6px; font-size: 12px; color: white; }
+        .green { background: #16a34a; }
+        .red   { background: #dc2626; }
+
+        /* ── Switch toggle (dashboard) ── */
+        .switch { position: relative; display: inline-block; width: 50px; height: 26px; margin-right: 10px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #dc2626; border-radius: 34px; transition: .3s; }
+        .slider:before { content: ""; position: absolute; height: 20px; width: 20px; left: 3px; top: 3px; background-color: white; border-radius: 50%; transition: .3s; }
+        .switch input:checked + .slider { background-color: #16a34a; }
+        .switch input:checked + .slider:before { transform: translateX(24px); }
+
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside class="h-screen w-64 fixed left-0 top-0 flex flex-col bg-white border-r border-slate-200 text-sm font-medium z-50 shadow-sm">
+
+    <div class="px-6 py-6 border-b border-slate-100">
+        <span class="text-xl font-black text-slate-900" style="font-family:'Syne',sans-serif;">
+            Cash<span class="text-blue-600">Fly</span>
+        </span>
+    </div>
+
+    <div class="flex-1 flex flex-col gap-1 py-4 overflow-y-auto no-scrollbar px-3">
+        {% set current_route = app.request.attributes.get('_route') %}
+
+        <a class="flex items-center gap-3 py-2.5 px-3 rounded-xl transition-all duration-200
+            {{ current_route == 'admin_dashboard'
+                ? 'bg-blue-50 text-blue-700 font-semibold'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}"
+           href="{{ path('admin_dashboard') }}">
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+        </a>
+
+        <a class="flex items-center gap-3 py-2.5 px-3 rounded-xl transition-all duration-200
+            {{ current_route starts with 'app_entreprise_admin'
+                ? 'bg-blue-50 text-blue-700 font-semibold'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}"
+           href="{{ path('app_entreprise_admin_index') }}">
+            <span class="material-symbols-outlined text-[20px]">account_balance</span>
+            Entreprises
+        </a>
+
+        <a class="flex items-center gap-3 py-2.5 px-3 rounded-xl transition-all duration-200
+            {{ current_route starts with 'app_document_admin'
+                ? 'bg-blue-50 text-blue-700 font-semibold'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}"
+           href="{{ path('app_document_admin_index') }}">
+            <span class="material-symbols-outlined text-[20px]">receipt_long</span>
+            Documents
+        </a>
+
+        <a class="flex items-center gap-3 py-2.5 px-3 rounded-xl transition-all duration-200
+            {{ current_route == 'admin_profile'
+                ? 'bg-blue-50 text-blue-700 font-semibold'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800' }}"
+           href="{{ path('admin_profile') }}">
+            <span class="material-symbols-outlined text-[20px]">manage_accounts</span>
+            Profil
+        </a>
+    </div>
+
+    <div class="px-4 py-5 border-t border-slate-100">
+        <a href="{{ path('app_logout') }}"
+           class="flex items-center gap-3 py-2.5 px-3 rounded-xl text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all duration-200">
+            <span class="material-symbols-outlined text-[20px]">logout</span>
+            Déconnexion
+        </a>
+    </div>
+</aside>
+
+<!-- ── Main Content ── -->
+<main class="ml-64 min-h-screen p-8" style="background: #f1f5f9;">
+    {% block flashes %}
+    {% for type, messages in app.flashes %}
+    <div class="flash-wrap">
+        {% for message in messages %}
+        <div class="alert alert-{{ type }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    {% endblock %}
+
+    {% block body %}{% endblock %}
+</main>
+
+{% block javascripts %}{% endblock %}
+{% block importmap %}{{ importmap('app') }}{% endblock %}
+
+</body>
+</html>

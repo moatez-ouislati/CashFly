@@ -1,0 +1,61 @@
+{% extends 'userDashboard2.html.twig' %}
+{% block title %}Dashboard Investisseur — CashFly{% endblock %}
+
+{% block body %}
+<div class="page-header">
+    <h1>Bonjour, {{ user.prenom }} 👋</h1>
+    <p>Voici un résumé de votre profil investisseur</p>
+</div>
+<a href="{{ path('investisseur_explore') }}" class="btn">
+    Explorer les propriétaires
+</a>
+<div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:1rem; margin-bottom:2rem;">
+    <div class="stat-card c3">
+        <div class="stat-number">{{ user.yearsExperience ?? '—' }}</div>
+        <div class="stat-label">Années d'expérience</div>
+    </div>
+    <div class="stat-card c1">
+        <div class="stat-number">{{ user.highestProfit ? user.highestProfit ~ ' TND' : '—' }}</div>
+        <div class="stat-label">Profit le plus élevé</div>
+    </div>
+    <div class="stat-card c4">
+        <div class="stat-number">{{ user.budget ? user.budget ~ ' TND' : '—' }}</div>
+        <div class="stat-label">Budget disponible</div>
+    </div>
+</div>
+
+<div class="card">
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+        <div class="avatar avatar-lg">
+            {% if user.faceImage %}
+                <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}" alt="">
+            {% else %}
+                {{ user.prenom[0]|upper }}{{ user.nom[0]|upper }}
+            {% endif %}
+        </div>
+        <div>
+            <h2 style="font-family:'Syne',sans-serif; font-weight:700;">{{ user.fullName }}</h2>
+            <span class="role-pill role-invest">Investisseur</span>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem 2rem;">
+        {% set info = [
+            ['Email', user.email],
+            ['CIN', user.cin],
+            ['Téléphone', user.tel],
+            ['Statut', user.isActive ? 'Actif ✓' : 'Inactif'],
+        ] %}
+        {% for row in info %}
+        <div>
+            <div style="font-size:.75rem; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:.2rem;">{{ row[0] }}</div>
+            <div style="font-weight:500;">{{ row[1] }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div style="margin-top:1.5rem;">
+        <a href="{{ path('investisseur_profile') }}" class="btn btn-primary">Modifier mon profil</a>
+    </div>
+</div>
+{% endblock %}
