@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Réservations | CashFly{% endblock %}
+
+{% block header_title %}Mes Réservations JPO{% endblock %}
+{% block header_subtitle %}Suivez vos inscriptions aux journées portes ouvertes.{% endblock %}
+
+{% block body %}
+<div class="mb-8">
+    <a href="{{ path('app_jpo_index') }}" class="flex items-center gap-2 text-secondary px-6 py-3 rounded-xl font-bold text-sm hover:text-primary transition-all bg-surface-container-high hover:bg-slate-200 w-fit">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        Voir tous les événements
+    </a>
+</div>
+
+<div class="grid grid-cols-1 gap-6">
+    {% for participation in participations %}
+        <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-sm border border-outline-variant/10 flex flex-col md:flex-row justify-between items-center gap-8 group">
+            <div class="flex items-center gap-8 flex-1">
+                <div class="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform shrink-0">
+                    <span class="material-symbols-outlined text-3xl">confirmation_number</span>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-on-surface mb-1">{{ participation.evenement.titre }}</h3>
+                    <div class="flex items-center gap-4 text-[10px] font-black text-outline uppercase tracking-widest">
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">calendar_today</span>
+                            {{ participation.evenement.dateEvenement|date('d/m/Y') }}
+                        </span>
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">location_on</span>
+                            {{ participation.evenement.lieu }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center gap-6 shrink-0">
+                <div class="text-center md:text-right">
+                    <p class="text-[10px] font-black text-outline uppercase tracking-widest mb-1">Statut</p>
+                    <span class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest
+                        {% if participation.statut == 'CONFIRME' %}bg-green-100 text-green-700
+                        {% elseif participation.statut == 'ANNULE' %}bg-red-100 text-red-700
+                        {% else %}bg-amber-100 text-amber-700{% endif %}">
+                        {{ participation.statut }}
+                    </span>
+                </div>
+                
+                <a href="{{ path('app_jpo_show', {'id': participation.evenement.id}) }}" class="px-6 py-4 bg-surface-container-high text-on-surface text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all">
+                    Détails
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-20 bg-surface-container-lowest rounded-3xl border-2 border-dashed border-outline-variant/30">
+            <span class="material-symbols-outlined text-6xl text-outline mb-4">confirmation_number</span>
+            <p class="text-secondary font-medium">Vous n'avez pas encore de réservations.</p>
+            <a href="{{ path('app_jpo_index') }}" class="mt-4 inline-flex items-center gap-2 text-primary font-bold hover:underline">
+                Découvrir les événements
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

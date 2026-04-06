@@ -1,0 +1,39 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin | Investissements{% endblock %}
+{% block header_title %}Investissements{% endblock %}
+{% block header_subtitle %}Gestion globale des placements financiers.{% endblock %}
+
+{% block body %}
+<div class="bg-admin-card rounded-3xl border border-white/5 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="bg-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th class="px-6 py-4">Investisseur</th>
+                <th class="px-6 py-4">Entreprise</th>
+                <th class="px-6 py-4">Montant</th>
+                <th class="px-6 py-4">Rendement</th>
+                <th class="px-6 py-4">Statut</th>
+                <th class="px-6 py-4">Date</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+            {% for inv in investissements %}
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-sm">{{ inv.investisseur.prenom }} {{ inv.investisseur.nom }}</p>
+                        <p class="text-[10px] text-slate-500">{{ inv.investisseur.email }}</p>
+                    </td>
+                    <td class="px-6 py-4 font-bold text-sm text-slate-300">{{ inv.entreprise.nom }}</td>
+                    <td class="px-6 py-4 font-black text-sm text-admin-primary">{{ inv.montant|number_format(2, ',', ' ') }} TND</td>
+                    <td class="px-6 py-4 font-bold text-sm text-emerald-400">{{ inv.tauxRendementPrevu }}%</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 bg-white/5 text-[8px] font-black rounded uppercase border border-white/10">{{ inv.statut }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-xs text-slate-500">{{ inv.dateInvestissement|date('d/m/Y') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

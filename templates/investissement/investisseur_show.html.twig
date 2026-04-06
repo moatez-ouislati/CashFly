@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil Investisseur | CashFly{% endblock %}
+
+{% block header_title %}Détails de l'Investisseur{% endblock %}
+{% block header_subtitle %}{{ investisseur.prenom }} {{ investisseur.nom }} - {{ investisseur.dbRole|capitalize }}{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Profil Info Card -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/10 text-center">
+            <div class="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center text-primary text-4xl font-black mx-auto mb-6">
+                {{ investisseur.prenom|first }}{{ investisseur.nom|first }}
+            </div>
+            <h2 class="text-xl font-black text-on-surface mb-2">{{ investisseur.prenom }} {{ investisseur.nom }}</h2>
+            <span class="px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-full">Investisseur</span>
+            
+            <div class="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-outline-variant/10">
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Expérience</p>
+                    <p class="text-lg font-black text-on-surface">{{ investisseur.yearsExperience|default('N/A') }} <span class="text-[10px] font-bold">ans</span></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-1">Budget</p>
+                    <p class="text-lg font-black text-primary">{{ investisseur.budget|number_format(0, ',', ' ') }} <span class="text-[10px] font-bold">TND</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/10">
+            <h3 class="text-xs font-black uppercase tracking-widest text-on-surface mb-6">Informations de Contact</h3>
+            <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-secondary text-lg">mail</span>
+                    <span class="text-sm font-bold text-on-surface">{{ investisseur.email }}</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="material-symbols-outlined text-secondary text-lg">call</span>
+                    <span class="text-sm font-bold text-on-surface">{{ investisseur.tel|default('N/A') }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Investments List -->
+    <div class="lg:col-span-2">
+        <div class="bg-surface-container-lowest p-8 rounded-3xl shadow-sm border border-outline-variant/10">
+            <h3 class="text-xs font-black uppercase tracking-widest text-on-surface mb-8">Investissements dans vos entreprises</h3>
+            
+            <div class="space-y-4">
+                {% for investissement in investissements %}
+                    <div class="flex items-center justify-between p-6 bg-surface-container-low rounded-2xl border border-outline-variant/5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+                                <span class="material-symbols-outlined text-lg">business</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-on-surface">{{ investissement.entreprise.nom }}</h4>
+                                <p class="text-xs text-secondary">{{ investissement.dateInvestissement|date('d M Y') }}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-black text-on-surface">{{ investissement.montant|number_format(2, '.', ',') }} TND</p>
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded-md {% if investissement.statut == 'ACTIF' %}bg-success/10 text-success{% else %}bg-warning/10 text-warning{% endif %} uppercase tracking-widest">
+                                {{ investissement.statut }}
+                            </span>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-center py-10 text-secondary text-sm">Aucun investissement trouvé.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-8">
+    <a href="{{ path('app_investissement_investisseurs') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-secondary text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all shadow-sm">
+        <span class="material-symbols-outlined text-sm">arrow_back</span>
+        Retour à la liste
+    </a>
+</div>
+{% endblock %}

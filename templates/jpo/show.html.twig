@@ -1,0 +1,125 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ jpo.titre }} | CashFly{% endblock %}
+
+{% block header_title %}{{ jpo.titre }}{% endblock %}
+{% block header_subtitle %}Rejoignez cet événement et développez votre réseau.{% endblock %}
+
+{% block body %}
+<div class="mb-10 flex items-center justify-between">
+    <a href="{{ path('app_jpo_index') }}" class="flex items-center gap-2 text-secondary px-6 py-3 rounded-xl font-bold text-sm hover:text-primary transition-all bg-surface-container-high hover:bg-slate-200">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        Retour à la liste
+    </a>
+    {% if jpo.createur == app.user or is_granted('ROLE_ADMIN') %}
+        <div class="flex gap-4">
+            <a href="{{ path('app_jpo_edit', {'id': jpo.id}) }}" class="p-4 bg-primary/10 text-primary rounded-xl hover:bg-primary/20 transition-all">
+                <span class="material-symbols-outlined">edit</span>
+            </a>
+            <form method="post" action="{{ path('app_jpo_delete', {'id': jpo.id}) }}" onsubmit="return confirm('Supprimer cet événement ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ jpo.id) }}">
+                <button class="p-4 bg-error/10 text-error rounded-xl hover:bg-error/20 transition-all">
+                    <span class="material-symbols-outlined">delete</span>
+                </button>
+            </form>
+        </div>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <div class="lg:col-span-2 space-y-12">
+        <div class="bg-surface-container-lowest rounded-3xl overflow-hidden shadow-sm border border-outline-variant/10">
+            <div class="h-80 bg-slate-100 flex items-center justify-center">
+                {% if jpo.imagePath %}
+                    <img src="{{ asset('uploads/jpo/' ~ jpo.imagePath) }}" class="w-full h-full object-cover" alt="{{ jpo.titre }}">
+                {% else %}
+                    <span class="material-symbols-outlined text-8xl text-outline/20">event</span>
+                {% endif %}
+            </div>
+            <div class="p-12">
+                <h3 class="text-3xl font-black text-on-surface mb-8">Description de l'événement</h3>
+                <p class="text-secondary text-lg leading-relaxed whitespace-pre-line">{{ jpo.description|default('Pas de description détaillée.') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-8">
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm border border-outline-variant/10">
+            <h3 class="text-xs font-black uppercase tracking-widest text-outline mb-8">Informations Pratiques</h3>
+            <div class="space-y-8">
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-outline mb-1">Date</p>
+                        <p class="text-lg font-black text-on-surface">{{ jpo.dateEvenement|date('d F Y') }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary shrink-0">
+                        <span class="material-symbols-outlined">location_on</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-outline mb-1">Lieu</p>
+                        <p class="text-lg font-black text-on-surface">{{ jpo.lieu }}</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                        <span class="material-symbols-outlined">group</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex justify-between items-end mb-2">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-outline">Capacité</p>
+                            <p class="text-xs font-bold text-on-surface">{{ jpo.currentParticipants }}/{{ jpo.maxParticipants }}</p>
+                        </div>
+                        <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary transition-all duration-1000" style="width: {{ (jpo.currentParticipants / jpo.maxParticipants * 100)|round }}%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 pt-12 border-t border-outline-variant/10">
+                {% if user_participation %}
+                    <div class="text-center">
+                        <div class="mb-4 inline-flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full text-xs font-black uppercase tracking-widest">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                            Déjà inscrit
+                        </div>
+                        <p class="text-xs text-secondary font-bold">Votre participation est confirmée.</p>
+                    </div>
+                {% elseif jpo.currentParticipants >= jpo.maxParticipants %}
+                    <div class="text-center p-6 bg-red-50 rounded-2xl border border-red-100">
+                        <span class="material-symbols-outlined text-red-600 mb-2">event_busy</span>
+                        <p class="text-sm font-black text-red-900 uppercase">Événement complet</p>
+                    </div>
+                {% else %}
+                    <form action="{{ path('app_jpo_participer', {'id': jpo.id}) }}" method="POST">
+                        <button type="submit" class="w-full py-5 bg-primary text-white text-sm font-black uppercase tracking-widest rounded-2xl shadow-xl shadow-primary/20 hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-3">
+                            <span class="material-symbols-outlined">confirmation_number</span>
+                            Réserver ma place
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm border border-outline-variant/10">
+            <h3 class="text-xs font-black uppercase tracking-widest text-outline mb-8">Organisateur</h3>
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-black text-xl uppercase">
+                    {{ jpo.createur.prenom|first }}{{ jpo.createur.nom|first }}
+                </div>
+                <div>
+                    <p class="text-lg font-black text-on-surface">{{ jpo.createur.prenom }} {{ jpo.createur.nom }}</p>
+                    <p class="text-xs font-bold text-primary uppercase tracking-widest">Membre CashFly</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

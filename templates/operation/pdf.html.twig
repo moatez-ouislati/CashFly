@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture {{ operation.reference }} | CashFly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            body { background: white; padding: 0; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 p-8 font-serif">
+    <div class="max-w-4xl mx-auto bg-white p-12 shadow-sm border border-slate-200">
+        <div class="flex justify-between items-start mb-16">
+            <div>
+                <h1 class="text-4xl font-black text-blue-700 tracking-tighter uppercase mb-1">CashFly</h1>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Gestion de Trésorerie de Précision</p>
+            </div>
+            <div class="text-right">
+                <h2 class="text-2xl font-bold text-slate-900 uppercase tracking-tight">FACTURE / REÇU</h2>
+                <p class="text-sm text-slate-500 font-bold mt-1">Réf: {{ operation.reference }}</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-12 mb-16">
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Émetteur</p>
+                <p class="text-lg font-bold text-slate-900">{{ operation.tresorerie.entreprise.nom }}</p>
+                <p class="text-sm text-slate-500 mt-1">{{ operation.tresorerie.entreprise.adresse }}</p>
+                <p class="text-sm text-slate-500">Secteur: {{ operation.tresorerie.entreprise.secteur }}</p>
+            </div>
+            <div class="text-right">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Détails de l'opération</p>
+                <p class="text-sm text-slate-900 font-bold">Date: {{ operation.dateOperation|date('d/m/Y') }}</p>
+                <p class="text-sm text-slate-500 mt-1">Heure: {{ operation.dateOperation|date('H:i') }}</p>
+                <p class="text-sm text-slate-500 mt-1">Compte: {{ operation.tresorerie.nomCompte }}</p>
+            </div>
+        </div>
+
+        <div class="mb-16">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="border-b-2 border-slate-900">
+                        <th class="py-4 text-left text-xs font-black uppercase tracking-widest">Désignation</th>
+                        <th class="py-4 text-center text-xs font-black uppercase tracking-widest">Type</th>
+                        <th class="py-4 text-right text-xs font-black uppercase tracking-widest">Montant</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    <tr>
+                        <td class="py-8">
+                            <p class="text-sm font-bold text-slate-900">{{ operation.categorie }}</p>
+                            <p class="text-xs text-slate-500 mt-1">{{ operation.description|default('Aucune description supplémentaire.') }}</p>
+                        </td>
+                        <td class="py-8 text-center">
+                            <span class="text-[10px] font-bold px-3 py-1 bg-slate-100 rounded-full uppercase tracking-widest">
+                                {{ operation.type == 'revenu' ? 'Entrée' : 'Sortie' }}
+                            </span>
+                        </td>
+                        <td class="py-8 text-right font-black text-lg">
+                            {{ operation.montant|number_format(2, ',', ' ') }} TND
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex justify-end mb-24">
+            <div class="w-64 space-y-3">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-500 font-bold">Total HT</span>
+                    <span class="text-slate-900 font-bold">{{ (operation.montant * 0.81)|number_format(2, ',', ' ') }} TND</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-500 font-bold">TVA (19%)</span>
+                    <span class="text-slate-900 font-bold">{{ (operation.montant * 0.19)|number_format(2, ',', ' ') }} TND</span>
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t-2 border-slate-900">
+                    <span class="text-xs font-black uppercase tracking-widest">Net à Payer</span>
+                    <span class="text-2xl font-black text-blue-700">{{ operation.montant|number_format(2, ',', ' ') }} TND</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-100 pt-8 text-center">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">Document généré par CashFly - Gestion de Trésorerie Automatisée</p>
+        </div>
+    </div>
+
+    <div class="fixed bottom-8 right-8 no-print">
+        <button onclick="window.print()" class="flex items-center gap-3 px-8 py-4 bg-blue-700 text-white font-black rounded-xl shadow-2xl hover:bg-blue-800 transition-all active:scale-95">
+            <span class="material-symbols-outlined">print</span>
+            IMPRIMER LA FACTURE
+        </button>
+    </div>
+</body>
+</html>

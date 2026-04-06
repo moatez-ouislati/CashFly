@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l'investissement | CashFly{% endblock %}
+
+{% block header_title %}Détails de l'Investissement{% endblock %}
+{% block header_subtitle %}Consultez les termes de la proposition pour {{ investissement.entreprise.nom }}.{% endblock %}
+
+{% block body %}
+<div class="mb-10">
+    <a href="{{ path('app_investissement_index') }}" class="flex items-center gap-2 text-secondary px-6 py-3 rounded-xl font-bold text-sm hover:text-primary transition-all bg-surface-container-high hover:bg-slate-200 w-fit">
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        Retour à la liste
+    </a>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+    <div class="lg:col-span-2 space-y-8">
+        <div class="bg-surface-container-lowest rounded-3xl p-12 shadow-sm border border-outline-variant/10">
+            <div class="flex justify-between items-start mb-12">
+                <div>
+                    <h3 class="text-3xl font-black text-on-surface mb-2">{{ investissement.entreprise.nom }}</h3>
+                    <p class="text-secondary font-medium">Secteur : {{ investissement.entreprise.secteur }}</p>
+                </div>
+                <span class="px-6 py-3 rounded-full text-xs font-black uppercase tracking-widest
+                    {% if investissement.statut == 'ACTIF' %}bg-green-100 text-green-700
+                    {% elseif investissement.statut == 'EN_ATTENTE' %}bg-amber-100 text-amber-700
+                    {% elseif investissement.statut == 'ANNULE' %}bg-red-100 text-red-700
+                    {% else %}bg-slate-100 text-slate-700{% endif %}">
+                    {{ investissement.statut }}
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
+                <div class="p-8 bg-primary/5 rounded-3xl border border-primary/10">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-4">Montant Proposé</p>
+                    <p class="text-4xl font-black text-on-surface">{{ investissement.montant|number_format(2, ',', ' ') }} <span class="text-lg">TND</span></p>
+                </div>
+                <div class="p-8 bg-tertiary/5 rounded-3xl border border-tertiary/10">
+                    <p class="text-[10px] font-black uppercase tracking-widest text-tertiary mb-4">Rendement Prévu</p>
+                    <p class="text-4xl font-black text-on-surface">{{ investissement.tauxRendementPrevu|default('0') }} <span class="text-lg">%</span></p>
+                </div>
+            </div>
+
+            <div class="space-y-8">
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-widest text-outline mb-4">Description / Notes</h4>
+                    <p class="text-secondary leading-relaxed bg-surface-container-low p-6 rounded-2xl">
+                        {{ investissement.description|default('Aucune note supplémentaire fournie.') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="space-y-8">
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm border border-outline-variant/10">
+            <h3 class="text-xs font-black uppercase tracking-widest text-outline mb-8">Parties Concernées</h3>
+            <div class="space-y-8">
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary shrink-0">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-outline mb-1">Investisseur</p>
+                        <p class="text-sm font-black text-on-surface">{{ investissement.investisseur.prenom }} {{ investissement.investisseur.nom }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-5">
+                    <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <span class="material-symbols-outlined">business</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-widest text-outline mb-1">PME Bénéficiaire</p>
+                        <p class="text-sm font-black text-on-surface">{{ investissement.entreprise.nom }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if investissement.statut == 'EN_ATTENTE' and investissement.entreprise.proprietaire == app.user %}
+            <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm border border-outline-variant/10">
+                <h3 class="text-xs font-black uppercase tracking-widest text-outline mb-8">Actions Requises</h3>
+                <div class="space-y-4">
+                    <form action="{{ path('app_investissement_valider', {'id': investissement.id}) }}" method="POST">
+                        <button type="submit" class="w-full py-4 bg-green-600 text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-600/20 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                            Accepter l'offre
+                        </button>
+                    </form>
+                    <form action="{{ path('app_investissement_refuser', {'id': investissement.id}) }}" method="POST">
+                        <button type="submit" class="w-full py-4 bg-error text-white text-xs font-black uppercase tracking-widest rounded-xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/20 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">cancel</span>
+                            Refuser l'offre
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel Investissement | CashFly{% endblock %}
+
+{% block header_title %}Proposer un Investissement{% endblock %}
+{% block header_subtitle %}Saisissez une opportunité et soutenez une PME.{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto bg-surface-container-lowest p-10 rounded-3xl shadow-sm border border-outline-variant/10">
+    <div class="flex justify-between items-center mb-8">
+        <h3 class="text-xs font-black uppercase tracking-widest text-on-surface">Formulaire d'investissement</h3>
+        <a href="{{ path('app_investissement_index') }}" class="flex items-center gap-2 text-secondary px-4 py-2 rounded-lg font-bold text-sm hover:text-primary transition-all">
+            <span class="material-symbols-outlined text-lg">arrow_back</span>
+            Retour à la liste
+        </a>
+    </div>
+
+    {{ form_start(form) }}
+        <div class="text-error text-sm mb-6">
+            {{ form_errors(form) }}
+        </div>
+
+        <div class="space-y-8">
+            <div class="space-y-1.5">
+                {{ form_label(form.entreprise) }}
+                {{ form_widget(form.entreprise, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface transition-all'}}) }}
+                {{ form_errors(form.entreprise, {'attr': {'class': 'text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1'}}) }}
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-1.5">
+                    {{ form_label(form.montant) }}
+                    {{ form_widget(form.montant, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface transition-all'}}) }}
+                    {{ form_errors(form.montant, {'attr': {'class': 'text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1'}}) }}
+                </div>
+                <div class="space-y-1.5">
+                    {{ form_label(form.tauxRendementPrevu) }}
+                    {{ form_widget(form.tauxRendementPrevu, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface transition-all'}}) }}
+                    {{ form_errors(form.tauxRendementPrevu, {'attr': {'class': 'text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1'}}) }}
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.dureeMois) }}
+                {{ form_widget(form.dureeMois, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface transition-all'}}) }}
+                {{ form_errors(form.dureeMois, {'attr': {'class': 'text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1'}}) }}
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface transition-all', 'rows': 4}}) }}
+                {{ form_errors(form.description, {'attr': {'class': 'text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1'}}) }}
+            </div>
+        </div>
+
+        <div class="mt-12 flex justify-end">
+            <button class="bg-primary text-white px-10 py-5 rounded-xl font-black text-sm hover:bg-primary-container transition-all flex items-center gap-3 group shadow-xl shadow-primary/20 active:scale-95">
+                Envoyer la proposition
+                <span class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">send</span>
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

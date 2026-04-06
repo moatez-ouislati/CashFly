@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ entreprise.nom }} | FinArchitect{% endblock %}
+
+{% block header_title %}{{ entreprise.nom }}{% endblock %}
+{% block header_subtitle %}{{ entreprise.secteur }} • {{ entreprise.formeJuridique }}{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-12 gap-8">
+    <!-- Main Info -->
+    <div class="col-span-12 lg:col-span-8 space-y-8">
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm">
+            <h3 class="text-sm font-black uppercase tracking-widest text-on-surface mb-8">Company Details</h3>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Date of Creation</p>
+                    <p class="text-sm font-bold text-on-surface">{{ entreprise.dateCreation ? entreprise.dateCreation|date('M d, Y') : 'N/A' }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Capital</p>
+                    <p class="text-sm font-bold text-on-surface">{{ entreprise.capital|number_format(2, '.', ',') }} TND</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Address</p>
+                    <p class="text-sm font-bold text-on-surface">{{ entreprise.adresse|default('N/A') }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Coordinates</p>
+                    <p class="text-sm font-bold text-on-surface">Lat: {{ entreprise.latitude|default('N/A') }}, Long: {{ entreprise.longitude|default('N/A') }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Contact Email</p>
+                    <p class="text-sm font-bold text-on-surface">{{ entreprise.proprietaire.email }}</p>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-secondary">Contact Phone</p>
+                    <p class="text-sm font-bold text-on-surface">{{ entreprise.proprietaire.tel|default('N/A') }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% if not is_granted('ROLE_INVESTISSEUR') %}
+        <!-- Trésoreries for this entreprise -->
+        <div class="bg-surface-container-lowest rounded-3xl p-10 shadow-sm">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Associated Trésoreries</h3>
+                <a href="{{ path('app_tresorerie_new', {'entreprise': entreprise.id}) }}" class="flex items-center gap-2 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl hover:bg-primary-container transition-all">
+                    <span class="material-symbols-outlined text-sm">add</span>
+                    New Trésorerie
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for tresorerie in tresoreries %}
+                    <a href="{{ path('app_tresorerie_show', {'id': tresorerie.id}) }}" class="p-6 bg-surface-container-low rounded-2xl border border-outline-variant/10 hover:border-primary/30 transition-all group">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined text-lg">account_balance</span>
+                            </div>
+                            <span class="text-xs font-black text-primary uppercase tracking-widest">{{ tresorerie.typeCompte }}</span>
+                        </div>
+                        <h4 class="font-bold text-on-surface mb-1">{{ tresorerie.nomCompte }}</h4>
+                        <p class="text-xl font-black text-on-surface">{{ tresorerie.solde|number_format(2, '.', ',') }} {{ tresorerie.devise }}</p>
+                    </a>
+                {% else %}
+                    <div class="col-span-full text-center py-10 bg-surface-container-low rounded-2xl border-2 border-dashed border-outline-variant/20">
+                        <p class="text-secondary text-sm">No accounts found for this company.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="col-span-12 lg:col-span-4 space-y-8">
+        <div class="bg-surface-container-high rounded-3xl p-8 shadow-sm">
+            <h3 class="text-sm font-black uppercase tracking-widest text-on-surface mb-6">Propriétaire</h3>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/20 p-0.5">
+                    <img alt="User Profile" class="w-full h-full object-cover rounded-full" src="https://ui-avatars.com/api/?name={{ entreprise.proprietaire.prenom }}+{{ entreprise.proprietaire.nom }}&background=0059c3&color=fff"/>
+                </div>
+                <div>
+                    <p class="font-bold text-on-surface">{{ entreprise.proprietaire.prenom }} {{ entreprise.proprietaire.nom }}</p>
+                    <p class="text-xs text-secondary">{{ entreprise.proprietaire.email }}</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-secondary">Phone</span>
+                    <span class="font-bold text-on-surface">{{ entreprise.proprietaire.tel|default('N/A') }}</span>
+                </div>
+                {% if entreprise.proprietaire.dbRole == 'investisseur' %}
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-secondary">Experience</span>
+                    <span class="font-bold text-on-surface">{{ entreprise.proprietaire.yearsExperience|default('N/A') }} yrs</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if not is_granted('ROLE_INVESTISSEUR') %}
+        <a href="{{ path('app_entreprise_documents', {'id': entreprise.id}) }}" class="flex items-center justify-center gap-3 w-full py-4 bg-primary/5 text-primary text-xs font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all mb-3 border border-primary/10">
+            <span class="material-symbols-outlined text-sm">folder</span>
+            Documents
+        </a>
+        {% endif %}
+        
+        <a href="{{ path('app_entreprise_index') }}" class="flex items-center justify-center gap-3 w-full py-4 bg-white border border-slate-200 text-secondary text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-100 transition-all">
+            <span class="material-symbols-outlined text-sm">arrow_back</span>
+            Back to List
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Espace Investisseur | CashFly{% endblock %}
+
+{% block header_title %}Portefeuille d'Investissement{% endblock %}
+{% block header_subtitle %}Bonjour {{ app.user.prenom }}, voici l'état de vos placements.{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <!-- Total Investi -->
+    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined">payments</span>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Investi</p>
+                <h3 class="text-2xl font-black text-slate-900">{{ total_invested|number_format(2, ',', ' ') }} TND</h3>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 text-[10px] font-bold text-tertiary uppercase">
+            <span class="material-symbols-outlined text-sm">trending_up</span>
+            {{ my_investments|length }} Placements actifs
+        </div>
+    </div>
+
+    <!-- Rendement Attendu -->
+    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+                <span class="material-symbols-outlined">monitoring</span>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Gains Attendus</p>
+                <h3 class="text-2xl font-black text-slate-900">+{{ expected_returns|number_format(2, ',', ' ') }} TND</h3>
+            </div>
+        </div>
+        <p class="text-[10px] font-bold text-slate-400 uppercase">Basé sur vos taux de rendement</p>
+    </div>
+
+    <!-- Participations JPO -->
+    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-4 mb-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+                <span class="material-symbols-outlined">event_available</span>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Événements JPO</p>
+                <h3 class="text-2xl font-black text-slate-900">{{ my_participations|length }}</h3>
+            </div>
+        </div>
+        <a href="{{ path('app_jpo_index') }}" class="text-[10px] font-bold text-primary uppercase hover:underline">Voir les événements</a>
+    </div>
+
+    <!-- Profil Investisseur -->
+    <div class="p-6 bg-primary/5 rounded-2xl border border-primary/10 shadow-sm md:col-span-3">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-3xl">workspace_premium</span>
+                </div>
+                <div>
+                    <h4 class="font-black text-slate-900 uppercase tracking-tight">Mon Profil d'Investisseur</h4>
+                    <p class="text-xs text-slate-500">Informations basées sur votre expérience de trading/investissement.</p>
+                </div>
+            </div>
+            <div class="flex gap-8">
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Expérience</p>
+                    <p class="text-xl font-black text-primary">{{ app.user.yearsExperience }} <span class="text-xs font-bold">ans</span></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Plus haut Profit</p>
+                    <p class="text-xl font-black text-tertiary">{{ app.user.highestProfit|number_format(0, ',', ' ') }} <span class="text-xs font-bold">TND</span></p>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Budget</p>
+                    <p class="text-xl font-black text-on-surface">{{ app.user.budget|number_format(0, ',', ' ') }} <span class="text-xs font-bold">TND</span></p>
+                </div>
+                <a href="{{ path('app_profile_complete') }}" class="flex items-center justify-center w-10 h-10 bg-white rounded-xl text-slate-400 hover:text-primary hover:shadow-md transition-all border border-slate-100" title="Modifier mon profil">
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tableau des Rendements -->
+    <div class="p-8 bg-surface-container-lowest rounded-3xl border border-outline-variant/10 shadow-sm mt-8">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+                    <span class="material-symbols-outlined">payments</span>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Tableau des Rendements</h3>
+                    <p class="text-[10px] text-secondary font-bold uppercase tracking-widest mt-1">Estimations de profits sur vos investissements</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="border-b border-outline-variant/10">
+                        <th class="py-4 text-[10px] font-black uppercase tracking-widest text-secondary">PME</th>
+                        <th class="py-4 text-[10px] font-black uppercase tracking-widest text-secondary text-right">Montant</th>
+                        <th class="py-4 text-[10px] font-black uppercase tracking-widest text-secondary text-right">Taux</th>
+                        <th class="py-4 text-[10px] font-black uppercase tracking-widest text-secondary text-right">Durée</th>
+                        <th class="py-4 text-[10px] font-black uppercase tracking-widest text-secondary text-right">Profit Estimé</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/5">
+                    {% for invest in my_investments %}
+                        <tr class="group hover:bg-surface-container-low transition-colors">
+                            <td class="py-5 font-bold text-on-surface text-sm">{{ invest.entreprise.nom }}</td>
+                            <td class="py-5 text-right font-black text-on-surface text-sm">{{ invest.montant|number_format(2, '.', ',') }} TND</td>
+                            <td class="py-5 text-right font-bold text-tertiary text-sm">{{ invest.tauxRendementPrevu }}%</td>
+                            <td class="py-5 text-right font-bold text-secondary text-sm">{{ invest.dureeMois }} mois</td>
+                            <td class="py-5 text-right font-black text-success text-sm">
+                                {% set profit = (invest.montant * (invest.tauxRendementPrevu / 100)) %}
+                                +{{ profit|number_format(2, '.', ',') }} TND
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="py-10 text-center text-secondary text-sm italic">Aucun investissement pour le moment.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Mes Investissements -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50 flex justify-between items-center">
+            <h4 class="font-black text-slate-900 uppercase tracking-tight">Mes Investissements</h4>
+            <a href="{{ path('app_investissement_index') }}" class="text-[10px] font-bold text-primary uppercase hover:underline">Voir tout</a>
+        </div>
+        <div class="p-6 space-y-4">
+            {% for inv in my_investments|slice(0, 5) %}
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-600 shadow-sm">
+                            <span class="material-symbols-outlined">business</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm">{{ inv.entreprise.nom }}</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ inv.statut }} • {{ inv.tauxRendementPrevu }}% Rendement</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-black text-slate-900">{{ inv.montant|number_format(2, ',', ' ') }} TND</p>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{{ inv.dateInvestissement|date('d/m/Y') }}</p>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-10">
+                    <p class="text-slate-400 text-sm italic text-center">Aucun investissement pour le moment.</p>
+                    <a href="{{ path('app_investissement_new') }}" class="mt-4 inline-block px-6 py-2 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-lg">Commencer</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Opportunités -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50">
+            <h4 class="font-black text-slate-900 uppercase tracking-tight">Opportunités PME</h4>
+        </div>
+        <div class="p-6 grid grid-cols-1 gap-4">
+            {% for ent in available_entreprises %}
+                <div class="group p-4 bg-slate-50 rounded-xl border border-transparent hover:border-primary/20 hover:bg-white transition-all">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                                <span class="material-symbols-outlined text-sm">rocket_launch</span>
+                            </div>
+                            <h5 class="font-bold text-sm">{{ ent.nom }}</h5>
+                        </div>
+                        <span class="px-2 py-1 bg-white text-[8px] font-black text-slate-500 rounded uppercase border border-slate-100">{{ ent.secteur }}</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-4 line-clamp-2">Investissez dans le secteur {{ ent.secteur }} avec une PME en pleine croissance.</p>
+                    <a href="{{ path('app_investissement_new', {'entreprise': ent.id}) }}" class="w-full py-2 bg-white border border-slate-200 text-slate-900 text-[10px] font-black uppercase tracking-widest rounded-lg group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all flex items-center justify-center gap-2">
+                        Proposer un investissement
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

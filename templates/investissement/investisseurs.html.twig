@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Investisseurs | CashFly{% endblock %}
+
+{% block header_title %}Mes Investisseurs{% endblock %}
+{% block header_subtitle %}Liste des investisseurs ayant manifesté un intérêt pour vos entreprises.{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for investisseur in investisseurs %}
+        <div class="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/10 shadow-sm hover:shadow-md transition-all">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-xl">
+                    {{ investisseur.prenom|first }}{{ investisseur.nom|first }}
+                </div>
+                <div>
+                    <h3 class="font-bold text-on-surface">{{ investisseur.prenom }} {{ investisseur.nom }}</h3>
+                    <p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Investisseur</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 mb-6">
+                <div class="flex justify-between text-xs">
+                    <span class="text-secondary">Expérience</span>
+                    <span class="font-bold text-on-surface">{{ investisseur.yearsExperience|default('N/A') }} ans</span>
+                </div>
+                <div class="flex justify-between text-xs">
+                    <span class="text-secondary">Budget</span>
+                    <span class="font-bold text-primary">{{ investisseur.budget|number_format(0, ',', ' ') }} TND</span>
+                </div>
+            </div>
+
+            <a href="{{ path('app_investissement_investisseur_show', {'id': investisseur.id}) }}" class="block w-full py-3 text-center bg-primary/5 text-primary text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-primary hover:text-white transition-all">
+                Voir Détails
+            </a>
+        </div>
+    {% else %}
+        <div class="col-span-full text-center py-20 bg-surface-container-lowest rounded-3xl border-2 border-dashed border-outline-variant/20">
+            <span class="material-symbols-outlined text-4xl text-outline-variant mb-4">person_search</span>
+            <p class="text-secondary">Aucun investisseur n'a encore investi dans vos entreprises.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

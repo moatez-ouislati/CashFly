@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Connexion | CashFly</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "tertiary-container": "#008486",
+              "on-error-container": "#93000a",
+              "on-tertiary-fixed": "#002020",
+              "surface-dim": "#ccdaf8",
+              "on-tertiary-container": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "surface-tint": "#005ac4",
+              "on-secondary": "#ffffff",
+              "inverse-primary": "#aec6ff",
+              "on-surface": "#0d1c32",
+              "secondary": "#515f78",
+              "inverse-on-surface": "#ecf0ff",
+              "surface-container": "#e8eeff",
+              "surface-container-highest": "#d6e3ff",
+              "primary-container": "#1171ef",
+              "outline-variant": "#c2c6d7",
+              "tertiary-fixed-dim": "#2ddbde",
+              "on-primary-container": "#ffffff",
+              "on-surface-variant": "#414754",
+              "background": "#f9f9ff",
+              "outline": "#727786",
+              "surface-variant": "#d6e3ff",
+              "tertiary": "#00696a",
+              "primary-fixed-dim": "#aec6ff",
+              "on-tertiary-fixed-variant": "#004f51",
+              "on-primary-fixed": "#001a42",
+              "surface-container-lowest": "#ffffff",
+              "on-background": "#0d1c32",
+              "on-primary-fixed-variant": "#004396",
+              "secondary-fixed-dim": "#b9c7e4",
+              "surface": "#f9f9ff",
+              "error": "#ba1a1a",
+              "on-secondary-container": "#55637d",
+              "primary-fixed": "#d8e2ff",
+              "surface-bright": "#f9f9ff",
+              "error-container": "#ffdad6",
+              "secondary-fixed": "#d6e3ff",
+              "primary": "#0059c3",
+              "on-primary": "#ffffff",
+              "secondary-container": "#d2e0fe",
+              "surface-container-low": "#f0f3ff",
+              "surface-container-high": "#dfe8ff",
+              "on-secondary-fixed": "#0d1c32",
+              "on-secondary-fixed-variant": "#39475f",
+              "tertiary-fixed": "#5af8fb",
+              "inverse-surface": "#233148",
+              "on-error": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .bg-mesh-pattern {
+        background-color: #0d1c32;
+        background-image: 
+          radial-gradient(at 0% 0%, rgba(0, 89, 195, 0.15) 0px, transparent 50%),
+          radial-gradient(at 100% 0%, rgba(17, 113, 239, 0.1) 0px, transparent 50%),
+          radial-gradient(at 100% 100%, rgba(0, 105, 106, 0.1) 0px, transparent 50%),
+          radial-gradient(at 0% 100%, rgba(0, 89, 195, 0.05) 0px, transparent 50%);
+      }
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+      }
+    </style>
+    {% block stylesheets %}
+        {{ importmap('app') }}
+    {% endblock %}
+    {% block javascripts %}
+        {{ importmap('app') }}
+    {% endblock %}
+</head>
+<body class="font-body bg-mesh-pattern min-h-screen flex flex-col">
+<main class="flex-grow flex items-center justify-center px-6 py-12 relative overflow-hidden">
+<div class="absolute top-[-10%] right-[-10%] w-[40rem] h-[40rem] bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[30rem] h-[30rem] bg-tertiary/10 rounded-full blur-[100px]"></div>
+<div class="w-full max-w-md relative z-10">
+<div class="text-center mb-10">
+<div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary-container rounded-xl shadow-lg mb-6 transform -rotate-6">
+<span class="material-symbols-outlined text-white text-4xl" data-weight="fill">architecture</span>
+</div>
+<h1 class="text-3xl font-black tracking-tighter text-white mb-2 font-headline uppercase">CashFly</h1>
+<p class="text-surface-dim/70 text-sm font-medium tracking-wide">GESTION DE TRÉSORERIE DE PRÉCISION</p>
+</div>
+<div class="bg-surface-container-lowest/5 glass-panel p-8 md:p-10 rounded-xl shadow-2xl border border-white/5 ring-1 ring-white/10">
+<div class="mb-8">
+<h2 class="text-2xl font-bold text-white tracking-tight">Connexion</h2>
+<p class="text-surface-dim/60 text-sm mt-1">Entrez vos identifiants pour accéder à votre espace.</p>
+</div>
+
+{% if error %}
+    <div class="bg-error-container/10 border border-error/20 text-error p-4 rounded-lg mb-6 text-sm flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">error</span>
+        {{ error.messageKey|trans(error.messageData, 'security') }}
+    </div>
+{% endif %}
+
+<form class="space-y-6" method="post" novalidate>
+<div class="space-y-1.5">
+<label class="block text-xs font-bold text-surface-dim/50 uppercase tracking-widest ml-1" for="email">Adresse Email</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-surface-dim/40 text-lg">mail</span>
+<input class="w-full bg-white/5 border-none focus:ring-2 focus:ring-primary/40 rounded-lg py-3.5 pl-12 pr-4 text-white placeholder-surface-dim/30 transition-all duration-300" id="email" name="_username" value="{{ last_username }}" placeholder="nom@entreprise.com" type="email" autofocus/>
+</div>
+{% if error and error.messageKey == 'Invalid credentials.' %}
+    <p class="text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1">Email ou mot de passe incorrect</p>
+{% endif %}
+</div>
+<div class="space-y-1.5">
+<div class="flex justify-between items-center">
+<label class="block text-xs font-bold text-surface-dim/50 uppercase tracking-widest ml-1" for="password">Mot de passe</label>
+<a class="text-xs font-semibold text-primary-container hover:text-primary transition-colors duration-200" href="#">Mot de passe oublié ?</a>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-surface-dim/40 text-lg">lock</span>
+<input class="w-full bg-white/5 border-none focus:ring-2 focus:ring-primary/40 rounded-lg py-3.5 pl-12 pr-12 text-white placeholder-surface-dim/30 transition-all duration-300" id="password" name="_password" placeholder="••••••••" type="password"/>
+<button class="absolute right-4 top-1/2 -translate-y-1/2 text-surface-dim/40 hover:text-white transition-colors" type="button" onclick="togglePassword()">
+<span class="material-symbols-outlined text-lg" id="password-icon">visibility</span>
+</button>
+</div>
+{% if error and error.messageKey == 'Invalid credentials.' %}
+    <p class="text-error text-[10px] font-bold uppercase tracking-widest ml-1 mt-1">Vérifiez vos identifiants</p>
+{% endif %}
+</div>
+
+<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+<button class="w-full bg-gradient-to-r from-primary to-primary-container hover:from-primary-container hover:to-primary text-white font-bold py-4 rounded-lg shadow-xl shadow-primary/20 transform active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] flex items-center justify-center gap-2 group" type="submit">
+                        Se connecter au tableau de bord
+                        <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform duration-300">arrow_forward</span>
+</button>
+</form>
+
+<div class="mt-10 relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-white/10"></div>
+</div>
+<div class="relative flex justify-center text-xs">
+<span class="px-4 bg-[#0d1c32]/50 backdrop-blur-sm text-surface-dim/40 font-bold uppercase tracking-widest">Ou continuer avec</span>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white py-3 rounded-lg transition-all duration-200 active:scale-[0.98]">
+<img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvqqWnT12N6xCAJHAxgsL64ROQh157VXXX8ptZwdLaKKDib_v-ug7PH6tN4YLh88xfoWhK-B9RDWsxAc8p0KCHicXdPq-WRTngGGnxpC9NuB4671j81Fv-0t0P11Sup7Iv3fn3FBf7BOQ6SQwasQ3MIw5fUPTM1nY30IOMkZd47IJUz_oRu9fcMf5O9XNghxquKX4pCApOnBPLYV4D1P7l045hA216AMno5hKUZ5Od622PKYSsd_3ycpZ7sQXM2TINriHcf5_xa6s"/>
+<span class="text-sm font-semibold">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white py-3 rounded-lg transition-all duration-200 active:scale-[0.98]">
+<span class="material-symbols-outlined text-xl" data-weight="fill">ios</span>
+<span class="text-sm font-semibold">Apple</span>
+</button>
+</div>
+<p class="mt-10 text-center text-surface-dim/60 text-sm">
+                    Nouveau sur la plateforme ? 
+                    <a class="text-primary-container font-bold hover:underline underline-offset-4 decoration-2 transition-all" href="{{ path('app_register') }}">Créer un compte</a>
+</p>
+</div>
+<div class="mt-8 flex items-center justify-center gap-6 opacity-40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-surface-dim text-sm">security</span>
+<span class="text-[10px] uppercase font-bold tracking-widest text-surface-dim">256-bit AES</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-surface-dim text-sm">verified_user</span>
+<span class="text-[10px] uppercase font-bold tracking-widest text-surface-dim">ISO 27001</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-surface-dim text-sm">shield</span>
+<span class="text-[10px] uppercase font-bold tracking-widest text-surface-dim">Assuré SIPC</span>
+</div>
+</div>
+</div>
+</main>
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('password-icon');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordIcon.textContent = 'visibility_off';
+    } else {
+        passwordInput.type = 'password';
+        passwordIcon.textContent = 'visibility';
+    }
+}
+</script>
+<footer class="w-full border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col md:flex-row justify-between items-center px-12 py-8 font-inter text-xs uppercase tracking-widest">
+<div class="text-sm font-black text-slate-900 dark:text-slate-50 mb-4 md:mb-0">
+            CashFly
+        </div>
+<div class="flex flex-col md:flex-row items-center gap-6">
+<div class="flex gap-8">
+<a class="text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 underline underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Politique de confidentialité</a>
+<a class="text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 underline underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Conditions d'utilisation</a>
+<a class="text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 underline underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Sécurité</a>
+<a class="text-slate-500 hover:text-slate-900 dark:hover:text-slate-100 underline underline-offset-4 transition-all opacity-80 hover:opacity-100" href="#">Statut</a>
+</div>
+<p class="text-slate-500 mt-6 md:mt-0">© 2024 CashFly Gestion de Trésorerie de Précision. Tous droits réservés.</p>
+</div>
+</footer>
+</body></html>

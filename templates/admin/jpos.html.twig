@@ -1,0 +1,46 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin | Événements JPO{% endblock %}
+{% block header_title %}Événements JPO{% endblock %}
+{% block header_subtitle %}Supervision des Journées Portes Ouvertes.{% endblock %}
+
+{% block body %}
+<div class="bg-admin-card rounded-3xl border border-white/5 overflow-hidden">
+    <table class="w-full text-left border-collapse">
+        <thead>
+            <tr class="bg-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th class="px-6 py-4">Titre</th>
+                <th class="px-6 py-4">Lieu</th>
+                <th class="px-6 py-4">Date</th>
+                <th class="px-6 py-4">Capacité</th>
+                <th class="px-6 py-4">Statut</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-white/5">
+            {% for jpo in jpos %}
+                <tr class="hover:bg-white/[0.02] transition-colors">
+                    <td class="px-6 py-4 font-bold text-sm text-slate-300">{{ jpo.titre }}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500 uppercase tracking-widest">{{ jpo.lieu }}</td>
+                    <td class="px-6 py-4 font-bold text-sm text-admin-primary">{{ jpo.dateEvenement|date('d M Y') }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-sm font-black text-white">{{ jpo.currentParticipants }}</span>
+                            <div class="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
+                                <div class="h-full bg-admin-primary" style="width: {{ (jpo.currentParticipants / jpo.maxParticipants * 100)|round }}%"></div>
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase">/ {{ jpo.maxParticipants }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if jpo.dateEvenement|date('Y-m-d') >= "now"|date('Y-m-d') %}
+                            <span class="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-[8px] font-black rounded uppercase border border-emerald-500/20">À Venir</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-slate-500/10 text-slate-400 text-[8px] font-black rounded uppercase border border-slate-500/20">Passé</span>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

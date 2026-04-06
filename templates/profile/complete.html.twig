@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Compléter mon profil | CashFly{% endblock %}
+
+{% block header_title %}Compléter mon profil{% endblock %}
+{% block header_subtitle %}Veuillez renseigner vos informations d'investisseur pour continuer.{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto bg-surface-container-lowest glass-panel p-10 rounded-3xl shadow-2xl border border-white/5 ring-1 ring-white/10">
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-on-surface tracking-tight">Détails de l'investisseur</h2>
+        <p class="text-secondary text-sm mt-1">Ces informations nous aident à mieux vous suggérer des opportunités d'investissement.</p>
+    </div>
+
+    {{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
+        <div class="text-error text-sm mb-4">
+            {{ form_errors(form) }}
+        </div>
+
+        <div class="space-y-1.5">
+            {{ form_label(form.yearsExperience, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+            {{ form_widget(form.yearsExperience) }}
+            {{ form_errors(form.yearsExperience) }}
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-1.5">
+                {{ form_label(form.highestProfit, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.highestProfit) }}
+                {{ form_errors(form.highestProfit) }}
+            </div>
+            <div class="space-y-1.5">
+                {{ form_label(form.budget, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.budget) }}
+                {{ form_errors(form.budget) }}
+            </div>
+        </div>
+
+        <div class="pt-6">
+            <button class="w-full bg-primary text-white font-black py-4 rounded-xl shadow-xl shadow-primary/20 hover:bg-primary-container transition-all active:scale-95 flex items-center justify-center gap-3 group" type="submit">
+                Enregistrer mon profil
+                <span class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform">check_circle</span>
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
