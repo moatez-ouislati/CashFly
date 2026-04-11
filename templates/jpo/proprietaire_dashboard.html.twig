@@ -1,0 +1,292 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord Propriétaire — CashFly{% endblock %}
+
+{% block body %}
+<div data-controller="jpo-calendar" data-jpo-calendar-data-value="{{ calendarData|json_encode }}"
+  data-jpo-calendar-open-value="false" data-jpo-calendar-url-value="" data-jpo-calendar-is-proprietaire-value="true"
+  data-jpo-calendar-create-url-value="{{ path('jpo_create_event') }}"
+  data-jpo-calendar-day-events-url-value="{{ path('jpo_events_on_day') }}"
+  data-jpo-calendar-current-user-id-value="{{ currentUserId }}" data-jpo-calendar-edit-url-value="/jpo/edit-event/"
+  data-jpo-calendar-delete-url-value="/jpo/delete-event/">
+
+  <header class="header header--transparent">
+    <div class="logo">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <div>
+        <div class="logo-text">CASHFLY</div>
+        <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
+      </div>
+    </div>
+    <div class="nav-label">ESPACE PROPRIÉTAIRE</div>
+    <div class="header-actions">
+      <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+        <i class="ph ph-sign-out"></i>
+      </a>
+    </div>
+  </header>
+
+  <main class="hero">
+    <div class="actions">
+      <button class="btn btn-primary" id="openCalBtn">
+        <span class="btn-icon"><i class="ph ph-calendar-blank"></i></span>CALENDRIER
+      </button>
+      <a href="{{ path('jpo_my_events') }}" class="btn btn-secondary"
+        style="background: rgba(255, 255, 255, 0.05); color: white;">
+        <span class="btn-icon"><i class="ph ph-list-bullets"></i></span>MES ÉVÉNEMENTS
+      </a>
+    </div>
+  </main>
+
+  {# ── CALENDAR OVERLAY ── #}
+  <div class="overlay" id="calOverlay">
+    <div class="cal-modal">
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="prevBtn">‹</button>
+          <div class="cal-month-title" id="calTitle"></div>
+          <button class="cal-nav-btn" id="nextBtn">›</button>
+        </div>
+        <div class="cal-view-switch">
+          <button class="view-btn active" id="monthViewBtn">MOIS</button>
+          <button class="view-btn" id="weekViewBtn">SEMAINE</button>
+        </div>
+        <button class="cal-close" id="calClose">✕</button>
+      </div>
+      <div class="cal-body">
+        <div id="monthView">
+          <div class="cal-weekdays">
+            <div class="cal-wd">LUN</div>
+            <div class="cal-wd">MAR</div>
+            <div class="cal-wd">MER</div>
+            <div class="cal-wd">JEU</div>
+            <div class="cal-wd">VEN</div>
+            <div class="cal-wd">SAM</div>
+            <div class="cal-wd">DIM</div>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+        </div>
+        <div class="week-view" id="weekView"></div>
+      </div>
+    </div>
+  </div>
+
+  {# ── DAY EVENTS POPUP ── #}
+  <div class="popup-overlay" id="dayEventsPopup">
+    <div class="popup-modal">
+      <div class="popup-header">
+        <div class="popup-header-left">
+          <i class="ph ph-calendar-check"></i>
+          <div>
+            <div class="popup-title">Événements du jour</div>
+            <div class="popup-subtitle" id="dayPopupTitle"></div>
+          </div>
+        </div>
+        <button class="popup-close" id="dayPopupClose" aria-label="Fermer">✕</button>
+      </div>
+      <div class="popup-body">
+        <div id="dayEventsList" class="day-events-list"></div>
+      </div>
+      <div class="popup-footer">
+        <button class="btn btn-primary popup-create-btn" id="dayPopupCreateBtn">
+          <i class="ph ph-plus-circle"></i> Créer un événement ce jour
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {# ── EVENT DETAILS POPUP ── #}
+  <div class="popup-overlay" id="eventDetailsPopup">
+    <div class="popup-modal popup-modal--wide">
+      <div class="popup-header">
+        <div class="popup-header-left">
+          <button class="popup-back" id="detailsPopupBack" aria-label="Retour">
+            <i class="ph ph-arrow-left"></i>
+          </button>
+          <i class="ph ph-info"></i>
+          <div>
+            <div class="popup-title">Détails de l'événement</div>
+            <div class="popup-subtitle" id="detailsPopupDateLabel"></div>
+          </div>
+        </div>
+        <button class="popup-close" id="detailsPopupClose" aria-label="Fermer">✕</button>
+      </div>
+      <div class="popup-body">
+        <div class="event-details-content">
+          <div class="edc-image" id="detailsPopupImage"></div>
+          <div class="edc-info">
+            <h2 id="detailsPopupTitle"></h2>
+            <div class="edc-meta">
+              <span><i class="ph ph-map-pin"></i> <span id="detailsPopupLieu"></span></span>
+              <span><i class="ph ph-users"></i> <span id="detailsPopupParticipants"></span></span>
+            </div>
+            <p class="edc-desc" id="detailsPopupDesc"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── DELETE CONFIRM MODAL ── #}
+  <div class="popup-overlay" id="deleteConfirmModal">
+    <div class="popup-modal popup-modal--small">
+      <i class="ph ph-warning-circle confirm-icon"></i>
+      <div class="confirm-title">Supprimer l'événement ?</div>
+      <p class="confirm-text">Attention : Cette action est irréversible. Voulez-vous vraiment supprimer cet événement ?
+      </p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" id="cancelDeleteBtn">ANNULER</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn" style="background: #ef4444; color: white;">OUI,
+          SUPPRIMER</button>
+      </div>
+    </div>
+  </div>
+
+  {# ── CREATE EVENT POPUP ── #}
+  <div class="popup-overlay" id="createEventPopup">
+    <div class="popup-modal popup-modal--wide">
+      <div class="popup-header">
+        <div class="popup-header-left">
+          <button class="popup-back" id="createPopupBack" aria-label="Retour" style="display:none">
+            <i class="ph ph-arrow-left"></i>
+          </button>
+          <i class="ph ph-plus-circle"></i>
+          <div>
+            <div class="popup-title">Créer un événement</div>
+            <div class="popup-subtitle" id="createPopupDateLabel"></div>
+          </div>
+        </div>
+        <button class="popup-close" id="createPopupClose" aria-label="Fermer">✕</button>
+      </div>
+      <div class="popup-body">
+        <form id="createEventForm" enctype="multipart/form-data" novalidate>
+          <input type="hidden" name="date_evenement" id="createEventDate">
+
+          <div class="form-group">
+            <label class="form-label" for="eventTitre">Titre <span class="required">*</span></label>
+            <input class="form-input" type="text" id="eventTitre" name="titre" placeholder="Nom de l'événement"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="eventLieu">Lieu <span class="required">*</span></label>
+            <input class="form-input" type="text" id="eventLieu" name="lieu" placeholder="Lieu de l'événement" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="eventDesc">Description</label>
+            <textarea class="form-input form-textarea" id="eventDesc" name="description" rows="3"
+              placeholder="Détails de l'événement…"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group form-group--half">
+              <label class="form-label" for="eventMaxPart">Max. Participants <span class="required">*</span></label>
+              <input class="form-input" type="number" id="eventMaxPart" name="max_participants" value="50" min="1"
+                max="9999" required>
+            </div>
+            <div class="form-group form-group--half">
+              <label class="form-label" for="eventImage">Image</label>
+              <label class="form-file-label" for="eventImage">
+                <i class="ph ph-image"></i>
+                <span id="fileNameDisplay">Choisir une image…</span>
+                <input class="form-file-input" type="file" id="eventImage" name="image" accept="image/*">
+              </label>
+            </div>
+          </div>
+
+          <div class="form-feedback form-feedback--error" id="createEventError"></div>
+          <div class="form-feedback form-feedback--success" id="createEventSuccess"></div>
+        </form>
+      </div>
+      <div class="popup-footer">
+        <button class="btn btn-primary popup-create-btn" id="createEventSubmit" type="button"
+          onclick="document.getElementById('createEventForm').dispatchEvent(new Event('submit', {bubbles:true, cancelable:true}))">
+          <i class="ph ph-check-circle"></i> Créer l'événement
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {# ── EDIT EVENT POPUP ── #}
+  <div class="popup-overlay" id="editEventPopup">
+    <div class="popup-modal popup-modal--wide">
+      <div class="popup-header">
+        <div class="popup-header-left">
+          <button class="popup-back" id="editPopupBack" aria-label="Retour">
+            <i class="ph ph-arrow-left"></i>
+          </button>
+          <i class="ph ph-pencil-simple"></i>
+          <div>
+            <div class="popup-title">Modifier l'événement</div>
+            <div class="popup-subtitle" id="editPopupDateLabel"></div>
+          </div>
+        </div>
+        <button class="popup-close" id="editPopupClose" aria-label="Fermer">✕</button>
+      </div>
+      <div class="popup-body">
+        <form id="editEventForm" enctype="multipart/form-data" novalidate>
+          <input type="hidden" name="event_id" id="editEventId">
+
+          <div class="form-group">
+            <label class="form-label" for="editTitre">Titre <span class="required">*</span></label>
+            <input class="form-input" type="text" id="editTitre" name="titre" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editLieu">Lieu <span class="required">*</span></label>
+            <input class="form-input" type="text" id="editLieu" name="lieu" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="editDesc">Description</label>
+            <textarea class="form-input form-textarea" id="editDesc" name="description" rows="3"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group form-group--half">
+              <label class="form-label" for="editMaxPart">Max. Participants <span class="required">*</span></label>
+              <input class="form-input" type="number" id="editMaxPart" name="max_participants" min="1" max="9999"
+                required>
+            </div>
+            <div class="form-group form-group--half">
+              <label class="form-label" for="editImage">Image (optionnel)</label>
+              <label class="form-file-label" for="editImage">
+                <i class="ph ph-image"></i>
+                <span id="editFileNameDisplay">Remplacer l'image…</span>
+                <input class="form-file-input" type="file" id="editImage" name="image" accept="image/*">
+              </label>
+            </div>
+          </div>
+
+          <div class="form-feedback form-feedback--error" id="editEventError"></div>
+          <div class="form-feedback form-feedback--success" id="editEventSuccess"></div>
+        </form>
+      </div>
+      <div class="popup-footer">
+        <button class="btn btn-primary popup-create-btn" id="editEventSubmit" type="button"
+          onclick="document.getElementById('editEventForm').dispatchEvent(new Event('submit', {bubbles:true, cancelable:true}))">
+          <i class="ph ph-check-circle"></i> Enregistrer les modifications
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const setupFileLabel = (inputId, displayId) => {
+      const input = document.getElementById(inputId);
+      const display = document.getElementById(displayId);
+      if (input && display) {
+        input.addEventListener('change', function () {
+          display.textContent = this.files[0] ? this.files[0].name : (inputId === 'editImage' ? 'Remplacer l\'image…' : 'Choisir une image…');
+        });
+      }
+    };
+    setupFileLabel('eventImage', 'fileNameDisplay');
+    setupFileLabel('editImage', 'editFileNameDisplay');
+  });
+</script>
+{% endblock %}

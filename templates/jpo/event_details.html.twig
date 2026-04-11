@@ -1,0 +1,383 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.titre }} - Détails de l'événement{% endblock %}
+
+{% block body %}
+<div class="page">
+  <header class="header header--transparent">
+    <a href="{{ isOwner ? path('jpo_dashboard_proprietaire') : path('jpo_dashboard_investisseur') }}" class="back-link">
+      <i class="ph ph-arrow-left"></i> Retour au Dashboard
+    </a>
+    <div class="logo">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <div>
+        <div class="logo-text">CASHFLY</div>
+        <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+        <i class="ph ph-sign-out"></i>
+      </a>
+    </div>
+  </header>
+
+  <div class="event-details-hero">
+    <div class="details-main-card">
+      <div class="details-img-container">
+        {% if event.imagePath %}
+        <img src="{{ event.imagePath }}" alt="{{ event.titre }}" class="details-hero-img">
+        {% else %}
+        <div class="details-hero-placeholder">
+          <i class="ph ph-image"></i>
+        </div>
+        {% endif %}
+        <div
+          class="details-badge-overlay {{ event.dateEvenement < date() ? 'past' : (event.isFull ? 'full' : 'open') }}">
+          {{ event.dateEvenement < date() ? 'TERMINÉ' : (event.isFull ? 'COMPLET' : 'OUVERT' ) }} </div>
+        </div>
+
+        <div class="details-content-grid">
+          <div class="details-info-primary">
+            <div class="details-date-tag">
+              <i class="ph ph-calendar-blank"></i> {{ event.dateEvenement|date('d F Y') }}
+            </div>
+            <h1 class="details-title">{{ event.titre }}</h1>
+
+            <div class="details-meta-row">
+              <div class="details-meta-item">
+                <i class="ph ph-map-pin"></i>
+                <span>{{ event.lieu ?: 'Lieu à confirmer' }}</span>
+              </div>
+              <div class="details-meta-item">
+                <i class="ph ph-users"></i>
+                <span>{{ event.currentParticipants }} / {{ event.maxParticipants }} Participants</span>
+              </div>
+            </div>
+
+            <div class="details-description">
+              <h3>À propos de cet événement</h3>
+              <p>{{ event.description ?: 'Aucune description détaillée n\'a été fournie pour cet événement.' }}</p>
+            </div>
+          </div>
+
+          <div class="details-sidebar">
+            <div class="action-card">
+              {% if isOwner %}
+              <div class="owner-notice">
+                <i class="ph ph-info"></i>
+                <p>Vous gérez cet événement</p>
+              </div>
+              <a href="{{ path('jpo_my_events') }}" class="btn btn-secondary"
+                style="width: 100%; justify-content: center;">
+                <i class="ph ph-pencil"></i> Gérer mes événements
+              </a>
+              {% else %}
+              {% if event.dateEvenement < date() %} <div class="status-notice past">
+                <i class="ph ph-clock-counter-clockwise"></i>
+                <p>Cet événement est terminé</p>
+            </div>
+            {% elseif isRegistered %}
+            <div class="status-notice registered">
+              <i class="ph ph-check-circle"></i>
+              <p>Vous êtes inscrit !</p>
+            </div>
+            <button class="btn btn-secondary" id="btnBadge"
+              style="width: 100%; justify-content: center; margin-bottom: 12px;">
+              <i class="ph ph-identification-card"></i> Télécharger le Badge
+            </button>
+            <button class="btn btn-danger" id="btnUnregister"
+              style="width: 100%; justify-content: center; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #ef4444;">
+              <i class="ph ph-x-circle"></i> Se désinscrire
+            </button>
+            {% elseif event.isFull %}
+            <div class="status-notice full">
+              <i class="ph ph-users"></i>
+              <p>Événement complet</p>
+            </div>
+            {% else %}
+            <button class="btn btn-primary" id="btnRegister" style="width: 100%; justify-content: center;">
+              <i class="ph ph-paper-plane-tilt"></i> S'inscrire maintenant
+            </button>
+            {% endif %}
+            {% endif %}
+          </div>
+
+          <div class="share-card">
+            <h4>Partager</h4>
+            <div class="share-icons">
+              <button class="share-btn"><i class="ph ph-link"></i></button>
+              <button class="share-btn"><i class="ph ph-twitter-logo"></i></button>
+              <button class="share-btn"><i class="ph ph-facebook-logo"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .event-details-hero {
+    margin-top: 40px;
+    padding: 0 48px 80px;
+  }
+
+  .details-main-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  .details-img-container {
+    height: 400px;
+    position: relative;
+    background: linear-gradient(135deg, #0e2a3a, #183f55);
+  }
+
+  .details-hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .details-hero-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    color: var(--text-dim);
+  }
+
+  .details-badge-overlay {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  .details-badge-overlay.open {
+    background: rgba(0, 229, 255, 0.2);
+    border: 1px solid var(--cyan);
+    color: var(--cyan);
+  }
+
+  .details-badge-overlay.full {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+  }
+
+  .details-badge-overlay.past {
+    background: rgba(122, 157, 181, 0.2);
+    border: 1px solid var(--text-dim);
+    color: var(--text-dim);
+  }
+
+  .details-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    padding: 40px;
+  }
+
+  .details-date-tag {
+    color: var(--cyan);
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .details-title {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    line-height: 1.1;
+  }
+
+  .details-meta-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .details-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+
+  .details-meta-item i {
+    color: var(--cyan);
+    font-size: 20px;
+  }
+
+  .details-description h3 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .details-description p {
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  .action-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .status-notice {
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .status-notice.registered {
+    background: rgba(0, 193, 106, 0.1);
+    border: 1px solid #00c16a;
+    color: #00c16a;
+  }
+
+  .status-notice.full {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+  }
+
+  .status-notice.past {
+    background: rgba(122, 157, 181, 0.1);
+    border: 1px solid var(--text-dim);
+    color: var(--text-dim);
+  }
+
+  .status-notice i {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+
+  .status-notice p {
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  .owner-notice {
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--cyan);
+  }
+
+  .share-card {
+    padding: 0 24px;
+  }
+
+  .share-card h4 {
+    font-size: 13px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+
+  .share-icons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .share-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .share-btn:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  @media (max-width: 992px) {
+    .details-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .details-title {
+      font-size: 32px;
+    }
+  }
+</style>
+
+<script data-event-id="{{ event.idEvenement }}">
+  (function () {
+    const eventId = parseInt(document.currentScript.dataset.eventId, 10);
+
+    const btnRegister = document.getElementById('btnRegister');
+    const btnUnregister = document.getElementById('btnUnregister');
+    const btnBadge = document.getElementById('btnBadge');
+
+    if (btnRegister) {
+      btnRegister.addEventListener('click', () => {
+        if (!confirm("Voulez-vous confirmer votre inscription ?")) return;
+        fetch(`/jpo/register/${eventId}`, { method: 'POST' })
+          .then(resp => resp.json())
+          .then(res => {
+            if (res.success) {
+              alert("✓ Inscription validée !");
+              window.location.reload();
+            } else {
+              alert(res.error || "Une erreur est survenue");
+            }
+          })
+          .catch(() => alert("Erreur réseau"));
+      });
+    }
+    if (btnUnregister) {
+      btnUnregister.addEventListener('click', () => {
+        if (!confirm("Voulez-vous vraiment vous désinscrire de cet événement ?")) return;
+        fetch(`/jpo/unregister/${eventId}`, { method: 'POST' })
+          .then(resp => resp.json())
+          .then(res => {
+            if (res.success) {
+              alert("✓ Vous avez été désinscrit avec succès.");
+              window.location.reload();
+            } else {
+              alert(res.error || "Une erreur est survenue");
+            }
+          })
+          .catch(() => alert("Erreur réseau"));
+      });
+    }
+    if (btnBadge) {
+      btnBadge.addEventListener('click', () => {
+        alert("⌛ Génération du badge en cours... (Fonctionnalité bientôt disponible)");
+      });
+    }
+  })();
+</script>
+{% endblock %}

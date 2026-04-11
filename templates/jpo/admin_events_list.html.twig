@@ -1,0 +1,201 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Événements Admin — CashFly{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('assets/styles/jpo.css') }}">
+<style>
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: var(--bg-card);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .admin-table th {
+        background: rgba(0, 229, 255, 0.05);
+        color: var(--cyan);
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .admin-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .action-btns {
+        display: flex;
+        gap: 8px;
+    }
+
+    .badge-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+    .badge-confirmé {
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+    }
+
+    .badge-en_attente {
+        background: rgba(234, 179, 8, 0.2);
+        color: #facc15;
+    }
+
+    .badge-annulé {
+        background: rgba(239, 68, 68, 0.2);
+        color: #f87171;
+    }
+
+    .btn-small {
+        padding: 6px 12px;
+        font-size: 11px;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page">
+    <header class="header header--transparent">
+        <div class="logo">
+            <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo"
+                style="height: 48px; width: auto; margin-right: 12px;">
+            <div>
+                <div class="logo-text">CASHFLY</div>
+                <div class="logo-sub">ADMIN JPO</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            {% if app.request.attributes.get('_route') == 'jpo_admin_events_list' %}
+            <a href="{{ path('jpo_dashboard_admin') }}" class="back-link"><i class="ph ph-house"></i> DASHBOARD</a>
+            <a href="{{ path('jpo_admin_event_create') }}" class="btn btn-primary" style="padding: 8px 16px;"><i
+                    class="ph ph-plus"></i> CRÉER</a>
+            {% else %}
+            <a href="{{ path('jpo_admin_events_list') }}" class="back-link"><i class="ph ph-arrow-left"></i> RETOUR</a>
+            {% endif %}
+            <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+                <i class="ph ph-sign-out"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="section-title">Gestion des <span>Événements</span></div>
+
+    <div class="toolbar">
+        <form method="GET" class="toolbar" style="width: 100%; margin-bottom: 0;">
+            <div class="search-wrap">
+                <i class="ph ph-magnifying-glass" style="padding: 13px; color: var(--text-dim);"></i>
+                <input type="text" name="q" value="{{ search }}" class="search-input"
+                    placeholder="Rechercher par titre ou lieu...">
+            </div>
+
+            <input type="date" name="date_start" value="{{ dateStart }}" class="filter-select"
+                style="padding-right: 16px;">
+            <input type="date" name="date_end" value="{{ dateEnd }}" class="filter-select" style="padding-right: 16px;">
+
+            <select name="creator" class="filter-select">
+                <option value="">Tous les créateurs</option>
+                {% for p in proprietaires %}
+                <option value="{{ p.id }}" {{ creatorId==p.id ? 'selected' : '' }}>{{ p.nomComplet }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-secondary btn-small">Filtrer</button>
+        </form>
+    </div>
+
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Date/Lieu</th>
+                <th>Participants</th>
+                <th>Attente</th>
+                <th>Créateur</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in events %}
+            {% set event = item.entity %}
+            <tr>
+                <td>{{ event.idEvenement }}</td>
+                <td style="font-weight: 600;">{{ event.titre }}</td>
+                <td>
+                    <div style="font-size: 12px;">{{ event.dateEvenement|date('d/m/Y') }}</div>
+                    <div style="font-size: 11px; color: var(--text-dim);">{{ event.lieu }}</div>
+                </td>
+                <td>
+                    <div style="font-size: 11px;">
+                        {{ event.currentParticipants }}/{{ event.maxParticipants }}
+                    </div>
+                    <div style="display: flex; gap: 4px; margin-top: 4px;">
+                        <span class="badge-status badge-confirmé" title="Confirmés">{{ item.statusCounts['confirmé']
+                            }}</span>
+                        <span class="badge-status badge-en_attente" title="En attente">{{
+                            item.statusCounts['en_attente'] }}</span>
+                        <span class="badge-status badge-annulé" title="Annulés">{{ item.statusCounts['annulé'] }}</span>
+                    </div>
+                </td>
+                <td>{{ item.waitlistCount }}</td>
+                <td>
+                    <div style="font-size: 12px;">{{ item.creator.nomComplet }}</div>
+                    <div style="font-size: 10px; color: var(--text-dim);">{{ item.creator.email }}</div>
+                </td>
+                <td>
+                    <div class="action-btns">
+                        <a href="{{ path('jpo_admin_event_participants', {'id': event.idEvenement}) }}"
+                            class="btn btn-secondary btn-small" title="Participants"><i class="ph ph-users"></i></a>
+                        <a href="{{ path('jpo_admin_event_waitlist', {'id': event.idEvenement}) }}"
+                            class="btn btn-secondary btn-small" title="Liste d'attente"><i
+                                class="ph ph-hourglass"></i></a>
+                        <a href="{{ path('jpo_admin_event_edit', {'id': event.idEvenement}) }}"
+                            class="btn btn-secondary btn-small" title="Modifier"><i class="ph ph-pencil"></i></a>
+                        <button class="btn btn-secondary btn-small btn-delete-event" data-id="{{ event.idEvenement }}"
+                            style="color: #ef4444;" title="Supprimer"><i class="ph ph-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: var(--text-dim);">Aucun événement trouvé.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    document.querySelectorAll('.btn-delete-event').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var id = this.dataset.id;
+            if (confirm('Voulez-vous vraiment supprimer cet événement et toutes les participations associées ?')) {
+                fetch('/jpo/admin/event/' + id + '/delete', { method: 'POST' })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Erreur: ' + (data.error || 'Inconnue'));
+                        }
+                    });
+            }
+        });
+    });
+</script>
+{% endblock %}

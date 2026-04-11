@@ -1,0 +1,269 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Événements — CashFly{% endblock %}
+
+{% block body %}
+<div data-controller="jpo-my-events" data-jpo-my-events-edit-url-value="/jpo/edit-event/"
+  data-jpo-my-events-delete-url-value="/jpo/delete-event/">
+
+  <header class="header header--transparent">
+    <div class="logo">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <div>
+        <div class="logo-text">CASHFLY</div>
+        <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
+      </div>
+    </div>
+    <div class="nav-label">MES ÉVÉNEMENTS</div>
+    <div class="header-actions">
+      <a href="{{ path('jpo_dashboard_proprietaire') }}" class="back-link">
+        <i class="ph ph-arrow-left"></i> RETOUR
+      </a>
+      <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+        <i class="ph ph-sign-out"></i>
+      </a>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="section-title">Gérer mes <span>Événements</span></div>
+    <div class="section-sub">Liste complète des Journées Portes Ouvertes que vous avez créées</div>
+
+    <div class="toolbar" style="margin-bottom: 30px;">
+      <form method="GET" style="display: flex; gap: 15px; flex: 1; min-width: 300px;">
+        <div class="search-wrap" style="flex: 1; position: relative; display: flex; align-items: center;">
+          <i class="ph ph-magnifying-glass"
+            style="position: absolute; left: 16px; color: var(--text-dim); z-index: 1;"></i>
+          <input type="text" name="q" id="searchInput" class="search-input" placeholder="Rechercher par titre, lieu..."
+            value="{{ search }}" data-action="input->jpo-my-events#search"
+            style="width: 100%; padding-left: 45px; height: 48px; border: none; background: transparent; outline: none; color: white;">
+        </div>
+
+        <button type="button" id="searchBtn" class="btn btn-primary" data-action="jpo-my-events#search"
+          style="height: 48px; padding: 0 24px;">
+          CHERCHER
+        </button>
+
+        <select name="sort" class="filter-select" onchange="this.form.submit()" style="height: 48px;">
+          <option value="dateEvenement" {{ sortBy=='dateEvenement' ? 'selected' : '' }}>Trier par Date</option>
+          <option value="titre" {{ sortBy=='titre' ? 'selected' : '' }}>Trier par Titre</option>
+          <option value="participants" {{ sortBy=='participants' ? 'selected' : '' }}>Trier par Participants</option>
+        </select>
+
+        <select name="limit" class="filter-select" onchange="this.form.submit()" style="height: 48px; width: 120px;">
+          <option value="10" {{ limit==10 ? 'selected' : '' }}>10 / page</option>
+          <option value="20" {{ limit==20 ? 'selected' : '' }}>20 / page</option>
+          <option value="50" {{ limit==50 ? 'selected' : '' }}>50 / page</option>
+        </select>
+
+        <input type="hidden" name="dir" value="{{ sortBy == 'dateEvenement' ? 'DESC' : 'ASC' }}">
+
+        <div class="tabs-wrap"
+          style="display: flex; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px;">
+          <a href="{{ path('jpo_my_events', app.request.query.all|merge({'history': '0', 'page': 1})) }}"
+            class="tab-btn {{ not history ? 'active' : '' }}">
+            À venir
+          </a>
+          <a href="{{ path('jpo_my_events', app.request.query.all|merge({'history': '1', 'page': 1})) }}"
+            class="tab-btn {{ history ? 'active' : '' }}">
+            Historique
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <div class="events-grid" id="myEventsGrid">
+      {% if events is empty %}
+      <div class="no-results"
+        style="padding: 60px 20px; text-align: center; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.1); grid-column: 1 / -1;">
+        <div style="font-size: 48px; color: var(--text-dim); margin-bottom: 20px;"><i class="ph ph-calendar-blank"></i>
+        </div>
+        <h3 style="color: white; margin-bottom: 10px;">Aucun événement trouvé</h3>
+        <p style="color: var(--text-dim); max-width: 400px; margin: 0 auto 30px;">Aucun résultat ne correspond à votre
+          recherche ou vous n'avez pas encore créé d'événements.</p>
+        <a href="{{ path('jpo_dashboard_proprietaire') }}" class="btn btn-primary">
+          <i class="ph ph-plus"></i> CRÉER UN ÉVÉNEMENT
+        </a>
+      </div>
+      {% else %}
+      {% for event in events %}
+      <div class="event-card" id="event-{{ event.idEvenement }}"
+        data-href="{{ path('jpo_event_details', {id: event.idEvenement}) }}" style="cursor: pointer;">
+        <div class="card-img">
+          {% if event.imagePath %}
+          <img src="{{ event.imagePath }}" alt="{{ event.titre }}">
+          {% else %}
+          <i class="ph ph-buildings"></i>
+          {% endif %}
+          <div class="card-badge"
+            style="background: var(--cyan); color: #060e1a; font-weight: 800; opacity: 1; box-shadow: 0 4px 12px rgba(0, 229, 255, 0.4);">
+            {{ event.currentParticipants }}/{{ event.maxParticipants }}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-date"><i class="ph ph-calendar-blank"></i> {{ event.dateEvenement|date('d/m/Y') }}</div>
+          <div class="card-title">{{ event.titre }}</div>
+          {% if event.lieu %}
+          <div style="font-size: 11px; color: var(--cyan); margin-bottom: 5px;"><i class="ph ph-map-pin"></i> {{
+            event.lieu }}</div>
+          {% endif %}
+          {% if event.description %}
+          <div class="card-desc">{{ event.description }}</div>
+          {% endif %}
+        </div>
+        <div class="card-footer"
+          style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 8px; height: 60px; position: relative;">
+          {% if not history %}
+          <button class="btn-icon btn-secondary" title="Modifier l'événement" data-action="jpo-my-events#openEdit"
+            data-event-id="{{ event.idEvenement }}" data-event-titre="{{ event.titre }}"
+            data-event-lieu="{{ event.lieu }}" data-event-desc="{{ event.description }}"
+            data-event-max="{{ event.maxParticipants }}" data-event-date="{{ event.dateEvenement|date('d/m/Y') }}"
+            style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
+            <i class="ph ph-pencil-simple" style="font-size: 18px; margin: 0;"></i>
+          </button>
+          <button class="btn-icon btn-danger" title="Supprimer l'événement" data-action="jpo-my-events#delete"
+            data-id="{{ event.idEvenement }}"
+            style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
+            <i class="ph ph-trash" style="font-size: 18px; margin: 0;"></i>
+          </button>
+          {% else %}
+          <div style="font-size: 11px; color: var(--text-dim); font-style: italic; display: flex; align-items: center;">
+            <i class="ph ph-lock-simple" style="margin-right: 5px;"></i> Lecture seule
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    {% if totalPages > 1 %}
+    <div class="pagination"
+      style="display: flex; justify-content: center; gap: 10px; margin-top: 40px; align-items: center;">
+      {% if currentPage > 1 %}
+      <a href="{{ path('jpo_my_events', app.request.query.all|merge({'page': currentPage - 1})) }}"
+        class="btn btn-secondary" style="padding: 10px 15px;"><i class="ph ph-caret-left"></i></a>
+      {% endif %}
+
+      <div style="font-weight: 600; font-size: 13px; color: var(--text-dim);">
+        Page <span style="color: var(--cyan);">{{ currentPage }}</span> sur {{ totalPages }}
+      </div>
+
+      {% if currentPage < totalPages %} <a
+        href="{{ path('jpo_my_events', app.request.query.all|merge({'page': currentPage + 1})) }}"
+        class="btn btn-secondary" style="padding: 10px 15px;"><i class="ph ph-caret-right"></i></a>
+        {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  {# ── DELETE CONFIRM MODAL ── #}
+  <div class="popup-overlay" id="deleteConfirmModal" data-jpo-my-events-target="deleteModal">
+    <div class="popup-modal popup-modal--small">
+      <i class="ph ph-warning-circle confirm-icon"></i>
+      <div class="confirm-title">Supprimer l'événement ?</div>
+      <p class="confirm-text">Attention : Cette action est irréversible. Voulez-vous vraiment supprimer cet événement ?
+      </p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" data-action="jpo-my-events#closeDelete">ANNULER</button>
+        <button class="btn btn-danger" id="confirmDeleteBtn" data-action="jpo-my-events#confirmDelete"
+          style="background: #ef4444; color: white;">OUI, SUPPRIMER</button>
+      </div>
+    </div>
+  </div>
+
+  {# ── EDIT MODAL ── #}
+  <div class="popup-overlay" id="editModal" data-jpo-my-events-target="editModal">
+    <div class="popup-modal popup-modal--wide">
+      <div class="popup-header">
+        <i class="ph ph-pencil-simple"></i>
+        <div>
+          <div class="popup-title">Modifier l'événement</div>
+          <div class="popup-subtitle" id="editModalSubtitle"></div>
+        </div>
+        <button class="popup-close" data-action="jpo-my-events#closeEdit">✕</button>
+      </div>
+      <div class="popup-body">
+        <form id="editForm" enctype="multipart/form-data">
+          <input type="hidden" name="id" id="editId">
+          <div class="form-group">
+            <label class="form-label">Titre</label>
+            <input type="text" name="titre" id="editTitre" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lieu</label>
+            <input type="text" name="lieu" id="editLieu" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea name="description" id="editDesc" class="form-input form-textarea" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group form-group--half">
+              <label class="form-label">Max. Participants</label>
+              <input type="number" name="max_participants" id="editMax" class="form-input" required min="1">
+            </div>
+            <div class="form-group form-group--half">
+              <label class="form-label">Image</label>
+              <label class="form-file-label">
+                <i class="ph ph-image"></i>
+                <span id="fileName">Remplacer l'image...</span>
+                <input type="file" name="image" class="form-file-input" accept="image/*"
+                  onchange="document.getElementById('fileName').textContent = this.files[0].name">
+              </label>
+            </div>
+          </div>
+          <div id="formError" class="form-feedback form-feedback--error"></div>
+          <div id="formSuccess" class="form-feedback form-feedback--success"></div>
+        </form>
+      </div>
+      <div class="popup-footer">
+        <button class="btn btn-primary" style="width: 100%;" data-action="jpo-my-events#submitEdit">
+          <i class="ph ph-check-circle"></i> ENREGISTRER LES MODIFICATIONS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tab-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    color: white;
+    background: rgba(0, 229, 255, 0.1);
+    border-color: rgba(0, 229, 255, 0.2);
+  }
+
+  .card-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+</style>
+
+<script>
+  document.querySelectorAll('.event-card[data-href]').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (!e.target.closest('button')) {
+        window.location.href = card.dataset.href;
+      }
+    });
+  });
+</script>
+
+{% endblock %}

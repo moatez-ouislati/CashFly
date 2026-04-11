@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard — CashFly{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/styles/jpo.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="admin-dashboard">
+    <header class="header header--transparent">
+        <div class="logo">
+            <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+            <div>
+                <div class="logo-text">CASHFLY</div>
+                <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
+            </div>
+        </div>
+        <div class="nav-label">ESPACE ADMINISTRATEUR</div>
+        <div class="header-actions">
+            <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+                <i class="ph ph-sign-out"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="hero">
+        <div class="hero-tag">CONTRÔLE TOTAL</div>
+        <h1>Gestion des <span>Événements</span></h1>
+        <p>Pilotez l'ensemble des Journées Portes Ouvertes, gérez les participants et supervisez les listes d'attente en temps réel.</p>
+        
+        <div class="actions">
+            <a href="{{ path('jpo_admin_events_list') }}" class="btn btn-primary">
+                <span class="btn-icon"><i class="ph ph-calendar-check"></i></span> Gérer les Événements
+            </a>
+        </div>
+    </main>
+</div>
+{% endblock %}
