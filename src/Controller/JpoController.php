@@ -392,7 +392,7 @@ class JpoController extends AbstractController
      */
     #[Route('/delete-event/{id}', name: 'delete_event', methods: ['POST'])]
     #[IsGranted('ROLE_PROPRIETAIRE')]
-    public function deleteEvent(int $id, EntityManagerInterface $em): JsonResponse
+    public function deleteEvent(int $id, Request $request, EntityManagerInterface $em): JsonResponse
     {
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
@@ -436,7 +436,7 @@ class JpoController extends AbstractController
     /**
      * Dedicated event details page.
      */
-    #[Route('/jpo/details/{id}', name: 'event_details')]
+    #[Route('/details/{id}', name: 'event_details')]
     public function eventDetails(int $id): Response
     {
         $event = $this->jpoRepository->find($id);
