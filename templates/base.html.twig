@@ -1,25 +1,85 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        <script src="https://unpkg.com/@phosphor-icons/web"></script>
-        {% block stylesheets %}
-        {% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    {% block stylesheets %}
+    {% endblock %}
 
-        {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
-        {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
-        {% endif %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    {% block javascripts %}
+    {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+
+    {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
+    {% if frankenphpHotReload %}
+    <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
+    <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+    <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+    {% endif %}
+</head>
+
+<body>
+    <script data-turbo-eval="false">
+        // Apply theme instantly on first load
+        const savedTheme = localStorage.getItem('cashfly_theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.add('light-mode');
+        }
+    </script>
+    {% block body %}{% endblock %}
+    <script>
+        (function () {
+            function toggleTheme() {
+                const isLight = document.documentElement.classList.toggle('light-mode');
+                localStorage.setItem('cashfly_theme', isLight ? 'light' : 'dark');
+                const icons = document.querySelectorAll('.theme-icon');
+                icons.forEach(icon => {
+                    icon.className = isLight ? 'ph ph-moon theme-icon' : 'ph ph-sun theme-icon';
+                });
+            }
+
+            function injectThemeToggle() {
+                if (document.getElementById('themeToggleBtn')) return;
+
+                const headerActions = document.querySelector('.header-actions');
+                const isLight = document.documentElement.classList.contains('light-mode');
+                const iconClass = isLight ? 'ph-moon' : 'ph-sun';
+
+                if (headerActions) {
+                    const btn = document.createElement('button');
+                    btn.id = 'themeToggleBtn';
+                    btn.onclick = toggleTheme;
+                    btn.title = 'Basculer le thème';
+                    btn.style.cssText = 'background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-dim); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; margin-left: 10px; order: -1;';
+
+                    btn.innerHTML = `<i class="ph ${iconClass} theme-icon" style="font-size: 20px;"></i>`;
+
+                    btn.onmouseover = () => { btn.style.color = 'var(--cyan)'; btn.style.borderColor = 'var(--cyan)'; };
+                    btn.onmouseout = () => { btn.style.color = 'var(--text-dim)'; btn.style.borderColor = 'var(--border)'; };
+
+                    headerActions.insertBefore(btn, headerActions.firstChild);
+                } else {
+                    const btn = document.createElement('button');
+                    btn.id = 'themeToggleBtn';
+                    btn.onclick = toggleTheme;
+                    btn.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; color: var(--text-dim); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(10px);';
+                    btn.innerHTML = `<i class="ph ${iconClass} theme-icon" style="font-size: 24px;"></i>`;
+                    document.body.appendChild(btn);
+                }
+            }
+
+            // Inject immediately since this script runs after body block
+            injectThemeToggle();
+
+            // Run on Turbo transitions
+            document.addEventListener('turbo:load', injectThemeToggle);
+            document.addEventListener('turbo:render', injectThemeToggle);
+        })();
+    </script>
+</body>
+
 </html>

@@ -3,114 +3,119 @@
 {% block title %}Tableau de Bord Investisseur — CashFly{% endblock %}
 
 {% block body %}
-<div data-controller="jpo-events"
-     data-jpo-events-url-value="{{ path('jpo_dashboard_investisseur') }}"
-     data-jpo-events-initial-query-value="{{ search }}"
-     data-jpo-events-initial-status-value="{{ status }}"
-     data-jpo-events-initial-sort-by-value="{{ sortBy }}"
-     data-jpo-events-initial-sort-dir-value="{{ sortDir }}"
-     data-jpo-events-initial-history-value="{{ history ? '1' : '0' }}"
-     data-jpo-events-initial-mine-value="{{ mine ? '1' : '0' }}">
+<div data-controller="jpo-events" data-jpo-events-url-value="{{ path('jpo_dashboard_investisseur') }}"
+  data-jpo-events-initial-query-value="{{ search }}" data-jpo-events-initial-status-value="{{ status }}"
+  data-jpo-events-initial-sort-by-value="{{ sortBy }}" data-jpo-events-initial-sort-dir-value="{{ sortDir }}"
+  data-jpo-events-initial-history-value="{{ history ? '1' : '0' }}"
+  data-jpo-events-initial-mine-value="{{ mine ? '1' : '0' }}">
 
-<header class="header">
-  <div class="logo">
-    <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
-    <div>
-      <div class="logo-text">CASHFLY</div>
-      <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
-    </div>
-  </div>
-  <div class="nav-label">ESPACE INVESTISSEUR</div>
-  <div class="header-actions">
-    <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
-      <i class="ph ph-sign-out"></i>
-    </a>
-  </div>
-</header>
-
-<div class="page">
-  <div class="section-title">Tous les <span>Événements</span></div>
-  <div class="section-sub">Explorez les Journées Portes Ouvertes disponibles</div>
-
-  <div class="toolbar">
-    <div class="search-wrap">
-      <div style="position: relative; flex: 1; display: flex; align-items: center;">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="position: absolute; left: 16px; color: #a1a1aa;" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        <input type="text" class="search-input" id="searchInput"
-               placeholder="Rechercher un événement, lieu..."
-               value="{{ search }}" style="width: 100%; padding-left: 40px;">
+  <header class="header header--transparent">
+    <div class="logo">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <div>
+        <div class="logo-text">CASHFLY</div>
+        <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
       </div>
-      <button id="searchBtn" style="background: var(--primary, #00C16A); color: white; border: none; border-radius: 0; padding: 0 24px; margin: 0; cursor: pointer; font-weight: 500; font-size: 14px;">Chercher</button>
     </div>
-    <div class="filter-toggle">
-      <button class="filter-btn toggle-history {{ history ? '' : 'active' }}" data-history="0">À venir</button>
-      <button class="filter-btn toggle-history {{ history ? 'active' : '' }}" data-history="1">Historique</button>
-      <button class="filter-btn toggle-mine {{ mine ? 'active' : '' }}" id="toggleMine" style="margin-left: 20px; border-color: var(--primary); color: var(--primary);">
-        <i class="ph ph-bookmark-simple"></i> Mes Inscriptions
+    <div class="nav-label">ESPACE INVESTISSEUR</div>
+    <div class="header-actions">
+      <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+        <i class="ph ph-sign-out"></i>
+      </a>
+    </div>
+  </header>
+
+  <div class="page">
+    <div class="section-title">Tous les <span>Événements</span></div>
+    <div class="section-sub">Explorez les Journées Portes Ouvertes disponibles</div>
+
+    <div class="toolbar">
+      <div class="search-wrap" style="flex: 1; border: none; background: transparent; display: flex; gap: 15px;">
+        <div class="search-input-container"
+          style="flex: 1; position: relative; display: flex; align-items: center; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); border-radius: 12px; transition: border-color 0.2s, box-shadow 0.2s;">
+          <i class="ph ph-magnifying-glass"
+            style="position: absolute; left: 16px; color: var(--text-dim); z-index: 1;"></i>
+          <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un événement, lieu..."
+            value="{{ search }}"
+            style="width: 100%; padding-left: 45px; height: 48px; border: none; background: transparent; outline: none; color: white;">
+        </div>
+        <button id="searchBtn" class="btn btn-primary" style="height: 48px; padding: 0 24px;">CHERCHER</button>
+      </div>
+      <div class="filter-toggle">
+        <button class="filter-btn toggle-history {{ history ? '' : 'active' }}" data-history="0">À venir</button>
+        <button class="filter-btn toggle-history {{ history ? 'active' : '' }}" data-history="1">Historique</button>
+        <button class="filter-btn toggle-mine {{ mine ? 'active' : '' }}" id="toggleMine" style="margin-left: 20px;">
+          <i class="ph ph-bookmark-simple"></i> Mes Inscriptions
+        </button>
+      </div>
+      <select class="filter-select" id="filterStatus">
+        <option value="">Tous les statuts</option>
+        <option value="open" {{ status=='open' ? 'selected' : '' }}>Places disponibles</option>
+        <option value="full" {{ status=='full' ? 'selected' : '' }}>Complet</option>
+      </select>
+      <button class="sort-btn {% if sortBy == 'dateEvenement' %}active{% endif %}" data-sort="dateEvenement">
+        <i class="ph ph-calendar-blank"></i> Date {% if sortBy == 'dateEvenement' %}{{ sortDir == 'ASC' ? '↑' : '↓' }}{%
+        endif %}
+      </button>
+      <button class="sort-btn {% if sortBy == 'participants' %}active{% endif %}" data-sort="participants">
+        <i class="ph ph-users"></i> Participants {% if sortBy == 'participants' %}{{ sortDir == 'ASC' ? '↑' : '↓' }}{%
+        endif %}
       </button>
     </div>
-    <select class="filter-select" id="filterStatus">
-      <option value="">Tous les statuts</option>
-      <option value="open" {{ status == 'open' ? 'selected' : '' }}>Places disponibles</option>
-      <option value="full" {{ status == 'full' ? 'selected' : '' }}>Complet</option>
-    </select>
-    <button class="sort-btn {% if sortBy == 'dateEvenement' %}active{% endif %}" data-sort="dateEvenement">
-      <i class="ph ph-calendar-blank"></i> Date {% if sortBy == 'dateEvenement' %}{{ sortDir == 'ASC' ? '↑' : '↓' }}{% endif %}
-    </button>
-    <button class="sort-btn {% if sortBy == 'participants' %}active{% endif %}" data-sort="participants">
-      <i class="ph ph-users"></i> Participants {% if sortBy == 'participants' %}{{ sortDir == 'ASC' ? '↑' : '↓' }}{% endif %}
-    </button>
-  </div>
 
-  <div class="events-list" id="eventsGrid">
-    {% if events is empty %}
+    <div class="events-list" id="eventsGrid">
+      {% if events is empty %}
       <div class="no-results"><span><i class="ph ph-magnifying-glass"></i></span>Aucun événement trouvé</div>
-    {% else %}
-      {% set fallbackIcons = ['ph-graduation-cap','ph-buildings','ph-laptop','ph-flask','ph-bank','ph-palette','ph-first-aid','ph-triangle','ph-microscope','ph-rocket'] %}
+      {% else %}
+      {% set fallbackIcons =
+      ['ph-graduation-cap','ph-buildings','ph-laptop','ph-flask','ph-bank','ph-palette','ph-first-aid','ph-triangle','ph-microscope','ph-rocket']
+      %}
       {% for event in events %}
-        <a href="{{ path('jpo_event_details', {id: event.idEvenement}) }}" class="event-list-item {{ event.idEvenement in registrationIds ? 'registered-highlight' : '' }}">
-          <div class="list-img">
-            {% if event.imagePath %}
-              <img src="{{ event.imagePath }}" alt="{{ event.titre }}" onerror="this.onerror=null; this.outerHTML='<i class=\'ph {{ fallbackIcons[loop.index0 % fallbackIcons|length] }}\'></i>';">
-            {% else %}
-              <i class="ph {{ fallbackIcons[loop.index0 % fallbackIcons|length] }}"></i>
+      <a href="{{ path('jpo_event_details', {id: event.idEvenement}) }}"
+        class="event-list-item {{ event.idEvenement in registrationIds ? 'registered-highlight' : '' }}">
+        <div class="list-img">
+          {% if event.imagePath %}
+          <img src="{{ event.imagePath }}" alt="{{ event.titre }}"
+            onerror="this.onerror=null; this.outerHTML='<i class=\'ph {{ fallbackIcons[loop.index0 % fallbackIcons|length] }}\'></i>';">
+          {% else %}
+          <i class="ph {{ fallbackIcons[loop.index0 % fallbackIcons|length] }}"></i>
+          {% endif %}
+        </div>
+        <div class="list-content">
+          <div class="list-info-main">
+            <div class="list-date">{{ event.dateEvenement|date('d F Y') }}</div>
+            <div class="list-title">{{ event.titre }}</div>
+          </div>
+          <div class="list-info-meta">
+            {% if event.lieu %}
+            <div class="list-location">
+              <i class="ph ph-map-pin"></i>
+              {{ event.lieu }}
+            </div>
+            {% endif %}
+            {% if event.description %}
+            <div class="list-desc">{{ event.description }}</div>
             {% endif %}
           </div>
-          <div class="list-content">
-            <div class="list-info-main">
-              <div class="list-date">{{ event.dateEvenement|date('d F Y') }}</div>
-              <div class="list-title">{{ event.titre }}</div>
-            </div>
-            <div class="list-info-meta">
-              {% if event.lieu %}
-                <div class="list-location">
-                  <i class="ph ph-map-pin"></i>
-                  {{ event.lieu }}
-                </div>
-              {% endif %}
-              {% if event.description %}
-                <div class="list-desc">{{ event.description }}</div>
-              {% endif %}
-            </div>
-            <div class="list-stats">
-              <div class="list-badge-wrap">
-                <div class="{{ event.dateEvenement < date('today') ? 'past-badge' : (event.isFull() ? 'full-badge' : 'open-badge') }}">
-                  {{ event.dateEvenement < date('today') ? 'TERMINÉ' : (event.isFull() ? 'COMPLET' : 'OUVERT') }}
-                </div>
+          <div class="list-stats">
+            <div class="list-badge-wrap">
+              <div
+                class="{{ event.dateEvenement < date('today') ? 'past-badge' : (event.isFull() ? 'full-badge' : 'open-badge') }}">
+                {{ event.dateEvenement < date('today') ? 'TERMINÉ' : (event.isFull() ? 'COMPLET' : 'OUVERT' ) }} </div>
               </div>
               <div class="list-capacity">
                 Participants: <span>{{ event.currentParticipants }}/{{ event.maxParticipants }}</span>
               </div>
             </div>
           </div>
-        </a>
+      </a>
       {% endfor %}
-    {% endif %}
-    <div class="spinner" id="spinner"><div class="spin"></div></div>
+      {% endif %}
+      <div class="spinner" id="spinner">
+        <div class="spin"></div>
+      </div>
+    </div>
   </div>
-</div>
 
 </div>
 {% endblock %}

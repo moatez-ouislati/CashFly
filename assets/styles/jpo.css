@@ -10,7 +10,40 @@
     --cyan-glow: rgba(0, 229, 255, 0.18);
     --text: #e8f4f8;
     --text-dim: #7a9db5;
-    --radius: 16px
+    --radius: 16px;
+    --header-bg: rgba(6, 14, 26, 0.85);
+    --text-bold: #fff;
+    --btn-primary-text: #060e1a;
+    --modal-bg: linear-gradient(145deg, #0d1f30, #091523);
+    --popup-modal-bg: linear-gradient(160deg, rgba(10, 25, 40, .97), rgba(6, 18, 30, .98));
+    --input-bg: rgba(255, 255, 255, .05);
+    --input-border: rgba(255, 255, 255, .1);
+    --bg-trans-hover: rgba(255, 255, 255, 0.07);
+    --cal-day-bg: rgba(255, 255, 255, 0.025);
+    --body-gradient: radial-gradient(ellipse 80% 60% at 20% 10%, #072840 0%, var(--bg-deep) 60%), radial-gradient(ellipse 60% 50% at 80% 80%, #041d2e 0%, transparent 70%);
+}
+
+:root.light-mode {
+    --bg-deep: #f0f5f9;
+    --bg-mid: #ffffff;
+    --bg-card: #ffffff;
+    --border: rgba(0, 0, 0, 0.1);
+    --cyan: #00768c;
+    --cyan2: #0093af;
+    --cyan-glow: rgba(0, 118, 140, 0.15);
+    --text: #1a202c;
+    --text-dim: #4a5568;
+
+    --header-bg: rgba(255, 255, 255, 0.95);
+    --text-bold: #1a202c;
+    --btn-primary-text: #ffffff;
+    --modal-bg: #ffffff;
+    --popup-modal-bg: #ffffff;
+    --input-bg: #f8fafc;
+    --input-border: #cbd5e0;
+    --bg-trans-hover: rgba(0, 0, 0, 0.04);
+    --cal-day-bg: #f8fafc;
+    --body-gradient: none;
 }
 
 * {
@@ -21,7 +54,7 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: radial-gradient(ellipse 80% 60% at 20% 10%, #072840 0%, var(--bg-deep) 60%), radial-gradient(ellipse 60% 50% at 80% 80%, #041d2e 0%, transparent 70%);
+    background: var(--body-gradient);
     background-color: var(--bg-deep);
     min-height: 100vh;
     color: var(--text);
@@ -38,7 +71,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(6, 14, 26, 0.85);
+    background: var(--header-bg);
 }
 
 .header-actions {
@@ -99,7 +132,7 @@ body {
     font-size: 18px;
     font-weight: 800;
     letter-spacing: 3px;
-    color: #fff
+    color: var(--text-bold)
 }
 
 .logo-sub {
@@ -181,7 +214,7 @@ body {
 
 .btn-primary {
     background: linear-gradient(90deg, var(--cyan), var(--cyan2));
-    color: #060e1a;
+    color: var(--btn-primary-text);
     box-shadow: 0 0 28px rgba(0, 229, 255, 0.35)
 }
 
@@ -231,7 +264,7 @@ body {
 .cal-modal {
     width: min(92vw, 860px);
     max-height: 90vh;
-    background: linear-gradient(145deg, #0d1f30, #091523);
+    background: var(--modal-bg);
     border: 1px solid var(--border);
     border-radius: 24px;
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 60px rgba(0, 229, 255, 0.07);
@@ -372,7 +405,7 @@ body {
     gap: 4px;
     cursor: pointer;
     position: relative;
-    background: rgba(255, 255, 255, 0.025);
+    background: var(--cal-day-bg);
     border: 1px solid transparent;
     transition: background .2s, border-color .2s, transform .2s;
     font-size: 14px;
@@ -891,7 +924,7 @@ body {
 }
 
 .event-list-item:hover {
-    background: rgba(255, 255, 255, 0.07);
+    background: var(--bg-trans-hover);
     border-color: rgba(0, 229, 255, 0.3);
     transform: translateX(8px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 229, 255, 0.05);
@@ -947,7 +980,7 @@ body {
     font-size: 17px;
     font-weight: 700;
     line-height: 1.3;
-    color: #fff;
+    color: var(--text-bold);
 }
 
 .list-info-meta {
@@ -1117,7 +1150,7 @@ body {
 }
 
 .popup-modal {
-    background: linear-gradient(160deg, rgba(10, 25, 40, .97), rgba(6, 18, 30, .98));
+    background: var(--popup-modal-bg);
     border: 1px solid rgba(0, 229, 255, 0.22);
     border-radius: 20px;
     width: 100%;
@@ -1395,8 +1428,8 @@ body {
 
 .form-input {
     width: 100%;
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid rgba(255, 255, 255, .1);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 10px;
     padding: 11px 14px;
     color: var(--text);

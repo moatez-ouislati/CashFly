@@ -125,7 +125,6 @@
                 <th>Titre</th>
                 <th>Date/Lieu</th>
                 <th>Participants</th>
-                <th>Attente</th>
                 <th>Créateur</th>
                 <th>Actions</th>
             </tr>
@@ -152,7 +151,6 @@
                         <span class="badge-status badge-annulé" title="Annulés">{{ item.statusCounts['annulé'] }}</span>
                     </div>
                 </td>
-                <td>{{ item.waitlistCount }}</td>
                 <td>
                     <div style="font-size: 12px;">{{ item.creator.nomComplet }}</div>
                     <div style="font-size: 10px; color: var(--text-dim);">{{ item.creator.email }}</div>

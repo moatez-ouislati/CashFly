@@ -213,6 +213,7 @@ class JpoController extends AbstractController
             'id'               => $e->getIdEvenement(),
             'titre'            => $e->getTitre(),
             'date'             => $e->getDateEvenement()->format('d/m/Y'),
+            'lieu'             => $e->getLieu(),
             'id_createur'      => $e->getIdCreateur(),
             'description'      => $e->getDescription(),
             'max_participants' => $e->getMaxParticipants(),
