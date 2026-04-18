@@ -180,10 +180,6 @@ class __TwigTemplate_da5890cf06b3a136bebe1f1a7ebc1eb7 extends Template
         // line 63
         yield "</div>
 
-<div class=\"alert alert-info mt-4\">
-    <i class=\"bi bi-info-circle me-2\"></i>
-    Ces recommandations sont generatees par <strong>OpenAI GPT-4</strong> en fonction de l'analyse de votre portfolio.
-</div>
 ";
         
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
@@ -281,10 +277,6 @@ class __TwigTemplate_da5890cf06b3a136bebe1f1a7ebc1eb7 extends Template
     {% endfor %}
 </div>
 
-<div class=\"alert alert-info mt-4\">
-    <i class=\"bi bi-info-circle me-2\"></i>
-    Ces recommandations sont generatees par <strong>OpenAI GPT-4</strong> en fonction de l'analyse de votre portfolio.
-</div>
 {% endblock %}
 ", "api/recommendations.html.twig", "C:\\cashfly-web-symfony\\templates\\api\\recommendations.html.twig");
     }
