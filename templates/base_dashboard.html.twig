@@ -78,7 +78,7 @@
 <aside id="sidebar" class="sidebar">
     <div class="logo-area">
         <a href="{{ path('app_dashboard') }}" class="d-inline-flex">
-            <img src="{{ asset('assets/images/images/CashFly-Logo.jpg') }}" alt="CashFly" class="img-fluid" style="max-height: 40px;">
+            <img src="{{ asset('assets/images/images/CashFly-Logo12.png') }}" alt="CashFly" class="img-fluid" style="max-height: 40px;">
         </a>
     </div>
     <ul class="nav flex-column">
@@ -100,6 +100,26 @@
         </a></li>
         <li><a class="nav-link {% if app.request.get('_route') == 'app_companies' %}active{% endif %}" href="{{ path('app_companies') }}">
             <i class="ti ti-building"></i><span class="nav-text">Entreprises</span>
+        </a></li>
+
+        <li class="px-4 pt-4 pb-2"><small class="nav-text text-muted">Services Investisseur</small></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_api_news' %}active{% endif %}" href="{{ path('app_api_news') }}">
+            <i class="ti ti-news"></i><span class="nav-text">Actualites Financieres</span>
+        </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_api_exchange_rates' %}active{% endif %}" href="{{ path('app_api_exchange_rates') }}">
+            <i class="ti ti-currency-dollar"></i><span class="nav-text">Taux de Change</span>
+        </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_api_stocks' or app.request.get('_route') == 'app_api_stock_search' %}active{% endif %}" href="{{ path('app_api_stocks') }}">
+            <i class="ti ti-chart-bar"></i><span class="nav-text">Marches Boursiers</span>
+        </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_api_market_status' %}active{% endif %}" href="{{ path('app_api_market_status') }}">
+            <i class="ti ti-world"></i><span class="nav-text">Statut Marches</span>
+        </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_api_economic' %}active{% endif %}" href="{{ path('app_api_economic') }}">
+            <i class="ti ti-chart-line"></i><span class="nav-text">Eco. Tunisie</span>
+        </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_api_recommendations' %}active{% endif %}" href="{{ path('app_api_recommendations') }}">
+            <i class="ti ti-robot"></i><span class="nav-text">Recommandations IA</span>
         </a></li>
 
         <li class="px-4 pt-4 pb-2"><small class="nav-text text-muted">Compte</small></li>
@@ -157,17 +177,27 @@
 <style>
 :root {
     --accent-color: #E66239;
-    --dark-bg: #0f172a;
-    --dark-card: #1e293b;
-    --dark-border: #334155;
-    --dark-text: #e2e8f0;
-    --dark-text-muted: #94a3b8;
-    --dark-sidebar: #1e293b;
-    --dark-topbar: #1e293b;
+    --dark-bg: #0a0f1a;
+    --dark-card: #111827;
+    --dark-border: #1f2937;
+    --dark-text: #f9fafb;
+    --dark-text-muted: #9ca3af;
+    --dark-sidebar: #111827;
+    --dark-topbar: #111827;
 }
 
 body.dark-mode {
     background-color: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4, 
+body.dark-mode h5, 
+body.dark-mode h6 {
     color: var(--dark-text) !important;
 }
 
@@ -175,7 +205,7 @@ body.dark-mode .card {
     background-color: var(--dark-card) !important;
     border-color: var(--dark-border) !important;
     color: var(--dark-text) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
 }
 
 body.dark-mode .card-header {
@@ -185,11 +215,9 @@ body.dark-mode .card-header {
 
 body.dark-mode .navbar,
 body.dark-mode nav,
-body.dark-mode .bg-white {
-    background-color: var(--dark-topbar) !important;
-}
-
-body.dark-mode .topbar {
+body.dark-mode .bg-white,
+body.dark-mode .topbar,
+body.dark-mode .logo-area {
     background-color: var(--dark-topbar) !important;
     border-bottom-color: var(--dark-border) !important;
 }
@@ -200,10 +228,22 @@ body.dark-mode .sidebar {
 }
 
 body.dark-mode .logo-area {
-    border-bottom-color: var(--dark-border) !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    background-color: var(--dark-sidebar) !important;
+}
+
+body.dark-mode .logo-text,
+body.dark-mode .navbar-brand {
+    color: var(--dark-text) !important;
 }
 
 body.dark-mode .table {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode .fw-semibold,
+body.dark-mode .fw-bold,
+body.dark-mode strong {
     color: var(--dark-text) !important;
 }
 
@@ -215,6 +255,19 @@ body.dark-mode .table > :not(caption) > * > * {
 body.dark-mode .table-light,
 body.dark-mode thead {
     background-color: var(--dark-card) !important;
+}
+
+body.dark-mode .table > thead > tr > th {
+    color: var(--dark-text) !important;
+    font-weight: 600 !important;
+}
+
+body.dark-mode .table > tbody > tr > td {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode label {
+    color: var(--dark-text) !important;
 }
 
 body.dark-mode .table-hover > tbody > tr:hover > * {

@@ -110,7 +110,15 @@ class __TwigTemplate_f876ca59767e01160628e8e8d539df61 extends Template
         yield "</p>
                     <span class=\"badge bg-primary mt-2\">";
         // line 23
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::upper($this->env->getCharset(), ((CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "role", [], "any", true, true, false, 23)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 23, $this->source); })()), "role", [], "any", false, false, false, 23), "User")) : ("User"))), "html", null, true);
+        if ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 23, $this->source); })()), "role", [], "any", false, false, false, 23) == "investisseur")) {
+            yield "Investisseur";
+        } elseif ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 23, $this->source); })()), "role", [], "any", false, false, false, 23) == "proprietaire")) {
+            yield "Proprietaire";
+        } elseif ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 23, $this->source); })()), "role", [], "any", false, false, false, 23) == "administrateur")) {
+            yield "Administrateur";
+        } else {
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::upper($this->env->getCharset(), ((CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "role", [], "any", true, true, false, 23)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 23, $this->source); })()), "role", [], "any", false, false, false, 23), "User")) : ("User"))), "html", null, true);
+        }
         yield "</span>
                 </div>
                 <div class=\"d-flex flex-column gap-2\">
@@ -261,7 +269,7 @@ class __TwigTemplate_f876ca59767e01160628e8e8d539df61 extends Template
      */
     public function getDebugInfo(): array
     {
-        return array (  198 => 78,  191 => 74,  184 => 70,  173 => 62,  166 => 58,  159 => 54,  152 => 50,  145 => 46,  138 => 42,  120 => 27,  113 => 23,  109 => 22,  105 => 21,  101 => 20,  85 => 6,  75 => 5,  58 => 3,  41 => 1,);
+        return array (  206 => 78,  199 => 74,  192 => 70,  181 => 62,  174 => 58,  167 => 54,  160 => 50,  153 => 46,  146 => 42,  128 => 27,  113 => 23,  109 => 22,  105 => 21,  101 => 20,  85 => 6,  75 => 5,  58 => 3,  41 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -288,7 +296,7 @@ class __TwigTemplate_f876ca59767e01160628e8e8d539df61 extends Template
                     <img src=\"{{ asset('assets/images/images/avatar/profile-avatar.png') }}\" alt=\"\" class=\"avatar avatar-xl rounded-circle mb-3\">
                     <h4 class=\"mb-1\">{{ user.fullName|default('User') }}</h4>
                     <p class=\"text-muted mb-0\">{{ user.email|default('') }}</p>
-                    <span class=\"badge bg-primary mt-2\">{{ user.role|default('User')|upper }}</span>
+                    <span class=\"badge bg-primary mt-2\">{% if user.role == 'investisseur' %}Investisseur{% elseif user.role == 'proprietaire' %}Proprietaire{% elseif user.role == 'administrateur' %}Administrateur{% else %}{{ user.role|default('User')|upper }}{% endif %}</span>
                 </div>
                 <div class=\"d-flex flex-column gap-2\">
                     <a href=\"#\" class=\"btn btn-outline-secondary\"><i class=\"ti ti-camera me-2\"></i>Changer la photo</a>

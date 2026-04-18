@@ -1,0 +1,77 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Taux de Change - CashFly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="fs-3 mb-1">Taux de Change</h1>
+                <p class="text-muted mb-0">Cours du Dinar Tunisien (TND) - Mise a jour en temps reel</p>
+            </div>
+            <div class="badge bg-primary">
+                <i class="ti ti-currency-dollar me-1"></i> Open Exchange Rates
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="card text-center py-4 bg-primary bg-opacity-10 border-primary border">
+            <h3 class="mb-0">1 TND</h3>
+            <p class="text-muted mb-0 small">Base</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Cours des principales devises</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="border-0 px-4 py-3">Devise</th>
+                        <th class="border-0 px-4 py-3">Nom</th>
+                        <th class="border-0 px-4 py-3 text-end">Cours</th>
+                        <th class="border-0 px-4 py-3 text-end">Variation 24h</th>
+                        <th class="border-0 px-4 py-3 text-end">1 TND =</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rate in rates %}
+                    <tr>
+                        <td class="px-4 py-3">
+                            <span class="badge bg-dark fs-6">{{ rate.symbol }}</span>
+                        </td>
+                        <td class="px-4 py-3">{{ rate.name }}</td>
+                        <td class="px-4 py-3 text-end fw-semibold">
+                            {{ rate.rate|number_format(4, '.', ',') }}
+                        </td>
+                        <td class="px-4 py-3 text-end">
+                            <span class="badge bg-{{ rate.change_24h >= 0 ? 'success' : 'danger' }}">
+                                <i class="ti ti-{{ rate.change_24h >= 0 ? 'arrow-up' : 'arrow-down' }} me-1"></i>
+                                {{ rate.change_24h >= 0 ? '+' : '' }}{{ rate.change_24h }}%
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-end text-muted">
+                            {{ (1 / rate.rate)|number_format(4, '.', ',') }} {{ rate.symbol }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-info mt-4">
+    <i class="ti ti-info-circle me-2"></i>
+    Les taux de change sont fournis par <strong>Open Exchange Rates API</strong> et sont mis a jour en temps reel.
+    Base: <strong>1 TND (Dinar Tunisien)</strong>
+</div>
+{% endblock %}

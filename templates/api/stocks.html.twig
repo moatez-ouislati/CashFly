@@ -1,0 +1,144 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Marches Boursiers - CashFly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="fs-3 mb-1">Marches Boursiers</h1>
+                <p class="text-muted mb-0">Cours des actions en temps reel via Alpha Vantage</p>
+            </div>
+            <div class="badge bg-primary">
+                <i class="bi bi-graph-up me-1"></i> Alpha Vantage API
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-currency-dollar me-2"></i>
+                        {{ symbol }}
+                    </h5>
+                    <form class="d-flex gap-2" method="GET">
+                        <select name="symbol" class="form-select form-select-sm" onchange="this.form.submit()">
+                            {% for stock in popularStocks %}
+                                <option value="{{ stock.symbol }}" {% if stock.symbol == symbol %}selected{% endif %}>
+                                    {{ stock.symbol }} - {{ stock.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if quotes.price > 0 %}
+                <div class="row text-center">
+                    <div class="col-12 mb-4">
+                        <h2 class="display-4 fw-bold mb-0">{{ quotes.price|number_format(2) }}</h2>
+                        <span class="badge bg-{{ quotes.change >= 0 ? 'success' : 'danger' }} fs-6">
+                            <i class="bi bi-{{ quotes.change >= 0 ? 'arrow-up' : 'arrow-down' }} me-1"></i>
+                            {{ quotes.change >= 0 ? '+' : '' }}{{ quotes.change|number_format(2) }}
+                            ({{ quotes.change_percent }})
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Ouverture</small>
+                            <strong>{{ quotes.open|number_format(2) }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Cloture Prec.</small>
+                            <strong>{{ quotes.previous_close|number_format(2) }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Plus Haut</small>
+                            <strong class="text-success">{{ quotes.high|number_format(2) }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Plus Bas</small>
+                            <strong class="text-danger">{{ quotes.low|number_format(2) }}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Volume</small>
+                            <strong>{{ quotes.volume|number_format(0, ',', ' ') }}</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded">
+                            <small class="text-muted d-block">Derniere Journee</small>
+                            <strong>{{ quotes.latest_day }}</strong>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3 d-block"></i>
+                    <p class="text-muted">Impossible de charger les donnees pour ce symbole.</p>
+                    <p class="small text-muted">Les appels API sont limites a 25 par jour (version gratuite).</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-star me-2"></i>Actions Populaires</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    {% for stock in popularStocks %}
+                    <a href="?symbol={{ stock.symbol }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if stock.symbol == symbol %}active{% endif %}">
+                        <div>
+                            <strong>{{ stock.symbol }}</strong>
+                            <br>
+                            <small>{{ stock.name|length > 25 ? stock.name|slice(0, 25) ~ '...' : stock.name }}</small>
+                        </div>
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-search me-2"></i>Rechercher</h5>
+            </div>
+            <div class="card-body">
+                <form method="GET" action="{{ path('app_api_stock_search') }}">
+                    <div class="input-group">
+                        <input type="text" name="keyword" class="form-control" placeholder="Nom de l'entreprise..." value="{{ keyword|default('') }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

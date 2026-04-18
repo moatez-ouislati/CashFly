@@ -3,6 +3,19 @@
 {% block title %}Analyse des Rendements - CashFly{% endblock %}
 
 {% block content %}
+{% for flash_success in app.flashes('success') %}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="ti ti-check-circle me-2"></i>{{ flash_success }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% for flash_error in app.flashes('error') %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="ti ti-x-circle me-2"></i>{{ flash_error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+
 <div class="row mb-4">
     <div class="col-12">
         <div class="d-flex justify-content-between align-items-center">
@@ -105,12 +118,12 @@
                 <h5 class="mb-0"><i class="ti ti-edit me-2"></i>Ajouter / Modifier Rendement</h5>
             </div>
             <div class="card-body">
-                <form action="{{ path('app_rendements_create') }}" method="POST">
+                <form id="rendementForm" action="{{ path('app_rendements_create') }}" method="POST">
                     <input type="hidden" name="id_rendement" id="editId" value="">
                     
                     <div class="mb-3">
                         <label class="form-label">Investissement</label>
-                        <select name="id_investissement" class="form-select" required>
+                        <select name="id_investissement" id="inputInvestissement" class="form-select" required>
                             <option value="">Choisir un investissement...</option>
                             {% for inv in investissements %}
                             <option value="{{ inv.id }}">{{ inv.nom|default('Investissement #' ~ inv.id) }} - {{ inv.montant|number_format(2, ',', ' ') }} TND</option>
@@ -136,11 +149,11 @@
 
                     <div class="mb-3">
                         <label class="form-label">Valeur Portefeuille</label>
-                        <input type="number" step="0.01" name="valeur_portefeuille" class="form-control" placeholder="0.00" value="0">
+                        <input type="number" step="0.01" name="valeur_portefeuille" id="inputPortefeuille" class="form-control" placeholder="0.00" value="0">
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
                             <i class="ti ti-plus me-2"></i>Ajouter
                         </button>
                         <button type="button" class="btn btn-outline-secondary" onclick="clearForm()">
@@ -178,13 +191,31 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
+function showToast(message, type) {
+    var toast = document.createElement('div');
+    toast.className = 'toast-notification toast-' + type;
+    toast.innerHTML = '<i class="ti ti-' + (type === 'success' ? 'check-circle text-success' : 'x-circle text-danger') + ' me-2"></i>' + message;
+    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:15px 20px;background:#fff;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:flex;align-items:center;animation:slideIn 0.3s ease';
+    
+    var style = document.createElement('style');
+    style.textContent = '@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}';
+    document.head.appendChild(style);
+    document.body.appendChild(toast);
+    
+    setTimeout(function() {
+        toast.style.animation = 'slideOut 0.3s ease forwards';
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3000);
+}
+
 function clearForm() {
     document.getElementById('editId').value = '';
-    document.querySelector('select[name="id_investissement"]').value = '';
+    document.getElementById('inputInvestissement').value = '';
     document.getElementById('inputDateCalcul').value = '';
     document.getElementById('inputGain').value = '0';
     document.getElementById('inputPerte').value = '0';
-    document.querySelector('input[name="valeur_portefeuille"]').value = '0';
+    document.getElementById('inputPortefeuille').value = '0';
+    document.getElementById('submitBtn').innerHTML = '<i class="ti ti-plus me-2"></i>Ajouter';
 }
 
 document.querySelectorAll('.btn-edit').forEach(function(btn) {
@@ -196,6 +227,48 @@ document.querySelectorAll('.btn-edit').forEach(function(btn) {
             document.getElementById('inputGain').value = card.querySelector('.text-success')?.textContent.replace(/[^\d,.-]/g, '').replace(',', '.') || '0';
             document.getElementById('inputPerte').value = card.querySelector('.text-danger')?.textContent.replace(/[^\d,.-]/g, '').replace(',', '.') || '0';
             document.getElementById('inputDateCalcul').value = card.querySelector('.small span:last-child')?.textContent.split('/').reverse().join('-') || '';
+            document.getElementById('submitBtn').innerHTML = '<i class="ti ti-check me-2"></i>Modifier';
+            document.getElementById('inputInvestissement').focus();
+        }
+    });
+});
+
+document.getElementById('rendementForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    var editId = document.getElementById('editId').value;
+    var form = this;
+    var formData = new FormData(form);
+    var url = editId ? '/rendements/update/' + editId : '/rendements/create';
+    
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(function(response) {
+        showToast(editId ? 'Rendement modifie avec succes!' : 'Rendement ajoute avec succes!', 'success');
+        setTimeout(function() { window.location.reload(); }, 1500);
+    })
+    .catch(function(error) {
+        showToast('Une erreur est survenue', 'error');
+    });
+});
+
+document.querySelectorAll('form[action*="delete"]').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (confirm('Etes-vous sur de vouloir supprimer ce rendement?')) {
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function() {
+                showToast('Rendement supprime avec succes!', 'success');
+                setTimeout(function() { window.location.reload(); }, 1500);
+            })
+            .catch(function() {
+                showToast('Erreur lors de la suppression', 'error');
+            });
         }
     });
 });

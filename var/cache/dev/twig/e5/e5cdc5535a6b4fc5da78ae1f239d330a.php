@@ -1,0 +1,1156 @@
+<?php
+
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Extension\CoreExtension;
+use Twig\Extension\SandboxExtension;
+use Twig\Markup;
+use Twig\Sandbox\SecurityError;
+use Twig\Sandbox\SecurityNotAllowedTagError;
+use Twig\Sandbox\SecurityNotAllowedFilterError;
+use Twig\Sandbox\SecurityNotAllowedFunctionError;
+use Twig\Source;
+use Twig\Template;
+use Twig\TemplateWrapper;
+
+/* api/recommendations_pdf.html.twig */
+class __TwigTemplate_12e21dfc0d3bf8dcbbd87e4e0492d774 extends Template
+{
+    private Source $source;
+    /**
+     * @var array<string, Template>
+     */
+    private array $macros = [];
+
+    public function __construct(Environment $env)
+    {
+        parent::__construct($env);
+
+        $this->source = $this->getSourceContext();
+
+        $this->parent = false;
+
+        $this->blocks = [
+        ];
+    }
+
+    protected function doDisplay(array $context, array $blocks = []): iterable
+    {
+        $macros = $this->macros;
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "template", "api/recommendations_pdf.html.twig"));
+
+        // line 1
+        yield "<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=\"UTF-8\">
+    <title>Rapport de Recommandations IA - CashFly</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            line-height: 1.7;
+            color: #333;
+            padding: 35px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #E66239;
+        }
+        .header .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #E66239;
+            margin-bottom: 5px;
+        }
+        .header h1 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #666;
+            font-size: 12px;
+        }
+        .header .ai-powered {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 10px;
+            margin-top: 10px;
+        }
+        .meta-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 10px;
+            color: #666;
+        }
+        .meta-info table { width: 100%; }
+        .meta-info td { padding: 3px 10px; }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 16px;
+            color: #E66239;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E66239;
+        }
+        
+        .stats-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            display: table-cell;
+            width: 25%;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        .stat-box h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .stat-box p {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .stat-invested h3 { color: #E66239; }
+        .stat-gain h3 { color: #28a745; }
+        .stat-count h3 { color: #ffc107; }
+        .stat-rate h3 { color: #17a2b8; }
+        
+        .sectors-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .sectors-list h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .sector-tag {
+            display: inline-block;
+            background: #E66239;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 9px;
+            margin: 2px;
+        }
+        
+        .recommendation {
+            margin-bottom: 18px;
+            padding: 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            page-break-inside: avoid;
+        }
+        .recommendation.high {
+            border-left: 5px solid #dc3545;
+            background: #fef8f8;
+        }
+        .recommendation.medium {
+            border-left: 5px solid #ffc107;
+            background: #fffbf0;
+        }
+        .recommendation.low {
+            border-left: 5px solid #6c757d;
+            background: #f8f9fa;
+        }
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .rec-header h3 {
+            font-size: 14px;
+            color: #333;
+            flex: 1;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+        }
+        .badge-high { background: #dc3545; }
+        .badge-medium { background: #ffc107; color: #333 !important; }
+        .badge-low { background: #6c757d; }
+        
+        .rec-description {
+            color: #555;
+            font-size: 11px;
+            margin-bottom: 12px;
+            line-height: 1.8;
+        }
+        
+        .rec-details {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .rec-details h4 {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .rec-details ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .rec-details li {
+            font-size: 10px;
+            color: #555;
+            margin-bottom: 4px;
+        }
+        
+        .priority-explanation {
+            background: #f0f7ff;
+            border: 1px solid #cce5ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .priority-explanation h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #004085;
+        }
+        .priority-explanation .item {
+            display: inline-block;
+            width: 32%;
+            vertical-align: top;
+            padding: 5px;
+            font-size: 9px;
+        }
+        .priority-explanation .item strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .methodology {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .methodology h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .methodology p {
+            font-size: 10px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .chart-placeholder {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 10px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #E66239;
+            text-align: center;
+        }
+        .footer .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 9px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        .footer p {
+            font-size: 9px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        .footer .brand {
+            font-size: 14px;
+            font-weight: bold;
+            color: #E66239;
+        }
+        
+        .page-break { page-break-after: always; }
+    </style>
+</head>
+<body>
+    <div class=\"header\">
+        <div class=\"logo\">CashFly</div>
+        <h1>Rapport de Recommandations IA</h1>
+        <p>Analyse approfondie de votre portfolio d'investissement</p>
+        <div class=\"ai-powered\">Powered by OpenAI GPT-4</div>
+    </div>
+
+    <div class=\"meta-info\">
+        <table>
+            <tr>
+                <td><strong>Date de generation:</strong> ";
+        // line 278
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate("now", "d/m/Y H:i"), "html", null, true);
+        yield "</td>
+                <td><strong>Periode d'analyse:</strong> ";
+        // line 279
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate("now", "F Y"), "html", null, true);
+        yield "</td>
+            </tr>
+            <tr>
+                <td><strong>Nom de l'utilisateur:</strong> ";
+        // line 282
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "fullName", [], "any", true, true, false, 282)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 282, $this->source); })()), "fullName", [], "any", false, false, false, 282), "Investisseur")) : ("Investisseur")), "html", null, true);
+        yield "</td>
+                <td><strong>Email:</strong> ";
+        // line 283
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(((CoreExtension::getAttribute($this->env, $this->source, ($context["user"] ?? null), "email", [], "any", true, true, false, 283)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 283, $this->source); })()), "email", [], "any", false, false, false, 283), "N/A")) : ("N/A")), "html", null, true);
+        yield "</td>
+            </tr>
+            <tr>
+                <td colspan=\"2\"><strong>Source des donnees:</strong> Base de donnees CashFly - ";
+        // line 286
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 286, $this->source); })()), "investmentsCount", [], "any", false, false, false, 286), "html", null, true);
+        yield " investissements analyses</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">1. Synthese du Portfolio</h2>
+        
+        <div class=\"stats-grid\">
+            <div class=\"stat-box stat-invested\">
+                <h3>";
+        // line 296
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 296, $this->source); })()), "totalInvested", [], "any", false, false, false, 296), 2, ",", " "), "html", null, true);
+        yield "</h3>
+                <p>Total Investi (TND)</p>
+            </div>
+            <div class=\"stat-box stat-gain\">
+                <h3>";
+        // line 300
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 300, $this->source); })()), "totalGain", [], "any", false, false, false, 300), 2, ",", " "), "html", null, true);
+        yield "</h3>
+                <p>Gains Prevus (TND)</p>
+            </div>
+            <div class=\"stat-box stat-count\">
+                <h3>";
+        // line 304
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 304, $this->source); })()), "investmentsCount", [], "any", false, false, false, 304), "html", null, true);
+        yield "</h3>
+                <p>Investissements</p>
+            </div>
+            <div class=\"stat-box stat-rate\">
+                <h3>";
+        // line 308
+        if ((CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 308, $this->source); })()), "totalInvested", [], "any", false, false, false, 308) > 0)) {
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(((CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 308, $this->source); })()), "totalGain", [], "any", false, false, false, 308) / CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 308, $this->source); })()), "totalInvested", [], "any", false, false, false, 308)) * 100), 2, ",", " "), "html", null, true);
+        } else {
+            yield "0";
+        }
+        yield "%</h3>
+                <p>Rendement Moyen</p>
+            </div>
+        </div>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">2. Secteurs d'Investissement</h2>
+        
+        <div class=\"sectors-list\">
+            <h4>Secteurs representes dans votre portfolio:</h4>
+            ";
+        // line 319
+        if ((Twig\Extension\CoreExtension::length($this->env->getCharset(), CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 319, $this->source); })()), "topSectors", [], "any", false, false, false, 319)) > 0)) {
+            // line 320
+            yield "                ";
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable(CoreExtension::getAttribute($this->env, $this->source, (isset($context["portfolioData"]) || array_key_exists("portfolioData", $context) ? $context["portfolioData"] : (function () { throw new RuntimeError('Variable "portfolioData" does not exist.', 320, $this->source); })()), "topSectors", [], "any", false, false, false, 320));
+            foreach ($context['_seq'] as $context["_key"] => $context["sector"]) {
+                // line 321
+                yield "                    <span class=\"sector-tag\">";
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($context["sector"], "html", null, true);
+                yield "</span>
+                ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['sector'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 323
+            yield "            ";
+        } else {
+            // line 324
+            yield "                <span class=\"sector-tag\">Aucun secteur defini</span>
+            ";
+        }
+        // line 326
+        yield "        </div>
+        
+        <p style=\"font-size: 10px; color: #666;\">
+            L'analyse de vos investissements par secteur permet d'identifier les opportunites 
+            de diversification et les concentrations de risque dans votre portfolio.
+        </p>
+    </div>
+
+    <div class=\"page-break\"></div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">3. Comprendre les Priorites</h2>
+        
+        <div class=\"priority-explanation\">
+            <h4>Guide d'interpretation des recommandations</h4>
+            <div class=\"item\">
+                <strong style=\"color: #dc3545;\">Haute Priorite (High)</strong>
+                Actions urgentes recommandees. Impact significatif sur votre portfolio. 
+                Negliger ces recommandations pourrait entrainer des pertes.
+            </div>
+            <div class=\"item\">
+                <strong style=\"color: #ffc107;\">Priorite Moyenne (Medium)</strong>
+                Suggestions importantes a considerer. Impact modere sur votre portfolio.
+                Recommandees pour optimiser vos rendements.
+            </div>
+            <div class=\"item\">
+                <strong style=\"color: #6c757d;\">Basse Priorite (Low)</strong>
+                Informations complementaires. Impact limite mais utile pour 
+                une gestion optimisee de votre portfolio.
+            </div>
+        </div>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">4. Recommandations Personnalisees</h2>
+        
+        <p style=\"font-size: 10px; color: #666; margin-bottom: 15px;\">
+            Les recommandations suivantes sont generates par intelligence artificielle en fonction 
+            de l'analyse approfondie de votre portfolio, des tendances du marche tunisien et des 
+            meilleures pratiques d'investissement.
+        </p>
+
+        ";
+        // line 368
+        $context['_parent'] = $context;
+        $context['_seq'] = CoreExtension::ensureTraversable((isset($context["recommendations"]) || array_key_exists("recommendations", $context) ? $context["recommendations"] : (function () { throw new RuntimeError('Variable "recommendations" does not exist.', 368, $this->source); })()));
+        $context['loop'] = [
+          'parent' => $context['_parent'],
+          'index0' => 0,
+          'index'  => 1,
+          'first'  => true,
+        ];
+        if (is_array($context['_seq']) || (is_object($context['_seq']) && $context['_seq'] instanceof \Countable)) {
+            $length = count($context['_seq']);
+            $context['loop']['revindex0'] = $length - 1;
+            $context['loop']['revindex'] = $length;
+            $context['loop']['length'] = $length;
+            $context['loop']['last'] = 1 === $length;
+        }
+        foreach ($context['_seq'] as $context["_key"] => $context["rec"]) {
+            // line 369
+            yield "        <div class=\"recommendation ";
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 369), "html", null, true);
+            yield "\">
+            <div class=\"rec-header\">
+                <h3>";
+            // line 371
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["loop"], "index", [], "any", false, false, false, 371), "html", null, true);
+            yield ". ";
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "title", [], "any", false, false, false, 371), "html", null, true);
+            yield "</h3>
+                <span class=\"badge badge-";
+            // line 372
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 372), "html", null, true);
+            yield "\">
+                    ";
+            // line 373
+            if ((CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 373) == "high")) {
+                yield "Haute Priorite
+                    ";
+            } elseif ((CoreExtension::getAttribute($this->env, $this->source,             // line 374
+$context["rec"], "priority", [], "any", false, false, false, 374) == "medium")) {
+                yield "Priorite Moyenne
+                    ";
+            } else {
+                // line 375
+                yield "Basse Priorite
+                    ";
+            }
+            // line 377
+            yield "                </span>
+            </div>
+            
+            <p class=\"rec-description\">";
+            // line 380
+            yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "description", [], "any", false, false, false, 380), "html", null, true);
+            yield "</p>
+            
+            <div class=\"rec-details\">
+                <h4>Points cles</h4>
+                <ul>
+                    <li><strong>Analyse:</strong> Basée sur votre situation financiere actuelle</li>
+                    <li><strong>Impact:</strong> ";
+            // line 386
+            if ((CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 386) == "high")) {
+                yield "Significant sur la croissance du portfolio";
+            } elseif ((CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 386) == "medium")) {
+                yield "Modere sur les rendements";
+            } else {
+                yield "Limite mais benefique";
+            }
+            yield "</li>
+                    <li><strong>Delai suggere:</strong> ";
+            // line 387
+            if ((CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 387) == "high")) {
+                yield "Immediate";
+            } elseif ((CoreExtension::getAttribute($this->env, $this->source, $context["rec"], "priority", [], "any", false, false, false, 387) == "medium")) {
+                yield "Dans les 30 jours";
+            } else {
+                yield "Dans les 3 mois";
+            }
+            yield "</li>
+                </ul>
+            </div>
+        </div>
+        ";
+            ++$context['loop']['index0'];
+            ++$context['loop']['index'];
+            $context['loop']['first'] = false;
+            if (isset($context['loop']['revindex0'], $context['loop']['revindex'])) {
+                --$context['loop']['revindex0'];
+                --$context['loop']['revindex'];
+                $context['loop']['last'] = 0 === $context['loop']['revindex0'];
+            }
+        }
+        $_parent = $context['_parent'];
+        unset($context['_seq'], $context['_key'], $context['rec'], $context['_parent'], $context['loop']);
+        $context = array_intersect_key($context, $_parent) + $_parent;
+        // line 392
+        yield "    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">5. Methodologie d'Analyse</h2>
+        
+        <div class=\"methodology\">
+            <h4>Comment ce rapport est-il genere?</h4>
+            <p><strong>1. Collecte des donnees:</strong> Les informations de votre portfolio sont extraites de la base de donnees CashFly, incluant tous vos investissements, montants, taux de rendement, et sectors d'activite.</p>
+            
+            <p><strong>2. Analyse par OpenAI GPT-4:</strong> Les donnees sont analyseees par un modele d'intelligence artificielle avance (GPT-4 Mini) qui identifie les patterns, les correlations, et les opportunites basees sur:</p>
+            <ul style=\"margin-left: 20px; font-size: 10px;\">
+                <li>La performance historique de vos investissements</li>
+                <li>Les tendances actuelles du marche financier tunisien et maghrebin</li>
+                <li>Les meilleures pratiques d'investissement</li>
+                <li>Les principes de diversification et de gestion des risques</li>
+            </ul>
+            
+            <p><strong>3. Generration des recommandations:</strong> L'IA formule des recommandations personnalisees en francais, organisees par priorite, avec des explications detaillees sur l'impact potentiel sur votre portfolio.</p>
+        </div>
+    </div>
+
+    <div class=\"chart-placeholder\">
+        [Graphique d'analyse du portfolio - Visualisation disponible dans l'interface web]
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">6. Marches Financiers - Contexte</h2>
+        
+        <div class=\"methodology\">
+            <h4>Situation economique actuelle (Tunisie & Maghreb)</h4>
+            <p><strong>Marche Tunisien:</strong> Le Tunindex continue de montrer une resilience remarquable avec une Hausse de 15% sur les 6 derniers mois. Les secteurs technologique et financier sont en pole position.</p>
+            
+            <p><strong>Taux de Change:</strong> Le Dinar Tunisien (TND) maintient sa stabilite face aux principales devises, ce qui cree un environnement favorable pour les investisseurs locaux.</p>
+            
+            <p><strong>Opportunites:</strong> Les PME tunisiennes offrent des rendements attractifs (8-15% selon les secteurs), avec un risque manageable grace a la diversification geographique.</p>
+        </div>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">7. Prochaines Etapes Recommandees</h2>
+        
+        <div class=\"recommendation high\">
+            <div class=\"rec-header\">
+                <h3>Action Immediate</h3>
+            </div>
+            <p class=\"rec-description\">
+                Revoir ce rapport et implementer les recommandations marquees \"Haute Priorite\" dans les 7 prochains jours.
+                Ces actions sont critiquees pour proteger et optimiser votre portfolio.
+            </p>
+        </div>
+        
+        <div class=\"recommendation medium\">
+            <div class=\"rec-header\">
+                <h3>Planification a 30 jours</h3>
+            </div>
+            <p class=\"rec-description\">
+                Planifier les actions identifiees comme \"Priorite Moyenne\" et preparez les ressources necessaires.
+                Considerer une consultation avec un conseiller financier pour les decisions importantes.
+            </p>
+        </div>
+        
+        <div class=\"recommendation low\">
+            <div class=\"rec-header\">
+                <h3>Suivi Trimestriel</h3>
+            </div>
+            <p class=\"rec-description\">
+                Generer un nouveau rapport chaque trimestre pour suivre l'evolution de votre portfolio
+                et recevoir des recommandations ajustees selon les nouvelles conditions du marche.
+            </p>
+        </div>
+    </div>
+
+    <div class=\"footer\">
+        <div class=\"disclaimer\">
+            <strong>Avertissement:</strong> Ce rapport est fourni a titre informatif uniquement et ne constitue pas un conseil financier professionnel. 
+            Les recommandations generees par intelligence artificielle ne garantissent pas les resultats. 
+            Consultez toujours un conseiller financier qualifie avant de prendre des decisions d'investissement importantes.
+            Les performances passees ne predisent pas les performances futures.
+        </div>
+        
+        <p class=\"brand\">CashFly - Fintech Dashboard</p>
+        <p>Genere par OpenAI GPT-4 | Rapport confidentiel</p>
+        <p>Pour toute question, contactez le support CashFly</p>
+    </div>
+</body>
+</html>
+";
+        
+        $__internal_6f47bbe9983af81f1e7450e9a3e3768f->leave($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof);
+
+        yield from [];
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getTemplateName(): string
+    {
+        return "api/recommendations_pdf.html.twig";
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function isTraitable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @codeCoverageIgnore
+     */
+    public function getDebugInfo(): array
+    {
+        return array (  558 => 392,  533 => 387,  523 => 386,  514 => 380,  509 => 377,  505 => 375,  500 => 374,  496 => 373,  492 => 372,  486 => 371,  480 => 369,  463 => 368,  419 => 326,  415 => 324,  412 => 323,  403 => 321,  398 => 320,  396 => 319,  378 => 308,  371 => 304,  364 => 300,  357 => 296,  344 => 286,  338 => 283,  334 => 282,  328 => 279,  324 => 278,  45 => 1,);
+    }
+
+    public function getSourceContext(): Source
+    {
+        return new Source("<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=\"UTF-8\">
+    <title>Rapport de Recommandations IA - CashFly</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 11px;
+            line-height: 1.7;
+            color: #333;
+            padding: 35px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 4px solid #E66239;
+        }
+        .header .logo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #E66239;
+            margin-bottom: 5px;
+        }
+        .header h1 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .header p {
+            color: #666;
+            font-size: 12px;
+        }
+        .header .ai-powered {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 10px;
+            margin-top: 10px;
+        }
+        .meta-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 10px;
+            color: #666;
+        }
+        .meta-info table { width: 100%; }
+        .meta-info td { padding: 3px 10px; }
+        
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 16px;
+            color: #E66239;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #E66239;
+        }
+        
+        .stats-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            display: table-cell;
+            width: 25%;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+        .stat-box h3 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .stat-box p {
+            font-size: 9px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        .stat-invested h3 { color: #E66239; }
+        .stat-gain h3 { color: #28a745; }
+        .stat-count h3 { color: #ffc107; }
+        .stat-rate h3 { color: #17a2b8; }
+        
+        .sectors-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .sectors-list h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .sector-tag {
+            display: inline-block;
+            background: #E66239;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 9px;
+            margin: 2px;
+        }
+        
+        .recommendation {
+            margin-bottom: 18px;
+            padding: 18px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            page-break-inside: avoid;
+        }
+        .recommendation.high {
+            border-left: 5px solid #dc3545;
+            background: #fef8f8;
+        }
+        .recommendation.medium {
+            border-left: 5px solid #ffc107;
+            background: #fffbf0;
+        }
+        .recommendation.low {
+            border-left: 5px solid #6c757d;
+            background: #f8f9fa;
+        }
+        .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .rec-header h3 {
+            font-size: 14px;
+            color: #333;
+            flex: 1;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+        }
+        .badge-high { background: #dc3545; }
+        .badge-medium { background: #ffc107; color: #333 !important; }
+        .badge-low { background: #6c757d; }
+        
+        .rec-description {
+            color: #555;
+            font-size: 11px;
+            margin-bottom: 12px;
+            line-height: 1.8;
+        }
+        
+        .rec-details {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .rec-details h4 {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .rec-details ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .rec-details li {
+            font-size: 10px;
+            color: #555;
+            margin-bottom: 4px;
+        }
+        
+        .priority-explanation {
+            background: #f0f7ff;
+            border: 1px solid #cce5ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .priority-explanation h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #004085;
+        }
+        .priority-explanation .item {
+            display: inline-block;
+            width: 32%;
+            vertical-align: top;
+            padding: 5px;
+            font-size: 9px;
+        }
+        .priority-explanation .item strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .methodology {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .methodology h4 {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .methodology p {
+            font-size: 10px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .chart-placeholder {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 10px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #E66239;
+            text-align: center;
+        }
+        .footer .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 9px;
+            color: #856404;
+            margin-bottom: 15px;
+        }
+        .footer p {
+            font-size: 9px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        .footer .brand {
+            font-size: 14px;
+            font-weight: bold;
+            color: #E66239;
+        }
+        
+        .page-break { page-break-after: always; }
+    </style>
+</head>
+<body>
+    <div class=\"header\">
+        <div class=\"logo\">CashFly</div>
+        <h1>Rapport de Recommandations IA</h1>
+        <p>Analyse approfondie de votre portfolio d'investissement</p>
+        <div class=\"ai-powered\">Powered by OpenAI GPT-4</div>
+    </div>
+
+    <div class=\"meta-info\">
+        <table>
+            <tr>
+                <td><strong>Date de generation:</strong> {{ \"now\"|date(\"d/m/Y H:i\") }}</td>
+                <td><strong>Periode d'analyse:</strong> {{ \"now\"|date(\"F Y\") }}</td>
+            </tr>
+            <tr>
+                <td><strong>Nom de l'utilisateur:</strong> {{ user.fullName|default('Investisseur') }}</td>
+                <td><strong>Email:</strong> {{ user.email|default('N/A') }}</td>
+            </tr>
+            <tr>
+                <td colspan=\"2\"><strong>Source des donnees:</strong> Base de donnees CashFly - {{ portfolioData.investmentsCount }} investissements analyses</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">1. Synthese du Portfolio</h2>
+        
+        <div class=\"stats-grid\">
+            <div class=\"stat-box stat-invested\">
+                <h3>{{ portfolioData.totalInvested|number_format(2, ',', ' ') }}</h3>
+                <p>Total Investi (TND)</p>
+            </div>
+            <div class=\"stat-box stat-gain\">
+                <h3>{{ portfolioData.totalGain|number_format(2, ',', ' ') }}</h3>
+                <p>Gains Prevus (TND)</p>
+            </div>
+            <div class=\"stat-box stat-count\">
+                <h3>{{ portfolioData.investmentsCount }}</h3>
+                <p>Investissements</p>
+            </div>
+            <div class=\"stat-box stat-rate\">
+                <h3>{% if portfolioData.totalInvested > 0 %}{{ ((portfolioData.totalGain / portfolioData.totalInvested) * 100)|number_format(2, ',', ' ') }}{% else %}0{% endif %}%</h3>
+                <p>Rendement Moyen</p>
+            </div>
+        </div>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">2. Secteurs d'Investissement</h2>
+        
+        <div class=\"sectors-list\">
+            <h4>Secteurs representes dans votre portfolio:</h4>
+            {% if portfolioData.topSectors|length > 0 %}
+                {% for sector in portfolioData.topSectors %}
+                    <span class=\"sector-tag\">{{ sector }}</span>
+                {% endfor %}
+            {% else %}
+                <span class=\"sector-tag\">Aucun secteur defini</span>
+            {% endif %}
+        </div>
+        
+        <p style=\"font-size: 10px; color: #666;\">
+            L'analyse de vos investissements par secteur permet d'identifier les opportunites 
+            de diversification et les concentrations de risque dans votre portfolio.
+        </p>
+    </div>
+
+    <div class=\"page-break\"></div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">3. Comprendre les Priorites</h2>
+        
+        <div class=\"priority-explanation\">
+            <h4>Guide d'interpretation des recommandations</h4>
+            <div class=\"item\">
+                <strong style=\"color: #dc3545;\">Haute Priorite (High)</strong>
+                Actions urgentes recommandees. Impact significatif sur votre portfolio. 
+                Negliger ces recommandations pourrait entrainer des pertes.
+            </div>
+            <div class=\"item\">
+                <strong style=\"color: #ffc107;\">Priorite Moyenne (Medium)</strong>
+                Suggestions importantes a considerer. Impact modere sur votre portfolio.
+                Recommandees pour optimiser vos rendements.
+            </div>
+            <div class=\"item\">
+                <strong style=\"color: #6c757d;\">Basse Priorite (Low)</strong>
+                Informations complementaires. Impact limite mais utile pour 
+                une gestion optimisee de votre portfolio.
+            </div>
+        </div>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">4. Recommandations Personnalisees</h2>
+        
+        <p style=\"font-size: 10px; color: #666; margin-bottom: 15px;\">
+            Les recommandations suivantes sont generates par intelligence artificielle en fonction 
+            de l'analyse approfondie de votre portfolio, des tendances du marche tunisien et des 
+            meilleures pratiques d'investissement.
+        </p>
+
+        {% for rec in recommendations %}
+        <div class=\"recommendation {{ rec.priority }}\">
+            <div class=\"rec-header\">
+                <h3>{{ loop.index }}. {{ rec.title }}</h3>
+                <span class=\"badge badge-{{ rec.priority }}\">
+                    {% if rec.priority == 'high' %}Haute Priorite
+                    {% elseif rec.priority == 'medium' %}Priorite Moyenne
+                    {% else %}Basse Priorite
+                    {% endif %}
+                </span>
+            </div>
+            
+            <p class=\"rec-description\">{{ rec.description }}</p>
+            
+            <div class=\"rec-details\">
+                <h4>Points cles</h4>
+                <ul>
+                    <li><strong>Analyse:</strong> Basée sur votre situation financiere actuelle</li>
+                    <li><strong>Impact:</strong> {% if rec.priority == 'high' %}Significant sur la croissance du portfolio{% elseif rec.priority == 'medium' %}Modere sur les rendements{% else %}Limite mais benefique{% endif %}</li>
+                    <li><strong>Delai suggere:</strong> {% if rec.priority == 'high' %}Immediate{% elseif rec.priority == 'medium' %}Dans les 30 jours{% else %}Dans les 3 mois{% endif %}</li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">5. Methodologie d'Analyse</h2>
+        
+        <div class=\"methodology\">
+            <h4>Comment ce rapport est-il genere?</h4>
+            <p><strong>1. Collecte des donnees:</strong> Les informations de votre portfolio sont extraites de la base de donnees CashFly, incluant tous vos investissements, montants, taux de rendement, et sectors d'activite.</p>
+            
+            <p><strong>2. Analyse par OpenAI GPT-4:</strong> Les donnees sont analyseees par un modele d'intelligence artificielle avance (GPT-4 Mini) qui identifie les patterns, les correlations, et les opportunites basees sur:</p>
+            <ul style=\"margin-left: 20px; font-size: 10px;\">
+                <li>La performance historique de vos investissements</li>
+                <li>Les tendances actuelles du marche financier tunisien et maghrebin</li>
+                <li>Les meilleures pratiques d'investissement</li>
+                <li>Les principes de diversification et de gestion des risques</li>
+            </ul>
+            
+            <p><strong>3. Generration des recommandations:</strong> L'IA formule des recommandations personnalisees en francais, organisees par priorite, avec des explications detaillees sur l'impact potentiel sur votre portfolio.</p>
+        </div>
+    </div>
+
+    <div class=\"chart-placeholder\">
+        [Graphique d'analyse du portfolio - Visualisation disponible dans l'interface web]
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">6. Marches Financiers - Contexte</h2>
+        
+        <div class=\"methodology\">
+            <h4>Situation economique actuelle (Tunisie & Maghreb)</h4>
+            <p><strong>Marche Tunisien:</strong> Le Tunindex continue de montrer une resilience remarquable avec une Hausse de 15% sur les 6 derniers mois. Les secteurs technologique et financier sont en pole position.</p>
+            
+            <p><strong>Taux de Change:</strong> Le Dinar Tunisien (TND) maintient sa stabilite face aux principales devises, ce qui cree un environnement favorable pour les investisseurs locaux.</p>
+            
+            <p><strong>Opportunites:</strong> Les PME tunisiennes offrent des rendements attractifs (8-15% selon les secteurs), avec un risque manageable grace a la diversification geographique.</p>
+        </div>
+    </div>
+
+    <div class=\"section\">
+        <h2 class=\"section-title\">7. Prochaines Etapes Recommandees</h2>
+        
+        <div class=\"recommendation high\">
+            <div class=\"rec-header\">
+                <h3>Action Immediate</h3>
+            </div>
+            <p class=\"rec-description\">
+                Revoir ce rapport et implementer les recommandations marquees \"Haute Priorite\" dans les 7 prochains jours.
+                Ces actions sont critiquees pour proteger et optimiser votre portfolio.
+            </p>
+        </div>
+        
+        <div class=\"recommendation medium\">
+            <div class=\"rec-header\">
+                <h3>Planification a 30 jours</h3>
+            </div>
+            <p class=\"rec-description\">
+                Planifier les actions identifiees comme \"Priorite Moyenne\" et preparez les ressources necessaires.
+                Considerer une consultation avec un conseiller financier pour les decisions importantes.
+            </p>
+        </div>
+        
+        <div class=\"recommendation low\">
+            <div class=\"rec-header\">
+                <h3>Suivi Trimestriel</h3>
+            </div>
+            <p class=\"rec-description\">
+                Generer un nouveau rapport chaque trimestre pour suivre l'evolution de votre portfolio
+                et recevoir des recommandations ajustees selon les nouvelles conditions du marche.
+            </p>
+        </div>
+    </div>
+
+    <div class=\"footer\">
+        <div class=\"disclaimer\">
+            <strong>Avertissement:</strong> Ce rapport est fourni a titre informatif uniquement et ne constitue pas un conseil financier professionnel. 
+            Les recommandations generees par intelligence artificielle ne garantissent pas les resultats. 
+            Consultez toujours un conseiller financier qualifie avant de prendre des decisions d'investissement importantes.
+            Les performances passees ne predisent pas les performances futures.
+        </div>
+        
+        <p class=\"brand\">CashFly - Fintech Dashboard</p>
+        <p>Genere par OpenAI GPT-4 | Rapport confidentiel</p>
+        <p>Pour toute question, contactez le support CashFly</p>
+    </div>
+</body>
+</html>
+", "api/recommendations_pdf.html.twig", "C:\\cashfly-web-symfony\\templates\\api\\recommendations_pdf.html.twig");
+    }
+}

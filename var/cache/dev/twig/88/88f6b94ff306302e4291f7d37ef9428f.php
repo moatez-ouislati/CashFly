@@ -140,7 +140,7 @@ class __TwigTemplate_78071517537671e207d1abd2cb1a69b8 extends Template
         yield "\" class=\"d-inline-flex flex-column align-items-start\">
             <img src=\"";
         // line 56
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/images/images/CashFly-Logo.jpg"), "html", null, true);
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/images/images/CashFly-Logo12.png"), "html", null, true);
         yield "\" alt=\"CashFly\" class=\"img-fluid\" style=\"max-height: 40px;\">
             <small class=\"text-danger fw-bold mt-1\">ADMIN</small>
         </a>
@@ -432,7 +432,7 @@ body.dark-mode .dropdown-item:hover {
 <aside id=\"sidebar\" class=\"sidebar\">
     <div class=\"logo-area\">
         <a href=\"{{ path('app_admin_analytics') }}\" class=\"d-inline-flex flex-column align-items-start\">
-            <img src=\"{{ asset('assets/images/images/CashFly-Logo.jpg') }}\" alt=\"CashFly\" class=\"img-fluid\" style=\"max-height: 40px;\">
+            <img src=\"{{ asset('assets/images/images/CashFly-Logo12.png') }}\" alt=\"CashFly\" class=\"img-fluid\" style=\"max-height: 40px;\">
             <small class=\"text-danger fw-bold mt-1\">ADMIN</small>
         </a>
     </div>

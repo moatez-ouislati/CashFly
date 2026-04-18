@@ -171,7 +171,7 @@ class __TwigTemplate_a8a048c322e7a863adddb9553e94283e extends Template
         yield "\" class=\"d-inline-flex\">
             <img src=\"";
         // line 81
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/images/images/CashFly-Logo.jpg"), "html", null, true);
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Symfony\Bridge\Twig\Extension\AssetExtension']->getAssetUrl("assets/images/images/CashFly-Logo12.png"), "html", null, true);
         yield "\" alt=\"CashFly\" class=\"img-fluid\" style=\"max-height: 40px;\">
         </a>
     </div>
@@ -238,10 +238,72 @@ class __TwigTemplate_a8a048c322e7a863adddb9553e94283e extends Template
             <i class=\"ti ti-building\"></i><span class=\"nav-text\">Entreprises</span>
         </a></li>
 
-        <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Compte</small></li>
+        <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Services Investisseur</small></li>
         <li><a class=\"nav-link ";
         // line 106
-        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 106, $this->source); })()), "request", [], "any", false, false, false, 106), "get", ["_route"], "method", false, false, false, 106) == "app_profile")) {
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 106, $this->source); })()), "request", [], "any", false, false, false, 106), "get", ["_route"], "method", false, false, false, 106) == "app_api_news")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_api_news");
+        yield "\">
+            <i class=\"ti ti-news\"></i><span class=\"nav-text\">Actualites Financieres</span>
+        </a></li>
+        <li><a class=\"nav-link ";
+        // line 109
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 109, $this->source); })()), "request", [], "any", false, false, false, 109), "get", ["_route"], "method", false, false, false, 109) == "app_api_exchange_rates")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_api_exchange_rates");
+        yield "\">
+            <i class=\"ti ti-currency-dollar\"></i><span class=\"nav-text\">Taux de Change</span>
+        </a></li>
+        <li><a class=\"nav-link ";
+        // line 112
+        if (((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 112, $this->source); })()), "request", [], "any", false, false, false, 112), "get", ["_route"], "method", false, false, false, 112) == "app_api_stocks") || (CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 112, $this->source); })()), "request", [], "any", false, false, false, 112), "get", ["_route"], "method", false, false, false, 112) == "app_api_stock_search"))) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_api_stocks");
+        yield "\">
+            <i class=\"ti ti-chart-bar\"></i><span class=\"nav-text\">Marches Boursiers</span>
+        </a></li>
+        <li><a class=\"nav-link ";
+        // line 115
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 115, $this->source); })()), "request", [], "any", false, false, false, 115), "get", ["_route"], "method", false, false, false, 115) == "app_api_market_status")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_api_market_status");
+        yield "\">
+            <i class=\"ti ti-world\"></i><span class=\"nav-text\">Statut Marches</span>
+        </a></li>
+        <li><a class=\"nav-link ";
+        // line 118
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 118, $this->source); })()), "request", [], "any", false, false, false, 118), "get", ["_route"], "method", false, false, false, 118) == "app_api_economic")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_api_economic");
+        yield "\">
+            <i class=\"ti ti-chart-line\"></i><span class=\"nav-text\">Eco. Tunisie</span>
+        </a></li>
+        <li><a class=\"nav-link ";
+        // line 121
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 121, $this->source); })()), "request", [], "any", false, false, false, 121), "get", ["_route"], "method", false, false, false, 121) == "app_api_recommendations")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_api_recommendations");
+        yield "\">
+            <i class=\"ti ti-robot\"></i><span class=\"nav-text\">Recommandations IA</span>
+        </a></li>
+
+        <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Compte</small></li>
+        <li><a class=\"nav-link ";
+        // line 126
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 126, $this->source); })()), "request", [], "any", false, false, false, 126), "get", ["_route"], "method", false, false, false, 126) == "app_profile")) {
             yield "active";
         }
         yield "\" href=\"";
@@ -255,9 +317,9 @@ class __TwigTemplate_a8a048c322e7a863adddb9553e94283e extends Template
 <main id=\"content\" class=\"content py-10\">
     <div class=\"container-fluid\">
         ";
-        // line 114
+        // line 134
         yield from $this->unwrap()->yieldBlock('content', $context, $blocks);
-        // line 115
+        // line 135
         yield "    </div>
 </main>
 
@@ -303,17 +365,27 @@ class __TwigTemplate_a8a048c322e7a863adddb9553e94283e extends Template
 <style>
 :root {
     --accent-color: #E66239;
-    --dark-bg: #0f172a;
-    --dark-card: #1e293b;
-    --dark-border: #334155;
-    --dark-text: #e2e8f0;
-    --dark-text-muted: #94a3b8;
-    --dark-sidebar: #1e293b;
-    --dark-topbar: #1e293b;
+    --dark-bg: #0a0f1a;
+    --dark-card: #111827;
+    --dark-border: #1f2937;
+    --dark-text: #f9fafb;
+    --dark-text-muted: #9ca3af;
+    --dark-sidebar: #111827;
+    --dark-topbar: #111827;
 }
 
 body.dark-mode {
     background-color: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4, 
+body.dark-mode h5, 
+body.dark-mode h6 {
     color: var(--dark-text) !important;
 }
 
@@ -321,7 +393,7 @@ body.dark-mode .card {
     background-color: var(--dark-card) !important;
     border-color: var(--dark-border) !important;
     color: var(--dark-text) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
 }
 
 body.dark-mode .card-header {
@@ -331,11 +403,9 @@ body.dark-mode .card-header {
 
 body.dark-mode .navbar,
 body.dark-mode nav,
-body.dark-mode .bg-white {
-    background-color: var(--dark-topbar) !important;
-}
-
-body.dark-mode .topbar {
+body.dark-mode .bg-white,
+body.dark-mode .topbar,
+body.dark-mode .logo-area {
     background-color: var(--dark-topbar) !important;
     border-bottom-color: var(--dark-border) !important;
 }
@@ -346,10 +416,22 @@ body.dark-mode .sidebar {
 }
 
 body.dark-mode .logo-area {
-    border-bottom-color: var(--dark-border) !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    background-color: var(--dark-sidebar) !important;
+}
+
+body.dark-mode .logo-text,
+body.dark-mode .navbar-brand {
+    color: var(--dark-text) !important;
 }
 
 body.dark-mode .table {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode .fw-semibold,
+body.dark-mode .fw-bold,
+body.dark-mode strong {
     color: var(--dark-text) !important;
 }
 
@@ -361,6 +443,19 @@ body.dark-mode .table > :not(caption) > * > * {
 body.dark-mode .table-light,
 body.dark-mode thead {
     background-color: var(--dark-card) !important;
+}
+
+body.dark-mode .table > thead > tr > th {
+    color: var(--dark-text) !important;
+    font-weight: 600 !important;
+}
+
+body.dark-mode .table > tbody > tr > td {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode label {
+    color: var(--dark-text) !important;
 }
 
 body.dark-mode .table-hover > tbody > tr:hover > * {
@@ -579,7 +674,7 @@ body.dark-mode .list-group-item {
         yield from [];
     }
 
-    // line 114
+    // line 134
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -616,7 +711,7 @@ body.dark-mode .list-group-item {
      */
     public function getDebugInfo(): array
     {
-        return array (  583 => 114,  261 => 115,  259 => 114,  244 => 106,  232 => 101,  222 => 98,  212 => 95,  202 => 92,  192 => 89,  182 => 86,  174 => 81,  170 => 80,  154 => 67,  148 => 64,  141 => 60,  137 => 59,  132 => 57,  124 => 52,  105 => 36,  92 => 26,  68 => 4,  58 => 3,  41 => 1,);
+        return array (  678 => 134,  323 => 135,  321 => 134,  306 => 126,  294 => 121,  284 => 118,  274 => 115,  264 => 112,  254 => 109,  244 => 106,  232 => 101,  222 => 98,  212 => 95,  202 => 92,  192 => 89,  182 => 86,  174 => 81,  170 => 80,  154 => 67,  148 => 64,  141 => 60,  137 => 59,  132 => 57,  124 => 52,  105 => 36,  92 => 26,  68 => 4,  58 => 3,  41 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -701,7 +796,7 @@ body.dark-mode .list-group-item {
 <aside id=\"sidebar\" class=\"sidebar\">
     <div class=\"logo-area\">
         <a href=\"{{ path('app_dashboard') }}\" class=\"d-inline-flex\">
-            <img src=\"{{ asset('assets/images/images/CashFly-Logo.jpg') }}\" alt=\"CashFly\" class=\"img-fluid\" style=\"max-height: 40px;\">
+            <img src=\"{{ asset('assets/images/images/CashFly-Logo12.png') }}\" alt=\"CashFly\" class=\"img-fluid\" style=\"max-height: 40px;\">
         </a>
     </div>
     <ul class=\"nav flex-column\">
@@ -723,6 +818,26 @@ body.dark-mode .list-group-item {
         </a></li>
         <li><a class=\"nav-link {% if app.request.get('_route') == 'app_companies' %}active{% endif %}\" href=\"{{ path('app_companies') }}\">
             <i class=\"ti ti-building\"></i><span class=\"nav-text\">Entreprises</span>
+        </a></li>
+
+        <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Services Investisseur</small></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_news' %}active{% endif %}\" href=\"{{ path('app_api_news') }}\">
+            <i class=\"ti ti-news\"></i><span class=\"nav-text\">Actualites Financieres</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_exchange_rates' %}active{% endif %}\" href=\"{{ path('app_api_exchange_rates') }}\">
+            <i class=\"ti ti-currency-dollar\"></i><span class=\"nav-text\">Taux de Change</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_stocks' or app.request.get('_route') == 'app_api_stock_search' %}active{% endif %}\" href=\"{{ path('app_api_stocks') }}\">
+            <i class=\"ti ti-chart-bar\"></i><span class=\"nav-text\">Marches Boursiers</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_market_status' %}active{% endif %}\" href=\"{{ path('app_api_market_status') }}\">
+            <i class=\"ti ti-world\"></i><span class=\"nav-text\">Statut Marches</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_economic' %}active{% endif %}\" href=\"{{ path('app_api_economic') }}\">
+            <i class=\"ti ti-chart-line\"></i><span class=\"nav-text\">Eco. Tunisie</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_recommendations' %}active{% endif %}\" href=\"{{ path('app_api_recommendations') }}\">
+            <i class=\"ti ti-robot\"></i><span class=\"nav-text\">Recommandations IA</span>
         </a></li>
 
         <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Compte</small></li>
@@ -780,17 +895,27 @@ body.dark-mode .list-group-item {
 <style>
 :root {
     --accent-color: #E66239;
-    --dark-bg: #0f172a;
-    --dark-card: #1e293b;
-    --dark-border: #334155;
-    --dark-text: #e2e8f0;
-    --dark-text-muted: #94a3b8;
-    --dark-sidebar: #1e293b;
-    --dark-topbar: #1e293b;
+    --dark-bg: #0a0f1a;
+    --dark-card: #111827;
+    --dark-border: #1f2937;
+    --dark-text: #f9fafb;
+    --dark-text-muted: #9ca3af;
+    --dark-sidebar: #111827;
+    --dark-topbar: #111827;
 }
 
 body.dark-mode {
     background-color: var(--dark-bg) !important;
+    color: var(--dark-text) !important;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4, 
+body.dark-mode h5, 
+body.dark-mode h6 {
     color: var(--dark-text) !important;
 }
 
@@ -798,7 +923,7 @@ body.dark-mode .card {
     background-color: var(--dark-card) !important;
     border-color: var(--dark-border) !important;
     color: var(--dark-text) !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4) !important;
 }
 
 body.dark-mode .card-header {
@@ -808,11 +933,9 @@ body.dark-mode .card-header {
 
 body.dark-mode .navbar,
 body.dark-mode nav,
-body.dark-mode .bg-white {
-    background-color: var(--dark-topbar) !important;
-}
-
-body.dark-mode .topbar {
+body.dark-mode .bg-white,
+body.dark-mode .topbar,
+body.dark-mode .logo-area {
     background-color: var(--dark-topbar) !important;
     border-bottom-color: var(--dark-border) !important;
 }
@@ -823,10 +946,22 @@ body.dark-mode .sidebar {
 }
 
 body.dark-mode .logo-area {
-    border-bottom-color: var(--dark-border) !important;
+    border-bottom: 1px solid var(--dark-border) !important;
+    background-color: var(--dark-sidebar) !important;
+}
+
+body.dark-mode .logo-text,
+body.dark-mode .navbar-brand {
+    color: var(--dark-text) !important;
 }
 
 body.dark-mode .table {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode .fw-semibold,
+body.dark-mode .fw-bold,
+body.dark-mode strong {
     color: var(--dark-text) !important;
 }
 
@@ -838,6 +973,19 @@ body.dark-mode .table > :not(caption) > * > * {
 body.dark-mode .table-light,
 body.dark-mode thead {
     background-color: var(--dark-card) !important;
+}
+
+body.dark-mode .table > thead > tr > th {
+    color: var(--dark-text) !important;
+    font-weight: 600 !important;
+}
+
+body.dark-mode .table > tbody > tr > td {
+    color: var(--dark-text) !important;
+}
+
+body.dark-mode label {
+    color: var(--dark-text) !important;
 }
 
 body.dark-mode .table-hover > tbody > tr:hover > * {
