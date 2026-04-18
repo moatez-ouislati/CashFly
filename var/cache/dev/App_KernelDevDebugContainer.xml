@@ -425,7 +425,6 @@
     <service id="App\Service\Api\AlphaVantageService" class="App\Service\Api\AlphaVantageService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\EmailService" class="App\Service\Api\EmailService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\ExchangeRateService" class="App\Service\Api\ExchangeRateService" autowire="true" autoconfigure="true"/>
-    <service id="App\Service\Api\MapService" class="App\Service\Api\MapService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\NewsService" class="App\Service\Api\NewsService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\TranslationService" class="App\Service\Api\TranslationService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\WeatherService" class="App\Service\Api\WeatherService" autowire="true" autoconfigure="true"/>
