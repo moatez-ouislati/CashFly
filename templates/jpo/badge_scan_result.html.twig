@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vérification du Badge - CashFly{% endblock %}
+
+{% block body %}
+<div class="page" style="display: flex; align-items: center; justify-content: center; min-height: 100vh;">
+    <div
+        style="background: var(--bg-card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 100%; max-width: 500px; text-align: center;">
+        <h1 style="font-size: 24px; margin-bottom: 40px;"><i class="ph ph-scan"></i> Résultat du Scan</h1>
+
+        {% if status == 'valide' %}
+        <div style="font-size: 64px; color: #00c16a; margin-bottom: 20px;"><i class="ph ph-check-circle"></i></div>
+        <h2 style="color: #00c16a; margin-bottom: 10px;">Inscrit - Badge généré</h2>
+        {% elseif status == 'non_genere' %}
+        <div style="font-size: 64px; color: #f59e0b; margin-bottom: 20px;"><i class="ph ph-warning-circle"></i></div>
+        <h2 style="color: #f59e0b; margin-bottom: 10px;">Inscrit - Badge non généré</h2>
+        {% else %}
+        <div style="font-size: 64px; color: #ef4444; margin-bottom: 20px;"><i class="ph ph-x-circle"></i></div>
+        <h2 style="color: #ef4444; margin-bottom: 10px;">Désinscrit / Non autorisé</h2>
+        {% endif %}
+
+        <div
+            style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 30px; text-align: left;">
+            <p style="margin-bottom: 10px;"><strong style="color: var(--text-dim);">Investisseur:</strong> {{ nomComplet
+                }}</p>
+            <p style="margin-bottom: 10px;"><strong style="color: var(--text-dim);">Evénement:</strong> {{ eventTitre }}
+            </p>
+            <p style="margin-bottom: 10px;"><strong style="color: var(--text-dim);">Date/Heure:</strong> {{ eventDate }}
+            </p>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button onclick="window.history.back()" class="btn btn-secondary"
+                style="width: 100%; justify-content: center;">
+                <i class="ph ph-arrow-left"></i> Retour
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

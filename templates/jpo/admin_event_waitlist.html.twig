@@ -101,7 +101,7 @@
                             </button>
                         </form>
                         <form method="POST" style="margin: 0;"
-                            onsubmit="return confirm('Retirer cet utilisateur de la liste d\'attente ?')">
+                            onsubmit="event.preventDefault(); window.uiConfirm('Retirer cet utilisateur de la liste d\'attente ?', () => this.submit(), 'RETIRER', 'ANNULER', 'Confirmation', true)">
                             <input type="hidden" name="waitlist_id" value="{{ w.entity.idAttente }}">
                             <input type="hidden" name="action" value="remove">
                             <button type="submit" class="btn btn-secondary btn-small" style="color: #ef4444;"><i

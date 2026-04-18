@@ -97,10 +97,12 @@ export default class extends Controller {
                     <button class="btn-icon btn-secondary" title="Modifier l'événement" data-action="jpo-my-events#openEdit"
                             data-event-id="${ev.id}" data-event-titre="${ev.titre}" data-event-lieu="${ev.lieu || ''}"
                             data-event-desc="${ev.description || ''}" data-event-max="${ev.max_participants}" data-event-date="${ev.date_evenement}"
+                            data-event-locked="${ev.is_locked}"
                             style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
                       <i class="ph ph-pencil-simple" style="font-size: 18px; margin: 0;"></i>
                     </button>
                     <button class="btn-icon btn-danger" title="Supprimer l'événement" data-action="jpo-my-events#delete" data-id="${ev.id}"
+                            data-locked="${ev.is_locked}"
                             style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
                       <i class="ph ph-trash" style="font-size: 18px; margin: 0;"></i>
                     </button>
@@ -117,6 +119,13 @@ export default class extends Controller {
 
     openEdit(e) {
         const btn = e.currentTarget;
+        const isLocked = btn.dataset.eventLocked === 'true';
+
+        if (isLocked) {
+            window.uiAlert("Cet événement commence dans moins de 24h et ne peut plus être modifié.", "Action impossible");
+            return;
+        }
+
         const id = btn.dataset.eventId;
         const titre = btn.dataset.eventTitre;
         const lieu = btn.dataset.eventLieu;
@@ -180,6 +189,13 @@ export default class extends Controller {
 
     // Custom Delete Confirmation with two-step for participants
     delete(e) {
+        const isLocked = e.currentTarget.dataset.locked === 'true';
+
+        if (isLocked) {
+            window.uiAlert("Cet événement commence dans moins de 24h et ne peut plus être supprimé.", "Action impossible");
+            return;
+        }
+
         this._deleteId = e.currentTarget.dataset.id;
         this._isForcedDelete = false;
 

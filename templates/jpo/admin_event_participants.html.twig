@@ -125,7 +125,10 @@
                 </td>
                 <td style="font-size: 12px;">{{ p.entity.dateInscription|date('d/m/Y H:i') }}</td>
                 <td>
-                    <form method="POST" style="margin: 0;" onsubmit="return confirm('Supprimer ce participant ?')">
+                    <form method="POST"
+                        action="{{ path('admin_jpo_remove_participant', {eventId: event.idEvenement, userId: p.user.idUtilisateur}) }}"
+                        style="margin: 0;"
+                        onsubmit="event.preventDefault(); window.uiConfirm('Supprimer ce participant ?', () => this.submit(), 'SUPPRIMER', 'ANNULER', 'Confirmation', true)">
                         <input type="hidden" name="participation_id" value="{{ p.entity.idParticipation }}">
                         <input type="hidden" name="action" value="delete">
                         <button type="submit" class="btn btn-secondary btn-small" style="color: #ef4444;"><i

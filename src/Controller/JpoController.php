@@ -14,6 +14,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\ParticipationJpoRepository;
+use App\Repository\UtilisateurRepository;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\RoundBlockSizeMode;
+use Endroid\QrCode\Writer\PngWriter;
+use Dompdf\Dompdf;
+use Dompdf\Options;
  
 #[Route('/jpo', name: 'jpo_')]
 class JpoController extends AbstractController
@@ -95,6 +111,7 @@ class JpoController extends AbstractController
                 'image_path'           => $e->getImagePath(),
                 'max_participants'     => $e->getMaxParticipants(),
                 'current_participants' => $e->getCurrentParticipants(),
+                'is_locked'            => (($e->getDateEvenement()->getTimestamp() - time()) / 3600 < 24 && ($e->getDateEvenement()->getTimestamp() - time()) >= 0),
                 'details_url'          => $this->generateUrl('jpo_event_details', ['id' => $e->getIdEvenement()]),
             ], $eventsSlice);
 
@@ -215,9 +232,9 @@ class JpoController extends AbstractController
             'date'             => $e->getDateEvenement()->format('d/m/Y'),
             'lieu'             => $e->getLieu(),
             'id_createur'      => $e->getIdCreateur(),
-            'description'      => $e->getDescription(),
             'max_participants' => $e->getMaxParticipants(),
             'image_path'       => $e->getImagePath(),
+            'is_locked'        => (($e->getDateEvenement()->getTimestamp() - time()) / 3600 < 24 && ($e->getDateEvenement()->getTimestamp() - time()) >= 0),
             'details_url'      => $this->generateUrl('jpo_event_details', ['id' => $e->getIdEvenement()]),
         ], $events);
 
@@ -353,6 +370,12 @@ class JpoController extends AbstractController
             return new JsonResponse(['error' => 'Forbidden: Vous n\'êtes pas le créateur de cet événement'], 403);
         }
 
+        $now = new \DateTime();
+        $intervalHours = ($event->getDateEvenement()->getTimestamp() - $now->getTimestamp()) / 3600;
+        if ($intervalHours < 24 && $intervalHours >= 0) {
+            return new JsonResponse(['error' => 'lockdown'], 400);
+        }
+
         $titre           = trim($request->request->get('titre', ''));
         $lieu            = trim($request->request->get('lieu', ''));
         $description     = trim($request->request->get('description', ''));
@@ -407,6 +430,12 @@ class JpoController extends AbstractController
             return new JsonResponse(['error' => 'Forbidden: Vous n\'êtes pas le créateur de cet événement'], 403);
         }
 
+        $now = new \DateTime();
+        $intervalHours = ($event->getDateEvenement()->getTimestamp() - $now->getTimestamp()) / 3600;
+        if ($intervalHours < 24 && $intervalHours >= 0) {
+            return new JsonResponse(['error' => 'lockdown'], 400);
+        }
+
         $force = $request->request->getBoolean('force', false);
         $participantCount = $event->getCurrentParticipants();
 
@@ -448,16 +477,139 @@ class JpoController extends AbstractController
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
         $isRegistered = false;
+        $hasBadge = false;
         if ($user) {
-            $regIds = $this->jpoRepository->findUserRegistrationIds($user->getId());
-            $isRegistered = in_array($event->getIdEvenement(), $regIds, true);
+            // Check participation directly
+            $em = $this->jpoRepository->getEntityManager();
+            $participation = $em->getRepository(ParticipationJpo::class)->findOneBy([
+                'idEvenement' => $event->getIdEvenement(),
+                'idUtilisateur' => $user->getId()
+            ]);
+            if ($participation) {
+                $isRegistered = true;
+                $hasBadge = $participation->isBadgeGenere();
+            }
         }
+        
+        $now = new \DateTime();
+        $intervalHours = ($event->getDateEvenement()->getTimestamp() - $now->getTimestamp()) / 3600;
+        $isWithin24h = ($intervalHours > 0 && $intervalHours < 24);
 
         return $this->render('jpo/event_details.html.twig', [
             'event' => $event,
             'isRegistered' => $isRegistered,
+            'hasBadge' => $hasBadge,
+            'isWithin24h' => $isWithin24h,
             'isOwner' => $user && $event->getIdCreateur() === $user->getId(),
+            'deadlineTimestamp' => $event->getDateEvenement()->getTimestamp() - 86400 // -24 hours
         ]);
+    }
+
+    /**
+     * Export event participants to Excel (Propriétaire only)
+     */
+    #[Route('/export/{id}', name: 'export_excel', methods: ['GET'])]
+    #[IsGranted('ROLE_PROPRIETAIRE')]
+    public function exportExcel(int $id, ParticipationJpoRepository $partRepo, UtilisateurRepository $userRepo): Response
+    {
+        /** @var Utilisateur|null $user */
+        $user = $this->getUser();
+        $event = $this->jpoRepository->find($id);
+
+        if (!$event) {
+            throw $this->createNotFoundException('Événement non trouvé');
+        }
+
+        if (!$user || $event->getIdCreateur() !== $user->getId()) {
+            throw $this->createAccessDeniedException('Vous n\'êtes pas le créateur de cet événement.');
+        }
+
+        $participants = $partRepo->findBy(['idEvenement' => $id]);
+
+        if (empty($participants)) {
+            $this->addFlash('error', 'Aucun participant inscrit. Impossible de générer l\'export.');
+            return $this->redirectToRoute('jpo_event_details', ['id' => $id]);
+        }
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Liste des Inscrits');
+
+        $sheet->setCellValue('A1', 'Rapport d\'inscriptions : ' . $event->getTitre());
+        $sheet->mergeCells('A1:E1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(16)->setColor(new Color(Color::COLOR_WHITE));
+        $sheet->getStyle('A1')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FF0F172A');
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('A1')->getAlignment()->setVertical(Alignment::VERTICAL_CENTER);
+        $sheet->getRowDimension(1)->setRowHeight(35);
+
+        $sheet->setCellValue('A2', 'Généré le : ' . date('d/m/Y H:i'));
+        $sheet->mergeCells('A2:E2');
+        $sheet->getStyle('A2')->getFont()->setItalic(true)->setColor(new Color('FF64748B'));
+        
+        $headerRow = 4;
+        $headers = ['A' => 'Nom et Prénom', 'B' => 'Email', 'C' => 'Date d\'inscription', 'D' => 'Statut Inscription', 'E' => 'Statut Badge'];
+        foreach ($headers as $col => $title) {
+            $sheet->setCellValue($col . $headerRow, $title);
+        }
+        
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['argb' => 'FFFFFFFF']],
+            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FF0EA5E9']], 
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['argb' => 'FF000000'],
+                ],
+            ],
+        ];
+        $sheet->getStyle('A4:E4')->applyFromArray($headerStyle);
+
+        $row = 5;
+        foreach ($participants as $p) {
+            $participantUser = $userRepo->find($p->getIdUtilisateur());
+            if ($participantUser) {
+                $sheet->setCellValue('A' . $row, $participantUser->getNomComplet() ?: 'Non renseigné');
+                $sheet->setCellValue('B' . $row, $participantUser->getEmail());
+                $sheet->setCellValue('C' . $row, $p->getDateInscription() ? $p->getDateInscription()->format('d/m/Y H:i') : 'N/A');
+                $sheet->setCellValue('D' . $row, ucfirst($p->getStatut() ?? 'Confirmé'));
+                $sheet->setCellValue('E' . $row, $p->isBadgeGenere() ? 'Généré' : 'Non généré');
+                
+                $sheet->getStyle('C'.$row.':E'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $row++;
+            }
+        }
+
+        if ($row > 5) {
+            $bodyStyle = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => 'FFCBD5E1'],
+                    ],
+                ],
+            ];
+            $sheet->getStyle('A5:E' . ($row - 1))->applyFromArray($bodyStyle);
+            
+            for ($i = 5; $i < $row; $i++) {
+                if ($i % 2 == 0) {
+                    $sheet->getStyle('A'.$i.':E'.$i)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFF8FAFC');
+                }
+            }
+        }
+
+        foreach (range('A','E') as $colId) {
+            $sheet->getColumnDimension($colId)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $fileName = 'Inscrits_' . preg_replace('/[^a-zA-Z0-9_\-]/', '_', $event->getTitre()) . '_' . date('Ymd') . '.xlsx';
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        
+        $writer->save($temp_file);
+        
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
     }
 
     /**
@@ -483,23 +635,234 @@ class JpoController extends AbstractController
             return new JsonResponse(['error' => 'L\'événement est déjà passé'], 400);
         }
 
-        $conn = $em->getConnection();
-        
-        try {
-            $deleted = $conn->executeStatement(
-                'DELETE FROM participation_jpo WHERE id_evenement = ? AND id_utilisateur = ?',
-                [$id, $user->getId()]
-            );
+        $intervalHours = ($event->getDateEvenement()->getTimestamp() - $now->getTimestamp()) / 3600;
+        if ($intervalHours < 24 && $intervalHours >= 0) {
+            return new JsonResponse(['error' => 'Désinscription impossible : l\'événement commence en moins de 24 heures.'], 400);
+        }
 
-            if ($deleted > 0) {
-                $event->setCurrentParticipants(max(0, $event->getCurrentParticipants() - 1));
-                $em->flush();
-                return new JsonResponse(['success' => true]);
-            }
-            
+        $participationRepo = $em->getRepository(ParticipationJpo::class);
+        $participation = $participationRepo->findOneBy([
+            'idEvenement' => $id,
+            'idUtilisateur' => $user->getId()
+        ]);
+
+        if (!$participation) {
             return new JsonResponse(['error' => 'Inscription non trouvée'], 404);
+        }
+
+        if ($participation->isBadgeGenere()) {
+            return new JsonResponse(['error' => 'Désinscription impossible : le badge a déjà été généré.'], 400);
+        }
+
+        try {
+            $em->remove($participation);
+            $event->setCurrentParticipants(max(0, $event->getCurrentParticipants() - 1));
+            $em->flush();
+            return new JsonResponse(['success' => true]);
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Erreur lors de la désinscription : ' . $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * API: Generate Badge (Investisseur)
+     */
+    #[Route('/generate-badge/{id}', name: 'generate_badge', methods: ['GET'])]
+    #[IsGranted('ROLE_INVESTISSEUR')]
+    public function generateBadge(int $id, EntityManagerInterface $em): Response
+    {
+        /** @var Utilisateur|null $user */
+        $user = $this->getUser();
+        $event = $this->jpoRepository->find($id);
+
+        if (!$event || !$user) {
+            throw $this->createNotFoundException('Événement ou utilisateur non trouvé');
+        }
+
+        $now = new \DateTime();
+        $intervalHours = ($event->getDateEvenement()->getTimestamp() - $now->getTimestamp()) / 3600;
+
+        if ($intervalHours < 24 && $intervalHours >= 0) {
+            $this->addFlash('error', 'Génération impossible : Evénement dans moins de 24h.');
+            return $this->redirectToRoute('jpo_event_details', ['id' => $id]);
+        }
+
+        $participationRepo = $em->getRepository(ParticipationJpo::class);
+        $participation = $participationRepo->findOneBy([
+            'idEvenement' => $id,
+            'idUtilisateur' => $user->getId()
+        ]);
+
+        if (!$participation) {
+            $this->addFlash('error', 'Vous n\'êtes pas inscrit à cet événement.');
+            return $this->redirectToRoute('jpo_event_details', ['id' => $id]);
+        }
+
+        // Payload
+        $timestamp = date('c');
+        $payloadArray = [
+            'investorId' => (string)$user->getId(),
+            'eventId' => (string)$event->getIdEvenement(),
+            'timestamp' => $timestamp
+        ];
+        
+        $secret = $_ENV['APP_SECRET'] ?? 'cashfly_secret';
+        $signature = hash_hmac('sha256', json_encode($payloadArray), $secret);
+        $payloadArray['signature'] = $signature;
+        
+        $qrData = json_encode($payloadArray);
+
+        $builder = new Builder(
+            writer: new PngWriter(),
+            data: $qrData,
+            encoding: new Encoding('UTF-8'),
+            errorCorrectionLevel: ErrorCorrectionLevel::High,
+            size: 300,
+            margin: 10,
+            roundBlockSizeMode: RoundBlockSizeMode::Margin
+        );
+        $result = $builder->build();
+
+        $qrImageData = $result->getString();
+
+        $width = 400;
+        $height = 600;
+        $image = imagecreatetruecolor($width, $height);
+
+        // Enable alpha blending for the logo just in case
+        imagealphablending($image, true);
+
+        $white = imagecolorallocate($image, 255, 255, 255);
+        $black = imagecolorallocate($image, 15, 23, 42);
+        $gray = imagecolorallocate($image, 100, 116, 139);
+        $green = imagecolorallocate($image, 0, 193, 106);
+
+        imagefill($image, 0, 0, $white);
+
+        $fontPath = $this->getParameter('kernel.project_dir') . '/vendor/endroid/qr-code/assets/open_sans.ttf';
+
+        // Header Rect
+        imagefilledrectangle($image, 0, 0, $width, 100, $black);
+        imagerectangle($image, 0, 0, $width - 1, $height - 1, $black);
+
+        // Logo
+        $logoPath = 'C:\\xampp\\htdocs\\img\\Logo4.png';
+        if (file_exists($logoPath)) {
+            $logoImage = imagecreatefrompng($logoPath);
+            $logoW = imagesx($logoImage);
+            $logoH = imagesy($logoImage);
+            $targetH = 40;
+            $targetW = (int)($logoW * ($targetH / $logoH));
+            $logoX = ($width - $targetW) / 2;
+            imagecopyresampled($image, $logoImage, (int)$logoX, 30, 0, 0, $targetW, $targetH, $logoW, $logoH);
+            imagedestroy($logoImage);
+        } else {
+            imagettftext($image, 20, 0, 135, 60, $white, $fontPath, "CASHFLY");
+        }
+
+        // Event Name
+        $rawEventName = mb_convert_encoding($event->getTitre() ?? '', 'ISO-8859-1', 'UTF-8');
+        $wrappedEventName = wordwrap($rawEventName, 35, "\n", true);
+        $lines = explode("\n", $wrappedEventName);
+        
+        $y = 135;
+        foreach (array_slice($lines, 0, 3) as $line) { // limit to 3 lines just in case
+            imagettftext($image, 14, 0, 30, $y, $black, $fontPath, $line);
+            $y += 22;
+        }
+        
+        // Event Date and Location
+        $y += 5;
+        imagettftext($image, 11, 0, 30, $y, $gray, $fontPath, $event->getDateEvenement()->format('d/m/Y'));
+        
+        $y += 20;
+        $lieu = mb_strimwidth($event->getLieu() ?: 'Lieu à confirmer', 0, 45, '...');
+        $lieuISO = mb_convert_encoding($lieu, 'ISO-8859-1', 'UTF-8');
+        imagettftext($image, 11, 0, 30, $y, $gray, $fontPath, $lieuISO);
+
+        // QR Code
+        $qrCodeGd = imagecreatefromstring($qrImageData);
+        imagecopy($image, $qrCodeGd, 50, 220, 0, 0, 300, 300);
+
+        // User Info
+        $userName = mb_substr($user->getNomComplet() ?: $user->getEmail(), 0, 30);
+        $userNameISO = mb_convert_encoding($userName, 'ISO-8859-1', 'UTF-8');
+        imagettftext($image, 16, 0, 30, 545, $black, $fontPath, "Investisseur: " . $userNameISO);
+        
+        $rawStatus = strtolower($participation->getStatut() ?? 'confirmé');
+        $displayStatus = 'Confirmé';
+        $statusColor = $green;
+
+        if (str_contains($rawStatus, 'attente')) {
+            $displayStatus = 'En attente';
+            $orange = imagecolorallocate($image, 245, 158, 11);
+            $statusColor = $orange;
+        } elseif (str_contains($rawStatus, 'annul')) {
+            $displayStatus = 'Annulé';
+            $red = imagecolorallocate($image, 239, 68, 68);
+            $statusColor = $red;
+        } elseif (str_contains($rawStatus, 'confirm')) {
+            $displayStatus = 'Confirmé';
+            $statusColor = $green;
+        } else {
+            $displayStatus = ucfirst($rawStatus);
+        }
+
+        $displayStatusISO = mb_convert_encoding("Status: " . $displayStatus, 'ISO-8859-1', 'UTF-8');
+        imagettftext($image, 12, 0, 30, 570, $statusColor, $fontPath, $displayStatusISO);
+
+        ob_start();
+        imagejpeg($image, null, 100);
+        $jpgData = ob_get_clean();
+        
+        imagedestroy($image);
+        imagedestroy($qrCodeGd);
+
+        if (!$participation->isBadgeGenere()) {
+            $participation->setBadgeGenere(true);
+            $em->flush();
+        }
+
+        $fileName = 'Badge_' . preg_replace('/[^a-zA-Z0-9_\-]/', '_', $event->getTitre()) . '_' . preg_replace('/[^a-zA-Z0-9_\-]/', '_', $user->getNomComplet() ?: 'User') . '.jpg';
+
+        return new Response($jpgData, 200, [
+            'Content-Type' => 'image/jpeg',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"'
+        ]);
+    }
+
+    /**
+     * API: Verify Badge Page (Security Staff)
+     */
+    #[Route('/verify-badge/{eventId}/{investorId}', name: 'verify_badge', methods: ['GET'])]
+    public function verifyBadge(int $eventId, int $investorId, EntityManagerInterface $em, UtilisateurRepository $userRepo): Response
+    {
+        $event = $this->jpoRepository->find($eventId);
+        $user = $userRepo->find($investorId);
+
+        $status = 'desinscrit';
+        
+        if ($event && $user) {
+            $participationRepo = $em->getRepository(ParticipationJpo::class);
+            $participation = $participationRepo->findOneBy([
+                'idEvenement' => $eventId,
+                'idUtilisateur' => $investorId
+            ]);
+            
+            if ($participation) {
+                if ($participation->isBadgeGenere()) {
+                    $status = 'valide';
+                } else {
+                    $status = 'non_genere';
+                }
+            }
+        }
+
+        return $this->render('jpo/badge_scan_result.html.twig', [
+            'status' => $status,
+            'nomComplet' => $user ? ($user->getNomComplet() ?: $user->getEmail()) : 'Inconnu',
+            'eventTitre' => $event ? $event->getTitre() : 'Événement Inconnu',
+            'eventDate' => $event ? $event->getDateEvenement()->format('d/m/Y H:i') : 'N/A'
+        ]);
     }
 }

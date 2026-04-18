@@ -80,6 +80,104 @@
             document.addEventListener('turbo:render', injectThemeToggle);
         })();
     </script>
+
+    {# --- GLOBAL UI MODALS --- #}
+    <div class="popup-overlay" id="uiGlobalConfirm"
+        style="display: none; align-items: center; justify-content: center; z-index: 9999;">
+        <div class="popup-modal popup-modal--small" style="text-align: center;">
+            <i class="ph ph-warning-circle confirm-icon"
+                style="font-size: 48px; color: #f59e0b; margin-bottom: 20px; display: block;"></i>
+            <div class="confirm-title"
+                style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: var(--text); padding: 0 10px;"
+                id="uiGlobalConfirmTitle">Confirmation</div>
+            <p class="confirm-text" style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px;"
+                id="uiGlobalConfirmText"></p>
+            <div class="confirm-actions" style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-secondary" id="uiGlobalConfirmCancel"
+                    style="flex: 1; justify-content: center;">ANNULER</button>
+                <button class="btn btn-primary" id="uiGlobalConfirmOk"
+                    style="flex: 1; justify-content: center; background: var(--cyan); color: #060e1a;">OUI</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="uiGlobalAlert"
+        style="display: none; align-items: center; justify-content: center; z-index: 9999;">
+        <div class="popup-modal popup-modal--small" style="text-align: center;">
+            <i class="ph ph-info confirm-icon" id="uiGlobalAlertIcon"
+                style="font-size: 48px; color: var(--cyan); margin-bottom: 20px; display: block;"></i>
+            <div class="confirm-title"
+                style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: var(--text); padding: 0 10px;"
+                id="uiGlobalAlertTitle">Information</div>
+            <p class="confirm-text" style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px;"
+                id="uiGlobalAlertText"></p>
+            <div class="confirm-actions" style="display: flex; justify-content: center;">
+                <button class="btn btn-primary" id="uiGlobalAlertOk"
+                    style="min-width: 120px; justify-content: center;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script data-turbo-eval="false">
+        window.uiConfirm = function (message, onConfirm, okText = 'OUI', cancelText = 'ANNULER', title = 'Confirmation', isDanger = false) {
+            const overlay = document.getElementById('uiGlobalConfirm');
+            document.getElementById('uiGlobalConfirmText').innerText = message;
+            document.getElementById('uiGlobalConfirmTitle').innerText = title;
+            const btnOk = document.getElementById('uiGlobalConfirmOk');
+            const btnCancel = document.getElementById('uiGlobalConfirmCancel');
+
+            btnOk.innerText = okText;
+            btnCancel.innerText = cancelText;
+
+            if (isDanger) {
+                btnOk.style.background = '#ef4444';
+                btnOk.style.color = '#ffffff';
+            } else {
+                btnOk.style.background = 'var(--cyan)';
+                btnOk.style.color = '#060e1a';
+            }
+
+            overlay.style.display = 'flex';
+
+            const handleClose = (result) => {
+                overlay.style.display = 'none';
+                btnOk.removeEventListener('click', okHandler);
+                btnCancel.removeEventListener('click', cancelHandler);
+                if (result && typeof onConfirm === 'function') onConfirm();
+            };
+
+            const okHandler = () => handleClose(true);
+            const cancelHandler = () => handleClose(false);
+
+            btnOk.addEventListener('click', okHandler);
+            btnCancel.addEventListener('click', cancelHandler);
+        };
+
+        window.uiAlert = function (message, title = 'Information', isSuccess = false) {
+            const overlay = document.getElementById('uiGlobalAlert');
+            document.getElementById('uiGlobalAlertText').innerText = message;
+            document.getElementById('uiGlobalAlertTitle').innerText = title;
+            const icon = document.getElementById('uiGlobalAlertIcon');
+            if (isSuccess) {
+                icon.className = 'ph ph-check-circle confirm-icon';
+                icon.style.color = '#00c16a';
+            } else if (title.toLowerCase().includes('erreur') || title.toLowerCase().includes('error') || title.toLowerCase().includes('attention')) {
+                icon.className = 'ph ph-x-circle confirm-icon';
+                icon.style.color = '#ef4444';
+            } else {
+                icon.className = 'ph ph-info confirm-icon';
+                icon.style.color = 'var(--cyan)';
+            }
+            overlay.style.display = 'flex';
+
+            const btnOk = document.getElementById('uiGlobalAlertOk');
+            const okHandler = () => {
+                overlay.style.display = 'none';
+                btnOk.removeEventListener('click', okHandler);
+            };
+            btnOk.addEventListener('click', okHandler);
+        };
+    </script>
 </body>
 
 </html>

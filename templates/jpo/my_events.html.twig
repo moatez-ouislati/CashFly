@@ -113,24 +113,27 @@
         </div>
         <div class="card-footer"
           style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 8px; height: 60px; position: relative;">
-          {% if not history %}
-          <button class="btn-icon btn-secondary" title="Modifier l'événement" data-action="jpo-my-events#openEdit"
+          {% set interval = event.dateEvenement.timestamp - date().timestamp %}
+          {% set isLocked = (interval > 0 and interval < 86400) %} {% if not history %} <button
+            class="btn-icon btn-secondary" title="Modifier l'événement" data-action="jpo-my-events#openEdit"
             data-event-id="{{ event.idEvenement }}" data-event-titre="{{ event.titre }}"
             data-event-lieu="{{ event.lieu }}" data-event-desc="{{ event.description }}"
             data-event-max="{{ event.maxParticipants }}" data-event-date="{{ event.dateEvenement|date('d/m/Y') }}"
+            data-event-locked="{{ isLocked ? 'true' : 'false' }}"
             style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
             <i class="ph ph-pencil-simple" style="font-size: 18px; margin: 0;"></i>
-          </button>
-          <button class="btn-icon btn-danger" title="Supprimer l'événement" data-action="jpo-my-events#delete"
-            data-id="{{ event.idEvenement }}"
-            style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
-            <i class="ph ph-trash" style="font-size: 18px; margin: 0;"></i>
-          </button>
-          {% else %}
-          <div style="font-size: 11px; color: var(--text-dim); font-style: italic; display: flex; align-items: center;">
-            <i class="ph ph-lock-simple" style="margin-right: 5px;"></i> Lecture seule
-          </div>
-          {% endif %}
+            </button>
+            <button class="btn-icon btn-danger" title="Supprimer l'événement" data-action="jpo-my-events#delete"
+              data-id="{{ event.idEvenement }}" data-locked="{{ isLocked ? 'true' : 'false' }}"
+              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
+              <i class="ph ph-trash" style="font-size: 18px; margin: 0;"></i>
+            </button>
+            {% else %}
+            <div
+              style="font-size: 11px; color: var(--text-dim); font-style: italic; display: flex; align-items: center;">
+              <i class="ph ph-lock-simple" style="margin-right: 5px;"></i> Lecture seule
+            </div>
+            {% endif %}
         </div>
       </div>
       {% endfor %}

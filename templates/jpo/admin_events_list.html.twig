@@ -179,20 +179,33 @@
 </div>
 
 <script>
-    document.querySelectorAll('.btn-delete-event').forEach(function (btn) {
+    const deleteBtns = document.querySelectorAll('.btn-delete-event');
+    deleteBtns.forEach(btn => {
         btn.addEventListener('click', function () {
-            var id = this.dataset.id;
-            if (confirm('Voulez-vous vraiment supprimer cet événement et toutes les participations associées ?')) {
-                fetch('/jpo/admin/event/' + id + '/delete', { method: 'POST' })
-                    .then(function (res) { return res.json(); })
-                    .then(function (data) {
+            const eventId = this.dataset.id;
+            window.uiConfirm('Voulez-vous vraiment supprimer cet événement et toutes les participations associées ?', () => {
+                fetch('/jpo/admin/event/' + eventId + '/delete', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
                         if (data.success) {
-                            location.reload();
+                            const row = btn.closest('tr');
+                            row.style.transition = 'opacity 0.3s';
+                            row.style.opacity = '0';
+                            setTimeout(() => row.remove(), 300);
                         } else {
-                            alert('Erreur: ' + (data.error || 'Inconnue'));
+                            window.uiAlert('Erreur: ' + (data.error || 'Inconnue'), 'Erreur');
                         }
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        window.uiAlert('Erreur réseau / serveur.', 'Erreur');
                     });
-            }
+            }, 'SUPPRIMER', 'ANNULER', 'Attention', true);
         });
     });
 </script>

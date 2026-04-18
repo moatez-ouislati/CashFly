@@ -110,9 +110,17 @@ export default class extends Controller {
 
                     if (isOwner) {
                         item.querySelector('.dei-btn--edit')?.addEventListener('click', () => {
+                            if (ev.is_locked) {
+                                window.uiAlert("Cet événement commence dans moins de 24h et ne peut plus être modifié.", "Action impossible");
+                                return;
+                            }
                             this.openEditPopup(ev);
                         });
                         item.querySelector('.dei-btn--delete')?.addEventListener('click', () => {
+                            if (ev.is_locked) {
+                                window.uiAlert("Cet événement commence dans moins de 24h et ne peut plus être supprimé.", "Action impossible");
+                                return;
+                            }
                             this.handleDelete(ev.id);
                         });
                     }

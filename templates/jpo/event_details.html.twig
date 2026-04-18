@@ -22,6 +22,13 @@
     </div>
   </header>
 
+  {% for message in app.flashes('error') %}
+  <div
+    style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 12px 24px; text-align: center; margin-top: 10px;">
+    <i class="ph ph-warning-circle"></i> {{ message }}
+  </div>
+  {% endfor %}
+
   <div class="event-details-hero">
     <div class="details-main-card">
       <div class="details-img-container">
@@ -69,9 +76,20 @@
                 <p>Vous gérez cet événement</p>
               </div>
               <a href="{{ path('jpo_my_events') }}" class="btn btn-secondary"
-                style="width: 100%; justify-content: center;">
+                style="width: 100%; justify-content: center; margin-bottom: 12px;">
                 <i class="ph ph-pencil"></i> Gérer mes événements
               </a>
+              {% if event.currentParticipants > 0 %}
+              <a href="{{ path('jpo_export_excel', {id: event.idEvenement}) }}" class="btn btn-primary"
+                style="width: 100%; justify-content: center;">
+                <i class="ph ph-file-xls"></i> Exporter la liste des inscrits
+              </a>
+              {% else %}
+              <button class="btn btn-primary" disabled style="width: 100%; justify-content: center; opacity: 0.5;"
+                title="Aucun inscrit pour le moment">
+                <i class="ph ph-file-xls"></i> Exporter la liste des inscrits
+              </button>
+              {% endif %}
               {% else %}
               {% if event.dateEvenement < date() %} <div class="status-notice past">
                 <i class="ph ph-clock-counter-clockwise"></i>
@@ -82,14 +100,38 @@
               <i class="ph ph-check-circle"></i>
               <p>Vous êtes inscrit !</p>
             </div>
-            <button class="btn btn-secondary" id="btnBadge"
-              style="width: 100%; justify-content: center; margin-bottom: 12px;">
-              <i class="ph ph-identification-card"></i> Télécharger le Badge
-            </button>
-            <button class="btn btn-danger" id="btnUnregister"
-              style="width: 100%; justify-content: center; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #ef4444;">
+            {% if hasBadge %}
+            <a href="{{ path('jpo_generate_badge', {id: event.idEvenement}) }}" class="btn btn-success"
+              style="width: 100%; justify-content: center; margin-bottom: 12px; background: rgba(0, 193, 106, 0.1); border-color: rgba(0, 193, 106, 0.2); color: #00c16a;"
+              download>
+              <i class="ph ph-download"></i> Télécharger le Badge
+            </a>
+            <button class="btn btn-danger" disabled style="width: 100%; justify-content: center; opacity: 0.5;"
+              title="Badge déjà généré - désinscription impossible">
               <i class="ph ph-x-circle"></i> Se désinscrire
             </button>
+            {% else %}
+            <a href="{{ path('jpo_generate_badge', {id: event.idEvenement}) }}" class="btn btn-secondary" id="btnBadge"
+              style="width: 100%; justify-content: center; margin-bottom: 12px;">
+              <i class="ph ph-identification-card"></i> Générer mon badge
+            </a>
+            {% if isWithin24h %}
+            <button class="btn btn-danger" disabled style="width: 100%; justify-content: center; opacity: 0.5;"
+              title="Désinscription impossible : l'événement commence dans moins de 24h">
+              <i class="ph ph-x-circle"></i> Se désinscrire
+            </button>
+            {% else %}
+            <button class="btn btn-danger" id="btnUnregister"
+              style="width: 100%; justify-content: center; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: #ef4444; margin-bottom: 12px;">
+              <i class="ph ph-x-circle"></i> Se désinscrire
+            </button>
+            <div id="signout-countdown" class="countdown-mini" data-deadline="{{ deadlineTimestamp }}"
+              style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); font-size: 13px; color: var(--text-dim);">
+              <i class="ph ph-timer" style="color: #ef4444; font-size: 16px;"></i>
+              <span id="timer-val">Calcul en cours...</span>
+            </div>
+            {% endif %}
+            {% endif %}
             {% elseif event.isFull %}
             <div class="status-notice full">
               <i class="ph ph-users"></i>
@@ -343,40 +385,88 @@
 
     if (btnRegister) {
       btnRegister.addEventListener('click', () => {
-        if (!confirm("Voulez-vous confirmer votre inscription ?")) return;
-        fetch(`/jpo/register/${eventId}`, { method: 'POST' })
-          .then(resp => resp.json())
-          .then(res => {
-            if (res.success) {
-              alert("✓ Inscription validée !");
-              window.location.reload();
-            } else {
-              alert(res.error || "Une erreur est survenue");
-            }
+        window.uiConfirm("Voulez-vous confirmer votre inscription ?", () => {
+          fetch("{{ path('jpo_register', {id: event.idEvenement}) }}", {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
           })
-          .catch(() => alert("Erreur réseau"));
+            .then(res => res.json())
+            .then(res => {
+              if (res.success) {
+                window.uiAlert("Inscription validée avec succès !", "Succès", true);
+                setTimeout(() => window.location.reload(), 1500);
+              } else {
+                window.uiAlert(res.error || "Une erreur est survenue", "Erreur");
+              }
+            })
+            .catch(() => window.uiAlert("Erreur réseau", "Erreur"));
+        }, 'CONFIRMER');
       });
     }
     if (btnUnregister) {
       btnUnregister.addEventListener('click', () => {
-        if (!confirm("Voulez-vous vraiment vous désinscrire de cet événement ?")) return;
-        fetch(`/jpo/unregister/${eventId}`, { method: 'POST' })
-          .then(resp => resp.json())
-          .then(res => {
-            if (res.success) {
-              alert("✓ Vous avez été désinscrit avec succès.");
-              window.location.reload();
-            } else {
-              alert(res.error || "Une erreur est survenue");
-            }
+        window.uiConfirm("Voulez-vous vraiment vous désinscrire de cet événement ?", () => {
+          fetch("{{ path('jpo_unregister', {id: event.idEvenement}) }}", {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
           })
-          .catch(() => alert("Erreur réseau"));
+            .then(res => res.json())
+            .then(res => {
+              if (res.success) {
+                window.uiAlert("Vous avez été désinscrit avec succès.", "Succès", true);
+                setTimeout(() => window.location.reload(), 1500);
+              } else {
+                window.uiAlert(res.error || "Une erreur est survenue", "Erreur");
+              }
+            })
+            .catch(() => window.uiAlert("Erreur réseau", "Erreur"));
+        }, 'DÉSINSCRIRE', 'ANNULER', 'Confirmation', true);
       });
     }
     if (btnBadge) {
-      btnBadge.addEventListener('click', () => {
-        alert("⌛ Génération du badge en cours... (Fonctionnalité bientôt disponible)");
+      btnBadge.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.uiConfirm(
+          "Générer ce badge validera définitivement votre inscription. La désinscription sera impossible par la suite. Confirmer ?",
+          () => {
+            // Proceed through the anchor link behavior manually
+            window.location.href = btnBadge.href;
+            // After a brief delay, reload to show generated state
+            setTimeout(() => window.location.reload(), 2000);
+          },
+          'GÉNÉRER',
+          'ANNULER',
+          'Générer le Badge'
+        );
       });
+    }
+
+    // --- COUNTDOWN TIMER ---
+    const countdownEl = document.getElementById('signout-countdown');
+    if (countdownEl) {
+      const deadline = parseInt(countdownEl.dataset.deadline) * 1000;
+      const timerVal = document.getElementById('timer-val');
+
+      function updateTimer() {
+        const now = new Date().getTime();
+        const diff = deadline - now;
+
+        if (diff <= 0) {
+          timerVal.innerText = "Délai expiré";
+          timerVal.style.color = "#ef4444";
+          setTimeout(() => window.location.reload(), 2000);
+          return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        timerVal.innerHTML = `<strong style="color: white;">${hours}h ${mins}m ${secs}s</strong> avant verrouillage`;
+      }
+
+      const timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
     }
   })();
 </script>
