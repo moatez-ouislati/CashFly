@@ -9,8 +9,8 @@
     <parameter key="kernel.runtime_mode.cli">%env(not:default:kernel.runtime_mode.web:)%</parameter>
     <parameter key="kernel.runtime_mode.worker">%env(bool:default::key:worker:default:kernel.runtime_mode:)%</parameter>
     <parameter key="kernel.debug">true</parameter>
-    <parameter key="kernel.build_dir">C:/cashfly-web-symfony/var/cache/dev</parameter>
-    <parameter key="kernel.cache_dir">C:/cashfly-web-symfony/var/cache/dev</parameter>
+    <parameter key="kernel.build_dir">C:\cashfly-web-symfony\var\cache\dev</parameter>
+    <parameter key="kernel.cache_dir">C:\cashfly-web-symfony\var\cache\dev</parameter>
     <parameter key="kernel.logs_dir">C:\cashfly-web-symfony\var\log</parameter>
     <parameter key="kernel.bundles" type="collection">
       <parameter key="FrameworkBundle">Symfony\Bundle\FrameworkBundle\FrameworkBundle</parameter>
@@ -93,15 +93,15 @@
     <parameter key="asset.request_context.base_path">null</parameter>
     <parameter key="asset.request_context.secure">null</parameter>
     <parameter key="debug.error_handler.throw_at">-1</parameter>
-    <parameter key="debug.container.dump">C:/cashfly-web-symfony/var/cache/dev/App_KernelDevDebugContainer.xml</parameter>
+    <parameter key="debug.container.dump">C:\cashfly-web-symfony\var\cache\dev/App_KernelDevDebugContainer.xml</parameter>
     <parameter key="router.request_context.host">localhost</parameter>
     <parameter key="router.request_context.scheme">http</parameter>
     <parameter key="router.request_context.base_url"></parameter>
     <parameter key="router.resource">kernel::loadRoutes</parameter>
-    <parameter key="router.cache_dir">C:/cashfly-web-symfony/var/cache/dev</parameter>
+    <parameter key="router.cache_dir">C:\cashfly-web-symfony\var\cache\dev</parameter>
     <parameter key="request_listener.http_port">80</parameter>
     <parameter key="request_listener.https_port">443</parameter>
-    <parameter key="serializer.mapping.cache.file">C:/cashfly-web-symfony/var/cache/dev/serialization.php</parameter>
+    <parameter key="serializer.mapping.cache.file">C:\cashfly-web-symfony\var\cache\dev/serialization.php</parameter>
     <parameter key="cache.prefix.seed">_C:\cashfly-web-symfony.App_KernelDevDebugContainer</parameter>
     <parameter key="session.metadata.storage_key">_sf2_meta</parameter>
     <parameter key="session.storage.options" type="collection">
@@ -116,7 +116,7 @@
     <parameter key="session.metadata.update_threshold">0</parameter>
     <parameter key="form.type_extension.csrf.enabled">true</parameter>
     <parameter key="form.type_extension.csrf.field_name">_token</parameter>
-    <parameter key="validator.mapping.cache.file">C:/cashfly-web-symfony/var/cache/dev/validation.php</parameter>
+    <parameter key="validator.mapping.cache.file">C:\cashfly-web-symfony\var\cache\dev/validation.php</parameter>
     <parameter key="validator.translation_domain">validators</parameter>
     <parameter key="data_collector.templates" type="collection"/>
     <parameter key="doctrine.dbal.configuration.class">Doctrine\DBAL\Configuration</parameter>
@@ -185,7 +185,7 @@
     <parameter key="doctrine.orm.auto_generate_proxy_classes">true</parameter>
     <parameter key="doctrine.orm.enable_lazy_ghost_objects">true</parameter>
     <parameter key="doctrine.orm.enable_native_lazy_objects">false</parameter>
-    <parameter key="doctrine.orm.proxy_dir">C:/cashfly-web-symfony/var/cache/dev/doctrine/orm/Proxies</parameter>
+    <parameter key="doctrine.orm.proxy_dir">C:\cashfly-web-symfony\var\cache\dev/doctrine/orm/Proxies</parameter>
     <parameter key="doctrine.orm.proxy_namespace">Proxies</parameter>
     <parameter key="doctrine.migrations.preferred_em">null</parameter>
     <parameter key="doctrine.migrations.preferred_connection">null</parameter>
@@ -574,7 +574,7 @@
       </argument>
     </service>
     <service id="http_cache.store" class="Symfony\Component\HttpKernel\HttpCache\Store">
-      <argument>C:/cashfly-web-symfony/var/cache/dev/http_cache</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/http_cache</argument>
     </service>
     <service id="url_helper" class="Symfony\Component\HttpFoundation\UrlHelper">
       <argument type="service" id="request_stack"/>
@@ -584,7 +584,7 @@
       <tag name="container.no_preload"/>
       <argument type="tagged_iterator" tag="kernel.cache_warmer"/>
       <argument>true</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/App_KernelDevDebugContainerDeprecations.log</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/App_KernelDevDebugContainerDeprecations.log</argument>
     </service>
     <service id="cache_clearer" class="Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer">
       <argument type="tagged_iterator" tag="kernel.cache_clearer"/>
@@ -1214,7 +1214,7 @@
       <tag name="kernel.reset" method="reset"/>
       <argument>02X1ju1-2o</argument>
       <argument>0</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/app</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
@@ -1230,7 +1230,7 @@
       <argument>73hCVf61+T</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1240,7 +1240,7 @@
       <argument>myouQIbmCk</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1250,7 +1250,7 @@
       <argument>jCzZmQn0vM</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1260,7 +1260,7 @@
       <argument>OMIl8KOB3Q</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1270,7 +1270,7 @@
       <argument>ee-JKBThR5</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1280,7 +1280,7 @@
       <argument></argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1299,7 +1299,7 @@
       <tag name="monolog.logger" channel="cache"/>
       <argument></argument>
       <argument>0</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/app</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
@@ -1937,7 +1937,7 @@
       <argument type="service" id=".service_locator.LFIBYeS.router.default"/>
       <argument>kernel::loadRoutes</argument>
       <argument type="collection">
-        <argument key="cache_dir">C:/cashfly-web-symfony/var/cache/dev</argument>
+        <argument key="cache_dir">C:\cashfly-web-symfony\var\cache\dev</argument>
         <argument key="debug">true</argument>
         <argument key="generator_class">Symfony\Component\Routing\Generator\CompiledUrlGenerator</argument>
         <argument key="generator_dumper_class">Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper</argument>
@@ -2121,10 +2121,10 @@
           </service>
         </argument>
       </argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/serialization.php</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/serialization.php</argument>
     </service>
     <service id="serializer.mapping.cache.symfony" class="Psr\Cache\CacheItemPoolInterface">
-      <argument>C:/cashfly-web-symfony/var/cache/dev/serialization.php</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/serialization.php</argument>
       <argument type="service" id="cache.serializer"/>
       <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create"/>
     </service>
@@ -2245,7 +2245,7 @@
       <argument>true</argument>
     </service>
     <service id="session.storage.factory.mock_file" class="Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory">
-      <argument>C:/cashfly-web-symfony/var/cache/dev/sessions</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/sessions</argument>
       <argument>MOCKSESSID</argument>
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\MetadataBag">
@@ -2439,10 +2439,10 @@
     <service id="validator.mapping.cache_warmer" class="Symfony\Bundle\FrameworkBundle\CacheWarmer\ValidatorCacheWarmer">
       <tag name="kernel.cache_warmer"/>
       <argument type="service" id="validator.builder"/>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/validation.php</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/validation.php</argument>
     </service>
     <service id="validator.mapping.cache.adapter" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" constructor="create">
-      <argument>C:/cashfly-web-symfony/var/cache/dev/validation.php</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/validation.php</argument>
       <argument type="service" id="cache.validator"/>
     </service>
     <service id="validator.validator_factory" class="Symfony\Component\Validator\ContainerConstraintValidatorFactory">
@@ -2705,7 +2705,7 @@
       <argument>a5R-3-5QcY</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -3328,7 +3328,7 @@
         <argument type="service" id=".doctrine.orm.default_metadata_driver"/>
       </call>
       <call method="setProxyDir">
-        <argument>C:/cashfly-web-symfony/var/cache/dev/doctrine/orm/Proxies</argument>
+        <argument>C:\cashfly-web-symfony\var\cache\dev/doctrine/orm/Proxies</argument>
       </call>
       <call method="setProxyNamespace">
         <argument>Proxies</argument>
@@ -3750,7 +3750,7 @@
       <argument>Bzv-LZnC8Z</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -3766,7 +3766,7 @@
       <argument>vZZTXPm2hu</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
+      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -4209,7 +4209,7 @@
       <argument type="service" id="twig.loader.native_filesystem"/>
       <argument type="collection">
         <argument key="autoescape">name</argument>
-        <argument key="cache">C:/cashfly-web-symfony/var/cache/dev/twig</argument>
+        <argument key="cache">C:\cashfly-web-symfony\var\cache\dev/twig</argument>
         <argument key="charset">UTF-8</argument>
         <argument key="debug">true</argument>
         <argument key="strict_variables">true</argument>

@@ -6,10 +6,16 @@ class AiAssistantService
 {
     private const HF_API_URL = 'https://api-inference.huggingface.co';
     private const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
-    private const HF_TOKEN = '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';
+    private string $hfToken;
+
+    public function __construct()
+    {
+        $this->hfToken = $_ENV['HF_TOKEN'] ?? ($_SERVER['HF_TOKEN'] ?? '');
+    }
 
     public function setToken(string $token): self
     {
+        $this->hfToken = $token;
         return $this;
     }
 
