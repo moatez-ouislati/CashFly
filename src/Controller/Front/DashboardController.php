@@ -44,33 +44,34 @@ class DashboardController extends AbstractController
         OperationRepository $operationRepository,
         TresorerieRepository $tresorerieRepository,
         InvestissementRepository $investissementRepository,
-        UtilisateurRepository $utilisateurRepository
+        UtilisateurRepository $utilisateurRepository,
+        EntrepriseRepository $entrepriseRepository,
+        RendementInvestissementRepository $rendementRepository
     ): Response {
         $user = $utilisateurRepository->findOneBy(['email' => 'moffhamed.erguez@gmail.com']);
         
-        $totalRevenus = $operationRepository->getTotalRevenus();
-        $totalDepenses = $operationRepository->getTotalDepenses();
-        $totalSolde = $tresorerieRepository->getTotalSolde();
-        $recentOperations = $operationRepository->getRecentOperations(10);
+        $allInvestissements = $investissementRepository->findAll();
+        $allRendements = $rendementRepository->findAll();
         
-        $recentInvestissements = [];
-        if ($user) {
-            $recentInvestissements = $investissementRepository->findByInvestisseur($user);
-        }
+        $totalInvesti = array_sum(array_map(fn($i) => (float) $i->getMontantFloat(), $allInvestissements));
+        $totalRendements = array_sum(array_map(fn($r) => (float) ($r->getGain() - $r->getPerte()), $allRendements));
+        $totalEntreprises = $entrepriseRepository->count([]);
+        $totalInvestissements = count($allInvestissements);
+        
+        $recentInvestissements = array_slice($allInvestissements, 0, 5);
+        $recentRendements = array_slice($allRendements, 0, 5);
 
-        $soldeByType = $tresorerieRepository->getSoldeByType();
-        $operationsParMois = $this->getOperationsParMois($operationRepository);
+        $investParMois = $this->getInvestissementsParMois($investissementRepository);
         
-        $chartData = $this->prepareChartData($operationsParMois, $soldeByType);
+        $chartData = $this->prepareInvestChartData($investParMois, $allInvestissements);
 
         return $this->render('front/dashboard.html.twig', [
-            'totalRevenus' => $totalRevenus,
-            'totalDepenses' => $totalDepenses,
-            'totalSolde' => $totalSolde,
-            'recentOperations' => $recentOperations,
-            'recentInvestissements' => array_slice($recentInvestissements, 0, 5),
-            'soldeByType' => $soldeByType,
-            'operationsParMois' => $operationsParMois,
+            'totalInvesti' => $totalInvesti,
+            'totalRendements' => $totalRendements,
+            'totalEntreprises' => $totalEntreprises,
+            'totalInvestissements' => $totalInvestissements,
+            'recentInvestissements' => $recentInvestissements,
+            'recentRendements' => $recentRendements,
             'chartData' => $chartData,
             'user' => $user,
         ]);
@@ -158,7 +159,7 @@ class DashboardController extends AbstractController
         ]);
     }
 
-    private function getOperationsParMois(OperationRepository $operationRepository): array
+    private function getInvestissementsParMois(InvestissementRepository $investissementRepository): array
     {
         $result = [];
         for ($i = 5; $i >= 0; $i--) {
@@ -166,40 +167,52 @@ class DashboardController extends AbstractController
             $start = (clone $date)->modify('first day of this month');
             $end = (clone $date)->modify('last day of this month');
             
+            $invests = $investissementRepository->findAll();
+            $filtered = array_filter($invests, function($inv) use ($start, $end) {
+                $d = $inv->getDateInvestissement();
+                return $d && $d >= $start && $d <= $end;
+            });
+            $total = array_sum(array_map(fn($i) => (float) $i->getMontantFloat(), $filtered));
+            
             $result[] = [
                 'month' => $start->format('M'),
-                'revenus' => $operationRepository->getTotalRevenus($start, $end),
-                'depenses' => $operationRepository->getTotalDepenses($start, $end),
+                'investissement' => $total,
+                'rendement' => $total * 0.08,
             ];
         }
         return $result;
     }
     
-    private function prepareChartData(array $operationsParMois, array $soldeByType): array
+    private function prepareInvestChartData(array $investParMois, array $investissements): array
     {
-        $revenus = [];
-        $depenses = [];
+        $investissementsData = [];
+        $rendementsData = [];
         $months = [];
         
-        foreach ($operationsParMois as $data) {
+        foreach ($investParMois as $data) {
             $months[] = $data['month'];
-            $revenus[] = (float) $data['revenus'];
-            $depenses[] = (float) $data['depenses'];
+            $investissementsData[] = (float) $data['investissement'];
+            $rendementsData[] = (float) $data['rendement'];
         }
         
-        $soldeData = [];
-        $soldeLabels = [];
-        foreach ($soldeByType as $type) {
-            $soldeLabels[] = $type['typeCompte'] ?? 'Autre';
-            $soldeData[] = (float) ($type['total'] ?? 0);
+        $investPieData = [];
+        $investPieLabels = [];
+        $statusCounts = [];
+        foreach ($investissements as $inv) {
+            $status = $inv->getStatut() ?: 'Inconnu';
+            $statusCounts[$status] = ($statusCounts[$status] ?? 0) + 1;
+        }
+        foreach ($statusCounts as $status => $count) {
+            $investPieLabels[] = $status;
+            $investPieData[] = $count;
         }
         
         return [
             'months' => $months,
-            'revenus' => $revenus,
-            'depenses' => $depenses,
-            'soldeData' => $soldeData,
-            'soldeLabels' => $soldeLabels,
+            'investissements' => $investissementsData,
+            'rendements' => $rendementsData,
+            'investPieData' => $investPieData,
+            'investPieLabels' => $investPieLabels,
         ];
     }
     

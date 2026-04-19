@@ -121,6 +121,12 @@
         <li><a class="nav-link {% if app.request.get('_route') == 'app_api_recommendations' %}active{% endif %}" href="{{ path('app_api_recommendations') }}">
             <i class="ti ti-robot"></i><span class="nav-text">Recommandations IA</span>
         </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_risk_analysis' %}active{% endif %}" href="{{ path('app_risk_analysis') }}">
+            <i class="ti ti-shield-check"></i><span class="nav-text">Analyse de Risque</span>
+        </a></li>
+        <li><a class="nav-link {% if app.request.get('_route') == 'app_ai_advisor' %}active{% endif %}" href="{{ path('app_ai_advisor') }}">
+            <i class="ti ti-message Bot"></i><span class="nav-text">AI Advisor</span>
+        </a></li>
 
         <li class="px-4 pt-4 pb-2"><small class="nav-text text-muted">Compte</small></li>
         <li><a class="nav-link {% if app.request.get('_route') == 'app_profile' %}active{% endif %}" href="{{ path('app_profile') }}">

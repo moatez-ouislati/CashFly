@@ -1,0 +1,208 @@
+{% extends 'base_dashboard.html.twig' %}
+
+{% block title %}Analyse de Risque - CashFly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="fs-3 mb-1">Analyse de Risque</h1>
+                <p class="text-muted mb-0">Evaluation du risque de vos investissements</p>
+            </div>
+            <div class="d-flex gap-2">
+                <select id="riskFilter" class="form-select" style="width: auto;">
+                    <option value="">Tous les risques</option>
+                    <option value="LOW">🟢 Faible (LOW)</option>
+                    <option value="MEDIUM">🟡 Moyen (MEDIUM)</option>
+                    <option value="HIGH">🔴 Eleve (HIGH)</option>
+                </select>
+                <input type="text" id="searchInvest" class="form-control" placeholder="Rechercher..." style="width: 200px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-4">
+        <div class="card text-center py-4 bg-success bg-opacity-10 border-success">
+            <h6 class="text-muted mb-1">Risque Faible</h6>
+            <h3 class="mb-0 text-success">{{ distribution.LOW }}</h3>
+            <small class="text-muted">0-30</small>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card text-center py-4 bg-warning bg-opacity-10 border-warning">
+            <h6 class="text-muted mb-1">Risque Moyen</h6>
+            <h3 class="mb-0 text-warning">{{ distribution.MEDIUM }}</h3>
+            <small class="text-muted">31-60</small>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card text-center py-4 bg-danger bg-opacity-10 border-danger">
+            <h6 class="text-muted mb-1">Risque Eleve</h6>
+            <h3 class="mb-0 text-danger">{{ distribution.HIGH }}</h3>
+            <small class="text-muted">61-100</small>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="ti ti-chart-pie me-2"></i>Distribution des Risques</h5>
+            </div>
+            <div class="card-body">
+                <div id="riskPieChart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="ti ti-chart-bar me-2"></i>Comparaison des Investissements</h5>
+            </div>
+            <div class="card-body">
+                <div id="riskBarChart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="ti ti-list me-2"></i>Details des Risques</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0" id="riskTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3">Investissement</th>
+                                <th class="px-4 py-3">Montant</th>
+                                <th class="px-4 py-3">Rendement Prev.</th>
+                                <th class="px-4 py-3">Duree</th>
+                                <th class="px-4 py-3">Statut</th>
+                                <th class="px-4 py-3">Score</th>
+                                <th class="px-4 py-3">Niveau</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in risks %}
+                            <tr data-risk-level="{{ item.riskLevel }}" data-search="{{ item.investment.nom|lower }}">
+                                <td class="px-4 py-3">
+                                    <strong>{{ item.investment.nom }}</strong>
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ item.investment.montant|number_format(2, ',', ' ') }} TND
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ item.investment.tauxRendementPrevu ?: 'N/A' }}%
+                                </td>
+                                <td class="px-4 py-3">
+                                    {{ item.investment.dureeMois ?: 'N/A' }} mois
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge {{ item.investment.statutBadgeClass }}">{{ item.investment.statut }}</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height: 8px; width: 80px;">
+                                            <div class="progress-bar bg-{{ item.riskLevel == 'LOW' ? 'success' : (item.riskLevel == 'MEDIUM' ? 'warning' : 'danger') }}" 
+                                                 role="progressbar" style="width: {{ item.riskScore }}%"></div>
+                                        </div>
+                                        <span class="small fw-semibold">{{ item.riskScore }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="badge bg-{{ item.riskLevel == 'LOW' ? 'success' : (item.riskLevel == 'MEDIUM' ? 'warning' : 'danger') }}">
+                                        {% if item.riskLevel == 'LOW' %}🟢 LOW{% elseif item.riskLevel == 'MEDIUM' %}🟡 MEDIUM{% else %}🔴 HIGH{% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    Aucun investissement trouve
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var pieData = [{{ distribution.LOW }}, {{ distribution.MEDIUM }}, {{ distribution.HIGH }}];
+    var pieLabels = ['Risque Faible', 'Risque Moyen', 'Risque Eleve'];
+    var pieColors = ['#28a745', '#ffc107', '#dc3545'];
+    
+    if (pieData.some(function(v) { return v > 0; })) {
+        var pieOptions = {
+            chart: { type: 'donut', height: 300 },
+            series: pieData,
+            labels: pieLabels,
+            colors: pieColors,
+            legend: { position: 'bottom' },
+            dataLabels: { enabled: true, formatter: function(val) { return val.toFixed(0) + '%'; } },
+            plotOptions: { pie: { donut: { size: '65%' } } }
+        };
+        new ApexCharts(document.querySelector('#riskPieChart'), pieOptions).render();
+    }
+    
+    var barData = [
+        {% for item in risks %}
+        {{ item.riskScore }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    var barLabels = [
+        {% for item in risks %}
+        "{{ item.investment.nom|slice(0, 15) }}"{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    if (barData.length > 0) {
+        var barOptions = {
+            chart: { type: 'bar', height: 300, toolbar: { show: false } },
+            series: [{ name: 'Score de Risque', data: barData }],
+            xaxis: { categories: barLabels },
+            colors: ['#dc3545'],
+            plotOptions: { bar: { borderRadius: 4, horizontal: false, distributed: true } },
+            dataLabels: { enabled: true, formatter: function(val) { return val; } },
+            legend: { show: false }
+        };
+        new ApexCharts(document.querySelector('#riskBarChart'), barOptions).render();
+    }
+    
+    var table = document.getElementById('riskTable');
+    var tbody = table.querySelector('tbody');
+    var rows = tbody.querySelectorAll('tr');
+    
+    document.getElementById('riskFilter').addEventListener('change', filterTable);
+    document.getElementById('searchInvest').addEventListener('input', filterTable);
+    
+    function filterTable() {
+        var filter = document.getElementById('riskFilter').value;
+        var search = document.getElementById('searchInvest').value.toLowerCase();
+        
+        rows.forEach(function(row) {
+            if (row.cells.length === 1) return;
+            var level = row.dataset.riskLevel || '';
+            var name = row.dataset.search || '';
+            var show = (filter === '' || level === filter) && name.includes(search);
+            row.style.display = show ? '' : 'none';
+        });
+    }
+});
+</script>
+{% endblock %}

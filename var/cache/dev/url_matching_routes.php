@@ -12,6 +12,10 @@ return [
         '/admin/users' => [[['_route' => 'app_admin_users', '_controller' => 'App\\Controller\\Admin\\AdminController::users'], null, null, null, false, false, null]],
         '/admin/users/new' => [[['_route' => 'app_admin_users_new', '_controller' => 'App\\Controller\\Admin\\AdminController::newUser'], null, ['GET' => 0, 'POST' => 1], null, false, false, null]],
         '/admin/stats' => [[['_route' => 'app_admin_stats', '_controller' => 'App\\Controller\\Admin\\AdminController::stats'], null, null, null, false, false, null]],
+        '/ai-advisor' => [[['_route' => 'app_ai_advisor', '_controller' => 'App\\Controller\\Api\\AiAdvisorController::index'], null, null, null, true, false, null]],
+        '/ai-advisor/chat' => [[['_route' => 'app_ai_advisor_chat', '_controller' => 'App\\Controller\\Api\\AiAdvisorController::chat'], null, ['POST' => 0], null, false, false, null]],
+        '/ai-advisor/compare' => [[['_route' => 'app_ai_advisor_compare', '_controller' => 'App\\Controller\\Api\\AiAdvisorController::compare'], null, ['POST' => 0], null, false, false, null]],
+        '/ai-advisor/should-invest' => [[['_route' => 'app_ai_advisor_should_invest', '_controller' => 'App\\Controller\\Api\\AiAdvisorController::shouldInvest'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/register' => [[['_route' => 'api_auth_register', '_controller' => 'App\\Controller\\Api\\AuthApiController::register'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/login' => [[['_route' => 'api_auth_login', '_controller' => 'App\\Controller\\Api\\AuthApiController::login'], null, ['POST' => 0], null, false, false, null]],
         '/api/auth/logout' => [[['_route' => 'api_auth_logout', '_controller' => 'App\\Controller\\Api\\AuthApiController::logout'], null, ['POST' => 0], null, false, false, null]],
@@ -45,6 +49,7 @@ return [
             [['_route' => 'api_rendements_list', '_controller' => 'App\\Controller\\Api\\RendementApiController::list'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'api_rendements_create', '_controller' => 'App\\Controller\\Api\\RendementApiController::create'], null, ['POST' => 0], null, false, false, null],
         ],
+        '/analyse-risque' => [[['_route' => 'app_risk_analysis', '_controller' => 'App\\Controller\\Api\\RiskAnalysisController::index'], null, null, null, true, false, null]],
         '/api/tresorerie' => [
             [['_route' => 'api_tresorerie_list', '_controller' => 'App\\Controller\\Api\\TresorerieApiController::list'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'api_tresorerie_create', '_controller' => 'App\\Controller\\Api\\TresorerieApiController::create'], null, ['POST' => 0], null, false, false, null],

@@ -14,40 +14,27 @@
 
 <div class="row g-3 mb-4">
     <div class="col-lg-3 col-12">
-        <div class="card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2">
-            <div class="d-flex gap-3">
-                <div class="icon-shape icon-md bg-success text-white rounded-2">
-                    <i class="ti ti-arrow-up"></i>
-                </div>
-                <div>
-                    <h2 class="mb-1 fs-6 text-muted">Total Revenus</h2>
-                    <h3 class="fw-bold mb-0">{{ totalRevenus|number_format(2, ',', ' ') }} TND</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-12">
-        <div class="card p-4 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-2">
-            <div class="d-flex gap-3">
-                <div class="icon-shape icon-md bg-danger text-white rounded-2">
-                    <i class="ti ti-arrow-down"></i>
-                </div>
-                <div>
-                    <h2 class="mb-1 fs-6 text-muted">Total Depenses</h2>
-                    <h3 class="fw-bold mb-0">{{ totalDepenses|number_format(2, ',', ' ') }} TND</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-3 col-12">
         <div class="card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2">
             <div class="d-flex gap-3">
                 <div class="icon-shape icon-md bg-primary text-white rounded-2">
-                    <i class="ti ti-wallet"></i>
+                    <i class="ti ti-chart-line"></i>
                 </div>
                 <div>
-                    <h2 class="mb-1 fs-6 text-muted">Solde Total</h2>
-                    <h3 class="fw-bold mb-0">{{ totalSolde|number_format(2, ',', ' ') }} TND</h3>
+                    <h2 class="mb-1 fs-6 text-muted">Total Investi</h2>
+                    <h3 class="fw-bold mb-0">{{ totalInvesti|number_format(2, ',', ' ') }} TND</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-12">
+        <div class="card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2">
+            <div class="d-flex gap-3">
+                <div class="icon-shape icon-md bg-success text-white rounded-2">
+                    <i class="ti ti-trending-up"></i>
+                </div>
+                <div>
+                    <h2 class="mb-1 fs-6 text-muted">Rendements Totaux</h2>
+                    <h3 class="fw-bold mb-0">{{ totalRendements|number_format(2, ',', ' ') }} TND</h3>
                 </div>
             </div>
         </div>
@@ -56,11 +43,24 @@
         <div class="card p-4 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-2">
             <div class="d-flex gap-3">
                 <div class="icon-shape icon-md bg-warning text-white rounded-2">
-                    <i class="ti ti-chart-line"></i>
+                    <i class="ti ti-building"></i>
+                </div>
+                <div>
+                    <h2 class="mb-1 fs-6 text-muted">Entreprises</h2>
+                    <h3 class="fw-bold mb-0">{{ totalEntreprises }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-12">
+        <div class="card p-4 bg-info bg-opacity-10 border border-info border-opacity-25 rounded-2">
+            <div class="d-flex gap-3">
+                <div class="icon-shape icon-md bg-info text-white rounded-2">
+                    <i class="ti ti-arrows-exchange"></i>
                 </div>
                 <div>
                     <h2 class="mb-1 fs-6 text-muted">Investissements</h2>
-                    <h3 class="fw-bold mb-0">{{ recentInvestissements|length }}</h3>
+                    <h3 class="fw-bold mb-0">{{ totalInvestissements }}</h3>
                 </div>
             </div>
         </div>
@@ -71,7 +71,7 @@
     <div class="col-12 col-lg-8">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center bg-transparent px-4 py-3">
-                <h3 class="h5 mb-0">Revenus vs Depenses</h3>
+                <h3 class="h5 mb-0">Investissements vs Rendements</h3>
                 <div>
                     <select class="form-select form-select-sm">
                         <option selected>6 derniers mois</option>
@@ -81,74 +81,23 @@
                 </div>
             </div>
             <div class="card-body p-4">
-                <div id="revenusDepensesChart" height="300"></div>
+                <div id="investRendementsChart" height="300"></div>
             </div>
         </div>
     </div>
     <div class="col-12 col-lg-4">
         <div class="card h-100">
             <div class="card-header bg-transparent px-4 py-3">
-                <h3 class="h5 mb-0">Repartition des Soldes</h3>
+                <h3 class="h5 mb-0">Repartition des Investissements</h3>
             </div>
             <div class="card-body p-4">
-                <div id="soldePieChart"></div>
+                <div id="investPieChart"></div>
             </div>
         </div>
     </div>
 </div>
 
 <div class="row g-3">
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center px-4 py-3">
-                <h4 class="mb-0 h5">Transactions Recentes</h4>
-                <a href="{{ path('app_transactions') }}" class="small text-primary text-decoration-underline">Voir tout</a>
-            </div>
-            <div class="card-body p-0">
-                {% if recentOperations|length > 0 %}
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                        <thead class="table-light">
-                            <tr>
-                                <th class="border-0 px-4 py-3">Reference</th>
-                                <th class="border-0 px-4 py-3">Type</th>
-                                <th class="border-0 px-4 py-3">Montant</th>
-                                <th class="border-0 px-4 py-3">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for operation in recentOperations %}
-                            <tr>
-                                <td class="px-4 py-3">
-                                    <span class="fw-semibold">{{ operation.reference|default('N/A') }}</span>
-                                </td>
-                                <td class="px-4 py-3">
-                                    {% if operation.type == 'revenu' %}
-                                    <span class="badge bg-success-subtle text-success border border-success">Revenu</span>
-                                    {% else %}
-                                    <span class="badge bg-danger-subtle text-danger border border-danger">Depense</span>
-                                    {% endif %}
-                                </td>
-                                <td class="px-4 py-3 fw-semibold {% if operation.type == 'revenu' %}text-success{% else %}text-danger{% endif %}">
-                                    {{ operation.montant|number_format(2, ',', ' ') }} TND
-                                </td>
-                                <td class="px-4 py-3 text-muted small">
-                                    {{ operation.dateOperation|date('d/m/Y H:i') }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class="text-center py-5 text-muted">
-                    <i class="ti ti-receipt fs-1 mb-3 d-block opacity-50"></i>
-                    <p>Aucune transaction recente</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
     <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-header bg-white d-flex justify-content-between align-items-center px-4 py-3">
@@ -198,6 +147,53 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center px-4 py-3">
+                <h4 class="mb-0 h5">Rendements Recents</h4>
+                <a href="{{ path('app_rendements') }}" class="small text-primary text-decoration-underline">Voir tout</a>
+            </div>
+            <div class="card-body p-0">
+                {% if recentRendements|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0 px-4 py-3">Investissement</th>
+                                <th class="border-0 px-4 py-3">Gain</th>
+                                <th class="border-0 px-4 py-3">Perte</th>
+                                <th class="border-0 px-4 py-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rendement in recentRendements %}
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <span class="fw-semibold">{{ rendement.investissement.nom|default('N/A') }}</span>
+                                </td>
+                                <td class="px-4 py-3 text-success">
+                                    +{{ rendement.gain|number_format(2, ',', ' ') }}
+                                </td>
+                                <td class="px-4 py-3 text-danger">
+                                    -{{ rendement.perte|number_format(2, ',', ' ') }}
+                                </td>
+                                <td class="px-4 py-3 text-muted small">
+                                    {{ rendement.dateCalcul|date('d/m/Y') }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="ti ti-trending-up fs-1 mb-3 d-block opacity-50"></i>
+                    <p>Aucun rendement recent</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer class="text-center py-4 mt-6 text-secondary">
@@ -209,35 +205,35 @@
 {{ parent() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Revenus vs Depenses Bar Chart
-    var revenusDepensesOptions = {
+    // Investissements vs Rendements Bar Chart
+    var investRendementsOptions = {
         chart: { type: 'bar', height: 300, toolbar: { show: false } },
         series: [
-            { name: 'Revenus', data: {{ chartData.revenus|json_encode|raw }} },
-            { name: 'Depenses', data: {{ chartData.depenses|json_encode|raw }} }
+            { name: 'Investissements', data: {{ chartData.investissements|json_encode|raw }} },
+            { name: 'Rendements', data: {{ chartData.rendements|json_encode|raw }} }
         ],
         xaxis: {
             categories: {{ chartData.months|json_encode|raw }}
         },
-        colors: ['#00C951', '#FB2C36'],
+        colors: ['#00B8DB', '#00C951'],
         plotOptions: { bar: { borderRadius: 4 } },
         dataLabels: { enabled: false }
     };
-    var chart1 = new ApexCharts(document.querySelector('#revenusDepensesChart'), revenusDepensesOptions);
+    var chart1 = new ApexCharts(document.querySelector('#investRendementsChart'), investRendementsOptions);
     chart1.render();
 
-    // Solde Pie Chart
-    var soldeData = {{ chartData.soldeData|json_encode|raw }};
-    var soldeLabels = {{ chartData.soldeLabels|json_encode|raw }};
-    if (soldeData.length > 0) {
-        var soldeOptions = {
+    // Repartition des Investissements Pie Chart
+    var investPieData = {{ chartData.investPieData|json_encode|raw }};
+    var investPieLabels = {{ chartData.investPieLabels|json_encode|raw }};
+    if (investPieData.length > 0) {
+        var investPieOptions = {
             chart: { type: 'donut', height: 250 },
-            series: soldeData,
-            labels: soldeLabels,
-            colors: ['#E66239', '#00B8DB', '#F0B100', '#00C951'],
+            series: investPieData,
+            labels: investPieLabels,
+            colors: ['#E66239', '#00B8DB', '#F0B100', '#00C951', '#8B5CF6'],
             legend: { position: 'bottom' }
         };
-        var chart2 = new ApexCharts(document.querySelector('#soldePieChart'), soldeOptions);
+        var chart2 = new ApexCharts(document.querySelector('#investPieChart'), investPieOptions);
         chart2.render();
     }
 });

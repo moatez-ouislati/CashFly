@@ -97,48 +97,32 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
 
 <div class=\"row g-3 mb-4\">
     <div class=\"col-lg-3 col-12\">
-        <div class=\"card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2\">
-            <div class=\"d-flex gap-3\">
-                <div class=\"icon-shape icon-md bg-success text-white rounded-2\">
-                    <i class=\"ti ti-arrow-up\"></i>
-                </div>
-                <div>
-                    <h2 class=\"mb-1 fs-6 text-muted\">Total Revenus</h2>
-                    <h3 class=\"fw-bold mb-0\">";
-        // line 24
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber((isset($context["totalRevenus"]) || array_key_exists("totalRevenus", $context) ? $context["totalRevenus"] : (function () { throw new RuntimeError('Variable "totalRevenus" does not exist.', 24, $this->source); })()), 2, ",", " "), "html", null, true);
-        yield " TND</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class=\"col-lg-3 col-12\">
-        <div class=\"card p-4 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-2\">
-            <div class=\"d-flex gap-3\">
-                <div class=\"icon-shape icon-md bg-danger text-white rounded-2\">
-                    <i class=\"ti ti-arrow-down\"></i>
-                </div>
-                <div>
-                    <h2 class=\"mb-1 fs-6 text-muted\">Total Depenses</h2>
-                    <h3 class=\"fw-bold mb-0\">";
-        // line 37
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber((isset($context["totalDepenses"]) || array_key_exists("totalDepenses", $context) ? $context["totalDepenses"] : (function () { throw new RuntimeError('Variable "totalDepenses" does not exist.', 37, $this->source); })()), 2, ",", " "), "html", null, true);
-        yield " TND</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class=\"col-lg-3 col-12\">
         <div class=\"card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2\">
             <div class=\"d-flex gap-3\">
                 <div class=\"icon-shape icon-md bg-primary text-white rounded-2\">
-                    <i class=\"ti ti-wallet\"></i>
+                    <i class=\"ti ti-chart-line\"></i>
                 </div>
                 <div>
-                    <h2 class=\"mb-1 fs-6 text-muted\">Solde Total</h2>
+                    <h2 class=\"mb-1 fs-6 text-muted\">Total Investi</h2>
                     <h3 class=\"fw-bold mb-0\">";
-        // line 50
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber((isset($context["totalSolde"]) || array_key_exists("totalSolde", $context) ? $context["totalSolde"] : (function () { throw new RuntimeError('Variable "totalSolde" does not exist.', 50, $this->source); })()), 2, ",", " "), "html", null, true);
+        // line 24
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber((isset($context["totalInvesti"]) || array_key_exists("totalInvesti", $context) ? $context["totalInvesti"] : (function () { throw new RuntimeError('Variable "totalInvesti" does not exist.', 24, $this->source); })()), 2, ",", " "), "html", null, true);
+        yield " TND</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=\"col-lg-3 col-12\">
+        <div class=\"card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2\">
+            <div class=\"d-flex gap-3\">
+                <div class=\"icon-shape icon-md bg-success text-white rounded-2\">
+                    <i class=\"ti ti-trending-up\"></i>
+                </div>
+                <div>
+                    <h2 class=\"mb-1 fs-6 text-muted\">Rendements Totaux</h2>
+                    <h3 class=\"fw-bold mb-0\">";
+        // line 37
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber((isset($context["totalRendements"]) || array_key_exists("totalRendements", $context) ? $context["totalRendements"] : (function () { throw new RuntimeError('Variable "totalRendements" does not exist.', 37, $this->source); })()), 2, ",", " "), "html", null, true);
         yield " TND</h3>
                 </div>
             </div>
@@ -148,13 +132,29 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
         <div class=\"card p-4 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-2\">
             <div class=\"d-flex gap-3\">
                 <div class=\"icon-shape icon-md bg-warning text-white rounded-2\">
-                    <i class=\"ti ti-chart-line\"></i>
+                    <i class=\"ti ti-building\"></i>
+                </div>
+                <div>
+                    <h2 class=\"mb-1 fs-6 text-muted\">Entreprises</h2>
+                    <h3 class=\"fw-bold mb-0\">";
+        // line 50
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["totalEntreprises"]) || array_key_exists("totalEntreprises", $context) ? $context["totalEntreprises"] : (function () { throw new RuntimeError('Variable "totalEntreprises" does not exist.', 50, $this->source); })()), "html", null, true);
+        yield "</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=\"col-lg-3 col-12\">
+        <div class=\"card p-4 bg-info bg-opacity-10 border border-info border-opacity-25 rounded-2\">
+            <div class=\"d-flex gap-3\">
+                <div class=\"icon-shape icon-md bg-info text-white rounded-2\">
+                    <i class=\"ti ti-arrows-exchange\"></i>
                 </div>
                 <div>
                     <h2 class=\"mb-1 fs-6 text-muted\">Investissements</h2>
                     <h3 class=\"fw-bold mb-0\">";
         // line 63
-        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["recentInvestissements"]) || array_key_exists("recentInvestissements", $context) ? $context["recentInvestissements"] : (function () { throw new RuntimeError('Variable "recentInvestissements" does not exist.', 63, $this->source); })())), "html", null, true);
+        yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape((isset($context["totalInvestissements"]) || array_key_exists("totalInvestissements", $context) ? $context["totalInvestissements"] : (function () { throw new RuntimeError('Variable "totalInvestissements" does not exist.', 63, $this->source); })()), "html", null, true);
         yield "</h3>
                 </div>
             </div>
@@ -166,7 +166,7 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
     <div class=\"col-12 col-lg-8\">
         <div class=\"card\">
             <div class=\"card-header d-flex justify-content-between align-items-center bg-transparent px-4 py-3\">
-                <h3 class=\"h5 mb-0\">Revenus vs Depenses</h3>
+                <h3 class=\"h5 mb-0\">Investissements vs Rendements</h3>
                 <div>
                     <select class=\"form-select form-select-sm\">
                         <option selected>6 derniers mois</option>
@@ -176,17 +176,17 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
                 </div>
             </div>
             <div class=\"card-body p-4\">
-                <div id=\"revenusDepensesChart\" height=\"300\"></div>
+                <div id=\"investRendementsChart\" height=\"300\"></div>
             </div>
         </div>
     </div>
     <div class=\"col-12 col-lg-4\">
         <div class=\"card h-100\">
             <div class=\"card-header bg-transparent px-4 py-3\">
-                <h3 class=\"h5 mb-0\">Repartition des Soldes</h3>
+                <h3 class=\"h5 mb-0\">Repartition des Investissements</h3>
             </div>
             <div class=\"card-body p-4\">
-                <div id=\"soldePieChart\"></div>
+                <div id=\"investPieChart\"></div>
             </div>
         </div>
     </div>
@@ -196,111 +196,17 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
     <div class=\"col-lg-6\">
         <div class=\"card h-100\">
             <div class=\"card-header bg-white d-flex justify-content-between align-items-center px-4 py-3\">
-                <h4 class=\"mb-0 h5\">Transactions Recentes</h4>
-                <a href=\"";
-        // line 105
-        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_transactions");
-        yield "\" class=\"small text-primary text-decoration-underline\">Voir tout</a>
-            </div>
-            <div class=\"card-body p-0\">
-                ";
-        // line 108
-        if ((Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["recentOperations"]) || array_key_exists("recentOperations", $context) ? $context["recentOperations"] : (function () { throw new RuntimeError('Variable "recentOperations" does not exist.', 108, $this->source); })())) > 0)) {
-            // line 109
-            yield "                <div class=\"table-responsive\">
-                    <table class=\"table table-hover mb-0\">
-                        <thead class=\"table-light\">
-                            <tr>
-                                <th class=\"border-0 px-4 py-3\">Reference</th>
-                                <th class=\"border-0 px-4 py-3\">Type</th>
-                                <th class=\"border-0 px-4 py-3\">Montant</th>
-                                <th class=\"border-0 px-4 py-3\">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ";
-            // line 120
-            $context['_parent'] = $context;
-            $context['_seq'] = CoreExtension::ensureTraversable((isset($context["recentOperations"]) || array_key_exists("recentOperations", $context) ? $context["recentOperations"] : (function () { throw new RuntimeError('Variable "recentOperations" does not exist.', 120, $this->source); })()));
-            foreach ($context['_seq'] as $context["_key"] => $context["operation"]) {
-                // line 121
-                yield "                            <tr>
-                                <td class=\"px-4 py-3\">
-                                    <span class=\"fw-semibold\">";
-                // line 123
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(((CoreExtension::getAttribute($this->env, $this->source, $context["operation"], "reference", [], "any", true, true, false, 123)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, $context["operation"], "reference", [], "any", false, false, false, 123), "N/A")) : ("N/A")), "html", null, true);
-                yield "</span>
-                                </td>
-                                <td class=\"px-4 py-3\">
-                                    ";
-                // line 126
-                if ((CoreExtension::getAttribute($this->env, $this->source, $context["operation"], "type", [], "any", false, false, false, 126) == "revenu")) {
-                    // line 127
-                    yield "                                    <span class=\"badge bg-success-subtle text-success border border-success\">Revenu</span>
-                                    ";
-                } else {
-                    // line 129
-                    yield "                                    <span class=\"badge bg-danger-subtle text-danger border border-danger\">Depense</span>
-                                    ";
-                }
-                // line 131
-                yield "                                </td>
-                                <td class=\"px-4 py-3 fw-semibold ";
-                // line 132
-                if ((CoreExtension::getAttribute($this->env, $this->source, $context["operation"], "type", [], "any", false, false, false, 132) == "revenu")) {
-                    yield "text-success";
-                } else {
-                    yield "text-danger";
-                }
-                yield "\">
-                                    ";
-                // line 133
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, $context["operation"], "montant", [], "any", false, false, false, 133), 2, ",", " "), "html", null, true);
-                yield " TND
-                                </td>
-                                <td class=\"px-4 py-3 text-muted small\">
-                                    ";
-                // line 136
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["operation"], "dateOperation", [], "any", false, false, false, 136), "d/m/Y H:i"), "html", null, true);
-                yield "
-                                </td>
-                            </tr>
-                            ";
-            }
-            $_parent = $context['_parent'];
-            unset($context['_seq'], $context['_key'], $context['operation'], $context['_parent']);
-            $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 140
-            yield "                        </tbody>
-                    </table>
-                </div>
-                ";
-        } else {
-            // line 144
-            yield "                <div class=\"text-center py-5 text-muted\">
-                    <i class=\"ti ti-receipt fs-1 mb-3 d-block opacity-50\"></i>
-                    <p>Aucune transaction recente</p>
-                </div>
-                ";
-        }
-        // line 149
-        yield "            </div>
-        </div>
-    </div>
-    <div class=\"col-lg-6\">
-        <div class=\"card h-100\">
-            <div class=\"card-header bg-white d-flex justify-content-between align-items-center px-4 py-3\">
                 <h4 class=\"mb-0 h5\">Investissements Recents</h4>
                 <a href=\"";
-        // line 156
+        // line 105
         yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_investments");
         yield "\" class=\"small text-primary text-decoration-underline\">Voir tout</a>
             </div>
             <div class=\"card-body p-0\">
                 ";
-        // line 159
-        if ((Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["recentInvestissements"]) || array_key_exists("recentInvestissements", $context) ? $context["recentInvestissements"] : (function () { throw new RuntimeError('Variable "recentInvestissements" does not exist.', 159, $this->source); })())) > 0)) {
-            // line 160
+        // line 108
+        if ((Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["recentInvestissements"]) || array_key_exists("recentInvestissements", $context) ? $context["recentInvestissements"] : (function () { throw new RuntimeError('Variable "recentInvestissements" does not exist.', 108, $this->source); })())) > 0)) {
+            // line 109
             yield "                <div class=\"table-responsive\">
                     <table class=\"table table-hover mb-0\">
                         <thead class=\"table-light\">
@@ -313,39 +219,39 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
                         </thead>
                         <tbody>
                             ";
-            // line 171
+            // line 120
             $context['_parent'] = $context;
-            $context['_seq'] = CoreExtension::ensureTraversable((isset($context["recentInvestissements"]) || array_key_exists("recentInvestissements", $context) ? $context["recentInvestissements"] : (function () { throw new RuntimeError('Variable "recentInvestissements" does not exist.', 171, $this->source); })()));
+            $context['_seq'] = CoreExtension::ensureTraversable((isset($context["recentInvestissements"]) || array_key_exists("recentInvestissements", $context) ? $context["recentInvestissements"] : (function () { throw new RuntimeError('Variable "recentInvestissements" does not exist.', 120, $this->source); })()));
             foreach ($context['_seq'] as $context["_key"] => $context["invest"]) {
-                // line 172
+                // line 121
                 yield "                            <tr>
                                 <td class=\"px-4 py-3\">
                                     <span class=\"fw-semibold\">";
-                // line 174
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "entreprise", [], "any", false, true, false, 174), "nom", [], "any", true, true, false, 174)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "entreprise", [], "any", false, false, false, 174), "nom", [], "any", false, false, false, 174), "N/A")) : ("N/A")), "html", null, true);
+                // line 123
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "entreprise", [], "any", false, true, false, 123), "nom", [], "any", true, true, false, 123)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "entreprise", [], "any", false, false, false, 123), "nom", [], "any", false, false, false, 123), "N/A")) : ("N/A")), "html", null, true);
                 yield "</span>
                                 </td>
                                 <td class=\"px-4 py-3 fw-semibold\">
                                     ";
-                // line 177
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "montant", [], "any", false, false, false, 177), 2, ",", " "), "html", null, true);
+                // line 126
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "montant", [], "any", false, false, false, 126), 2, ",", " "), "html", null, true);
                 yield " TND
                                 </td>
                                 <td class=\"px-4 py-3\">
                                     <span class=\"badge ";
-                // line 180
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "statutBadgeClass", [], "any", false, false, false, 180), "html", null, true);
+                // line 129
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "statutBadgeClass", [], "any", false, false, false, 129), "html", null, true);
                 yield "\">
                                         ";
-                // line 181
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::replace(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "statut", [], "any", false, false, false, 181), ["_" => " "]), "html", null, true);
+                // line 130
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(Twig\Extension\CoreExtension::replace(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "statut", [], "any", false, false, false, 130), ["_" => " "]), "html", null, true);
                 yield "
                                     </span>
                                 </td>
                                 <td class=\"px-4 py-3 text-muted small\">
                                     ";
-                // line 185
-                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "dateInvestissement", [], "any", false, false, false, 185), "d/m/Y"), "html", null, true);
+                // line 134
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["invest"], "dateInvestissement", [], "any", false, false, false, 134), "d/m/Y"), "html", null, true);
                 yield "
                                 </td>
                             </tr>
@@ -354,20 +260,99 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
             $_parent = $context['_parent'];
             unset($context['_seq'], $context['_key'], $context['invest'], $context['_parent']);
             $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 189
+            // line 138
             yield "                        </tbody>
                     </table>
                 </div>
                 ";
         } else {
-            // line 193
+            // line 142
             yield "                <div class=\"text-center py-5 text-muted\">
                     <i class=\"ti ti-chart-line fs-1 mb-3 d-block opacity-50\"></i>
                     <p>Aucun investissement recent</p>
                 </div>
                 ";
         }
-        // line 198
+        // line 147
+        yield "            </div>
+        </div>
+    </div>
+    <div class=\"col-lg-6\">
+        <div class=\"card h-100\">
+            <div class=\"card-header bg-white d-flex justify-content-between align-items-center px-4 py-3\">
+                <h4 class=\"mb-0 h5\">Rendements Recents</h4>
+                <a href=\"";
+        // line 154
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_rendements");
+        yield "\" class=\"small text-primary text-decoration-underline\">Voir tout</a>
+            </div>
+            <div class=\"card-body p-0\">
+                ";
+        // line 157
+        if ((Twig\Extension\CoreExtension::length($this->env->getCharset(), (isset($context["recentRendements"]) || array_key_exists("recentRendements", $context) ? $context["recentRendements"] : (function () { throw new RuntimeError('Variable "recentRendements" does not exist.', 157, $this->source); })())) > 0)) {
+            // line 158
+            yield "                <div class=\"table-responsive\">
+                    <table class=\"table table-hover mb-0\">
+                        <thead class=\"table-light\">
+                            <tr>
+                                <th class=\"border-0 px-4 py-3\">Investissement</th>
+                                <th class=\"border-0 px-4 py-3\">Gain</th>
+                                <th class=\"border-0 px-4 py-3\">Perte</th>
+                                <th class=\"border-0 px-4 py-3\">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ";
+            // line 169
+            $context['_parent'] = $context;
+            $context['_seq'] = CoreExtension::ensureTraversable((isset($context["recentRendements"]) || array_key_exists("recentRendements", $context) ? $context["recentRendements"] : (function () { throw new RuntimeError('Variable "recentRendements" does not exist.', 169, $this->source); })()));
+            foreach ($context['_seq'] as $context["_key"] => $context["rendement"]) {
+                // line 170
+                yield "                            <tr>
+                                <td class=\"px-4 py-3\">
+                                    <span class=\"fw-semibold\">";
+                // line 172
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape(((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["rendement"], "investissement", [], "any", false, true, false, 172), "nom", [], "any", true, true, false, 172)) ? (Twig\Extension\CoreExtension::default(CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, $context["rendement"], "investissement", [], "any", false, false, false, 172), "nom", [], "any", false, false, false, 172), "N/A")) : ("N/A")), "html", null, true);
+                yield "</span>
+                                </td>
+                                <td class=\"px-4 py-3 text-success\">
+                                    +";
+                // line 175
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, $context["rendement"], "gain", [], "any", false, false, false, 175), 2, ",", " "), "html", null, true);
+                yield "
+                                </td>
+                                <td class=\"px-4 py-3 text-danger\">
+                                    -";
+                // line 178
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatNumber(CoreExtension::getAttribute($this->env, $this->source, $context["rendement"], "perte", [], "any", false, false, false, 178), 2, ",", " "), "html", null, true);
+                yield "
+                                </td>
+                                <td class=\"px-4 py-3 text-muted small\">
+                                    ";
+                // line 181
+                yield $this->env->getRuntime('Twig\Runtime\EscaperRuntime')->escape($this->extensions['Twig\Extension\CoreExtension']->formatDate(CoreExtension::getAttribute($this->env, $this->source, $context["rendement"], "dateCalcul", [], "any", false, false, false, 181), "d/m/Y"), "html", null, true);
+                yield "
+                                </td>
+                            </tr>
+                            ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_key'], $context['rendement'], $context['_parent']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 185
+            yield "                        </tbody>
+                    </table>
+                </div>
+                ";
+        } else {
+            // line 189
+            yield "                <div class=\"text-center py-5 text-muted\">
+                    <i class=\"ti ti-trending-up fs-1 mb-3 d-block opacity-50\"></i>
+                    <p>Aucun rendement recent</p>
+                </div>
+                ";
+        }
+        // line 194
         yield "            </div>
         </div>
     </div>
@@ -383,7 +368,7 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
         yield from [];
     }
 
-    // line 208
+    // line 204
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -393,55 +378,55 @@ class __TwigTemplate_4d91cf5b446a11209991ea6fd25c1d62 extends Template
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f = $this->extensions["Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension"];
         $__internal_6f47bbe9983af81f1e7450e9a3e3768f->enter($__internal_6f47bbe9983af81f1e7450e9a3e3768f_prof = new \Twig\Profiler\Profile($this->getTemplateName(), "block", "javascripts"));
 
-        // line 209
+        // line 205
         yield from $this->yieldParentBlock("javascripts", $context, $blocks);
         yield "
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Revenus vs Depenses Bar Chart
-    var revenusDepensesOptions = {
+    // Investissements vs Rendements Bar Chart
+    var investRendementsOptions = {
         chart: { type: 'bar', height: 300, toolbar: { show: false } },
         series: [
-            { name: 'Revenus', data: ";
-        // line 216
-        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 216, $this->source); })()), "revenus", [], "any", false, false, false, 216));
+            { name: 'Investissements', data: ";
+        // line 212
+        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 212, $this->source); })()), "investissements", [], "any", false, false, false, 212));
         yield " },
-            { name: 'Depenses', data: ";
-        // line 217
-        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 217, $this->source); })()), "depenses", [], "any", false, false, false, 217));
+            { name: 'Rendements', data: ";
+        // line 213
+        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 213, $this->source); })()), "rendements", [], "any", false, false, false, 213));
         yield " }
         ],
         xaxis: {
             categories: ";
-        // line 220
-        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 220, $this->source); })()), "months", [], "any", false, false, false, 220));
+        // line 216
+        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 216, $this->source); })()), "months", [], "any", false, false, false, 216));
         yield "
         },
-        colors: ['#00C951', '#FB2C36'],
+        colors: ['#00B8DB', '#00C951'],
         plotOptions: { bar: { borderRadius: 4 } },
         dataLabels: { enabled: false }
     };
-    var chart1 = new ApexCharts(document.querySelector('#revenusDepensesChart'), revenusDepensesOptions);
+    var chart1 = new ApexCharts(document.querySelector('#investRendementsChart'), investRendementsOptions);
     chart1.render();
 
-    // Solde Pie Chart
-    var soldeData = ";
-        // line 230
-        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 230, $this->source); })()), "soldeData", [], "any", false, false, false, 230));
+    // Repartition des Investissements Pie Chart
+    var investPieData = ";
+        // line 226
+        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 226, $this->source); })()), "investPieData", [], "any", false, false, false, 226));
         yield ";
-    var soldeLabels = ";
-        // line 231
-        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 231, $this->source); })()), "soldeLabels", [], "any", false, false, false, 231));
+    var investPieLabels = ";
+        // line 227
+        yield json_encode(CoreExtension::getAttribute($this->env, $this->source, (isset($context["chartData"]) || array_key_exists("chartData", $context) ? $context["chartData"] : (function () { throw new RuntimeError('Variable "chartData" does not exist.', 227, $this->source); })()), "investPieLabels", [], "any", false, false, false, 227));
         yield ";
-    if (soldeData.length > 0) {
-        var soldeOptions = {
+    if (investPieData.length > 0) {
+        var investPieOptions = {
             chart: { type: 'donut', height: 250 },
-            series: soldeData,
-            labels: soldeLabels,
-            colors: ['#E66239', '#00B8DB', '#F0B100', '#00C951'],
+            series: investPieData,
+            labels: investPieLabels,
+            colors: ['#E66239', '#00B8DB', '#F0B100', '#00C951', '#8B5CF6'],
             legend: { position: 'bottom' }
         };
-        var chart2 = new ApexCharts(document.querySelector('#soldePieChart'), soldeOptions);
+        var chart2 = new ApexCharts(document.querySelector('#investPieChart'), investPieOptions);
         chart2.render();
     }
 });
@@ -474,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     public function getDebugInfo(): array
     {
-        return array (  434 => 231,  430 => 230,  417 => 220,  411 => 217,  407 => 216,  397 => 209,  387 => 208,  371 => 198,  364 => 193,  358 => 189,  348 => 185,  341 => 181,  337 => 180,  331 => 177,  325 => 174,  321 => 172,  317 => 171,  304 => 160,  302 => 159,  296 => 156,  287 => 149,  280 => 144,  274 => 140,  264 => 136,  258 => 133,  250 => 132,  247 => 131,  243 => 129,  239 => 127,  237 => 126,  231 => 123,  227 => 121,  223 => 120,  210 => 109,  208 => 108,  202 => 105,  157 => 63,  141 => 50,  125 => 37,  109 => 24,  92 => 10,  86 => 6,  76 => 5,  59 => 3,  42 => 1,);
+        return array (  419 => 227,  415 => 226,  402 => 216,  396 => 213,  392 => 212,  382 => 205,  372 => 204,  356 => 194,  349 => 189,  343 => 185,  333 => 181,  327 => 178,  321 => 175,  315 => 172,  311 => 170,  307 => 169,  294 => 158,  292 => 157,  286 => 154,  277 => 147,  270 => 142,  264 => 138,  254 => 134,  247 => 130,  243 => 129,  237 => 126,  231 => 123,  227 => 121,  223 => 120,  210 => 109,  208 => 108,  202 => 105,  157 => 63,  141 => 50,  125 => 37,  109 => 24,  92 => 10,  86 => 6,  76 => 5,  59 => 3,  42 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -495,40 +480,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <div class=\"row g-3 mb-4\">
     <div class=\"col-lg-3 col-12\">
-        <div class=\"card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2\">
-            <div class=\"d-flex gap-3\">
-                <div class=\"icon-shape icon-md bg-success text-white rounded-2\">
-                    <i class=\"ti ti-arrow-up\"></i>
-                </div>
-                <div>
-                    <h2 class=\"mb-1 fs-6 text-muted\">Total Revenus</h2>
-                    <h3 class=\"fw-bold mb-0\">{{ totalRevenus|number_format(2, ',', ' ') }} TND</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class=\"col-lg-3 col-12\">
-        <div class=\"card p-4 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded-2\">
-            <div class=\"d-flex gap-3\">
-                <div class=\"icon-shape icon-md bg-danger text-white rounded-2\">
-                    <i class=\"ti ti-arrow-down\"></i>
-                </div>
-                <div>
-                    <h2 class=\"mb-1 fs-6 text-muted\">Total Depenses</h2>
-                    <h3 class=\"fw-bold mb-0\">{{ totalDepenses|number_format(2, ',', ' ') }} TND</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class=\"col-lg-3 col-12\">
         <div class=\"card p-4 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-2\">
             <div class=\"d-flex gap-3\">
                 <div class=\"icon-shape icon-md bg-primary text-white rounded-2\">
-                    <i class=\"ti ti-wallet\"></i>
+                    <i class=\"ti ti-chart-line\"></i>
                 </div>
                 <div>
-                    <h2 class=\"mb-1 fs-6 text-muted\">Solde Total</h2>
-                    <h3 class=\"fw-bold mb-0\">{{ totalSolde|number_format(2, ',', ' ') }} TND</h3>
+                    <h2 class=\"mb-1 fs-6 text-muted\">Total Investi</h2>
+                    <h3 class=\"fw-bold mb-0\">{{ totalInvesti|number_format(2, ',', ' ') }} TND</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=\"col-lg-3 col-12\">
+        <div class=\"card p-4 bg-success bg-opacity-10 border border-success border-opacity-25 rounded-2\">
+            <div class=\"d-flex gap-3\">
+                <div class=\"icon-shape icon-md bg-success text-white rounded-2\">
+                    <i class=\"ti ti-trending-up\"></i>
+                </div>
+                <div>
+                    <h2 class=\"mb-1 fs-6 text-muted\">Rendements Totaux</h2>
+                    <h3 class=\"fw-bold mb-0\">{{ totalRendements|number_format(2, ',', ' ') }} TND</h3>
                 </div>
             </div>
         </div>
@@ -537,11 +509,24 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class=\"card p-4 bg-warning bg-opacity-10 border border-warning border-opacity-25 rounded-2\">
             <div class=\"d-flex gap-3\">
                 <div class=\"icon-shape icon-md bg-warning text-white rounded-2\">
-                    <i class=\"ti ti-chart-line\"></i>
+                    <i class=\"ti ti-building\"></i>
+                </div>
+                <div>
+                    <h2 class=\"mb-1 fs-6 text-muted\">Entreprises</h2>
+                    <h3 class=\"fw-bold mb-0\">{{ totalEntreprises }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class=\"col-lg-3 col-12\">
+        <div class=\"card p-4 bg-info bg-opacity-10 border border-info border-opacity-25 rounded-2\">
+            <div class=\"d-flex gap-3\">
+                <div class=\"icon-shape icon-md bg-info text-white rounded-2\">
+                    <i class=\"ti ti-arrows-exchange\"></i>
                 </div>
                 <div>
                     <h2 class=\"mb-1 fs-6 text-muted\">Investissements</h2>
-                    <h3 class=\"fw-bold mb-0\">{{ recentInvestissements|length }}</h3>
+                    <h3 class=\"fw-bold mb-0\">{{ totalInvestissements }}</h3>
                 </div>
             </div>
         </div>
@@ -552,7 +537,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <div class=\"col-12 col-lg-8\">
         <div class=\"card\">
             <div class=\"card-header d-flex justify-content-between align-items-center bg-transparent px-4 py-3\">
-                <h3 class=\"h5 mb-0\">Revenus vs Depenses</h3>
+                <h3 class=\"h5 mb-0\">Investissements vs Rendements</h3>
                 <div>
                     <select class=\"form-select form-select-sm\">
                         <option selected>6 derniers mois</option>
@@ -562,74 +547,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <div class=\"card-body p-4\">
-                <div id=\"revenusDepensesChart\" height=\"300\"></div>
+                <div id=\"investRendementsChart\" height=\"300\"></div>
             </div>
         </div>
     </div>
     <div class=\"col-12 col-lg-4\">
         <div class=\"card h-100\">
             <div class=\"card-header bg-transparent px-4 py-3\">
-                <h3 class=\"h5 mb-0\">Repartition des Soldes</h3>
+                <h3 class=\"h5 mb-0\">Repartition des Investissements</h3>
             </div>
             <div class=\"card-body p-4\">
-                <div id=\"soldePieChart\"></div>
+                <div id=\"investPieChart\"></div>
             </div>
         </div>
     </div>
 </div>
 
 <div class=\"row g-3\">
-    <div class=\"col-lg-6\">
-        <div class=\"card h-100\">
-            <div class=\"card-header bg-white d-flex justify-content-between align-items-center px-4 py-3\">
-                <h4 class=\"mb-0 h5\">Transactions Recentes</h4>
-                <a href=\"{{ path('app_transactions') }}\" class=\"small text-primary text-decoration-underline\">Voir tout</a>
-            </div>
-            <div class=\"card-body p-0\">
-                {% if recentOperations|length > 0 %}
-                <div class=\"table-responsive\">
-                    <table class=\"table table-hover mb-0\">
-                        <thead class=\"table-light\">
-                            <tr>
-                                <th class=\"border-0 px-4 py-3\">Reference</th>
-                                <th class=\"border-0 px-4 py-3\">Type</th>
-                                <th class=\"border-0 px-4 py-3\">Montant</th>
-                                <th class=\"border-0 px-4 py-3\">Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for operation in recentOperations %}
-                            <tr>
-                                <td class=\"px-4 py-3\">
-                                    <span class=\"fw-semibold\">{{ operation.reference|default('N/A') }}</span>
-                                </td>
-                                <td class=\"px-4 py-3\">
-                                    {% if operation.type == 'revenu' %}
-                                    <span class=\"badge bg-success-subtle text-success border border-success\">Revenu</span>
-                                    {% else %}
-                                    <span class=\"badge bg-danger-subtle text-danger border border-danger\">Depense</span>
-                                    {% endif %}
-                                </td>
-                                <td class=\"px-4 py-3 fw-semibold {% if operation.type == 'revenu' %}text-success{% else %}text-danger{% endif %}\">
-                                    {{ operation.montant|number_format(2, ',', ' ') }} TND
-                                </td>
-                                <td class=\"px-4 py-3 text-muted small\">
-                                    {{ operation.dateOperation|date('d/m/Y H:i') }}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-                {% else %}
-                <div class=\"text-center py-5 text-muted\">
-                    <i class=\"ti ti-receipt fs-1 mb-3 d-block opacity-50\"></i>
-                    <p>Aucune transaction recente</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
     <div class=\"col-lg-6\">
         <div class=\"card h-100\">
             <div class=\"card-header bg-white d-flex justify-content-between align-items-center px-4 py-3\">
@@ -679,6 +613,53 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         </div>
     </div>
+    <div class=\"col-lg-6\">
+        <div class=\"card h-100\">
+            <div class=\"card-header bg-white d-flex justify-content-between align-items-center px-4 py-3\">
+                <h4 class=\"mb-0 h5\">Rendements Recents</h4>
+                <a href=\"{{ path('app_rendements') }}\" class=\"small text-primary text-decoration-underline\">Voir tout</a>
+            </div>
+            <div class=\"card-body p-0\">
+                {% if recentRendements|length > 0 %}
+                <div class=\"table-responsive\">
+                    <table class=\"table table-hover mb-0\">
+                        <thead class=\"table-light\">
+                            <tr>
+                                <th class=\"border-0 px-4 py-3\">Investissement</th>
+                                <th class=\"border-0 px-4 py-3\">Gain</th>
+                                <th class=\"border-0 px-4 py-3\">Perte</th>
+                                <th class=\"border-0 px-4 py-3\">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rendement in recentRendements %}
+                            <tr>
+                                <td class=\"px-4 py-3\">
+                                    <span class=\"fw-semibold\">{{ rendement.investissement.nom|default('N/A') }}</span>
+                                </td>
+                                <td class=\"px-4 py-3 text-success\">
+                                    +{{ rendement.gain|number_format(2, ',', ' ') }}
+                                </td>
+                                <td class=\"px-4 py-3 text-danger\">
+                                    -{{ rendement.perte|number_format(2, ',', ' ') }}
+                                </td>
+                                <td class=\"px-4 py-3 text-muted small\">
+                                    {{ rendement.dateCalcul|date('d/m/Y') }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class=\"text-center py-5 text-muted\">
+                    <i class=\"ti ti-trending-up fs-1 mb-3 d-block opacity-50\"></i>
+                    <p>Aucun rendement recent</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 
 <footer class=\"text-center py-4 mt-6 text-secondary\">
@@ -690,40 +671,39 @@ document.addEventListener('DOMContentLoaded', function() {
 {{ parent() }}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Revenus vs Depenses Bar Chart
-    var revenusDepensesOptions = {
+    // Investissements vs Rendements Bar Chart
+    var investRendementsOptions = {
         chart: { type: 'bar', height: 300, toolbar: { show: false } },
         series: [
-            { name: 'Revenus', data: {{ chartData.revenus|json_encode|raw }} },
-            { name: 'Depenses', data: {{ chartData.depenses|json_encode|raw }} }
+            { name: 'Investissements', data: {{ chartData.investissements|json_encode|raw }} },
+            { name: 'Rendements', data: {{ chartData.rendements|json_encode|raw }} }
         ],
         xaxis: {
             categories: {{ chartData.months|json_encode|raw }}
         },
-        colors: ['#00C951', '#FB2C36'],
+        colors: ['#00B8DB', '#00C951'],
         plotOptions: { bar: { borderRadius: 4 } },
         dataLabels: { enabled: false }
     };
-    var chart1 = new ApexCharts(document.querySelector('#revenusDepensesChart'), revenusDepensesOptions);
+    var chart1 = new ApexCharts(document.querySelector('#investRendementsChart'), investRendementsOptions);
     chart1.render();
 
-    // Solde Pie Chart
-    var soldeData = {{ chartData.soldeData|json_encode|raw }};
-    var soldeLabels = {{ chartData.soldeLabels|json_encode|raw }};
-    if (soldeData.length > 0) {
-        var soldeOptions = {
+    // Repartition des Investissements Pie Chart
+    var investPieData = {{ chartData.investPieData|json_encode|raw }};
+    var investPieLabels = {{ chartData.investPieLabels|json_encode|raw }};
+    if (investPieData.length > 0) {
+        var investPieOptions = {
             chart: { type: 'donut', height: 250 },
-            series: soldeData,
-            labels: soldeLabels,
-            colors: ['#E66239', '#00B8DB', '#F0B100', '#00C951'],
+            series: investPieData,
+            labels: investPieLabels,
+            colors: ['#E66239', '#00B8DB', '#F0B100', '#00C951', '#8B5CF6'],
             legend: { position: 'bottom' }
         };
-        var chart2 = new ApexCharts(document.querySelector('#soldePieChart'), soldeOptions);
+        var chart2 = new ApexCharts(document.querySelector('#investPieChart'), investPieOptions);
         chart2.render();
     }
 });
 </script>
-{% endblock %}
-", "front/dashboard.html.twig", "C:\\cashfly-web-symfony\\templates\\front\\dashboard.html.twig");
+{% endblock %}", "front/dashboard.html.twig", "C:\\cashfly-web-symfony\\templates\\front\\dashboard.html.twig");
     }
 }

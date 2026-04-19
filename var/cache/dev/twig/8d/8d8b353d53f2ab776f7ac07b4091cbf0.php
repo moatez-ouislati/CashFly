@@ -92,7 +92,7 @@ class __TwigTemplate_520b5c6077cbddfc33bd334ed99518ae extends Template
             </div>
             ";
         // line 13
-        if (((isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 13, $this->source); })()) && (CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 13, $this->source); })()), "role", [], "any", false, false, false, 13) == "proprietaire"))) {
+        if (((isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 13, $this->source); })()) && (CoreExtension::getAttribute($this->env, $this->source, (isset($context["user"]) || array_key_exists("user", $context) ? $context["user"] : (function () { throw new RuntimeError('Variable "user" does not exist.', 13, $this->source); })()), "role", [], "any", false, false, false, 13) == "investisseur"))) {
             // line 14
             yield "            <div>
                 <a href=\"#\" class=\"btn btn-primary\">
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h1 class=\"fs-3 mb-1\">Entreprises</h1>
                 <p class=\"text-muted mb-0\">Decouvrez et investissez dans des entreprises</p>
             </div>
-            {% if user and user.role == 'proprietaire' %}
+            {% if user and user.role == 'investisseur' %}
             <div>
                 <a href=\"#\" class=\"btn btn-primary\">
                     <i class=\"ti ti-plus me-2\"></i>Creer une Entreprise

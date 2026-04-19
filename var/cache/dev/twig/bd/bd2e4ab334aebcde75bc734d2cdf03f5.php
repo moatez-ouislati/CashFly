@@ -299,11 +299,31 @@ class __TwigTemplate_a8a048c322e7a863adddb9553e94283e extends Template
         yield "\">
             <i class=\"ti ti-robot\"></i><span class=\"nav-text\">Recommandations IA</span>
         </a></li>
+        <li><a class=\"nav-link ";
+        // line 124
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 124, $this->source); })()), "request", [], "any", false, false, false, 124), "get", ["_route"], "method", false, false, false, 124) == "app_risk_analysis")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_risk_analysis");
+        yield "\">
+            <i class=\"ti ti-shield-check\"></i><span class=\"nav-text\">Analyse de Risque</span>
+        </a></li>
+        <li><a class=\"nav-link ";
+        // line 127
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 127, $this->source); })()), "request", [], "any", false, false, false, 127), "get", ["_route"], "method", false, false, false, 127) == "app_ai_advisor")) {
+            yield "active";
+        }
+        yield "\" href=\"";
+        yield $this->extensions['Symfony\Bridge\Twig\Extension\RoutingExtension']->getPath("app_ai_advisor");
+        yield "\">
+            <i class=\"ti ti-message Bot\"></i><span class=\"nav-text\">AI Advisor</span>
+        </a></li>
 
         <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Compte</small></li>
         <li><a class=\"nav-link ";
-        // line 126
-        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 126, $this->source); })()), "request", [], "any", false, false, false, 126), "get", ["_route"], "method", false, false, false, 126) == "app_profile")) {
+        // line 132
+        if ((CoreExtension::getAttribute($this->env, $this->source, CoreExtension::getAttribute($this->env, $this->source, (isset($context["app"]) || array_key_exists("app", $context) ? $context["app"] : (function () { throw new RuntimeError('Variable "app" does not exist.', 132, $this->source); })()), "request", [], "any", false, false, false, 132), "get", ["_route"], "method", false, false, false, 132) == "app_profile")) {
             yield "active";
         }
         yield "\" href=\"";
@@ -317,9 +337,9 @@ class __TwigTemplate_a8a048c322e7a863adddb9553e94283e extends Template
 <main id=\"content\" class=\"content py-10\">
     <div class=\"container-fluid\">
         ";
-        // line 134
+        // line 140
         yield from $this->unwrap()->yieldBlock('content', $context, $blocks);
-        // line 135
+        // line 141
         yield "    </div>
 </main>
 
@@ -674,7 +694,7 @@ body.dark-mode .list-group-item {
         yield from [];
     }
 
-    // line 134
+    // line 140
     /**
      * @return iterable<null|scalar|\Stringable>
      */
@@ -711,7 +731,7 @@ body.dark-mode .list-group-item {
      */
     public function getDebugInfo(): array
     {
-        return array (  678 => 134,  323 => 135,  321 => 134,  306 => 126,  294 => 121,  284 => 118,  274 => 115,  264 => 112,  254 => 109,  244 => 106,  232 => 101,  222 => 98,  212 => 95,  202 => 92,  192 => 89,  182 => 86,  174 => 81,  170 => 80,  154 => 67,  148 => 64,  141 => 60,  137 => 59,  132 => 57,  124 => 52,  105 => 36,  92 => 26,  68 => 4,  58 => 3,  41 => 1,);
+        return array (  698 => 140,  343 => 141,  341 => 140,  326 => 132,  314 => 127,  304 => 124,  294 => 121,  284 => 118,  274 => 115,  264 => 112,  254 => 109,  244 => 106,  232 => 101,  222 => 98,  212 => 95,  202 => 92,  192 => 89,  182 => 86,  174 => 81,  170 => 80,  154 => 67,  148 => 64,  141 => 60,  137 => 59,  132 => 57,  124 => 52,  105 => 36,  92 => 26,  68 => 4,  58 => 3,  41 => 1,);
     }
 
     public function getSourceContext(): Source
@@ -838,6 +858,12 @@ body.dark-mode .list-group-item {
         </a></li>
         <li><a class=\"nav-link {% if app.request.get('_route') == 'app_api_recommendations' %}active{% endif %}\" href=\"{{ path('app_api_recommendations') }}\">
             <i class=\"ti ti-robot\"></i><span class=\"nav-text\">Recommandations IA</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_risk_analysis' %}active{% endif %}\" href=\"{{ path('app_risk_analysis') }}\">
+            <i class=\"ti ti-shield-check\"></i><span class=\"nav-text\">Analyse de Risque</span>
+        </a></li>
+        <li><a class=\"nav-link {% if app.request.get('_route') == 'app_ai_advisor' %}active{% endif %}\" href=\"{{ path('app_ai_advisor') }}\">
+            <i class=\"ti ti-message Bot\"></i><span class=\"nav-text\">AI Advisor</span>
         </a></li>
 
         <li class=\"px-4 pt-4 pb-2\"><small class=\"nav-text text-muted\">Compte</small></li>

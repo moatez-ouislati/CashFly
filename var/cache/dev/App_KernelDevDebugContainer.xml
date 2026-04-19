@@ -9,8 +9,8 @@
     <parameter key="kernel.runtime_mode.cli">%env(not:default:kernel.runtime_mode.web:)%</parameter>
     <parameter key="kernel.runtime_mode.worker">%env(bool:default::key:worker:default:kernel.runtime_mode:)%</parameter>
     <parameter key="kernel.debug">true</parameter>
-    <parameter key="kernel.build_dir">C:\cashfly-web-symfony\var\cache\dev</parameter>
-    <parameter key="kernel.cache_dir">C:\cashfly-web-symfony\var\cache\dev</parameter>
+    <parameter key="kernel.build_dir">C:/cashfly-web-symfony/var/cache/dev</parameter>
+    <parameter key="kernel.cache_dir">C:/cashfly-web-symfony/var/cache/dev</parameter>
     <parameter key="kernel.logs_dir">C:\cashfly-web-symfony\var\log</parameter>
     <parameter key="kernel.bundles" type="collection">
       <parameter key="FrameworkBundle">Symfony\Bundle\FrameworkBundle\FrameworkBundle</parameter>
@@ -93,15 +93,15 @@
     <parameter key="asset.request_context.base_path">null</parameter>
     <parameter key="asset.request_context.secure">null</parameter>
     <parameter key="debug.error_handler.throw_at">-1</parameter>
-    <parameter key="debug.container.dump">C:\cashfly-web-symfony\var\cache\dev/App_KernelDevDebugContainer.xml</parameter>
+    <parameter key="debug.container.dump">C:/cashfly-web-symfony/var/cache/dev/App_KernelDevDebugContainer.xml</parameter>
     <parameter key="router.request_context.host">localhost</parameter>
     <parameter key="router.request_context.scheme">http</parameter>
     <parameter key="router.request_context.base_url"></parameter>
     <parameter key="router.resource">kernel::loadRoutes</parameter>
-    <parameter key="router.cache_dir">C:\cashfly-web-symfony\var\cache\dev</parameter>
+    <parameter key="router.cache_dir">C:/cashfly-web-symfony/var/cache/dev</parameter>
     <parameter key="request_listener.http_port">80</parameter>
     <parameter key="request_listener.https_port">443</parameter>
-    <parameter key="serializer.mapping.cache.file">C:\cashfly-web-symfony\var\cache\dev/serialization.php</parameter>
+    <parameter key="serializer.mapping.cache.file">C:/cashfly-web-symfony/var/cache/dev/serialization.php</parameter>
     <parameter key="cache.prefix.seed">_C:\cashfly-web-symfony.App_KernelDevDebugContainer</parameter>
     <parameter key="session.metadata.storage_key">_sf2_meta</parameter>
     <parameter key="session.storage.options" type="collection">
@@ -116,7 +116,7 @@
     <parameter key="session.metadata.update_threshold">0</parameter>
     <parameter key="form.type_extension.csrf.enabled">true</parameter>
     <parameter key="form.type_extension.csrf.field_name">_token</parameter>
-    <parameter key="validator.mapping.cache.file">C:\cashfly-web-symfony\var\cache\dev/validation.php</parameter>
+    <parameter key="validator.mapping.cache.file">C:/cashfly-web-symfony/var/cache/dev/validation.php</parameter>
     <parameter key="validator.translation_domain">validators</parameter>
     <parameter key="data_collector.templates" type="collection"/>
     <parameter key="doctrine.dbal.configuration.class">Doctrine\DBAL\Configuration</parameter>
@@ -185,7 +185,7 @@
     <parameter key="doctrine.orm.auto_generate_proxy_classes">true</parameter>
     <parameter key="doctrine.orm.enable_lazy_ghost_objects">true</parameter>
     <parameter key="doctrine.orm.enable_native_lazy_objects">false</parameter>
-    <parameter key="doctrine.orm.proxy_dir">C:\cashfly-web-symfony\var\cache\dev/doctrine/orm/Proxies</parameter>
+    <parameter key="doctrine.orm.proxy_dir">C:/cashfly-web-symfony/var/cache/dev/doctrine/orm/Proxies</parameter>
     <parameter key="doctrine.orm.proxy_namespace">Proxies</parameter>
     <parameter key="doctrine.migrations.preferred_em">null</parameter>
     <parameter key="doctrine.migrations.preferred_connection">null</parameter>
@@ -254,6 +254,13 @@
         <argument type="service" id=".service_locator.O2p6Lk7.App\Controller\ApiController"/>
       </call>
     </service>
+    <service id="App\Controller\Api\AiAdvisorController" class="App\Controller\Api\AiAdvisorController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.O2p6Lk7.App\Controller\Api\AiAdvisorController"/>
+      </call>
+    </service>
     <service id="App\Controller\Api\AuthApiController" class="App\Controller\Api\AuthApiController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -317,6 +324,13 @@
       <argument type="service" id="App\Service\JwtService"/>
       <call method="setContainer">
         <argument type="service" id=".service_locator.O2p6Lk7.App\Controller\Api\RendementApiController"/>
+      </call>
+    </service>
+    <service id="App\Controller\Api\RiskAnalysisController" class="App\Controller\Api\RiskAnalysisController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.O2p6Lk7.App\Controller\Api\RiskAnalysisController"/>
       </call>
     </service>
     <service id="App\Controller\Api\TresorerieApiController" class="App\Controller\Api\TresorerieApiController" public="true" autowire="true" autoconfigure="true">
@@ -421,6 +435,7 @@
       <argument type="service" id="App\Repository\UtilisateurRepository"/>
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
     </service>
+    <service id="App\Service\Api\AiAssistantService" class="App\Service\Api\AiAssistantService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\AiRecommendationService" class="App\Service\Api\AiRecommendationService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\AlphaVantageService" class="App\Service\Api\AlphaVantageService" autowire="true" autoconfigure="true"/>
     <service id="App\Service\Api\EmailService" class="App\Service\Api\EmailService" autowire="true" autoconfigure="true"/>
@@ -438,6 +453,9 @@
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
     </service>
     <service id="App\Service\KycService" class="App\Service\KycService" autowire="true" autoconfigure="true">
+      <argument type="service" id="doctrine.orm.default_entity_manager"/>
+    </service>
+    <service id="App\Service\RiskScoringService" class="App\Service\RiskScoringService" autowire="true" autoconfigure="true">
       <argument type="service" id="doctrine.orm.default_entity_manager"/>
     </service>
     <service id="App\Service\TransactionService" class="App\Service\TransactionService" autowire="true" autoconfigure="true">
@@ -473,7 +491,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag priority="-50" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.KbM2ah."/>
+      <argument type="service" id=".service_locator.DiB8jJk"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag priority="-100" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">controller.argument_value_resolver</tag>
@@ -556,7 +574,7 @@
       </argument>
     </service>
     <service id="http_cache.store" class="Symfony\Component\HttpKernel\HttpCache\Store">
-      <argument>C:\cashfly-web-symfony\var\cache\dev/http_cache</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/http_cache</argument>
     </service>
     <service id="url_helper" class="Symfony\Component\HttpFoundation\UrlHelper">
       <argument type="service" id="request_stack"/>
@@ -566,7 +584,7 @@
       <tag name="container.no_preload"/>
       <argument type="tagged_iterator" tag="kernel.cache_warmer"/>
       <argument>true</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/App_KernelDevDebugContainerDeprecations.log</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/App_KernelDevDebugContainerDeprecations.log</argument>
     </service>
     <service id="cache_clearer" class="Symfony\Component\HttpKernel\CacheClearer\ChainCacheClearer">
       <argument type="tagged_iterator" tag="kernel.cache_clearer"/>
@@ -1196,7 +1214,7 @@
       <tag name="kernel.reset" method="reset"/>
       <argument>02X1ju1-2o</argument>
       <argument>0</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/app</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
@@ -1212,7 +1230,7 @@
       <argument>73hCVf61+T</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1222,7 +1240,7 @@
       <argument>myouQIbmCk</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1232,7 +1250,7 @@
       <argument>jCzZmQn0vM</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1242,7 +1260,7 @@
       <argument>OMIl8KOB3Q</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1252,7 +1270,7 @@
       <argument>ee-JKBThR5</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1262,7 +1280,7 @@
       <argument></argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -1281,7 +1299,7 @@
       <tag name="monolog.logger" channel="cache"/>
       <argument></argument>
       <argument>0</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/app</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/app</argument>
       <argument type="service" id="cache.default_marshaller" on-invalid="ignore"/>
       <call method="setLogger">
         <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
@@ -1816,7 +1834,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.KbM2ah."/>
+      <argument type="service" id=".service_locator.DiB8jJk"/>
     </service>
     <service id="debug.log_processor" class="Symfony\Bridge\Monolog\Processor\DebugProcessor">
       <tag name="kernel.reset" method="reset"/>
@@ -1919,7 +1937,7 @@
       <argument type="service" id=".service_locator.LFIBYeS.router.default"/>
       <argument>kernel::loadRoutes</argument>
       <argument type="collection">
-        <argument key="cache_dir">C:\cashfly-web-symfony\var\cache\dev</argument>
+        <argument key="cache_dir">C:/cashfly-web-symfony/var/cache/dev</argument>
         <argument key="debug">true</argument>
         <argument key="generator_class">Symfony\Component\Routing\Generator\CompiledUrlGenerator</argument>
         <argument key="generator_dumper_class">Symfony\Component\Routing\Generator\Dumper\CompiledUrlGeneratorDumper</argument>
@@ -2103,10 +2121,10 @@
           </service>
         </argument>
       </argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/serialization.php</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/serialization.php</argument>
     </service>
     <service id="serializer.mapping.cache.symfony" class="Psr\Cache\CacheItemPoolInterface">
-      <argument>C:\cashfly-web-symfony\var\cache\dev/serialization.php</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/serialization.php</argument>
       <argument type="service" id="cache.serializer"/>
       <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create"/>
     </service>
@@ -2227,7 +2245,7 @@
       <argument>true</argument>
     </service>
     <service id="session.storage.factory.mock_file" class="Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorageFactory">
-      <argument>C:\cashfly-web-symfony\var\cache\dev/sessions</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/sessions</argument>
       <argument>MOCKSESSID</argument>
       <argument type="service">
         <service class="Symfony\Component\HttpFoundation\Session\Storage\MetadataBag">
@@ -2421,10 +2439,10 @@
     <service id="validator.mapping.cache_warmer" class="Symfony\Bundle\FrameworkBundle\CacheWarmer\ValidatorCacheWarmer">
       <tag name="kernel.cache_warmer"/>
       <argument type="service" id="validator.builder"/>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/validation.php</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/validation.php</argument>
     </service>
     <service id="validator.mapping.cache.adapter" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" constructor="create">
-      <argument>C:\cashfly-web-symfony\var\cache\dev/validation.php</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/validation.php</argument>
       <argument type="service" id="cache.validator"/>
     </service>
     <service id="validator.validator_factory" class="Symfony\Component\Validator\ContainerConstraintValidatorFactory">
@@ -2687,7 +2705,7 @@
       <argument>a5R-3-5QcY</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -3310,7 +3328,7 @@
         <argument type="service" id=".doctrine.orm.default_metadata_driver"/>
       </call>
       <call method="setProxyDir">
-        <argument>C:\cashfly-web-symfony\var\cache\dev/doctrine/orm/Proxies</argument>
+        <argument>C:/cashfly-web-symfony/var/cache/dev/doctrine/orm/Proxies</argument>
       </call>
       <call method="setProxyNamespace">
         <argument>Proxies</argument>
@@ -3732,7 +3750,7 @@
       <argument>Bzv-LZnC8Z</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -3748,7 +3766,7 @@
       <argument>vZZTXPm2hu</argument>
       <argument>0</argument>
       <argument>%container.build_id%</argument>
-      <argument>C:\cashfly-web-symfony\var\cache\dev/pools/system</argument>
+      <argument>C:/cashfly-web-symfony/var/cache/dev/pools/system</argument>
       <argument type="service" id="monolog.logger.cache" on-invalid="ignore"/>
       <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache"/>
     </service>
@@ -4191,7 +4209,7 @@
       <argument type="service" id="twig.loader.native_filesystem"/>
       <argument type="collection">
         <argument key="autoescape">name</argument>
-        <argument key="cache">C:\cashfly-web-symfony\var\cache\dev/twig</argument>
+        <argument key="cache">C:/cashfly-web-symfony/var/cache/dev/twig</argument>
         <argument key="charset">UTF-8</argument>
         <argument key="debug">true</argument>
         <argument key="strict_variables">true</argument>
@@ -4538,6 +4556,9 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\ApiController" class="App\Controller\ApiController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\ApiController" class="App\Controller\ApiController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\ApiController" class="App\Controller\ApiController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\AiAdvisorController" class="App\Controller\Api\AiAdvisorController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\AiAdvisorController" class="App\Controller\Api\AiAdvisorController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\AiAdvisorController" class="App\Controller\Api\AiAdvisorController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\AuthApiController" class="App\Controller\Api\AuthApiController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\AuthApiController" class="App\Controller\Api\AuthApiController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\Api\AuthApiController" class="App\Controller\Api\AuthApiController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -4556,6 +4577,9 @@
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\RendementApiController" class="App\Controller\Api\RendementApiController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\RendementApiController" class="App\Controller\Api\RendementApiController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\Api\RendementApiController" class="App\Controller\Api\RendementApiController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\RiskAnalysisController" class="App\Controller\Api\RiskAnalysisController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\RiskAnalysisController" class="App\Controller\Api\RiskAnalysisController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\RiskAnalysisController" class="App\Controller\Api\RiskAnalysisController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\TresorerieApiController" class="App\Controller\Api\TresorerieApiController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\TresorerieApiController" class="App\Controller\Api\TresorerieApiController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\Api\TresorerieApiController" class="App\Controller\Api\TresorerieApiController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -5060,11 +5084,40 @@
         <argument key="utilisateurRepository" type="service_closure" id="App\Repository\UtilisateurRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.t56ggG3" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.nqb5Ce0" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
+        <argument key="aiService" type="service_closure" id="App\Service\Api\AiAssistantService"/>
+        <argument key="invRepo" type="service_closure" id="App\Repository\InvestissementRepository"/>
+        <argument key="rendRepo" type="service_closure" id="App\Repository\RendementInvestissementRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.rUBlecR" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="aiService" type="service_closure" id="App\Service\Api\AiAssistantService"/>
+        <argument key="invRepo" type="service_closure" id="App\Repository\InvestissementRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.FujbCKh" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="aiService" type="service_closure" id="App\Service\Api\AiAssistantService"/>
+      </argument>
+    </service>
+    <service id=".service_locator.uvux0ci" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="riskService" type="service_closure" id="App\Service\RiskScoringService"/>
+      </argument>
+    </service>
+    <service id=".service_locator.4bU.ZGX" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="entrepriseRepository" type="service_closure" id="App\Repository\EntrepriseRepository"/>
         <argument key="investissementRepository" type="service_closure" id="App\Repository\InvestissementRepository"/>
         <argument key="operationRepository" type="service_closure" id="App\Repository\OperationRepository"/>
+        <argument key="rendementRepository" type="service_closure" id="App\Repository\RendementInvestissementRepository"/>
         <argument key="tresorerieRepository" type="service_closure" id="App\Repository\TresorerieRepository"/>
         <argument key="utilisateurRepository" type="service_closure" id="App\Repository\UtilisateurRepository"/>
       </argument>
@@ -5145,7 +5198,7 @@
         <argument key="rendementRepository" type="service_closure" id="App\Repository\RendementInvestissementRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.KbM2ah." class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.DiB8jJk" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Controller\Admin\AdminController::analytics" type="service_closure" id=".service_locator.mA1Y2CK"/>
@@ -5155,8 +5208,13 @@
         <argument key="App\Controller\Admin\AdminController::stats" type="service_closure" id=".service_locator.KjdaFpB"/>
         <argument key="App\Controller\Admin\AdminController::toggleUser" type="service_closure" id=".service_locator.Fllgtc2"/>
         <argument key="App\Controller\Admin\AdminController::users" type="service_closure" id=".service_locator.9QfjjfA"/>
+        <argument key="App\Controller\Api\AiAdvisorController::chat" type="service_closure" id=".service_locator.rUBlecR"/>
+        <argument key="App\Controller\Api\AiAdvisorController::compare" type="service_closure" id=".service_locator.FujbCKh"/>
+        <argument key="App\Controller\Api\AiAdvisorController::index" type="service_closure" id=".service_locator.nqb5Ce0"/>
+        <argument key="App\Controller\Api\AiAdvisorController::shouldInvest" type="service_closure" id=".service_locator.FujbCKh"/>
+        <argument key="App\Controller\Api\RiskAnalysisController::index" type="service_closure" id=".service_locator.uvux0ci"/>
         <argument key="App\Controller\Front\DashboardController::companies" type="service_closure" id=".service_locator.rsFN82S"/>
-        <argument key="App\Controller\Front\DashboardController::dashboard" type="service_closure" id=".service_locator.t56ggG3"/>
+        <argument key="App\Controller\Front\DashboardController::dashboard" type="service_closure" id=".service_locator.4bU.ZGX"/>
         <argument key="App\Controller\Front\DashboardController::profile" type="service_closure" id=".service_locator.9QfjjfA"/>
         <argument key="App\Controller\Front\DashboardController::rendements" type="service_closure" id=".service_locator.Fgm2hIf"/>
         <argument key="App\Controller\Front\DashboardController::settings" type="service_closure" id=".service_locator.9QfjjfA"/>
@@ -5181,8 +5239,13 @@
         <argument key="App\Controller\Admin\AdminController:stats" type="service_closure" id=".service_locator.KjdaFpB"/>
         <argument key="App\Controller\Admin\AdminController:toggleUser" type="service_closure" id=".service_locator.Fllgtc2"/>
         <argument key="App\Controller\Admin\AdminController:users" type="service_closure" id=".service_locator.9QfjjfA"/>
+        <argument key="App\Controller\Api\AiAdvisorController:chat" type="service_closure" id=".service_locator.rUBlecR"/>
+        <argument key="App\Controller\Api\AiAdvisorController:compare" type="service_closure" id=".service_locator.FujbCKh"/>
+        <argument key="App\Controller\Api\AiAdvisorController:index" type="service_closure" id=".service_locator.nqb5Ce0"/>
+        <argument key="App\Controller\Api\AiAdvisorController:shouldInvest" type="service_closure" id=".service_locator.FujbCKh"/>
+        <argument key="App\Controller\Api\RiskAnalysisController:index" type="service_closure" id=".service_locator.uvux0ci"/>
         <argument key="App\Controller\Front\DashboardController:companies" type="service_closure" id=".service_locator.rsFN82S"/>
-        <argument key="App\Controller\Front\DashboardController:dashboard" type="service_closure" id=".service_locator.t56ggG3"/>
+        <argument key="App\Controller\Front\DashboardController:dashboard" type="service_closure" id=".service_locator.4bU.ZGX"/>
         <argument key="App\Controller\Front\DashboardController:profile" type="service_closure" id=".service_locator.9QfjjfA"/>
         <argument key="App\Controller\Front\DashboardController:rendements" type="service_closure" id=".service_locator.Fgm2hIf"/>
         <argument key="App\Controller\Front\DashboardController:settings" type="service_closure" id=".service_locator.9QfjjfA"/>
@@ -5468,6 +5531,12 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.O2p6Lk7" method="withContext"/>
     </service>
+    <service id=".service_locator.O2p6Lk7.App\Controller\Api\AiAdvisorController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\AiAdvisorController"/>
+      <argument>App\Controller\Api\AiAdvisorController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.O2p6Lk7" method="withContext"/>
+    </service>
     <service id=".service_locator.O2p6Lk7.App\Controller\Api\AuthApiController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Api\AuthApiController"/>
       <argument>App\Controller\Api\AuthApiController</argument>
@@ -5501,6 +5570,12 @@
     <service id=".service_locator.O2p6Lk7.App\Controller\Api\RendementApiController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Api\RendementApiController"/>
       <argument>App\Controller\Api\RendementApiController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.O2p6Lk7" method="withContext"/>
+    </service>
+    <service id=".service_locator.O2p6Lk7.App\Controller\Api\RiskAnalysisController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\RiskAnalysisController"/>
+      <argument>App\Controller\Api\RiskAnalysisController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.O2p6Lk7" method="withContext"/>
     </service>
@@ -5660,12 +5735,14 @@
           <argument>App\Kernel</argument>
           <argument>App\Controller\Admin\AdminController</argument>
           <argument>App\Controller\ApiController</argument>
+          <argument>App\Controller\Api\AiAdvisorController</argument>
           <argument>App\Controller\Api\AuthApiController</argument>
           <argument>App\Controller\Api\EntrepriseApiController</argument>
           <argument>App\Controller\Api\ExternalApiController</argument>
           <argument>App\Controller\Api\InvestissementApiController</argument>
           <argument>App\Controller\Api\OperationApiController</argument>
           <argument>App\Controller\Api\RendementApiController</argument>
+          <argument>App\Controller\Api\RiskAnalysisController</argument>
           <argument>App\Controller\Api\TresorerieApiController</argument>
           <argument>App\Controller\Api\UserApiController</argument>
           <argument>App\Controller\Front\DashboardController</argument>
@@ -6579,7 +6656,7 @@
     <service id="Psr\Log\LoggerInterface" alias="monolog.logger"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.w7.f4fT" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.KbM2ah."/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.DiB8jJk"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.KLVvNIq"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id=".Psr\Log\LoggerInterface $request.logger" alias="monolog.logger.request"/>
@@ -6605,7 +6682,7 @@
     <service id=".service_locator.4UiI.SP" alias=".service_locator.1UipdzX"/>
     <service id=".service_locator.FllHxEn" alias=".service_locator.Fllgtc2"/>
     <service id=".service_locator.wDPcGhw" alias=".service_locator.KjdaFpB"/>
-    <service id=".service_locator.1Kg_TNJ" alias=".service_locator.t56ggG3"/>
+    <service id=".service_locator.ju4khdy" alias=".service_locator.4bU.ZGX"/>
     <service id=".service_locator.ssTq4LG" alias=".service_locator.Fgm2hIf"/>
     <service id=".service_locator.PZpVq8K" alias=".service_locator.rlVBljV"/>
     <service id=".service_locator.abENoKE" alias=".service_locator.hBvHTG3"/>
@@ -6613,7 +6690,7 @@
     <service id=".service_locator.MkAOu.g" alias=".service_locator.9Dm3AfK"/>
     <service id=".service_locator.UHBqPOi" alias=".service_locator.gwZ0B9m"/>
     <service id=".service_locator.TbNYwvL" alias=".service_locator.ldY1k.X"/>
-    <service id=".service_locator.AVbFQGt" alias=".service_locator.KbM2ah."/>
+    <service id=".service_locator.Tzm9RDX" alias=".service_locator.DiB8jJk"/>
     <service id=".service_locator.BFrsqsn" alias=".service_locator.F9PKc.7"/>
     <service id=".service_locator.yj07qm_" alias=".service_locator.ZyXYEQR"/>
     <service id=".service_locator.LMuqDDe" alias=".service_locator.VHsrTPK"/>
@@ -6632,7 +6709,11 @@
     <service id=".service_locator.iWhDXMx" alias=".service_locator.1UipdzX"/>
     <service id=".service_locator.JmUXWyE" alias=".service_locator.Fllgtc2"/>
     <service id=".service_locator.9rxYYlr" alias=".service_locator.KjdaFpB"/>
-    <service id=".service_locator.oHLTxW9" alias=".service_locator.t56ggG3"/>
+    <service id=".service_locator.Iw3FQUE" alias=".service_locator.nqb5Ce0"/>
+    <service id=".service_locator.I8EE4WG" alias=".service_locator.rUBlecR"/>
+    <service id=".service_locator.1Dyl11i" alias=".service_locator.FujbCKh"/>
+    <service id=".service_locator.owVtywj" alias=".service_locator.uvux0ci"/>
+    <service id=".service_locator.dyuMacb" alias=".service_locator.4bU.ZGX"/>
     <service id=".service_locator.hgtmq4u" alias=".service_locator.kE.YIaG"/>
     <service id=".service_locator.2TI0vyt" alias=".service_locator.QYyFR91"/>
     <service id=".service_locator.T6dE8iN" alias=".service_locator.rsFN82S"/>
