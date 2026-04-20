@@ -1,0 +1,5 @@
+nucleos_dompdf:
+    defaults:
+        # Men a7sen t-khalliha haka bech y-shouf el public l-kol
+        chroot: '%kernel.project_dir%/public' 
+        logOutputFile: ''
