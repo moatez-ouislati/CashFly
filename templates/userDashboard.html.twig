@@ -187,6 +187,20 @@
                 Documents
             </a>
 
+            <a href="{{ path('app_map') }}"
+               style="display:flex; align-items:center; gap:.75rem; padding:.6rem .75rem; border-radius:10px; text-decoration:none; transition:all .15s;
+               {% if cr == 'app_map' %}background:#eff6ff; color:#1d4ed8; font-weight:600;{% else %}color:#64748b;{% endif %}">
+                <span class="material-symbols-outlined" style="font-size:20px;">map</span>
+                Carte
+            </a>
+
+            <a href="{{ path('app_admin_forecast') }}"
+               style="display:flex; align-items:center; gap:.75rem; padding:.6rem .75rem; border-radius:10px; text-decoration:none; transition:all .15s;
+               {% if cr == 'app_admin_forecast' %}background:#eff6ff; color:#1d4ed8; font-weight:600;{% else %}color:#64748b;{% endif %}">
+                <span class="material-symbols-outlined" style="font-size:20px;">trending_up</span>
+                Prévisions
+            </a>
+
             <a href="{{ path('proprietaire_clients') }}"
                style="display:flex; align-items:center; gap:.75rem; padding:.6rem .75rem; border-radius:10px; text-decoration:none; transition:all .15s;
                {% if cr == 'proprietaire_clients' %}background:#eff6ff; color:#1d4ed8; font-weight:600;{% else %}color:#64748b;{% endif %}">
@@ -215,6 +229,13 @@
                {% if cr == 'investisseur_profile' %}background:#eff6ff; color:#1d4ed8; font-weight:600;{% else %}color:#64748b;{% endif %}">
                 <span class="material-symbols-outlined" style="font-size:20px;">manage_accounts</span>
                 Profil
+            </a>
+
+            <a href="{{ path('app_map') }}"
+               style="display:flex; align-items:center; gap:.75rem; padding:.6rem .75rem; border-radius:10px; text-decoration:none; transition:all .15s;
+               {% if cr == 'app_map' %}background:#eff6ff; color:#1d4ed8; font-weight:600;{% else %}color:#64748b;{% endif %}">
+                <span class="material-symbols-outlined" style="font-size:20px;">map</span>
+                Carte
             </a>
 
         {% endif %}

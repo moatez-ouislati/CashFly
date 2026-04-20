@@ -1,0 +1,288 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carte des Entreprises - CashFly{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    .map-page {
+        padding: 0;
+        margin: -2.5rem -1.5rem;
+        min-height: calc(100vh - 64px);
+    }
+    
+    #map {
+        height: calc(100vh - 64px);
+        width: 100%;
+    }
+    
+    .map-header {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000;
+        background: rgba(19, 19, 26, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.25rem;
+        min-width: 280px;
+        box-shadow: var(--shadow);
+    }
+    
+    .map-header h1 {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .map-header h1 span {
+        font-size: 1.4rem;
+    }
+    
+    .stats-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 0.75rem;
+    }
+    
+    .stat-item {
+        background: var(--surface2);
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        text-align: center;
+        flex: 1;
+    }
+    
+    .stat-item .number {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--accent);
+    }
+    
+    .stat-item .label {
+        font-size: 0.7rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    .entreprise-list {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-top: 1rem;
+    }
+    
+    .entreprise-item {
+        padding: 0.6rem 0.75rem;
+        background: var(--surface2);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+    }
+    
+    .entreprise-item:hover {
+        background: var(--surface);
+        border-color: var(--accent);
+    }
+    
+    .entreprise-item.active {
+        background: rgba(108, 99, 255, 0.15);
+        border-color: var(--accent);
+    }
+    
+    .entreprise-item .name {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--text);
+        margin-bottom: 0.2rem;
+    }
+    
+    .entreprise-item .info {
+        font-size: 0.75rem;
+        color: var(--muted);
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    .entreprise-item .sector-badge {
+        background: rgba(108, 99, 255, 0.2);
+        color: var(--accent);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 600;
+    }
+    
+    .no-coords {
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        background: rgba(19, 19, 26, 0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        box-shadow: var(--shadow);
+    }
+    
+    .no-coords svg {
+        width: 24px;
+        height: 24px;
+        color: var(--muted);
+    }
+    
+    .no-coords p {
+        color: var(--muted);
+        font-size: 0.85rem;
+    }
+    
+    .custom-marker {
+        background: none;
+        border: none;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="map-page">
+    <div id="map"></div>
+    
+    <div class="map-header">
+        <h1><span>🗺️</span> Carte des Entreprises</h1>
+        
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="number" id="total-count">{{ entreprises|length }}</div>
+                <div class="label">Entreprises</div>
+            </div>
+        </div>
+        
+        <div class="entreprise-list" id="entreprise-list">
+            {% for entreprise in entreprises %}
+            <div class="entreprise-item" data-lat="{{ entreprise.latitude }}" data-lon="{{ entreprise.longitude }}" data-id="{{ entreprise.id }}">
+                <div class="name">{{ entreprise.nom }}</div>
+                <div class="info">
+                    <span class="sector-badge">{{ entreprise.secteur }}</span>
+                    <span>{{ entreprise.adresse|length > 30 ? entreprise.adresse|slice(0, 30) ~ '...' : entreprise.adresse }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-coords">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                <p>Aucune entreprise avec coordonnées GPS</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    {% if entreprises|length == 0 %}
+    <div class="no-coords">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <p>Aucune entreprise n'a de coordonnées GPS définies.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const entreprises = {{ entreprises|json_encode|raw }};
+        
+        const map = L.map('map').setView([36.8065, 10.1815], 6);
+        
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        
+        const markers = {};
+        const colors = ['#58589b', '#ff6584', '#00e5a0', '#ffc800', '#00c8ff', '#ff6b6b', '#4ecdc4', '#a855f7'];
+        
+        function createIcon(index) {
+            const color = colors[index % colors.length];
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    background: linear-gradient(135deg, ${color} 0%, ${color}99 100%);
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50% 50% 50% 0;
+                    transform: rotate(-45deg);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 12px ${color}40;
+                    border: 2px solid white;
+                ">
+                    <span style="transform: rotate(45deg); color: white; font-size: 12px; font-weight: bold;">${index + 1}</span>
+                </div>`,
+                iconSize: [36, 36],
+                iconAnchor: [18, 36],
+            });
+        }
+        
+        entreprises.forEach((entreprise, index) => {
+            if (entreprise.latitude && entreprise.longitude) {
+                const marker = L.marker([entreprise.latitude, entreprise.longitude], {
+                    icon: createIcon(index)
+                }).addTo(map);
+                
+                marker.bindPopup(`
+                    <div style="min-width: 200px; padding: 0.5rem; text-align: center;">
+                        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; color: white; font-weight: 800; font-size: 16px;">${entreprise.nom.substring(0, 2).toUpperCase()}</div>
+                        <strong style="font-size: 14px; color: #333;">${entreprise.nom}</strong>
+                        <div style="font-size: 12px; color: #666; margin-top: 4px;">
+                            <span style="background: #e8e7ff; color: #58589b; padding: 2px 6px; border-radius: 4px; font-weight: 600;">${entreprise.secteur || 'Non défini'}</span>
+                        </div>
+                        <div style="font-size: 12px; color: #888; margin-top: 8px;">
+                            <div>📍 ${entreprise.adresse || 'Adresse non définie'}</div>
+                        </div>
+                        <a href="/entreprise/${entreprise.id}" style="display: inline-block; margin-top: 8px; background: #58589b; color: white; padding: 4px 12px; border-radius: 6px; text-decoration: none; font-size: 12px;">Voir détails →</a>
+                    </div>
+                `);
+                
+                markers[entreprise.id] = marker;
+            }
+        });
+        
+        if (entreprises.length > 0) {
+            const bounds = L.latLngBounds(entreprises.map(e => [e.latitude, e.longitude]));
+            map.fitBounds(bounds, { padding: [50, 50] });
+        }
+        
+        document.querySelectorAll('.entreprise-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.dataset.id;
+                const lat = parseFloat(this.dataset.lat);
+                const lon = parseFloat(this.dataset.lon);
+                
+                document.querySelectorAll('.entreprise-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                map.setView([lat, lon], 15);
+                
+                if (markers[id]) {
+                    markers[id].openPopup();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

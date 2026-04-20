@@ -1,4 +1,4 @@
-{{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate'}}) }}
+{{ form_start(form, {'attr': {'class': 'space-y-6', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
     
     <style>
         form input:not([type="submit"]):not([type="radio"]):not([type="checkbox"]), 
@@ -24,21 +24,95 @@
             font-weight: 700;
             color: #0d1c32;
         }
+        .drop-zone {
+            border: 2px dashed #c2c6d7;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9f9ff;
+            margin-bottom: 1rem;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #0059c3;
+            background: rgba(0, 89, 195, 0.05);
+        }
+        .drop-zone-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .drop-zone-icon span { font-size: 32px; color: white; }
+        .drop-zone-text { font-size: 1rem; font-weight: 600; color: #0d1c32; margin-bottom: 0.25rem; }
+        .drop-zone-hint { font-size: 0.8rem; color: #6b7280; }
+        .file-list { margin-top: 1rem; }
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .file-icon {
+            width: 48px; height: 48px;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .file-icon.pdf { background: #fee2e2; color: #dc2626; }
+        .file-icon.doc { background: #dbeafe; color: #2563eb; }
+        .file-icon.xls { background: #dcfce7; color: #16a34a; }
+        .file-icon.img { background: #fef3c7; color: #d97706; }
+        .file-icon span { font-size: 24px; }
+        .file-info { flex: 1; }
+        .file-name { font-weight: 600; color: #0d1c32; }
+        .file-size { font-size: 0.75rem; color: #6b7280; }
+        .file-remove {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: #fee2e2; color: #dc2626;
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .file-remove:hover { background: #dc2626; color: white; }
+        .file-remove span { font-size: 18px; }
     </style>
+
+    <div class="drop-zone" id="docDropZone">
+        <div class="drop-zone-icon">
+            <span class="material-symbols-outlined">cloud_upload</span>
+        </div>
+        <p class="drop-zone-text">Glissez-déposez vos fichiers ici</p>
+        <p class="drop-zone-hint">ou cliquez pour sélectionner</p>
+    </div>
+
+    <input type="file" id="docFileInput" multiple style="display:none">
+
+    <div class="file-list" id="docFileList"></div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
         {% for field in form %}
-            {% if 'hidden' not in field.vars.block_prefixes %}
+            {% if field.vars.name != 'fichiers' and 'hidden' not in field.vars.block_prefixes %}
                 <div class="flex flex-col w-full {% if 'textarea' in field.vars.block_prefixes %}md:col-span-2{% endif %}">
                     {{ form_label(field) }}
-                    {{ form_widget(field, {'attr': {'placeholder': 'Saisissez ' ~ field.vars.name|capitalize}}) }}
+                    {{ form_widget(field) }}
                     <div class="text-red-500 text-xs mt-1">{{ form_errors(field) }}</div>
                 </div>
             {% endif %}
         {% endfor %}
     </div>
 
-    {{ form_rest(form) }}
+    {{ form_widget(form.fichiers, {'attr': {'style': 'display:none'}}) }}
 
     <div class="pt-6 border-t border-outline-variant/20 flex justify-end gap-4">
         <button type="submit" class="flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-95 transition-all">
@@ -46,4 +120,94 @@
             {{ button_label|default('Enregistrer') }}
         </button>
     </div>
+
 {{ form_end(form) }}
+
+<script>
+(function() {
+    var dropZone = document.getElementById('docDropZone');
+    var fileInput = document.getElementById('docFileInput');
+    var formFileInput = document.querySelector('input[name*="fichiers"]');
+    var fileList = document.getElementById('docFileList');
+    var files = [];
+
+    if (!dropZone || !fileInput) return;
+
+    dropZone.onclick = function() { fileInput.click(); };
+
+    fileInput.onchange = function(e) {
+        for (var i = 0; i < this.files.length; i++) {
+            files.push(this.files[i]);
+        }
+        renderFiles();
+        updateFormInput();
+    };
+
+    dropZone.ondragover = function(e) { e.preventDefault(); this.classList.add('dragover'); };
+    dropZone.ondragleave = function(e) { this.classList.remove('dragover'); };
+    dropZone.ondrop = function(e) {
+        e.preventDefault();
+        this.classList.remove('dragover');
+        for (var i = 0; i < e.dataTransfer.files.length; i++) {
+            files.push(e.dataTransfer.files[i]);
+        }
+        renderFiles();
+        updateFormInput();
+    };
+
+    function renderFiles() {
+        fileList.innerHTML = '';
+        for (var i = 0; i < files.length; i++) {
+            var f = files[i];
+            var type = getFileType(f);
+            var size = formatSize(f.size);
+            var div = document.createElement('div');
+            div.className = 'file-item';
+            div.innerHTML = 
+                '<div class="file-icon ' + type + '"><span class="material-symbols-outlined">' + getIcon(type) + '</span></div>' +
+                '<div class="file-info"><div class="file-name">' + f.name + '</div><div class="file-size">' + size + '</div></div>' +
+                '<button type="button" class="file-remove" data-index="' + i + '"><span class="material-symbols-outlined">close</span></button>';
+            div.querySelector('.file-remove').onclick = function() {
+                files.splice(parseInt(this.getAttribute('data-index')), 1);
+                renderFiles();
+                updateFormInput();
+            };
+            fileList.appendChild(div);
+        }
+    }
+
+    function updateFormInput() {
+        var dt = new DataTransfer();
+        for (var i = 0; i < files.length; i++) {
+            dt.items.add(files[i]);
+        }
+        if (formFileInput) {
+            formFileInput.files = dt.files;
+        }
+        if (fileInput) {
+            fileInput.files = dt.files;
+        }
+    }
+
+    function getFileType(file) {
+        if (file.type === 'application/pdf') return 'pdf';
+        if (file.type.indexOf('word') !== -1 || file.type.indexOf('document') !== -1) return 'doc';
+        if (file.type.indexOf('excel') !== -1 || file.type.indexOf('spreadsheet') !== -1) return 'xls';
+        if (file.type.indexOf('image') !== -1) return 'img';
+        return 'doc';
+    }
+
+    function getIcon(type) {
+        var icons = {pdf: 'picture_as_pdf', doc: 'description', xls: 'table_chart', img: 'image'};
+        return icons[type] || 'insert_drive_file';
+    }
+
+    function formatSize(bytes) {
+        if (bytes === 0) return '0 Octets';
+        var k = 1024;
+        var sizes = ['Octets', 'Ko', 'Mo', 'Go'];
+        var i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+})();
+</script>

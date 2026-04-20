@@ -239,17 +239,20 @@
     <a href="{{ path('admin_dashboard') }}" class="nav-link {% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}">Dashboard</a>
     <a href="{{ path('admin_profile') }}"   class="nav-link {% if app.request.attributes.get('_route') == 'admin_profile'    %}active{% endif %}">Profil</a>
     <a href="{{ path('app_entreprise_admin_index') }}" class="nav-link {% if app.request.attributes.get('_route') starts with 'app_entreprise_admin' %}active{% endif %}">🏦 Entreprises</a>
+    <a href="{{ path('app_map') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_map' %}active{% endif %}">🗺️ Carte</a>
     <a href="{{ path('app_document_admin_index') }}"   class="nav-link {% if app.request.attributes.get('_route') starts with 'app_document_admin'   %}active{% endif %}">📄 Documents</a>
         {% elseif is_granted('ROLE_PROPRIETAIRE') %}
             <span class="nav-badge prop">PROPRIÉTAIRE</span>
             <a href="{{ path('proprietaire_dashboard') }}" class="nav-link {% if app.request.attributes.get('_route') == 'proprietaire_dashboard' %}active{% endif %}">Dashboard</a>
             <a href="{{ path('proprietaire_profile') }}"   class="nav-link {% if app.request.attributes.get('_route') == 'proprietaire_profile'    %}active{% endif %}">Profil</a>
             <a href="{{ path('app_entreprise_index') }}" class="nav-link {% if app.request.attributes.get('_route') starts with 'app_entreprise' and not (app.request.attributes.get('_route') starts with 'app_entreprise_admin') %}active{% endif %}">🏦 Entreprises</a>
+            <a href="{{ path('app_map') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_map' %}active{% endif %}">🗺️ Carte</a>
 <a href="{{ path('app_document_index') }}" class="nav-link {% if app.request.attributes.get('_route') starts with 'app_document' and not (app.request.attributes.get('_route') starts with 'app_document_admin') %}active{% endif %}">📄 Documents</a>
         {% elseif is_granted('ROLE_INVESTISSEUR') %}
             <span class="nav-badge">INVESTISSEUR</span>
             <a href="{{ path('investisseur_dashboard') }}" class="nav-link {% if app.request.attributes.get('_route') == 'investisseur_dashboard' %}active{% endif %}">Dashboard</a>
             <a href="{{ path('investisseur_profile') }}"   class="nav-link {% if app.request.attributes.get('_route') == 'investisseur_profile'    %}active{% endif %}">Profil</a>
+            <a href="{{ path('app_map') }}" class="nav-link {% if app.request.attributes.get('_route') == 'app_map' %}active{% endif %}">🗺️ Carte</a>
         {% endif %}
 
         <a href="{{ path('app_logout') }}" class="logout-link">

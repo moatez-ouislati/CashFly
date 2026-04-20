@@ -58,7 +58,13 @@
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <span class="text-secondary font-medium">Statut</span>
-                        <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-md text-xs font-bold">{{ document.statut ?: '-' }}</span>
+                        <span class="px-2 py-1 rounded-md text-xs font-bold
+                            {% if document.statut == 'approuve' %}bg-green-100 text-green-700
+                            {% elseif document.statut == 'rejete' %}bg-red-100 text-red-700
+                            {% elseif document.statut in ['soumis', 'en_revision'] %}bg-amber-100 text-amber-700
+                            {% else %}bg-slate-100 text-slate-600{% endif %}">
+                            {{ document.statutLabel }}
+                        </span>
                     </div>
                 </div>
 

@@ -1,0 +1,291 @@
+{% extends 'userDashboard.html.twig' %}
+
+{% block title %}Prévisions - CashFly{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .forecast-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            color: white;
+        }
+        .trend-up { color: #22c55e; }
+        .trend-down { color: #ef4444; }
+        .trend-stable { color: #eab308; }
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .prediction-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <header class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+            <a href="{{ path('app_entreprise_admin_index') }}" class="text-primary hover:text-blue-700">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </a>
+            <h1 class="text-3xl font-black text-on-surface">📈 Prévisions</h1>
+        </div>
+        <p class="text-secondary">Analyse et projections basées sur les données historiques</p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="forecast-card">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-green-400">business</span>
+                <span class="text-sm text-gray-400">Entreprises</span>
+            </div>
+            <div class="stat-value">{{ totalEntreprises }}</div>
+            <div class="flex items-center gap-1 mt-2">
+                <span class="material-symbols-outlined text-sm {% if entreprise_forecast.trend == 'up' %}trend-up{% elseif entreprise_forecast.trend == 'down' %}trend-down{% else %}trend-stable{% endif %}">
+                    {% if entreprise_forecast.trend == 'up' %}trending_up{% elseif entreprise_forecast.trend == 'down' %}trending_down{% else %}trending_flat{% endif %}
+                </span>
+                <span class="text-sm {% if entreprise_forecast.trend == 'up' %}trend-up{% elseif entreprise_forecast.trend == 'down' %}trend-down{% else %}trend-stable{% endif %}">
+                    {{ entreprise_forecast.growth_rate > 0 ? '+' ~ entreprise_forecast.growth_rate ~ '%' : entreprise_forecast.growth_rate ~ '%' }}
+                </span>
+            </div>
+        </div>
+
+        <div class="forecast-card">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-blue-400">account_balance</span>
+                <span class="text-sm text-gray-400">Capital Total</span>
+            </div>
+            <div class="stat-value">{{ (capital_forecast.current_total)|number_format(0, '', ' ') }}</div>
+            <div class="flex items-center gap-1 mt-2">
+                <span class="material-symbols-outlined text-sm {% if capital_forecast.total_growth > 0 %}trend-up{% elseif capital_forecast.total_growth < 0 %}trend-down{% else %}trend-stable{% endif %}">
+                    {% if capital_forecast.total_growth > 0 %}trending_up{% elseif capital_forecast.total_growth < 0 %}trending_down{% else %}trending_flat{% endif %}
+                </span>
+                <span class="text-sm {% if capital_forecast.total_growth > 0 %}trend-up{% elseif capital_forecast.total_growth < 0 %}trend-down{% else %}trend-stable{% endif %}">
+                    {{ capital_forecast.total_growth > 0 ? '+' ~ capital_forecast.total_growth ~ '%' : capital_forecast.total_growth ~ '%' }}
+                </span>
+            </div>
+        </div>
+
+        <div class="forecast-card">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-purple-400">show_chart</span>
+                <span class="text-sm text-gray-400">Tendance</span>
+            </div>
+            <div class="stat-value text-lg capitalize">{{ entreprise_forecast.trend }}</div>
+            <div class="text-sm text-gray-400 mt-2">
+                Pente: {{ entreprise_forecast.slope }}
+            </div>
+        </div>
+
+        <div class="forecast-card">
+            <div class="flex items-center gap-2 mb-2">
+                <span class="material-symbols-outlined text-orange-400">bar_chart</span>
+                <span class="text-sm text-gray-400">Capital Moyen</span>
+            </div>
+            <div class="stat-value">{{ capital_forecast.avg_capital|number_format(0, '', ' ') }}</div>
+            <div class="text-sm text-gray-400 mt-2">Par entreprise</div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-green-600">business</span>
+                Prévision d'Entreprises
+            </h2>
+            <div style="height: 300px;">
+                <canvas id="entrepriseChart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-600">account_balance_wallet</span>
+                Prévision de Capital
+            </h2>
+            <div style="height: 300px;">
+                <canvas id="capitalChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-600">calendar_month</span>
+                Prédictions Prochains Mois
+            </h2>
+            <div class="space-y-3">
+                {% for prediction in entreprise_forecast.prediction %}
+                <div class="prediction-item flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-indigo-600 text-sm">event</span>
+                        </div>
+                        <div>
+                            <div class="font-bold text-white">{{ prediction.month }}</div>
+                            <div class="text-xs text-gray-400">Prévu</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-green-400">{{ prediction.predicted }}</div>
+                        <div class="text-xs text-gray-400">entreprises</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-orange-600">pie_chart</span>
+                Projections par Secteur
+            </h2>
+            <div style="height: 300px;">
+                <canvas id="sectorChart"></canvas>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const entrepriseCtx = document.getElementById('entrepriseChart').getContext('2d');
+        new Chart(entrepriseCtx, {
+            type: 'line',
+            data: {
+                labels: [
+                    {% for item in entreprise_forecast.historical %}
+                        '{{ item.month }}',
+                    {% endfor %}
+                    {% for item in entreprise_forecast.prediction %}
+                        '{{ item.month }} (prévu)',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Entreprises',
+                    data: [
+                        {% for item in entreprise_forecast.historical %}
+                            {{ item.nb_entreprises }},
+                        {% endfor %}
+                        {% for item in entreprise_forecast.prediction %}
+                            {{ item.predicted }},
+                        {% endfor %}
+                    ],
+                    borderColor: '#22c55e',
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#22c55e'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', maxRotation: 45 }
+                    }
+                }
+            }
+        });
+
+        const capitalCtx = document.getElementById('capitalChart').getContext('2d');
+        new Chart(capitalCtx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    {% for item in capital_forecast.historical %}
+                        '{{ item.month }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Capital',
+                    data: [
+                        {% for item in capital_forecast.historical %}
+                            {{ item.total_capital }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { 
+                            color: '#94a3b8',
+                            callback: function(value) {
+                                return value / 1000 + 'K';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', maxRotation: 45 }
+                    }
+                }
+            }
+        });
+
+        const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+        new Chart(sectorCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    {% for sector in sector_forecast %}
+                        '{{ sector.secteur }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    data: [
+                        {% for sector in sector_forecast %}
+                            {{ sector.total_capital }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: [
+                        '#4f46e5', '#7c3aed', '#2563eb', '#0891b2', 
+                        '#059669', '#16a34a', '#ca8a04', '#ea580c'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { color: '#94a3b8', padding: 10 }
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

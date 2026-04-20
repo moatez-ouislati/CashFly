@@ -7,11 +7,31 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
 #[ORM\Table(name: 'documents')]
 class Document
 {
+    public const STATUT_BROUILLON = 'brouillon';
+    public const STATUT_SOUMIS = 'soumis';
+    public const STATUT_EN_REVISION = 'en_revision';
+    public const STATUT_APPROUVE = 'approuve';
+    public const STATUT_REJETE = 'rejete';
+
+    public const STATUTS = [
+        self::STATUT_BROUILLON => 'Brouillon',
+        self::STATUT_SOUMIS => 'Soumis',
+        self::STATUT_EN_REVISION => 'En révision',
+        self::STATUT_APPROUVE => 'Approuvé',
+        self::STATUT_REJETE => 'Rejeté',
+    ];
+
+    public const STATUTS_ACTION = [
+        self::STATUT_BROUILLON => [self::STATUT_SOUMIS],
+        self::STATUT_SOUMIS => [self::STATUT_APPROUVE, self::STATUT_REJETE, self::STATUT_EN_REVISION],
+        self::STATUT_EN_REVISION => [self::STATUT_APPROUVE, self::STATUT_REJETE],
+        self::STATUT_REJETE => [self::STATUT_SOUMIS],
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(name: 'id_document')]
@@ -22,65 +42,55 @@ class Document
     #[Assert\NotBlank(message: 'Veuillez sélectionner une entreprise.')]
     private ?Entreprise $entreprise = null;
 
-    // Rempli automatiquement, pas par l'utilisateur
     #[ORM\Column(name: 'id_utilisateur', nullable: true)]
     private ?int $idUtilisateur = null;
 
     #[ORM\Column(name: 'nom_document', length: 255)]
     #[Assert\NotBlank(message: 'Le nom du document est obligatoire.')]
-    #[Assert\Length(
-        min: 4,
-        max: 255,
-        minMessage: 'Le nom du document doit contenir au moins {{ limit }} caractères.',
-        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères.'
-    )]
+    #[Assert\Length(min: 4, max: 255)]
     private ?string $nomDocument = null;
 
     #[ORM\Column(name: 'type_document', length: 50, nullable: true)]
     #[Assert\NotBlank(message: 'Le type de document est obligatoire.')]
-    #[Assert\Length(
-        max: 50,
-        maxMessage: 'Le type de document ne peut pas dépasser {{ limit }} caractères.'
-    )]
     private ?string $typeDocument = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    #[Assert\NotBlank(message: 'Le statut est obligatoire.')]
-    #[Assert\Choice(
-        choices: ['en_attente', 'validé', 'rejeté'],
-        message: 'Le statut doit être : en_attente, validé ou rejeté.'
-    )]
-    private ?string $statut = null;
+    private ?string $statut = self::STATUT_BROUILLON;
 
-    // Optionnel — chemin généré automatiquement lors de l'upload
     #[ORM\Column(name: 'chemin_fichier', length: 255, nullable: true)]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: 'Le chemin du fichier ne peut pas dépasser {{ limit }} caractères.'
-    )]
     private ?string $cheminFichier = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(message: 'La description est obligatoire.')]
-    #[Assert\Length(
-        min: 10,
-        minMessage: 'La description doit contenir au moins {{ limit }} caractères.'
-    )]
+    #[Assert\Length(min: 10)]
     private ?string $description = null;
 
-    // Optionnel — généré automatiquement par OCR
     #[ORM\Column(name: 'texte_ocr', type: Types::TEXT, nullable: true)]
     private ?string $texteOcr = null;
 
-    // Auto-initialisé dans __construct, NotNull suffit
     #[ORM\Column(name: 'date_upload', type: Types::DATETIME_MUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
-    #[Assert\NotNull(message: 'La date d\'upload est obligatoire.')]
-    #[Assert\Type(\DateTimeInterface::class)]
     private ?\DateTimeInterface $dateUpload = null;
+
+    #[ORM\Column(name: 'commentaire', type: Types::TEXT, nullable: true)]
+    private ?string $commentaire = null;
+
+    #[ORM\Column(name: 'id_validateur', nullable: true)]
+    private ?int $idValidateur = null;
+
+    #[ORM\Column(name: 'nom_validateur', length: 150, nullable: true)]
+    private ?string $nomValidateur = null;
+
+    #[ORM\Column(name: 'date_validation', type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateValidation = null;
+
+    #[ORM\Column(name: 'historique', type: Types::JSON, nullable: true)]
+    private ?array $historique = [];
 
     public function __construct()
     {
         $this->dateUpload = new \DateTime();
+        $this->statut = self::STATUT_BROUILLON;
+        $this->historique = [];
     }
 
     public function getId(): ?int
@@ -185,5 +195,104 @@ class Document
     {
         $this->dateUpload = $dateUpload;
         return $this;
+    }
+
+    public function getCommentaire(): ?string
+    {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire(?string $commentaire): static
+    {
+        $this->commentaire = $commentaire;
+        return $this;
+    }
+
+    public function getIdValidateur(): ?int
+    {
+        return $this->idValidateur;
+    }
+
+    public function setIdValidateur(?int $idValidateur): static
+    {
+        $this->idValidateur = $idValidateur;
+        return $this;
+    }
+
+    public function getNomValidateur(): ?string
+    {
+        return $this->nomValidateur;
+    }
+
+    public function setNomValidateur(?string $nomValidateur): static
+    {
+        $this->nomValidateur = $nomValidateur;
+        return $this;
+    }
+
+    public function getDateValidation(): ?\DateTimeInterface
+    {
+        return $this->dateValidation;
+    }
+
+    public function setDateValidation(?\DateTimeInterface $dateValidation): static
+    {
+        $this->dateValidation = $dateValidation;
+        return $this;
+    }
+
+    public function getHistorique(): ?array
+    {
+        return $this->historique;
+    }
+
+    public function setHistorique(?array $historique): static
+    {
+        $this->historique = $historique;
+        return $this;
+    }
+
+    public function addToHistorique(string $action, ?string $details = null, ?string $user = null): static
+    {
+        $this->historique[] = [
+            'date' => (new \DateTime())->format('d/m/Y H:i:s'),
+            'action' => $action,
+            'details' => $details,
+            'user' => $user,
+        ];
+        return $this;
+    }
+
+    public function getStatutLabel(): string
+    {
+        if ($this->statut === null) {
+            return 'Brouillon';
+        }
+        return self::STATUTS[$this->statut] ?? $this->statut ?? 'Inconnu';
+    }
+
+    public function getAvailableActions(): array
+    {
+        return self::STATUTS_ACTION[$this->statut] ?? [];
+    }
+
+    public function canTransitionTo(string $newStatut): bool
+    {
+        return in_array($newStatut, $this->getAvailableActions());
+    }
+
+    public function isApprouve(): bool
+    {
+        return $this->statut === self::STATUT_APPROUVE;
+    }
+
+    public function isRejete(): bool
+    {
+        return $this->statut === self::STATUT_REJETE;
+    }
+
+    public function isEnAttente(): bool
+    {
+        return in_array($this->statut, [self::STATUT_SOUMIS, self::STATUT_EN_REVISION]);
     }
 }

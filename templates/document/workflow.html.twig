@@ -1,0 +1,128 @@
+{% extends 'userDashboard.html.twig' %}
+
+{% block title %}Workflow - {{ document.nomDocument }}{% endblock %}
+
+{% block body %}
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <a href="{{ path('app_document_show', {id: document.id}) }}" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-blue-700 mb-4 inline-flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Retour
+            </a>
+            <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">Workflow du Document</h1>
+            <p class="text-secondary font-medium">{{ document.nomDocument }}</p>
+        </div>
+    </header>
+
+    <!-- Statut Actuel -->
+    <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-lg border border-outline-variant/20 mb-6">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl flex items-center justify-center
+                {% if document.statut == 'approuve' %}bg-green-100 text-green-600
+                {% elseif document.statut == 'rejete' %}bg-red-100 text-red-600
+                {% elseif document.statut in ['soumis', 'en_revision'] %}bg-amber-100 text-amber-600
+                {% else %}bg-slate-100 text-slate-600{% endif %}">
+                <span class="material-symbols-outlined text-3xl">
+                    {% if document.statut == 'approuve' %}verified
+                    {% elseif document.statut == 'rejete' %}cancel
+                    {% elseif document.statut == 'soumis' %}send
+                    {% elseif document.statut == 'en_revision' %}edit_note
+                    {% else %}edit
+                    {% endif %}
+                </span>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Statut actuel</p>
+                <p class="text-2xl font-black text-on-surface">{{ document.statutLabel }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Disponibles -->
+    {% if actions|length > 0 %}
+    <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-lg border border-outline-variant/20 mb-6">
+        <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">bolt</span>
+            Actions disponibles
+        </h3>
+
+        {% if 'approuve' in actions %}
+            <form action="{{ path('document_approve', {id: document.id}) }}" method="POST" class="inline">
+                <input type="hidden" name="_token" value="{{ csrf_token('approve_' ~ document.id) }}">
+                <div class="mb-4">
+                    <label class="text-sm font-bold text-secondary mb-2 block">Commentaire (optionnel)</label>
+                    <textarea name="commentaire" rows="2" class="w-full p-3 border border-outline-variant rounded-xl bg-surface-container-low focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Ajouter un commentaire..."></textarea>
+                </div>
+                <button type="submit" class="flex items-center gap-2 bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 transition-colors">
+                    <span class="material-symbols-outlined text-sm">check_circle</span>
+                    Approuver
+                </button>
+            </form>
+        {% endif %}
+
+        {% if 'rejete' in actions %}
+            <form action="{{ path('document_reject', {id: document.id}) }}" method="POST" class="inline ml-4">
+                <input type="hidden" name="_token" value="{{ csrf_token('reject_' ~ document.id) }}">
+                <div class="mb-4">
+                    <label class="text-sm font-bold text-secondary mb-2 block">Motif de rejet *</label>
+                    <textarea name="commentaire" rows="2" class="w-full p-3 border border-outline-variant rounded-xl bg-surface-container-low focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Expliquez pourquoi ce document est rejeté..." required></textarea>
+                </div>
+                <button type="submit" class="flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors">
+                    <span class="material-symbols-outlined text-sm">cancel</span>
+                    Rejeter
+                </button>
+            </form>
+        {% endif %}
+
+        {% if 'soumis' in actions %}
+            <form action="{{ path('document_submit', {id: document.id}) }}" method="POST" class="inline">
+                <button type="submit" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                    <span class="material-symbols-outlined text-sm">send</span>
+                    Soumettre pour validation
+                </button>
+            </form>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="bg-amber-50 border border-amber-200 rounded-3xl p-6 mb-6">
+        <p class="text-amber-800 font-bold flex items-center gap-2">
+            <span class="material-symbols-outlined">info</span>
+            Aucune action disponible pour ce document.
+        </p>
+    </div>
+    {% endif %}
+
+    <!-- Historique -->
+    {% if document.historique|length > 0 %}
+    <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-lg border border-outline-variant/20">
+        <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+            <span class="material-symbols-outlined text-tertiary">history</span>
+            Historique des actions
+        </h3>
+
+        <div class="relative">
+            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-outline-variant"></div>
+            
+            <div class="space-y-4">
+                {% for entry in document.historique|reverse %}
+                <div class="relative pl-10">
+                    <div class="absolute left-2 top-1 w-4 h-4 rounded-full bg-primary border-2 border-surface-container-lowest"></div>
+                    <div class="bg-surface-container-low rounded-xl p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-bold text-on-surface">{{ entry.action }}</span>
+                            <span class="text-xs text-secondary">{{ entry.date }}</span>
+                        </div>
+                        {% if entry.user %}
+                        <p class="text-xs text-secondary mb-1">Par: {{ entry.user }}</p>
+                        {% endif %}
+                        {% if entry.details %}
+                        <p class="text-sm text-secondary italic">"{{ entry.details }}"</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
