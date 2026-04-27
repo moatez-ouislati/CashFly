@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CashFly JPO – Tableau des Fonctionnalités</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d1117;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 48px 24px;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.07) 0%, transparent 55%);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #38bdf8, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 40px;
+            letter-spacing: 0.04em;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            max-width: 1100px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1.5px solid rgba(99, 102, 241, 0.35);
+            box-shadow:
+                0 0 0 1px rgba(14, 165, 233, 0.08),
+                0 4px 40px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(56, 189, 248, 0.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        /* ─── HEADER ─── */
+        thead tr th {
+            background: #0ea5e9;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.82rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 16px 18px;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+        }
+
+        thead tr th:first-child {
+            text-align: left;
+        }
+
+        /* ─── BODY ─── */
+        tbody tr {
+            border-bottom: 1px solid rgba(99, 102, 241, 0.18);
+            transition: background 0.2s;
+            background: rgba(15, 23, 42, 0.85);
+        }
+
+        tbody tr:hover {
+            background: rgba(14, 165, 233, 0.06);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 20px 18px;
+            font-size: 0.88rem;
+            vertical-align: middle;
+            text-align: center;
+            line-height: 1.5;
+            border-right: 1px solid rgba(99, 102, 241, 0.12);
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        td:first-child {
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* ─── PRIORITY BADGES ─── */
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+        }
+
+        .badge-high {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-med {
+            background: rgba(234, 179, 8, 0.15);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .badge-low {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* ─── COMPLEXITY DOTS ─── */
+        .dot-row {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #334155;
+        }
+
+        .dot.active {
+            background: #38bdf8;
+        }
+
+        /* ─── ODD CHIP ─── */
+        .odd-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(14, 165, 233, 0.18);
+            border: 1.5px solid #0ea5e9;
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        /* ─── ROLE CHIP ─── */
+        .role {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+        }
+
+        .role-inv {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .role-prop {
+            background: rgba(14, 165, 233, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+        }
+
+        .role-admin {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* ─── SECTION SEPARATOR ─── */
+        tr.section-header td {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.12), rgba(168, 85, 247, 0.10));
+            color: #94a3b8;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        /* ─── FEATURE ICON ─── */
+        .feat-icon {
+            margin-right: 8px;
+            font-size: 1rem;
+            vertical-align: middle;
+        }
+
+        /* ─── FOOTER ─── */
+        .table-footer {
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 20px;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .legend {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CashFly JPO &nbsp;—&nbsp; Fonctionnalités Avancées</h1>
+    <p class="subtitle">Tableau de bord des User Stories · Sprint Review · 2026</p>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th style="width:22%">Fonctionnalité</th>
+                    <th style="width:32%">Description</th>
+                    <th style="width:11%">Priorité</th>
+                    <th style="width:12%">Complexité</th>
+                    <th style="width:13%">Rôle</th>
+                    <th style="width:10%">ODD</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <!-- ═══ INVESTISSEUR ═══ -->
+                <tr class="section-header">
+                    <td colspan="6">👤 Fonctionnalités Investisseur</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">📝</span>S'inscrire à un événement</td>
+                    <td>Réserver une place pour participer à une Journée Portes Ouvertes disponible</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td><span class="odd-chip">9</span></td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">❌</span>Annuler une inscription</td>
+                    <td>L'investisseur peut annuler son inscription jusqu'à 24h avant le début de l'événement</td>
+                    <td><span class="badge badge-med">Moyenne</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🪪</span>Générer / Télécharger badge</td>
+                    <td>Génération d'un badge PDF personnalisé avec QR code signé (HMAC-SHA256) pour accéder à
+                        l'événement</td>
+                    <td><span class="badge badge-med">Moyenne</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td><span class="odd-chip">9</span></td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">⏱️</span>Compteur de temps (24h)</td>
+                    <td>Minuterie live affichant le temps restant avant le seuil de blocage de 24h ; boutons verrouillés
+                        automatiquement à l'expiration</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td><span class="odd-chip">11</span></td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🔒</span>Sécurité 24h (lockdown)</td>
+                    <td>Toute désinscription ou génération de badge est bloquée si l'événement débute dans moins de 24
+                        heures</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🔍</span>Filtrer &amp; trier les événements</td>
+                    <td>Recherche par mot-clé, tri par date / titre, basculer entre événements à venir et historique
+                    </td>
+                    <td><span class="badge badge-med">Moyenne</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td>–</td>
+                </tr>
+
+                <!-- ═══ PROPRIETAIRE ═══ -->
+                <tr class="section-header">
+                    <td colspan="6">🏢 Fonctionnalités Propriétaire</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">➕</span>Créer un événement</td>
+                    <td>Formulaire modal avec titre, date, lieu, description, capacité max et image de couverture</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-prop">Propriétaire</span></td>
+                    <td><span class="odd-chip">8</span></td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">✏️</span>Modifier un événement</td>
+                    <td>Édition des informations d'un événement bloquée dans les 24h précédant la date de l'événement
+                        (lockdown serveur)</td>
+                    <td><span class="badge badge-med">Moyenne</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-prop">Propriétaire</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🗑️</span>Supprimer un événement</td>
+                    <td>Suppression avec confirmation à deux étapes si des participants sont inscrits ; cascade
+                        automatique des inscriptions</td>
+                    <td><span class="badge badge-med">Moyenne</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-prop">Propriétaire</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">📊</span>Export Excel participants</td>
+                    <td>Téléchargement d'un fichier .xlsx formaté (nom, email, date d'inscription, statut badge) pour
+                        chaque événement créé</td>
+                    <td><span class="badge badge-low">Basse</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-prop">Propriétaire</span></td>
+                    <td><span class="odd-chip">8</span></td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">📅</span>Calendrier interactif</td>
+                    <td>Vue calendrier mensuelle avec popup de détails par jour, indicateurs colorés de chargement des
+                        événements</td>
+                    <td><span class="badge badge-low">Basse</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-prop">Propriétaire</span></td>
+                    <td>–</td>
+                </tr>
+
+                <!-- ═══ ADMIN ═══ -->
+                <tr class="section-header">
+                    <td colspan="6">🛡️ Fonctionnalités Administrateur</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">📋</span>Liste globale des événements</td>
+                    <td>Vue complète de tous les événements avec filtres (statut, créateur, période) et pagination</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-admin">Admin</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">👥</span>Gestion liste d'attente</td>
+                    <td>Consultation et gestion de la liste d'attente par événement ; vue dédiée des participants en
+                        attente</td>
+                    <td><span class="badge badge-med">Moyenne</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-admin">Admin</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🔎</span>Scan de badge QR</td>
+                    <td>Vérification du QR code d'un badge à l'entrée : validation de la signature HMAC, affichage du
+                        résultat (confirmé / invalide)</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-admin">Admin</span></td>
+                    <td><span class="odd-chip">16</span></td>
+                </tr>
+
+                <!-- ═══ TRANSVERSAL ═══ -->
+                <tr class="section-header">
+                    <td colspan="6">🌐 Fonctionnalités Transversales</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🗺️</span>Google Maps intégré</td>
+                    <td>Carte interactive sur la page de détail de l'événement permettant de visualiser et naviguer
+                        jusqu'au lieu de l'événement</td>
+                    <td><span class="badge badge-low">Basse</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-inv">Investisseur</span></td>
+                    <td><span class="odd-chip">11</span></td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🔐</span>Contrôle d'accès par rôle</td>
+                    <td>Routes sécurisées par attribut <code>#[IsGranted]</code> ; redirections automatiques selon le
+                        rôle (Investisseur / Propriétaire / Admin)</td>
+                    <td><span class="badge badge-high">Haute</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-admin">Admin</span></td>
+                    <td>–</td>
+                </tr>
+
+                <tr>
+                    <td><span class="feat-icon">🎨</span>Design system unifié</td>
+                    <td>Architecture CSS centralisée (tokens, glassmorphism, animations) partagée entre tous les
+                        dashboards</td>
+                    <td><span class="badge badge-low">Basse</span></td>
+                    <td>
+                        <div class="dot-row">
+                            <div class="dot active"></div>
+                            <div class="dot active"></div>
+                            <div class="dot"></div>
+                        </div>
+                    </td>
+                    <td><span class="role role-admin">Admin</span></td>
+                    <td>–</td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Légende complexité -->
+    <div class="table-footer">
+        <span class="legend">Complexité :</span>
+        <span class="legend">
+            <div class="legend-dot" style="background:#38bdf8"></div> 1 point = Faible
+        </span>
+        <span class="legend">
+            <div class="legend-dot" style="background:#38bdf8"></div>
+            <div class="legend-dot" style="background:#38bdf8"></div> 2 points = Moyenne
+        </span>
+        <span class="legend">
+            <div class="legend-dot" style="background:#38bdf8"></div>
+            <div class="legend-dot" style="background:#38bdf8"></div>
+            <div class="legend-dot" style="background:#38bdf8"></div> 3 points = Élevée
+        </span>
+    </div>
+
+</body>
+
+</html>

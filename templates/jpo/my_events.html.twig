@@ -8,7 +8,7 @@
 
   <header class="header header--transparent">
     <div class="logo">
-      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" class="header-logo">
       <div>
         <div class="logo-text">CASHFLY</div>
         <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
@@ -29,37 +29,34 @@
     <div class="section-title">Gérer mes <span>Événements</span></div>
     <div class="section-sub">Liste complète des Journées Portes Ouvertes que vous avez créées</div>
 
-    <div class="toolbar" style="margin-bottom: 30px;">
+    <div class="toolbar">
       <form method="GET" style="display: flex; gap: 15px; flex: 1; min-width: 300px;">
-        <div class="search-wrap" style="flex: 1; position: relative; display: flex; align-items: center;">
-          <i class="ph ph-magnifying-glass"
-            style="position: absolute; left: 16px; color: var(--text-dim); z-index: 1;"></i>
+        <div class="search-wrap">
           <input type="text" name="q" id="searchInput" class="search-input" placeholder="Rechercher par titre, lieu..."
-            value="{{ search }}" data-action="input->jpo-my-events#search"
-            style="width: 100%; padding-left: 45px; height: 48px; border: none; background: transparent; outline: none; color: white;">
+            value="{{ search }}" data-action="input->jpo-my-events#search">
+          <i class="ph ph-magnifying-glass search-icon"></i>
         </div>
 
-        <button type="button" id="searchBtn" class="btn btn-primary" data-action="jpo-my-events#search"
-          style="height: 48px; padding: 0 24px;">
+        <button type="button" id="searchBtn" class="btn btn-primary search-btn-main" data-action="jpo-my-events#search">
           CHERCHER
         </button>
 
-        <select name="sort" class="filter-select" onchange="this.form.submit()" style="height: 48px;">
+        <select name="sort" class="filter-select select-standard" onchange="this.form.submit()">
           <option value="dateEvenement" {{ sortBy=='dateEvenement' ? 'selected' : '' }}>Trier par Date</option>
           <option value="titre" {{ sortBy=='titre' ? 'selected' : '' }}>Trier par Titre</option>
           <option value="participants" {{ sortBy=='participants' ? 'selected' : '' }}>Trier par Participants</option>
         </select>
 
-        <select name="limit" class="filter-select" onchange="this.form.submit()" style="height: 48px; width: 120px;">
+        <select name="limit" class="filter-select select-limit" onchange="this.form.submit()">
+          <option value="5" {{ limit==5 ? 'selected' : '' }}>5 / page</option>
           <option value="10" {{ limit==10 ? 'selected' : '' }}>10 / page</option>
+          <option value="15" {{ limit==15 ? 'selected' : '' }}>15 / page</option>
           <option value="20" {{ limit==20 ? 'selected' : '' }}>20 / page</option>
-          <option value="50" {{ limit==50 ? 'selected' : '' }}>50 / page</option>
         </select>
 
         <input type="hidden" name="dir" value="{{ sortBy == 'dateEvenement' ? 'DESC' : 'ASC' }}">
 
-        <div class="tabs-wrap"
-          style="display: flex; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 10px;">
+        <div class="tabs-wrap">
           <a href="{{ path('jpo_my_events', app.request.query.all|merge({'history': '0', 'page': 1})) }}"
             class="tab-btn {{ not history ? 'active' : '' }}">
             À venir
@@ -74,13 +71,10 @@
 
     <div class="events-grid" id="myEventsGrid">
       {% if events is empty %}
-      <div class="no-results"
-        style="padding: 60px 20px; text-align: center; background: rgba(255,255,255,0.02); border-radius: 20px; border: 1px dashed rgba(255,255,255,0.1); grid-column: 1 / -1;">
-        <div style="font-size: 48px; color: var(--text-dim); margin-bottom: 20px;"><i class="ph ph-calendar-blank"></i>
-        </div>
-        <h3 style="color: white; margin-bottom: 10px;">Aucun événement trouvé</h3>
-        <p style="color: var(--text-dim); max-width: 400px; margin: 0 auto 30px;">Aucun résultat ne correspond à votre
-          recherche ou vous n'avez pas encore créé d'événements.</p>
+      <div class="no-results">
+        <div class="no-results-icon"><i class="ph ph-calendar-blank"></i></div>
+        <h3>Aucun événement trouvé</h3>
+        <p>Aucun résultat ne correspond à votre recherche ou vous n'avez pas encore créé d'événements.</p>
         <a href="{{ path('jpo_dashboard_proprietaire') }}" class="btn btn-primary">
           <i class="ph ph-plus"></i> CRÉER UN ÉVÉNEMENT
         </a>
@@ -95,8 +89,7 @@
           {% else %}
           <i class="ph ph-buildings"></i>
           {% endif %}
-          <div class="card-badge"
-            style="background: var(--cyan); color: #060e1a; font-weight: 800; opacity: 1; box-shadow: 0 4px 12px rgba(0, 229, 255, 0.4);">
+          <div class="card-badge card-badge--participants">
             {{ event.currentParticipants }}/{{ event.maxParticipants }}
           </div>
         </div>
@@ -104,34 +97,31 @@
           <div class="card-date"><i class="ph ph-calendar-blank"></i> {{ event.dateEvenement|date('d/m/Y') }}</div>
           <div class="card-title">{{ event.titre }}</div>
           {% if event.lieu %}
-          <div style="font-size: 11px; color: var(--cyan); margin-bottom: 5px;"><i class="ph ph-map-pin"></i> {{
-            event.lieu }}</div>
+          <div class="card-location"><i class="ph ph-map-pin"></i> {{ event.lieu }}</div>
           {% endif %}
           {% if event.description %}
           <div class="card-desc">{{ event.description }}</div>
           {% endif %}
         </div>
-        <div class="card-footer"
-          style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: flex-end; gap: 8px; height: 60px; position: relative;">
+        <div class="card-footer">
           {% set interval = event.dateEvenement.timestamp - date().timestamp %}
           {% set isLocked = (interval > 0 and interval < 86400) %} {% if not history %} <button
-            class="btn-icon btn-secondary" title="Modifier l'événement" data-action="jpo-my-events#openEdit"
-            data-event-id="{{ event.idEvenement }}" data-event-titre="{{ event.titre }}"
-            data-event-lieu="{{ event.lieu }}" data-event-desc="{{ event.description }}"
-            data-event-max="{{ event.maxParticipants }}" data-event-date="{{ event.dateEvenement|date('d/m/Y') }}"
-            data-event-locked="{{ isLocked ? 'true' : 'false' }}"
-            style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white;">
-            <i class="ph ph-pencil-simple" style="font-size: 18px; margin: 0;"></i>
+            class="btn-icon btn-secondary btn-icon--sm" title="Modifier l'événement"
+            data-action="jpo-my-events#openEdit" data-event-id="{{ event.idEvenement }}"
+            data-event-titre="{{ event.titre }}" data-event-lieu="{{ event.lieu }}"
+            data-event-desc="{{ event.description }}" data-event-max="{{ event.maxParticipants }}"
+            data-event-date="{{ event.dateEvenement|date('d/m/Y') }}"
+            data-event-locked="{{ isLocked ? 'true' : 'false' }}">
+            <i class="ph ph-pencil-simple"></i>
             </button>
-            <button class="btn-icon btn-danger" title="Supprimer l'événement" data-action="jpo-my-events#delete"
-              data-id="{{ event.idEvenement }}" data-locked="{{ isLocked ? 'true' : 'false' }}"
-              style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444;">
-              <i class="ph ph-trash" style="font-size: 18px; margin: 0;"></i>
+            <button class="btn-icon btn-danger btn-icon--sm" title="Supprimer l'événement"
+              data-action="jpo-my-events#delete" data-id="{{ event.idEvenement }}"
+              data-locked="{{ isLocked ? 'true' : 'false' }}">
+              <i class="ph ph-trash"></i>
             </button>
             {% else %}
-            <div
-              style="font-size: 11px; color: var(--text-dim); font-style: italic; display: flex; align-items: center;">
-              <i class="ph ph-lock-simple" style="margin-right: 5px;"></i> Lecture seule
+            <div class="read-only-badge">
+              <i class="ph ph-lock-simple"></i> Lecture seule
             </div>
             {% endif %}
         </div>
@@ -140,24 +130,8 @@
       {% endif %}
     </div>
 
-    {% if totalPages > 1 %}
-    <div class="pagination"
-      style="display: flex; justify-content: center; gap: 10px; margin-top: 40px; align-items: center;">
-      {% if currentPage > 1 %}
-      <a href="{{ path('jpo_my_events', app.request.query.all|merge({'page': currentPage - 1})) }}"
-        class="btn btn-secondary" style="padding: 10px 15px;"><i class="ph ph-caret-left"></i></a>
-      {% endif %}
+    {{ knp_pagination_render(events) }}
 
-      <div style="font-weight: 600; font-size: 13px; color: var(--text-dim);">
-        Page <span style="color: var(--cyan);">{{ currentPage }}</span> sur {{ totalPages }}
-      </div>
-
-      {% if currentPage < totalPages %} <a
-        href="{{ path('jpo_my_events', app.request.query.all|merge({'page': currentPage + 1})) }}"
-        class="btn btn-secondary" style="padding: 10px 15px;"><i class="ph ph-caret-right"></i></a>
-        {% endif %}
-    </div>
-    {% endif %}
   </div>
 
   {# ── DELETE CONFIRM MODAL ── #}
@@ -169,8 +143,8 @@
       </p>
       <div class="confirm-actions">
         <button class="btn btn-secondary" data-action="jpo-my-events#closeDelete">ANNULER</button>
-        <button class="btn btn-danger" id="confirmDeleteBtn" data-action="jpo-my-events#confirmDelete"
-          style="background: #ef4444; color: white;">OUI, SUPPRIMER</button>
+        <button class="btn btn-danger btn-danger--flat" id="confirmDeleteBtn"
+          data-action="jpo-my-events#confirmDelete">OUI, SUPPRIMER</button>
       </div>
     </div>
   </div>
@@ -221,7 +195,7 @@
         </form>
       </div>
       <div class="popup-footer">
-        <button class="btn btn-primary" style="width: 100%;" data-action="jpo-my-events#submitEdit">
+        <button class="btn btn-primary btn--full" data-action="jpo-my-events#submitEdit">
           <i class="ph ph-check-circle"></i> ENREGISTRER LES MODIFICATIONS
         </button>
       </div>
@@ -229,36 +203,6 @@
   </div>
 </div>
 
-<style>
-  .tab-btn {
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    color: var(--text-dim);
-    background: transparent;
-    border: 1px solid transparent;
-    transition: all 0.2s;
-  }
-
-  .tab-btn.active {
-    color: white;
-    background: rgba(0, 229, 255, 0.1);
-    border-color: rgba(0, 229, 255, 0.2);
-  }
-
-  .card-desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    line-clamp: 2;
-    overflow: hidden;
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.4;
-  }
-</style>
 
 <script>
   document.querySelectorAll('.event-card[data-href]').forEach(function (card) {

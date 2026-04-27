@@ -39,6 +39,12 @@ class JourneePorteOuverte
     #[ORM\Column(name: 'id_createur', type: Types::INTEGER, nullable: true)]
     private ?int $idCreateur = null;
 
+    #[ORM\Column(name: 'latitude', type: Types::FLOAT, nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(name: 'longitude', type: Types::FLOAT, nullable: true)]
+    private ?float $longitude = null;
+
     public function getIdEvenement(): ?int { return $this->idEvenement; }
 
     public function getTitre(): string { return $this->titre; }
@@ -64,6 +70,12 @@ class JourneePorteOuverte
 
     public function getIdCreateur(): ?int { return $this->idCreateur; }
     public function setIdCreateur(?int $idCreateur): static { $this->idCreateur = $idCreateur; return $this; }
+
+    public function getLatitude(): ?float { return $this->latitude; }
+    public function setLatitude(?float $latitude): static { $this->latitude = $latitude; return $this; }
+
+    public function getLongitude(): ?float { return $this->longitude; }
+    public function setLongitude(?float $longitude): static { $this->longitude = $longitude; return $this; }
 
     public function isFull(): bool
     {

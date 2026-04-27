@@ -1,0 +1,29 @@
+{%- if pageCount > 1 -%}
+<div class="pagination">
+    {%- if previous is defined -%}
+    <a href="{{ path(route, query|merge({(pageParameterName): previous})) }}" class="btn btn-secondary btn--square"
+        aria-label="Page précédente">
+        <i class="ph ph-caret-left"></i>
+    </a>
+    {%- else -%}
+    <span class="btn btn-secondary btn--square" style="opacity:0.4;pointer-events:none;" aria-disabled="true">
+        <i class="ph ph-caret-left"></i>
+    </span>
+    {%- endif -%}
+
+    <div class="pagination-info">
+        Page <span class="text-cyan">{{ current }}</span> sur {{ pageCount }}
+    </div>
+
+    {%- if next is defined -%}
+    <a href="{{ path(route, query|merge({(pageParameterName): next})) }}" class="btn btn-secondary btn--square"
+        aria-label="Page suivante">
+        <i class="ph ph-caret-right"></i>
+    </a>
+    {%- else -%}
+    <span class="btn btn-secondary btn--square" style="opacity:0.4;pointer-events:none;" aria-disabled="true">
+        <i class="ph ph-caret-right"></i>
+    </span>
+    {%- endif -%}
+</div>
+{%- endif -%}

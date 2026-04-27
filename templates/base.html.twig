@@ -8,6 +8,7 @@
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     {% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
     {% endblock %}
 
     {% block javascripts %}
@@ -82,38 +83,61 @@
     </script>
 
     {# --- GLOBAL UI MODALS --- #}
-    <div class="popup-overlay" id="uiGlobalConfirm"
-        style="display: none; align-items: center; justify-content: center; z-index: 9999;">
-        <div class="popup-modal popup-modal--small" style="text-align: center;">
-            <i class="ph ph-warning-circle confirm-icon"
-                style="font-size: 48px; color: #f59e0b; margin-bottom: 20px; display: block;"></i>
-            <div class="confirm-title"
-                style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: var(--text); padding: 0 10px;"
-                id="uiGlobalConfirmTitle">Confirmation</div>
-            <p class="confirm-text" style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px;"
-                id="uiGlobalConfirmText"></p>
-            <div class="confirm-actions" style="display: flex; gap: 10px; justify-content: center;">
-                <button class="btn btn-secondary" id="uiGlobalConfirmCancel"
-                    style="flex: 1; justify-content: center;">ANNULER</button>
-                <button class="btn btn-primary" id="uiGlobalConfirmOk"
-                    style="flex: 1; justify-content: center; background: var(--cyan); color: #060e1a;">OUI</button>
+    <div class="popup-overlay modal-overlay--hidden" id="uiGlobalConfirm">
+        <div class="popup-modal popup-modal--small modal--centered">
+            <i class="ph ph-warning-circle modal-icon--large modal-icon--warning" id="uiGlobalConfirmIcon"></i>
+            <div class="confirm-title modal-title--bold" id="uiGlobalConfirmTitle">Confirmation</div>
+            <p class="confirm-text modal-text--standard" id="uiGlobalConfirmText"></p>
+            <div class="confirm-actions modal-actions--centered">
+                <button class="btn btn-secondary modal-btn--flex" id="uiGlobalConfirmCancel">ANNULER</button>
+                <button class="btn btn-primary modal-btn--flex modal-btn--cyan" id="uiGlobalConfirmOk">OUI</button>
             </div>
         </div>
     </div>
 
-    <div class="popup-overlay" id="uiGlobalAlert"
-        style="display: none; align-items: center; justify-content: center; z-index: 9999;">
-        <div class="popup-modal popup-modal--small" style="text-align: center;">
-            <i class="ph ph-info confirm-icon" id="uiGlobalAlertIcon"
-                style="font-size: 48px; color: var(--cyan); margin-bottom: 20px; display: block;"></i>
-            <div class="confirm-title"
-                style="font-size: 20px; font-weight: bold; margin-bottom: 15px; color: var(--text); padding: 0 10px;"
-                id="uiGlobalAlertTitle">Information</div>
-            <p class="confirm-text" style="color: var(--text-dim); margin-bottom: 30px; font-size: 14px;"
-                id="uiGlobalAlertText"></p>
-            <div class="confirm-actions" style="display: flex; justify-content: center;">
-                <button class="btn btn-primary" id="uiGlobalAlertOk"
-                    style="min-width: 120px; justify-content: center;">OK</button>
+    <div class="popup-overlay modal-overlay--hidden" id="uiGlobalAlert">
+        <div class="popup-modal popup-modal--small modal--centered">
+            <i class="ph ph-info modal-icon--large modal-icon--info" id="uiGlobalAlertIcon"></i>
+            <div class="confirm-title modal-title--bold" id="uiGlobalAlertTitle">Information</div>
+            <p class="confirm-text modal-text--standard" id="uiGlobalAlertText"></p>
+            <div class="confirm-actions modal-actions--centered">
+                <button class="btn btn-primary modal-btn--min-120" id="uiGlobalAlertOk">OK</button>
+            </div>
+        </div>
+    </div>
+
+    {# --- AI SUGGESTION MODAL --- #}
+    <div class="popup-overlay modal-overlay--hidden" id="uiGlobalSuggestion" style="z-index: 10001;">
+        <div class="popup-modal modal--centered"
+            style="max-width: 450px; padding: 0; overflow: hidden; border: 1px solid var(--cyan);">
+            <div
+                style="background: linear-gradient(135deg, var(--cyan), #00d2ff); padding: 25px; color: #060e1a; text-align: center;">
+                <i class="ph ph-sparkle" style="font-size: 32px;"></i>
+                <div style="font-weight: 800; font-size: 18px; margin-top: 10px; letter-spacing: 1px;">DÉCOUVERTE
+                    INTELLIGENTE</div>
+            </div>
+            <div style="padding: 25px;">
+                <p id="suggestionHook"
+                    style="font-style: italic; color: var(--text-dim); font-size: 14px; line-height: 1.5; margin-bottom: 20px; text-align: center; border-left: 3px solid var(--cyan); padding-left: 15px;">
+                </p>
+
+                <div
+                    style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 15px; border: 1px solid var(--border); transition: transform 0.2s;">
+                    <img id="suggestionImage" src="" alt="Event"
+                        style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; display: none;">
+                    <div id="suggestionTitle"
+                        style="font-weight: 700; font-size: 16px; margin-bottom: 8px; color: var(--cyan);"></div>
+                    <div style="display: flex; gap: 15px; font-size: 12px; color: var(--text-dim);">
+                        <span><i class="ph ph-calendar"></i> <span id="suggestionDate"></span></span>
+                        <span><i class="ph ph-map-pin"></i> <span id="suggestionLocation"></span></span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 25px;">
+                    <button class="btn btn-secondary" id="suggestionSkip" style="flex: 1;">PLUS TARD</button>
+                    <button class="btn btn-primary" id="suggestionGo" style="flex: 1.5;">DÉCOUVRIR <i
+                            class="ph ph-arrow-right"></i></button>
+                </div>
             </div>
         </div>
     </div>
@@ -130,11 +154,11 @@
             btnCancel.innerText = cancelText;
 
             if (isDanger) {
-                btnOk.style.background = '#ef4444';
-                btnOk.style.color = '#ffffff';
+                btnOk.classList.add('modal-btn--danger');
+                btnOk.classList.remove('modal-btn--cyan');
             } else {
-                btnOk.style.background = 'var(--cyan)';
-                btnOk.style.color = '#060e1a';
+                btnOk.classList.remove('modal-btn--danger');
+                btnOk.classList.add('modal-btn--cyan');
             }
 
             overlay.style.display = 'flex';
@@ -158,15 +182,15 @@
             document.getElementById('uiGlobalAlertText').innerText = message;
             document.getElementById('uiGlobalAlertTitle').innerText = title;
             const icon = document.getElementById('uiGlobalAlertIcon');
+
+            icon.classList.remove('modal-icon--success', 'modal-icon--error', 'modal-icon--info');
+
             if (isSuccess) {
-                icon.className = 'ph ph-check-circle confirm-icon';
-                icon.style.color = '#00c16a';
+                icon.className = 'ph ph-check-circle modal-icon--large modal-icon--success';
             } else if (title.toLowerCase().includes('erreur') || title.toLowerCase().includes('error') || title.toLowerCase().includes('attention')) {
-                icon.className = 'ph ph-x-circle confirm-icon';
-                icon.style.color = '#ef4444';
+                icon.className = 'ph ph-x-circle modal-icon--large modal-icon--error';
             } else {
-                icon.className = 'ph ph-info confirm-icon';
-                icon.style.color = 'var(--cyan)';
+                icon.className = 'ph ph-info modal-icon--large modal-icon--info';
             }
             overlay.style.display = 'flex';
 
@@ -176,6 +200,42 @@
                 btnOk.removeEventListener('click', okHandler);
             };
             btnOk.addEventListener('click', okHandler);
+        };
+
+        window.uiSuggestion = function (suggestion) {
+            const overlay = document.getElementById('uiGlobalSuggestion');
+            document.getElementById('suggestionTitle').innerText = suggestion.titre;
+            document.getElementById('suggestionDate').innerText = suggestion.date;
+            document.getElementById('suggestionLocation').innerText = suggestion.lieu;
+            document.getElementById('suggestionHook').innerText = suggestion.hook;
+
+            const img = document.getElementById('suggestionImage');
+            if (suggestion.image) {
+                img.src = suggestion.image;
+                img.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+            }
+
+            const btnGo = document.getElementById('suggestionGo');
+            const btnSkip = document.getElementById('suggestionSkip');
+
+            overlay.style.display = 'flex';
+
+            const handleClose = () => {
+                overlay.style.display = 'none';
+                btnGo.onclick = null;
+                btnSkip.onclick = null;
+            };
+
+            btnGo.onclick = () => {
+                handleClose();
+                window.location.href = suggestion.details_url || `/event/${suggestion.id}`;
+            };
+            btnSkip.onclick = () => {
+                handleClose();
+                window.location.reload();
+            };
         };
     </script>
 </body>

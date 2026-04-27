@@ -12,7 +12,7 @@
 
   <header class="header header--transparent">
     <div class="logo">
-      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" class="header-logo">
       <div>
         <div class="logo-text">CASHFLY</div>
         <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
@@ -31,8 +31,7 @@
       <button class="btn btn-primary" id="openCalBtn">
         <span class="btn-icon"><i class="ph ph-calendar-blank"></i></span>CALENDRIER
       </button>
-      <a href="{{ path('jpo_my_events') }}" class="btn btn-secondary"
-        style="background: rgba(255, 255, 255, 0.05); color: white;">
+      <a href="{{ path('jpo_my_events') }}" class="btn btn-secondary btn-secondary--dashboard">
         <span class="btn-icon"><i class="ph ph-list-bullets"></i></span>MES ÉVÉNEMENTS
       </a>
     </div>
@@ -115,13 +114,12 @@
         <div class="event-details-content">
           <div class="edc-image" id="detailsPopupImage"></div>
           <div class="edc-info">
-            <h2 id="detailsPopupTitle" style="margin-bottom: 12px;"></h2>
-            <div class="edc-meta"
-              style="margin-bottom: 20px; display: flex; gap: 16px; color: var(--cyan); font-size: 14px;">
+            <h2 id="detailsPopupTitle" class="popup-title--large"></h2>
+            <div class="edc-meta meta-row--cyan-small">
               <span><i class="ph ph-map-pin"></i> <span id="detailsPopupLieu"></span></span>
               <span><i class="ph ph-users"></i> <span id="detailsPopupParticipants"></span></span>
             </div>
-            <p class="edc-desc" id="detailsPopupDesc" style="line-height: 1.6; color: var(--text-dim);"></p>
+            <p class="edc-desc text-description--dim" id="detailsPopupDesc"></p>
           </div>
         </div>
       </div>
@@ -137,8 +135,7 @@
       </p>
       <div class="confirm-actions">
         <button class="btn btn-secondary" id="cancelDeleteBtn">ANNULER</button>
-        <button class="btn btn-danger" id="confirmDeleteBtn" style="background: #ef4444; color: white;">OUI,
-          SUPPRIMER</button>
+        <button class="btn btn-danger btn-danger--flat" id="confirmDeleteBtn">OUI, SUPPRIMER</button>
       </div>
     </div>
   </div>
@@ -148,7 +145,7 @@
     <div class="popup-modal popup-modal--wide">
       <div class="popup-header">
         <div class="popup-header-left">
-          <button class="popup-back" id="createPopupBack" aria-label="Retour" style="display:none">
+          <button class="popup-back" id="createPopupBack" aria-label="Retour" class="hidden">
             <i class="ph ph-arrow-left"></i>
           </button>
           <i class="ph ph-plus-circle"></i>

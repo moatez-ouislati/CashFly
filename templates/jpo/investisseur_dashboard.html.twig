@@ -11,7 +11,7 @@
 
   <header class="header header--transparent">
     <div class="logo">
-      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" style="height: 48px; width: auto; margin-right: 12px;">
+      <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo" class="header-logo">
       <div>
         <div class="logo-text">CASHFLY</div>
         <div class="logo-sub">HYPER-SPEED ASSET MANAGEMENT</div>
@@ -30,21 +30,18 @@
     <div class="section-sub">Explorez les Journées Portes Ouvertes disponibles</div>
 
     <div class="toolbar">
-      <div class="search-wrap" style="flex: 1; border: none; background: transparent; display: flex; gap: 15px;">
-        <div class="search-input-container"
-          style="flex: 1; position: relative; display: flex; align-items: center; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); border-radius: 12px; transition: border-color 0.2s, box-shadow 0.2s;">
-          <i class="ph ph-magnifying-glass"
-            style="position: absolute; left: 16px; color: var(--text-dim); z-index: 1;"></i>
-          <input type="text" class="search-input" id="searchInput" placeholder="Rechercher un événement, lieu..."
-            value="{{ search }}"
-            style="width: 100%; padding-left: 45px; height: 48px; border: none; background: transparent; outline: none; color: white;">
+      <div class="search-toolbar--flex">
+        <div class="search-box--glass">
+          <i class="ph ph-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input search-input--standard" id="searchInput"
+            placeholder="Rechercher un événement, lieu..." value="{{ search }}">
         </div>
-        <button id="searchBtn" class="btn btn-primary" style="height: 48px; padding: 0 24px;">CHERCHER</button>
+        <button id="searchBtn" class="btn btn-primary search-btn-main">CHERCHER</button>
       </div>
       <div class="filter-toggle">
         <button class="filter-btn toggle-history {{ history ? '' : 'active' }}" data-history="0">À venir</button>
         <button class="filter-btn toggle-history {{ history ? 'active' : '' }}" data-history="1">Historique</button>
-        <button class="filter-btn toggle-mine {{ mine ? 'active' : '' }}" id="toggleMine" style="margin-left: 20px;">
+        <button class="filter-btn toggle-mine {{ mine ? 'active' : '' }} ml-20" id="toggleMine">
           <i class="ph ph-bookmark-simple"></i> Mes Inscriptions
         </button>
       </div>

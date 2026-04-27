@@ -3,7 +3,7 @@
 {% block title %}Liste des Événements Admin — CashFly{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('assets/styles/jpo.css') }}">
+<link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
 <style>
     .admin-table {
         width: 100%;
@@ -11,7 +11,6 @@
         margin-top: 20px;
         background: var(--bg-card);
         border-radius: 12px;
-        overflow: hidden;
     }
 
     .admin-table th,
@@ -25,18 +24,134 @@
         background: rgba(0, 229, 255, 0.05);
         color: var(--cyan);
         font-weight: 700;
-        font-size: 12px;
+        font-size: 11px;
         letter-spacing: 1px;
         text-transform: uppercase;
+    }
+
+    .sort-link {
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: color 0.2s;
+    }
+
+    .sort-link:hover {
+        color: var(--white);
+    }
+
+    .sort-link i {
+        font-size: 14px;
     }
 
     .admin-table tr:hover {
         background: rgba(255, 255, 255, 0.02);
     }
 
-    .action-btns {
+    /* Actions Dropdown Grid */
+    .actions-dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .actions-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
         display: flex;
+        align-items: center;
         gap: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .actions-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--cyan);
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        padding-top: 8px;
+        /* Bridge gap for hover */
+        z-index: 100;
+        width: 240px;
+    }
+
+    /* Flip dropdown for last rows to prevent clipping */
+    .admin-table tr:nth-last-child(-n+2) .dropdown-content {
+        top: auto;
+        bottom: 100%;
+        padding-top: 0;
+        padding-bottom: 8px;
+    }
+
+    .dropdown-inner {
+        background: var(--bg-mid);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        padding: 12px;
+    }
+
+    .actions-dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .action-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 8px;
+        border-radius: 8px;
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 600;
+        text-align: center;
+        transition: all 0.2s;
+        background: var(--bg-trans-hover);
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .action-item i {
+        font-size: 20px;
+        color: var(--cyan);
+    }
+
+    .action-item:hover {
+        background: rgba(var(--cyan-rgb, 0, 229, 255), 0.1);
+        border-color: var(--cyan);
+        color: var(--text);
+        transform: translateY(-2px);
+    }
+
+    .action-item.delete:hover {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: #ef4444;
+        color: #ef4444;
+    }
+
+    .action-item.delete i {
+        color: #ef4444;
     }
 
     .badge-status {
@@ -82,8 +197,7 @@
         <div class="header-actions">
             {% if app.request.attributes.get('_route') == 'jpo_admin_events_list' %}
             <a href="{{ path('jpo_dashboard_admin') }}" class="back-link"><i class="ph ph-house"></i> DASHBOARD</a>
-            <a href="{{ path('jpo_admin_event_create') }}" class="btn btn-primary" style="padding: 8px 16px;"><i
-                    class="ph ph-plus"></i> CRÉER</a>
+            {# REMOVED CRÉER BUTTON #}
             {% else %}
             <a href="{{ path('jpo_admin_events_list') }}" class="back-link"><i class="ph ph-arrow-left"></i> RETOUR</a>
             {% endif %}
@@ -96,37 +210,70 @@
     <div class="section-title">Gestion des <span>Événements</span></div>
 
     <div class="toolbar">
-        <form method="GET" class="toolbar" style="width: 100%; margin-bottom: 0;">
+        <form method="GET" id="filterForm" class="toolbar" style="width: 100%; margin-bottom: 0;">
             <div class="search-wrap">
                 <i class="ph ph-magnifying-glass" style="padding: 13px; color: var(--text-dim);"></i>
                 <input type="text" name="q" value="{{ search }}" class="search-input"
-                    placeholder="Rechercher par titre ou lieu...">
+                    placeholder="Rechercher par titre ou lieu..." oninput="debounceSearch(this)">
             </div>
 
-            <input type="date" name="date_start" value="{{ dateStart }}" class="filter-select"
-                style="padding-right: 16px;">
-            <input type="date" name="date_end" value="{{ dateEnd }}" class="filter-select" style="padding-right: 16px;">
+            <input type="date" name="date" value="{{ date }}" class="filter-select" style="padding-right: 16px;"
+                title="Filtrer par date" onchange="this.form.submit()">
 
-            <select name="creator" class="filter-select">
+            <select name="creator" class="filter-select" onchange="this.form.submit()">
                 <option value="">Tous les créateurs</option>
                 {% for p in proprietaires %}
                 <option value="{{ p.id }}" {{ creatorId==p.id ? 'selected' : '' }}>{{ p.nomComplet }}</option>
                 {% endfor %}
             </select>
 
-            <button type="submit" class="btn btn-secondary btn-small">Filtrer</button>
+            <select name="sort" class="filter-select" onchange="this.form.submit()">
+                <option value="dateEvenement" {{ sortBy=='dateEvenement' ? 'selected' : '' }}>Trier par Date</option>
+                <option value="currentParticipants" {{ sortBy=='currentParticipants' ? 'selected' : '' }}>Trier par
+                    Participants</option>
+                <option value="titre" {{ sortBy=='titre' ? 'selected' : '' }}>Trier par Titre</option>
+            </select>
+
+            <input type="hidden" name="dir"
+                value="{{ sortBy == 'dateEvenement' or sortBy == 'currentParticipants' ? 'DESC' : 'ASC' }}">
+
+            <a href="{{ path('jpo_admin_events_list') }}" class="btn btn-secondary btn-small">Réinitialiser</a>
         </form>
     </div>
+
+    <script>
+        let searchTimeout;
+        function debounceSearch(input) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                input.form.submit();
+            }, 500);
+        }
+    </script>
 
     <table class="admin-table">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Titre</th>
-                <th>Date/Lieu</th>
-                <th>Participants</th>
+                <th>
+                    <a href="?sort=dateEvenement&dir={{ (sortBy == 'dateEvenement' and sortDir == 'DESC') ? 'ASC' : 'DESC' }}{{ search ? '&q=' ~ search : '' }}{{ date ? '&date=' ~ date : '' }}{{ creatorId ? '&creator=' ~ creatorId : '' }}"
+                        class="sort-link">
+                        Date/Lieu
+                        <i
+                            class="ph ph-caret-{{ (sortBy == 'dateEvenement' and sortDir == 'ASC') ? 'up' : 'down' }}"></i>
+                    </a>
+                </th>
+                <th>
+                    <a href="?sort=currentParticipants&dir={{ (sortBy == 'currentParticipants' and sortDir == 'DESC') ? 'ASC' : 'DESC' }}{{ search ? '&q=' ~ search : '' }}{{ date ? '&date=' ~ date : '' }}{{ creatorId ? '&creator=' ~ creatorId : '' }}"
+                        class="sort-link">
+                        Participants
+                        <i
+                            class="ph ph-caret-{{ (sortBy == 'currentParticipants' and sortDir == 'ASC') ? 'up' : 'down' }}"></i>
+                    </a>
+                </th>
                 <th>Créateur</th>
-                <th>Actions</th>
+                <th style="text-align: right;">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -136,12 +283,12 @@
                 <td>{{ event.idEvenement }}</td>
                 <td style="font-weight: 600;">{{ event.titre }}</td>
                 <td>
-                    <div style="font-size: 12px;">{{ event.dateEvenement|date('d/m/Y') }}</div>
+                    <div style="font-size: 12px; font-weight: 600;">{{ event.dateEvenement|date('d/m/Y') }}</div>
                     <div style="font-size: 11px; color: var(--text-dim);">{{ event.lieu }}</div>
                 </td>
                 <td>
-                    <div style="font-size: 11px;">
-                        {{ event.currentParticipants }}/{{ event.maxParticipants }}
+                    <div style="font-size: 12px; font-weight: 600;">
+                        {{ event.currentParticipants }} / {{ event.maxParticipants }}
                     </div>
                     <div style="display: flex; gap: 4px; margin-top: 4px;">
                         <span class="badge-status badge-confirmé" title="Confirmés">{{ item.statusCounts['confirmé']
@@ -156,16 +303,43 @@
                     <div style="font-size: 10px; color: var(--text-dim);">{{ item.creator.email }}</div>
                 </td>
                 <td>
-                    <div class="action-btns">
-                        <a href="{{ path('jpo_admin_event_participants', {'id': event.idEvenement}) }}"
-                            class="btn btn-secondary btn-small" title="Participants"><i class="ph ph-users"></i></a>
-                        <a href="{{ path('jpo_admin_event_waitlist', {'id': event.idEvenement}) }}"
-                            class="btn btn-secondary btn-small" title="Liste d'attente"><i
-                                class="ph ph-hourglass"></i></a>
-                        <a href="{{ path('jpo_admin_event_edit', {'id': event.idEvenement}) }}"
-                            class="btn btn-secondary btn-small" title="Modifier"><i class="ph ph-pencil"></i></a>
-                        <button class="btn btn-secondary btn-small btn-delete-event" data-id="{{ event.idEvenement }}"
-                            style="color: #ef4444;" title="Supprimer"><i class="ph ph-trash"></i></button>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <div class="actions-dropdown">
+                            <button class="actions-btn">
+                                Actions <i class="ph ph-caret-down"></i>
+                            </button>
+                            <div class="dropdown-content">
+                                <div class="dropdown-inner">
+                                    <div class="actions-grid">
+                                        <div class="action-item admin-chat-btn" data-id="{{ event.idEvenement }}"
+                                            data-title="{{ event.titre }}">
+                                            <i class="ph ph-chats-circle"></i>
+                                            <span>CHAT</span>
+                                        </div>
+                                        <a href="{{ path('jpo_admin_event_participants', {'id': event.idEvenement}) }}"
+                                            class="action-item">
+                                            <i class="ph ph-users"></i>
+                                            <span>PARTICIPANTS</span>
+                                        </a>
+                                        <a href="{{ path('jpo_admin_event_waitlist', {'id': event.idEvenement}) }}"
+                                            class="action-item">
+                                            <i class="ph ph-hourglass"></i>
+                                            <span>ATTENTE</span>
+                                        </a>
+                                        <a href="{{ path('jpo_admin_event_edit', {'id': event.idEvenement}) }}"
+                                            class="action-item">
+                                            <i class="ph ph-pencil"></i>
+                                            <span>MODIFIER</span>
+                                        </a>
+                                        <div class="action-item delete btn-delete-event"
+                                            data-id="{{ event.idEvenement }}">
+                                            <i class="ph ph-trash"></i>
+                                            <span>SUPPRIMER</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -176,24 +350,86 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {# --- ADMIN CHAT INTERVENTION SYSTEM (Hidden by default) --- #}
+    <div id="admin-chat-wrapper" class="chat-system" data-controller="jpo-chat"
+        data-jpo-chat-current-user-id-value="{{ app.user.id }}" data-jpo-chat-edit-url-value="/api/chat/edit/"
+        data-jpo-chat-delete-url-value="/api/chat/delete/" style="display: none;">
+
+        <button class="chat-toggle-btn" data-action="jpo-chat#toggle" data-jpo-chat-target="toggleBtn"
+            style="display: none;">
+            <i class="ph ph-chat-centered-text"></i>
+        </button>
+
+        <div class="chat-container" data-jpo-chat-target="container"
+            style="display: flex; position: fixed; right: 20px; bottom: 20px; z-index: 1000; width: 380px; height: 500px;">
+            <div class="chat-header">
+                <div class="chat-header-info">
+                    <i class="ph ph-shield-check"></i>
+                    <div>
+                        <div class="chat-header-title" id="admin-chat-title">Modération Chat</div>
+                        <div class="chat-header-status"><span class="online-indicator"></span> Intervention Admin</div>
+                    </div>
+                </div>
+                <button class="chat-close" data-action="click->jpo-chat#toggle">✕</button>
+            </div>
+
+            <div class="chat-messages" data-jpo-chat-target="messages"></div>
+
+            <div class="chat-reply-preview modal-overlay--hidden" data-jpo-chat-target="replyPreview">
+                <div class="reply-info">
+                    <i class="ph ph-arrow-bend-up-left"></i>
+                    <span>Réponse Admin <strong data-jpo-chat-target="replyAuthor"></strong></span>
+                </div>
+                <div class="reply-snippet" data-jpo-chat-target="replySnippet"></div>
+                <button class="reply-cancel" data-action="jpo-chat#cancelReply">✕</button>
+            </div>
+
+            <div class="chat-input-area" data-jpo-chat-target="inputArea">
+                <textarea class="chat-input" placeholder="Intervenir en tant qu'administrateur..."
+                    data-jpo-chat-target="input" data-action="keydown->jpo-chat#handleKeydown"></textarea>
+                <button class="chat-send-btn" data-action="jpo-chat#send">
+                    <i class="ph ph-paper-plane-right"></i>
+                </button>
+            </div>
+
+            <div class="chat-input-area" data-jpo-chat-target="readonlyNotice"
+                style="display: none; justify-content: center; opacity: 0.6; font-size: 11px;">
+                <i class="ph ph-lock-key"></i> Chat archivé (lecture seule).
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    const deleteBtns = document.querySelectorAll('.btn-delete-event');
-    deleteBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-            const eventId = this.dataset.id;
+    // Handle Actions and Chat using Delegation for better stability
+    document.addEventListener('click', function (e) {
+        // Find if clicked element or its parent is the admin-chat-btn
+        const chatBtn = e.target.closest('.admin-chat-btn');
+        if (chatBtn) {
+            const id = chatBtn.dataset.id;
+            const title = chatBtn.dataset.title;
+
+            // Dispatch global event - the chat controller will catch it
+            document.dispatchEvent(new CustomEvent('chat:openAdmin', {
+                detail: { id, title }
+            }));
+            return;
+        }
+
+        // Handle delete via delegation
+        const deleteBtn = e.target.closest('.btn-delete-event');
+        if (deleteBtn) {
+            const eventId = deleteBtn.dataset.id;
             window.uiConfirm('Voulez-vous vraiment supprimer cet événement et toutes les participations associées ?', () => {
                 fetch('/jpo/admin/event/' + eventId + '/delete', {
                     method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            const row = btn.closest('tr');
+                            const row = deleteBtn.closest('tr');
                             row.style.transition = 'opacity 0.3s';
                             row.style.opacity = '0';
                             setTimeout(() => row.remove(), 300);
@@ -206,7 +442,7 @@
                         window.uiAlert('Erreur réseau / serveur.', 'Erreur');
                     });
             }, 'SUPPRIMER', 'ANNULER', 'Attention', true);
-        });
+        }
     });
 </script>
 {% endblock %}

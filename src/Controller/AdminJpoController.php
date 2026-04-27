@@ -42,11 +42,16 @@ class AdminJpoController extends AbstractController
     public function eventsList(Request $request): Response
     {
         $search = $request->query->get('q', '');
-        $dateStart = $request->query->get('date_start');
-        $dateEnd = $request->query->get('date_end');
+        $dateStr = $request->query->get('date');
         $creatorId = $request->query->get('creator');
         $sortBy = $request->query->get('sort', 'dateEvenement');
         $sortDir = $request->query->get('dir', 'DESC');
+
+        // Validate allowed sort fields to prevent injection or errors
+        $allowedSorts = ['dateEvenement', 'currentParticipants', 'titre', 'lieu'];
+        if (!in_array($sortBy, $allowedSorts, true)) {
+            $sortBy = 'dateEvenement';
+        }
 
         $qb = $this->jpoRepository->createQueryBuilder('j');
 
@@ -55,14 +60,10 @@ class AdminJpoController extends AbstractController
                ->setParameter('search', '%' . $search . '%');
         }
 
-        if ($dateStart) {
-            $qb->andWhere('j.dateEvenement >= :dateStart')
-               ->setParameter('dateStart', $dateStart);
-        }
-
-        if ($dateEnd) {
-            $qb->andWhere('j.dateEvenement <= :dateEnd')
-               ->setParameter('dateEnd', $dateEnd);
+        if ($dateStr) {
+            $qb->andWhere('j.dateEvenement >= :dateStart AND j.dateEvenement < :dateEnd')
+               ->setParameter('dateStart', $dateStr . ' 00:00:00')
+               ->setParameter('dateEnd', $dateStr . ' 23:59:59');
         }
 
         if ($creatorId) {
@@ -106,8 +107,7 @@ class AdminJpoController extends AbstractController
             'events' => $enrichedEvents,
             'proprietaires' => $proprietaires,
             'search' => $search,
-            'dateStart' => $dateStart,
-            'dateEnd' => $dateEnd,
+            'date' => $dateStr,
             'creatorId' => $creatorId,
             'sortBy' => $sortBy,
             'sortDir' => $sortDir,
@@ -293,12 +293,32 @@ class AdminJpoController extends AbstractController
         }
 
         $waitlist = $this->waitlistRepository->findBy(['idEvenement' => $id], ['position' => 'ASC']);
+        $pendingParticipants = $this->participationRepository->findBy([
+            'idEvenement' => $id,
+            'statut' => 'en_attente'
+        ]);
+
         $enrichedWaitlist = [];
+        
+        // Add pending participants first (usually they have priority or need approval)
+        foreach ($pendingParticipants as $p) {
+            $user = $this->utilisateurRepository->find($p->getIdUtilisateur());
+            $enrichedWaitlist[] = [
+                'type' => 'pending',
+                'entity' => $p,
+                'user' => $user,
+                'date' => $p->getDateInscription()
+            ];
+        }
+
+        // Add waitlist entries
         foreach ($waitlist as $w) {
             $user = $this->utilisateurRepository->find($w->getIdUtilisateur());
             $enrichedWaitlist[] = [
+                'type' => 'waitlist',
                 'entity' => $w,
-                'user' => $user
+                'user' => $user,
+                'date' => $w->getDateDemande()
             ];
         }
 

@@ -3,7 +3,7 @@
 {% block title %}Participants - {{ event.titre }} — CashFly{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('assets/styles/jpo.css') }}">
+<link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
 <style>
     .admin-table {
         width: 100%;
@@ -125,9 +125,7 @@
                 </td>
                 <td style="font-size: 12px;">{{ p.entity.dateInscription|date('d/m/Y H:i') }}</td>
                 <td>
-                    <form method="POST"
-                        action="{{ path('admin_jpo_remove_participant', {eventId: event.idEvenement, userId: p.user.idUtilisateur}) }}"
-                        style="margin: 0;"
+                    <form method="POST" style="margin: 0;"
                         onsubmit="event.preventDefault(); window.uiConfirm('Supprimer ce participant ?', () => this.submit(), 'SUPPRIMER', 'ANNULER', 'Confirmation', true)">
                         <input type="hidden" name="participation_id" value="{{ p.entity.idParticipation }}">
                         <input type="hidden" name="action" value="delete">

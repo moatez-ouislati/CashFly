@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Knp\Component\Pager\PaginatorInterface;
 
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\ParticipationJpoRepository;
@@ -69,7 +70,7 @@ class JpoController extends AbstractController
      */
     #[Route('/dashboard/proprietaire/my-events', name: 'my_events')]
     #[IsGranted('ROLE_PROPRIETAIRE')]
-    public function myEvents(Request $request): Response
+    public function myEvents(Request $request, PaginatorInterface $paginator): Response
     {
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
@@ -81,27 +82,25 @@ class JpoController extends AbstractController
         $sortBy  = $request->query->get('sort', 'dateEvenement');
         $sortDir = $request->query->get('dir', 'DESC');
         $page    = $request->query->getInt('page', 1);
-        $limit   = $request->query->getInt('limit', 10);
+        $limit   = max(1, min(100, $request->query->getInt('limit', 10)));
         $history = $request->query->getBoolean('history', false);
- 
-        $allEvents = $this->jpoRepository->findFiltered(
-            $search ?: null,
-            null,
-            $sortBy,
-            $sortDir,
-            $history,
-            null,
-            $user->getId()
-        );
 
-        // Simple manual pagination
-        $totalItems = count($allEvents);
-        $totalPages = ceil($totalItems / $limit);
-        $page = max(1, min($page, $totalPages ?: 1));
-        $offset = ($page - 1) * $limit;
-        $eventsSlice = array_slice($allEvents, $offset, $limit);
-
+        // AJAX branch: still uses the array-returning method for the Stimulus search controller
         if ($request->isXmlHttpRequest()) {
+            $allEvents = $this->jpoRepository->findFiltered(
+                $search ?: null,
+                null,
+                $sortBy,
+                $sortDir,
+                $history,
+                null,
+                $user->getId()
+            );
+            $totalItems = count($allEvents);
+            $totalPages = (int) ceil($totalItems / $limit);
+            $page = max(1, min($page, $totalPages ?: 1));
+            $eventsSlice = array_slice($allEvents, ($page - 1) * $limit, $limit);
+
             $data = array_map(fn($e) => [
                 'id'                   => $e->getIdEvenement(),
                 'titre'                => $e->getTitre(),
@@ -122,15 +121,29 @@ class JpoController extends AbstractController
             ]);
         }
 
+        // Full-page render: use KnpPaginator with a Doctrine Query
+        $query = $this->jpoRepository->findFilteredQuery(
+            $search ?: null,
+            $sortBy,
+            $sortDir,
+            $history,
+            $user->getId()
+        );
+
+        $events = $paginator->paginate($query, $page, $limit, [
+            // We handle sorting ourselves in findFilteredQuery() via the ?sort=&dir= params.
+            // Disable KnpPaginator's auto-sort so it doesn't try to reinterpret ?sort=dateEvenement
+            // as a bare DQL field (it needs the alias prefix j.dateEvenement to be valid).
+            'sortFieldWhitelist' => [],
+        ]);
+
         return $this->render('jpo/my_events.html.twig', [
-            'events'      => $eventsSlice,
-            'search'      => $search,
-            'sortBy'      => $sortBy,
-            'sortDir'     => $sortDir,
-            'currentPage' => $page,
-            'totalPages'  => $totalPages,
-            'limit'       => $limit,
-            'history'     => $history,
+            'events'  => $events,
+            'search'  => $search,
+            'sortBy'  => $sortBy,
+            'sortDir' => $sortDir,
+            'limit'   => $limit,
+            'history' => $history,
         ]);
     }
 
@@ -246,7 +259,7 @@ class JpoController extends AbstractController
      */
     #[Route('/register/{id}', name: 'register', methods: ['POST'])]
     #[IsGranted('ROLE_INVESTISSEUR')]
-    public function register(int $id, EntityManagerInterface $em): JsonResponse
+    public function register(int $id, EntityManagerInterface $em, \App\Service\DiscoveryService $discoveryService): JsonResponse
     {
         /** @var Utilisateur|null $user */
         $user = $this->getUser();
@@ -288,7 +301,25 @@ class JpoController extends AbstractController
         $em->persist($participation);
         $em->flush();
 
-        return new JsonResponse(['success' => true]);
+        // Get AI Suggestion
+        $suggestion = $discoveryService->getNearbySuggestion($event);
+        $suggestionData = null;
+        if ($suggestion) {
+            $suggestedEvent = $suggestion['event'];
+            $suggestionData = [
+                'id' => $suggestedEvent->getIdEvenement(),
+                'titre' => $suggestedEvent->getTitre(),
+                'lieu' => $suggestedEvent->getLieu(),
+                'date' => $suggestedEvent->getDateEvenement()->format('d/m/Y'),
+                'image' => $suggestedEvent->getImagePath(),
+                'hook' => $suggestion['hook']
+            ];
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'suggestion' => $suggestionData
+        ]);
     }
 
     /**
@@ -340,6 +371,20 @@ class JpoController extends AbstractController
         $event->setMaxParticipants($maxParticipants > 0 ? $maxParticipants : 50);
         $event->setImagePath($imagePath);
         $event->setIdCreateur($user->getId());
+
+        // Simple Geocoding for AI Discovery
+        if ($lieu) {
+            $lowerLieu = strtolower($lieu);
+            if (str_contains($lowerLieu, 'paris')) {
+                $event->setLatitude(48.8566); $event->setLongitude(2.3522);
+            } elseif (str_contains($lowerLieu, 'tunis')) {
+                $event->setLatitude(36.8065); $event->setLongitude(10.1815);
+            } else {
+                // Mock coordinate near Tunis for the demo if unknown
+                $event->setLatitude(36.8000 + (rand(-100, 100) / 2000));
+                $event->setLongitude(10.1800 + (rand(-100, 100) / 2000));
+            }
+        }
 
         $this->jpoRepository->save($event);
 
@@ -400,6 +445,20 @@ class JpoController extends AbstractController
         $event->setLieu($lieu ?: null);
         $event->setDescription($description ?: null);
         $event->setMaxParticipants($maxParticipants > 0 ? $maxParticipants : 50);
+
+        // Update geocoding if location name changed
+        if ($lieu) {
+            $lowerLieu = strtolower($lieu);
+            if (str_contains($lowerLieu, 'paris')) {
+                $event->setLatitude(48.8566); $event->setLongitude(2.3522);
+            } elseif (str_contains($lowerLieu, 'tunis')) {
+                $event->setLatitude(36.8065); $event->setLongitude(10.1815);
+            } else {
+                // Keep jitter for variety
+                $event->setLatitude(36.8000 + (rand(-100, 100) / 2000));
+                $event->setLongitude(10.1800 + (rand(-100, 100) / 2000));
+            }
+        }
 
         $this->jpoRepository->save($event);
 
@@ -492,16 +551,20 @@ class JpoController extends AbstractController
         }
         
         $now = new \DateTime();
-        $intervalHours = ($event->getDateEvenement()->getTimestamp() - $now->getTimestamp()) / 3600;
+        $eventStart = $event->getDateEvenement();
+        $intervalHours = ($eventStart->getTimestamp() - $now->getTimestamp()) / 3600;
         $isWithin24h = ($intervalHours > 0 && $intervalHours < 24);
+        
+        $chatReadOnly = $now > (clone $eventStart)->modify('+12 hours');
 
         return $this->render('jpo/event_details.html.twig', [
             'event' => $event,
             'isRegistered' => $isRegistered,
             'hasBadge' => $hasBadge,
             'isWithin24h' => $isWithin24h,
+            'chatReadOnly' => $chatReadOnly,
             'isOwner' => $user && $event->getIdCreateur() === $user->getId(),
-            'deadlineTimestamp' => $event->getDateEvenement()->getTimestamp() - 86400 // -24 hours
+            'deadlineTimestamp' => $eventStart->getTimestamp() - 86400 // -24 hours
         ]);
     }
 

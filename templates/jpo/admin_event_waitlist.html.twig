@@ -3,7 +3,7 @@
 {% block title %}Liste d'attente - {{ event.titre }} — CashFly{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('assets/styles/jpo.css') }}">
+<link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
 <style>
     .admin-table {
         width: 100%;
@@ -37,6 +37,19 @@
     .btn-small {
         padding: 6px 12px;
         font-size: 11px;
+    }
+
+    .badge-status {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .badge-en_attente {
+        background: rgba(234, 179, 8, 0.2);
+        color: #facc15;
     }
 
     .position-badge {
@@ -75,7 +88,7 @@
     <table class="admin-table">
         <thead>
             <tr>
-                <th>Position</th>
+                <th>Type / Position</th>
                 <th>Utilisateur</th>
                 <th>Date demande</th>
                 <th>Actions</th>
@@ -84,14 +97,42 @@
         <tbody>
             {% for w in waitlist %}
             <tr>
-                <td><span class="position-badge">#{{ w.entity.position }}</span></td>
+                <td>
+                    {% if w.type == 'pending' %}
+                    <span class="badge-status badge-en_attente">EN ATTENTE</span>
+                    {% else %}
+                    <span class="position-badge">#{{ w.entity.position }}</span>
+                    <span style="font-size: 10px; color: var(--text-dim); margin-left: 4px;">LISTE D'ATTENTE</span>
+                    {% endif %}
+                </td>
                 <td>
                     <div style="font-weight: 600;">{{ w.user.nomComplet }}</div>
                     <div style="font-size: 11px; color: var(--text-dim);">{{ w.user.email }}</div>
                 </td>
-                <td style="font-size: 12px;">{{ w.entity.dateDemande|date('d/m/Y H:i') }}</td>
+                <td style="font-size: 12px;">{{ w.date|date('d/m/Y H:i') }}</td>
                 <td>
                     <div style="display: flex; gap: 8px;">
+                        {% if w.type == 'pending' %}
+                        <form method="POST" action="{{ path('jpo_admin_event_participants', {id: event.idEvenement}) }}"
+                            style="margin: 0;">
+                            <input type="hidden" name="participation_id" value="{{ w.entity.idParticipation }}">
+                            <input type="hidden" name="action" value="update_status">
+                            <input type="hidden" name="statut" value="confirmé">
+                            <button type="submit" class="btn btn-primary btn-small">
+                                <i class="ph ph-check-circle"></i> Confirmer
+                            </button>
+                        </form>
+                        <form method="POST" action="{{ path('jpo_admin_event_participants', {id: event.idEvenement}) }}"
+                            style="margin: 0;"
+                            onsubmit="event.preventDefault(); window.uiConfirm('Annuler cette inscription ?', () => this.submit(), 'ANNULER', 'RETOUR', 'Confirmation', true)">
+                            <input type="hidden" name="participation_id" value="{{ w.entity.idParticipation }}">
+                            <input type="hidden" name="action" value="update_status">
+                            <input type="hidden" name="statut" value="annulé">
+                            <button type="submit" class="btn btn-secondary btn-small" style="color: #ef4444;">
+                                <i class="ph ph-x-circle"></i> Annuler
+                            </button>
+                        </form>
+                        {% else %}
                         <form method="POST" style="margin: 0;">
                             <input type="hidden" name="waitlist_id" value="{{ w.entity.idAttente }}">
                             <input type="hidden" name="action" value="promote">
@@ -107,12 +148,14 @@
                             <button type="submit" class="btn btn-secondary btn-small" style="color: #ef4444;"><i
                                     class="ph ph-x-circle"></i> Retirer</button>
                         </form>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-dim);">La liste d'attente est vide.</td>
+                <td colspan="4" style="text-align: center; color: var(--text-dim);">Personne ne patiente pour cet
+                    événement.</td>
             </tr>
             {% endfor %}
         </tbody>
