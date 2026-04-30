@@ -1,0 +1,290 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Propriétaires — CashFly{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+    }
+
+    .page-wrapper {
+        padding: 2.5rem;
+        background-color: #f1f5f9;
+        min-height: 100vh;
+    }
+
+    .page-header h1 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+    }
+
+    /* Search Bar Styling */
+    .search-container {
+        position: relative;
+        margin-bottom: 2.5rem;
+    }
+
+    .modern-search {
+        width: 100%;
+        padding: 1.2rem 1.5rem 1.2rem 3.5rem;
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,0.8);
+        background: white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .modern-search:focus {
+        outline: none;
+        box-shadow: 0 10px 25px rgba(99, 102, 241, 0.1);
+        border-color: #6366f1;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2rem;
+        opacity: 0.5;
+    }
+
+    /* Cards Grid */
+    #results {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.8rem;
+    }
+
+    .modern-card {
+        background: #ffffff;
+        border-radius: 25px;
+        padding: 2rem;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.04);
+        border: 1px solid rgba(255,255,255,0.8);
+        transition: transform 0.3s ease;
+    }
+
+    .modern-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Avatar & Badge */
+    .avatar-wrapper {
+        position: relative;
+        width: 70px;
+        height: 70px;
+    }
+
+    .avatar-main {
+        width: 100%;
+        height: 100%;
+        border-radius: 18px;
+        background: #eef2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #6366f1;
+        overflow: hidden;
+        border: 2px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+
+    .avatar-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .role-badge {
+        display: inline-block;
+        background: #ecfdf5;
+        color: #059669;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-top: 0.5rem;
+    }
+
+    /* Contact Info Boxes */
+    .contact-info {
+        margin: 1.5rem 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .info-item {
+        background: #f8fafc;
+        padding: 0.8rem 1.2rem;
+        border-radius: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .info-item label {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .info-item span {
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    /* Button */
+    .btn-whatsapp {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 15px;
+        background: var(--primary-gradient);
+        color: white !important;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        font-weight: 700;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .btn-whatsapp:hover {
+        box-shadow: 0 15px 25px rgba(99, 102, 241, 0.3);
+        transform: scale(1.02);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="page-header mb-4">
+        <h1>Propriétaires disponibles</h1>
+        <p style="color: var(--text-muted);">Trouvez des propriétaires à contacter pour vos futurs investissements</p>
+    </div>
+
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input 
+            type="text" 
+            id="searchInput" 
+            class="modern-search" 
+            placeholder="Rechercher par nom, CIN ou téléphone..."
+        >
+    </div>
+
+    <div id="results">
+        {% for user in users %}
+            <div class="modern-card">
+                <div style="display:flex; align-items:center; gap:1.2rem; margin-bottom:1rem;">
+                    <div class="avatar-wrapper">
+                        <div class="avatar-main">
+                            {% if user.faceImage %}
+                                <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}">
+                            {% else %}
+                                {{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="font-family:'Syne',sans-serif; font-weight:800; margin:0; font-size:1.2rem;">{{ user.fullName }}</h3>
+                        <span class="role-badge">PROPRIÉTAIRE</span>
+                    </div>
+                </div>
+
+                <div class="contact-info">
+                    <div class="info-item">
+                        <label>CIN</label>
+                        <span>{{ user.cin }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Téléphone</label>
+                        <span>{{ user.tel }}</span>
+                    </div>
+                </div>
+
+                <a class="btn-whatsapp" target="_blank" href="https://wa.me/216{{ user.tel }}">
+                    <span>💬</span> Contacter via WhatsApp
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+// نفس منطق الـ JavaScript السابق مع تحديث الـ Template الراجع من الـ Fetch
+const input = document.getElementById('searchInput');
+const results = document.getElementById('results');
+const initialContent = results.innerHTML;
+let timeout = null;
+let controller = null;
+
+input.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        if (input.value.trim() === '') {
+            results.innerHTML = initialContent;
+            return;
+        }
+
+        if (controller) controller.abort();
+        controller = new AbortController();
+
+        fetch(`/investisseur/explore?q=${input.value}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            signal: controller.signal
+        })
+        .then(res => res.json())
+        .then(data => {
+            results.innerHTML = '';
+            if (!data.length) {
+                results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:3rem; opacity:.5;">Aucun propriétaire trouvé</div>`;
+                return;
+            }
+
+            data.forEach(user => {
+                results.innerHTML += `
+                    <div class="modern-card">
+                        <div style="display:flex; align-items:center; gap:1.2rem; margin-bottom:1rem;">
+                            <div class="avatar-wrapper">
+                                <div class="avatar-main">
+                                    ${user.faceImage 
+                                        ? `<img src="/uploads/faces/${user.faceImage}">` 
+                                        : `<span>${user.prenom[0].toUpperCase()}${user.nom[0].toUpperCase()}</span>`
+                                    }
+                                </div>
+                            </div>
+                            <div>
+                                <h3 style="font-family:'Syne',sans-serif; font-weight:800; margin:0; font-size:1.2rem;">${user.fullName}</h3>
+                                <span class="role-badge">PROPRIÉTAIRE</span>
+                            </div>
+                        </div>
+                        <div class="contact-info">
+                            <div class="info-item"><label>CIN</label><span>${user.cin}</span></div>
+                            <div class="info-item"><label>Téléphone</label><span>${user.tel}</span></div>
+                        </div>
+                        <a class="btn-whatsapp" target="_blank" href="https://wa.me/216${user.tel}">
+                            <span>💬</span> Contacter via WhatsApp
+                        </a>
+                    </div>
+                `;
+            });
+        })
+        .catch(err => { if (err.name !== 'AbortError') console.error(err); });
+    }, 400);
+});
+</script>
+{% endblock %}

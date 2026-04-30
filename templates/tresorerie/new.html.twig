@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Account | FinArchitect{% endblock %}
+
+{% block header_title %}Create New Account{% endblock %}
+{% block header_subtitle %}Set up a new bank or cash account for your PME.{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto bg-surface-container-lowest rounded-3xl p-10 shadow-sm">
+    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+        <div class="text-error text-sm mb-4">
+            {{ form_errors(form) }}
+        </div>
+        <div class="space-y-1.5">
+            {{ form_label(form.nomCompte, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+            {{ form_widget(form.nomCompte, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+            {{ form_errors(form.nomCompte) }}
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-1.5">
+                {{ form_label(form.typeCompte, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.typeCompte, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+                {{ form_errors(form.typeCompte) }}
+            </div>
+            <div class="space-y-1.5">
+                {{ form_label(form.entreprise, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.entreprise, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+                {{ form_errors(form.entreprise) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-1.5">
+                {{ form_label(form.solde, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.solde, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+                {{ form_errors(form.solde) }}
+            </div>
+            <div class="space-y-1.5">
+                {{ form_label(form.devise, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.devise, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+                {{ form_errors(form.devise) }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="space-y-1.5">
+                {{ form_label(form.rib, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.rib, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+                {{ form_errors(form.rib) }}
+            </div>
+            <div class="space-y-1.5">
+                {{ form_label(form.numeroCompte, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.numeroCompte, {'attr': {'class': 'w-full bg-surface-container-low border-none focus:ring-2 focus:ring-primary/40 rounded-xl py-4 px-6 text-on-surface placeholder-outline/30 transition-all duration-300'}}) }}
+                {{ form_errors(form.numeroCompte) }}
+            </div>
+        </div>
+
+        <div class="flex gap-4 pt-6">
+            <a href="{{ path('app_tresorerie_index') }}" class="flex-1 py-4 text-center bg-slate-100 text-secondary text-xs font-black uppercase tracking-widest rounded-xl hover:bg-slate-200 transition-all">
+                Cancel
+            </a>
+            <button class="flex-1 py-4 bg-primary text-white text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-container transition-all active:scale-95" type="submit">
+                Create Account
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

@@ -1,0 +1,288 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails - {{ document.nomDocument }}{% endblock %}
+
+{% block body %}
+    <style>
+        form[action*="delete"] button {
+            background-color: #ba1a1a;
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        form[action*="delete"] button:hover { transform: scale(0.95); }
+        .ocr-text {
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .ocr-loading {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-top-color: #0059c3;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <a href="{{ path('app_document_index') }}" class="text-xs font-bold uppercase tracking-widest text-primary hover:text-blue-700 mb-4 inline-flex items-center gap-1 transition-colors">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                Retour à la liste
+            </a>
+            <h1 class="text-4xl font-black tracking-tight text-on-surface mb-2">Fiche Document</h1>
+            <p class="text-secondary font-medium">Informations sur <strong>{{ document.nomDocument }}</strong>.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{{ path('document_workflow', {id: document.id}) }}" class="flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all
+                {% if document.statut == 'approuve' %}bg-green-100 text-green-700 hover:bg-green-200
+                {% elseif document.statut == 'rejete' %}bg-red-100 text-red-700 hover:bg-red-200
+                {% elseif document.statut in ['soumis', 'en_revision'] %}bg-amber-100 text-amber-700 hover:bg-amber-200
+                {% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+                <span class="material-symbols-outlined text-sm">account_tree</span>
+                Workflow
+            </a>
+            <a href="{{ path('app_document_edit', {'id': document.id}) }}" class="flex items-center gap-2 bg-slate-100 text-tertiary hover:bg-tertiary hover:text-white px-5 py-3 rounded-xl text-sm font-bold transition-all">
+                <span class="material-symbols-outlined text-sm">edit</span>
+                Modifier
+            </a>
+            {{ include('document/_delete_form.html.twig') }}
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Informations principales -->
+        <div class="lg:col-span-2">
+            <div class="bg-surface-container-lowest rounded-3xl p-8 shadow-lg border border-outline-variant/20 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Identifiant</span>
+                        <span class="text-base font-semibold text-on-surface">#{{ document.id }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Nom</span>
+                        <span class="text-base font-bold text-on-surface">{{ document.nomDocument }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Entreprise liée</span>
+                        <span class="text-base font-semibold text-on-surface">{{ document.entreprise ? document.entreprise.nom : '-' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Type</span>
+                        <span class="text-base font-semibold text-on-surface">{{ document.typeDocument ?: '-' }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Statut Workflow</span>
+                        <span class="inline-flex items-center gap-1 text-base font-semibold
+                            {% if document.statut == 'approuve' %}text-green-600
+                            {% elseif document.statut == 'rejete' %}text-red-600
+                            {% elseif document.statut in ['soumis', 'en_revision'] %}text-amber-600
+                            {% else %}text-slate-600{% endif %}">
+                            <span class="material-symbols-outlined text-sm">
+                                {% if document.statut == 'approuve' %}verified
+                                {% elseif document.statut == 'rejete' %}cancel
+                                {% elseif document.statut == 'soumis' %}send
+                                {% elseif document.statut == 'en_revision' %}edit_note
+                                {% else %}edit{% endif %}
+                            </span>
+                            {{ document.statutLabel }}
+                        </span>
+                    </div>
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Date Upload</span>
+                        <span class="text-base font-semibold text-on-surface">{{ document.dateUpload ? document.dateUpload|date('d/m/Y H:i') : '-' }}</span>
+                    </div>
+                    {% if document.nomValidateur %}
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Validateur</span>
+                        <span class="text-base font-semibold text-on-surface">{{ document.nomValidateur }}</span>
+                    </div>
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Date Validation</span>
+                        <span class="text-base font-semibold text-on-surface">{{ document.dateValidation ? document.dateValidation|date('d/m/Y H:i') : '-' }}</span>
+                    </div>
+                    {% endif %}
+                    {% if document.commentaire %}
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4 md:col-span-2">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Commentaire</span>
+                        <span class="text-base text-on-surface">{{ document.commentaire }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="flex flex-col border-b border-outline-variant/10 pb-4 md:col-span-3">
+                        <span class="text-xs font-bold text-secondary uppercase tracking-widest mb-1">Description</span>
+                        <span class="text-base text-on-surface">{{ document.description ?: '-' }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fichiers -->
+            {% if document.cheminFichier %}
+            <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-lg border border-outline-variant/20 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">attach_file</span>
+                        Fichiers joints ({{ document.cheminFichier|split(',')|length }})
+                    </h3>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    {% for fichier in document.cheminFichier|split(',') %}
+                    <a href="{{ fichier }}" target="_blank" class="flex items-center gap-2 px-4 py-3 bg-surface-container-low rounded-xl hover:bg-outline-variant transition-colors">
+                        <span class="material-symbols-outlined text-primary">description</span>
+                        <div>
+                            <span class="text-sm font-medium text-on-surface block">{{ fichier|split('/')|last }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- OCR Text -->
+            <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-lg border border-outline-variant/20">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-purple-600">auto_awesome</span>
+                        Texte OCR (Extraction IA)
+                    </h3>
+                    {% if document.cheminFichier %}
+                    <form action="{{ path('document_ocr', {id: document.id}) }}" method="POST" id="ocrForm" class="inline">
+                        <button type="submit" id="ocrBtn" class="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-purple-700 transition-colors">
+                            <span class="material-symbols-outlined text-sm" id="ocrIcon">document_scanner</span>
+                            <span id="ocrBtnText">Extraire le texte</span>
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <div id="ocrResult">
+                    {% if document.texteOcr %}
+                    <div class="ocr-text bg-surface-container-low rounded-xl p-4 border border-outline-variant/20">
+                        {{ document.texteOcr }}
+                    </div>
+                    <div class="mt-3 flex items-center gap-2 text-sm text-secondary">
+                        <span class="material-symbols-outlined text-sm text-green-600">check_circle</span>
+                        Texte extrait avec succès
+                    </div>
+                    {% else %}
+                    <div class="text-center py-8">
+                        <div class="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-outlined text-3xl text-secondary">text_fields</span>
+                        </div>
+                        <p class="text-secondary mb-2">Aucun texte extrait</p>
+                        <p class="text-xs text-muted">Cliquez sur "Extraire le texte" pour lancer la reconnaissance OCR</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar - Historique -->
+        <div>
+            {% if document.historique|length > 0 %}
+            <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-lg border border-outline-variant/20">
+                <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-tertiary">history</span>
+                    Historique
+                </h3>
+                <div class="space-y-3">
+                    {% for entry in document.historique|reverse %}
+                    <div class="flex items-start gap-3 p-3 bg-surface-container-low rounded-xl">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0
+                            {% if 'Approuvé' in entry.action %}bg-green-100 text-green-600
+                            {% elseif 'Rejeté' in entry.action %}bg-red-100 text-red-600
+                            {% elseif 'Soumis' in entry.action %}bg-blue-100 text-blue-600
+                            {% else %}bg-slate-100 text-slate-600{% endif %}">
+                            <span class="material-symbols-outlined text-sm">
+                                {% if 'Approuvé' in entry.action %}check_circle
+                                {% elseif 'Rejeté' in entry.action %}cancel
+                                {% elseif 'Soumis' in entry.action %}send
+                                {% else %}edit{% endif %}
+                            </span>
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <p class="font-semibold text-on-surface text-sm">{{ entry.action }}</p>
+                            {% if entry.user %}
+                            <p class="text-xs text-secondary">Par: {{ entry.user }}</p>
+                            {% endif %}
+                            {% if entry.details %}
+                            <p class="text-xs text-muted mt-1 italic">"{{ entry.details|length > 50 ? entry.details|slice(0, 50) ~ '...' : entry.details }}"</p>
+                            {% endif %}
+                            <p class="text-xs text-secondary mt-1">{{ entry.date }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ocrForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('ocrBtn');
+            const icon = document.getElementById('ocrIcon');
+            const btnText = document.getElementById('ocrBtnText');
+            const resultDiv = document.getElementById('ocrResult');
+            
+            btn.disabled = true;
+            icon.textContent = 'progress_activity';
+            icon.classList.add('animate-spin');
+            btnText.textContent = 'Extraction en cours...';
+            
+            fetch('{{ path('document_ocr', {id: document.id}) }}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="ocr-text bg-surface-container-low rounded-xl p-4 border border-green-200">
+                            ${data.text.replace(/\n/g, '<br>')}
+                        </div>
+                        <div class="mt-3 flex items-center gap-2 text-sm text-green-600">
+                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                            ${data.message}
+                        </div>
+                    `;
+                } else {
+                    alert(data.error || 'Erreur lors de l\'extraction');
+                    btn.disabled = false;
+                    icon.textContent = 'document_scanner';
+                    icon.classList.remove('animate-spin');
+                    btnText.textContent = 'Extraire le texte';
+                }
+            })
+            .catch(error => {
+                alert('Erreur: ' + error);
+                btn.disabled = false;
+                icon.textContent = 'document_scanner';
+                icon.classList.remove('animate-spin');
+                btnText.textContent = 'Extraire le texte';
+            });
+        });
+    </script>
+{% endblock %}

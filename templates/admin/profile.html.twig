@@ -1,0 +1,262 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil — Admin{% endblock %}
+
+{% block body %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        --admin-dark: #0f172a;
+        --admin-card: #1e293b;
+        --text-slate: #94a3b8;
+    }
+
+    .profile-container {
+        padding: 2.5rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .page-header h1 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    .modern-card {
+        background: var(--admin-card);
+        border-radius: 24px;
+        padding: 2.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Left Side: Admin Identity */
+    .profile-card-left {
+        text-align: center;
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        width: 140px;
+        height: 140px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .avatar-glow {
+        position: absolute;
+        inset: -5px;
+        background: var(--primary-gradient);
+        border-radius: 40px;
+        filter: blur(15px);
+        opacity: 0.3;
+    }
+
+    .avatar-main {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #0f172a;
+        border-radius: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #818cf8;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+    }
+
+    .avatar-main img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .role-badge-admin {
+        background: rgba(99, 102, 241, 0.15);
+        color: #818cf8;
+        padding: 6px 16px;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+
+    /* Form Styling */
+    .form-label {
+        color: var(--text-slate);
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 0.6rem;
+        display: block;
+    }
+
+    .form-control {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        color: white;
+        width: 100%;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #6366f1;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    /* Buttons */
+    .btn-admin-primary {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        width: 100%;
+        cursor: pointer;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-admin-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-dashboard {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: var(--text-slate);
+        text-decoration: none;
+        margin-top: 2rem;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+    .btn-dashboard:hover { color: white; }
+
+    @media (max-width: 992px) {
+        .profile-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="page-header">
+        <h1>Mon Profil</h1>
+        <p style="color: var(--text-slate);">Gestion du compte administrateur CashFly</p>
+    </div>
+
+    <div class="profile-grid">
+        <div class="modern-card profile-card-left">
+            <div class="avatar-wrapper">
+                <div class="avatar-glow"></div>
+                <div class="avatar-main">
+                    {% if app.user.faceImage %}
+                        <img src="{{ asset('uploads/faces/' ~ app.user.faceImage) }}" alt="Admin">
+                    {% else %}
+                        {{ app.user.prenom|slice(0,1)|upper }}{{ app.user.nom|slice(0,1)|upper }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <h3 style="font-family:'Syne',sans-serif; font-weight:800; color:white; margin-bottom:0.5rem; font-size:1.5rem;">
+                {{ app.user.fullName }}
+            </h3>
+            <span class="role-badge-admin">Administrateur</span>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                <div style="margin-bottom: 1rem;">
+                    <label style="display:block; font-size: 0.65rem; font-weight:800; color:#475569; text-transform:uppercase;">Email</label>
+                    <span style="color: #e2e8f0; font-size: 0.9rem;">{{ app.user.email }}</span>
+                </div>
+                <div>
+                    <label style="display:block; font-size: 0.65rem; font-weight:800; color:#475569; text-transform:uppercase;">CIN</label>
+                    <span style="color: #e2e8f0; font-size: 0.9rem;">{{ app.user.cin }}</span>
+                </div>
+            </div>
+
+            <a href="{{ path('admin_dashboard') }}" class="btn-dashboard">
+                <span>←</span> Dashboard
+            </a>
+        </div>
+
+        <div class="modern-card">
+            <h2 style="font-family:'Syne',sans-serif; font-weight:800; color:white; font-size:1.2rem; margin-bottom:2rem; display:flex; align-items:center; gap:10px;">
+                <span style="color:#6366f1;">●</span> Paramètres du compte
+            </h2>
+
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form_label(form.nom, "Nom", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.nom) }}</div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.prenom, "Prénom", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.prenom) }}</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form_label(form.cin, "CIN", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.cin) }}</div>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.tel, "Téléphone", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.tel, {'attr': {'class': 'form-control'}}) }}
+                        <div style="color: #f87171; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.tel) }}</div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 2.5rem;">
+                    {{ form_label(form.faceImageFile, "Photo d'identité (Biométrie)", {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.faceImageFile, {'attr': {'class': 'form-control'}}) }}
+                    <small style="color: #64748b; display:block; mt: 8px;">Utilisée pour la reconnaissance faciale.</small>
+                    <div style="color: #f87171; font-size: 0.8rem; margin-top: 4px;">{{ form_errors(form.faceImageFile) }}</div>
+                </div>
+
+                <button type="submit" class="btn-admin-primary">
+                    Mettre à jour le profil
+                </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

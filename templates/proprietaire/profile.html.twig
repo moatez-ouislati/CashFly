@@ -1,0 +1,233 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil — Propriétaire{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --bg-light: #f8fafc;
+        --card-white: #ffffff;
+        --primary-blue: #4f46e5;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+        --border-color: #e2e8f0;
+    }
+
+    .page-wrapper {
+        background-color: var(--bg-light);
+        min-height: 100vh;
+        padding: 2.5rem;
+        color: var(--text-dark);
+    }
+
+    .header-title h1 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        color: var(--text-dark);
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    /* Cards Styling */
+    .profile-card {
+        background: var(--card-white);
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .left-panel {
+        text-align: center;
+        height: fit-content;
+    }
+
+    /* Avatar System */
+    .avatar-container {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 1.5rem;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: white;
+        overflow: hidden;
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.2);
+    }
+
+    .avatar-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .role-label {
+        background: #eef2ff;
+        color: var(--primary-blue);
+        padding: 5px 15px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    /* Form Design */
+    .form-label {
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        border: 1px solid var(--border-color) !important;
+        background-color: #fdfdfd !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 1rem !important;
+        color: var(--text-dark) !important;
+        transition: all 0.2s;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+        background-color: #fff !important;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Button Styling */
+    .btn-submit {
+        background: var(--primary-blue);
+        color: white !important;
+        border: none;
+        padding: 1rem;
+        border-radius: 12px;
+        font-weight: 700;
+        width: 100%;
+        margin-top: 1rem;
+        transition: transform 0.2s, background 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-submit:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+    }
+
+    .btn-back-dashboard {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        margin-top: 1.5rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .btn-back-dashboard:hover {
+        color: var(--primary-blue);
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="header-title">
+        <h1>Mon Profil</h1>
+        <p style="color: var(--text-muted);">Gérez vos informations de compte CashFly.</p>
+    </div>
+
+    <div class="profile-grid">
+        <div class="profile-card left-panel">
+            <div class="avatar-container">
+                {% if user.faceImage %}
+                    <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}" alt="User Profile">
+                {% else %}
+                    {{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}
+                {% endif %}
+            </div>
+            
+            <h3 style="margin-bottom: 0.5rem; font-weight: 700;">{{ user.fullName }}</h3>
+            <span class="role-label">Propriétaire</span>
+            
+            <p style="color: var(--text-muted); margin-top: 1.5rem; font-size: 0.85rem;">
+                {{ user.email }}
+            </p>
+
+            <hr style="border: none; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+
+            <a href="{{ path('proprietaire_dashboard') }}" class="btn-back-dashboard">
+                <i class="fas fa-arrow-left"></i> Retour au Dashboard
+            </a>
+        </div>
+
+        <div class="profile-card">
+            <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 2rem; color: var(--text-dark);">
+                Informations Personnelles
+            </h2>
+
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nom</label>
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger small">{{ form_errors(form.nom) }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prénom</label>
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger small">{{ form_errors(form.prenom) }}</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Numéro CIN</label>
+                        {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger small">{{ form_errors(form.cin) }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Téléphone</label>
+                        {{ form_widget(form.tel, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger small">{{ form_errors(form.tel) }}</div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 2rem;">
+                    <label class="form-label">Photo de profil</label>
+                    {{ form_widget(form.faceImageFile, {'attr': {'class': 'form-control'}}) }}
+                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">
+                        Utilisée pour la vérification de votre identité.
+                    </small>
+                    <div class="text-danger small">{{ form_errors(form.faceImageFile) }}</div>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Enregistrer les modifications
+                </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

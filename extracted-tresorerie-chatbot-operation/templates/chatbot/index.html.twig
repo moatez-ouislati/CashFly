@@ -1,0 +1,288 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Assistant Financier - CashFly{% endblock %}
+
+{% block header_title %}Assistant Financier{% endblock %}
+{% block header_subtitle %}Votre conseiller spécialisé en gestion financière{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Chat Container -->
+    <div class="bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant/10 overflow-hidden flex flex-col h-[600px]">
+        
+        <!-- Header -->
+        <div class="p-6 border-b border-outline-variant/10 bg-white flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-2xl">smart_toy</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-black text-on-surface">Assistant CashFly</h2>
+                <p class="text-on-surface-variant text-sm font-medium">Connecté via l'Intelligence Artificielle</p>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 bg-slate-50/50 space-y-6">
+            
+            <!-- Welcome Message -->
+            <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                    <span class="material-symbols-outlined text-sm">smart_toy</span>
+                </div>
+                <div class="bg-white border border-outline-variant/20 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-[80%]">
+                    <p class="text-on-surface text-sm leading-relaxed mb-2 font-medium">Bonjour ! Je suis votre assistant financier spécialisé. Je peux vous aider à :</p>
+                    <ul class="space-y-1 text-sm text-on-surface-variant list-disc pl-5 mb-2">
+                        <li>Analyser vos opérations financières</li>
+                        <li>Exécuter des actions (ex: "Ajoute une dépense de 100 TND")</li>
+                        <li>Vous conseiller sur la gestion de trésorerie</li>
+                        <li>Expliquer vos indicateurs financiers</li>
+                    </ul>
+                    <p class="text-on-surface font-bold text-sm">Comment puis-je vous aider aujourd'hui ?</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white border-t border-outline-variant/10">
+            <div class="relative flex items-center">
+                <input type="text" id="chatInput" placeholder="Posez votre question ou demandez une action..." 
+                       class="w-full bg-surface-container-low border border-outline-variant/30 rounded-full py-4 pl-6 pr-16 text-sm text-on-surface focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all outline-none" 
+                       autocomplete="off">
+                <button type="button" id="sendBtn" class="absolute right-2 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-lg ml-1">send</span>
+                </button>
+            </div>
+            <p class="text-xs text-center text-on-surface-variant mt-3 font-medium flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">info</span>
+                Je suis limité aux sujets financiers et à la gestion de votre PME.
+            </p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/40 hover:bg-primary/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Fais-moi un résumé de ma trésorerie ce mois-ci">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-primary">insights</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Résumé mensuel</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Analyse des revenus et dépenses</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+        
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-success/40 hover:bg-success/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Comment puis-je optimiser mes dépenses ?">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-success/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-success">savings</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Conseils d'économie</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Stratégies pour optimiser les coûts</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-success opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+        
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-warning/40 hover:bg-warning/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Fais un virement de 500 TND vers mon autre compte">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-warning">sync_alt</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Virement interne</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Transférer des fonds facilement</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-warning opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+        
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-error/40 hover:bg-error/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Ajoute une dépense de 50 TND pour du matériel">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-error/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-error">add_shopping_cart</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Créer une dépense</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Enregistrer une opération</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-error opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<style>
+.typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    background-color: currentColor;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out both;
+}
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatMessages = document.getElementById('chatMessages');
+    const quickActions = document.querySelectorAll('.quick-action');
+
+    function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        addMessage(message, 'user');
+        chatInput.value = '';
+
+        showTypingIndicator();
+
+        fetch('/chatbot/message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ message: message })
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideTypingIndicator();
+            if (data.success) {
+                addMessage(data.message, 'bot', data.suggestions || [], data.is_automated);
+            } else {
+                addMessage('Désolé, une erreur est survenue: ' + (data.message || 'Erreur inconnue'), 'bot', [], true);
+            }
+        })
+        .catch(error => {
+            hideTypingIndicator();
+            addMessage('Erreur de connexion. Veuillez réessayer plus tard.', 'bot', [], true);
+            console.error('Error:', error);
+        });
+    }
+
+    function addMessage(text, sender, suggestions = [], isAutomated = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex gap-4 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+        
+        const avatar = sender === 'user' 
+            ? `<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface flex-shrink-0 shadow-sm"><span class="material-symbols-outlined text-sm">person</span></div>`
+            : `<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 shadow-md"><span class="material-symbols-outlined text-sm">smart_toy</span></div>`;
+
+        const contentClasses = sender === 'user' 
+            ? 'bg-primary text-white rounded-2xl rounded-tr-sm p-4 shadow-md max-w-[80%]' 
+            : 'bg-white border border-outline-variant/20 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-[80%]';
+            
+        const textClasses = sender === 'user' ? 'text-white text-sm leading-relaxed' : 'text-on-surface text-sm leading-relaxed';
+
+        let suggestionsHtml = '';
+        if (suggestions.length > 0) {
+            suggestionsHtml = '<div class="mt-3 flex flex-wrap gap-2">';
+            suggestions.forEach(suggestion => {
+                suggestionsHtml += `<button class="suggestion-chip px-3 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary hover:text-white transition-colors">${escapeHtml(suggestion)}</button>`;
+            });
+            suggestionsHtml += '</div>';
+        }
+
+        // Format basic markdown-like text from AI (bolding and bullets)
+        const formattedText = escapeHtml(text)
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>')
+            .replace(/•/g, '<span class="text-primary font-bold mr-1">•</span>');
+
+        let sourceBadge = '';
+        if (sender === 'bot') {
+            if (isAutomated) {
+                sourceBadge = '<div class="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-on-surface-variant flex items-center gap-1 font-medium"><span class="material-symbols-outlined text-[12px]">settings</span> Réponse automatique</div>';
+            } else {
+                sourceBadge = '<div class="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-primary flex items-center gap-1 font-bold"><span class="material-symbols-outlined text-[12px]">auto_awesome</span> Généré par IA</div>';
+            }
+        }
+
+        messageDiv.innerHTML = `
+            ${avatar}
+            <div class="${contentClasses}">
+                <p class="${textClasses}">${formattedText}</p>
+                ${suggestionsHtml}
+                ${sourceBadge}
+            </div>
+        `;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        messageDiv.querySelectorAll('.suggestion-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                chatInput.value = this.textContent;
+                sendMessage();
+            });
+        });
+    }
+
+    function showTypingIndicator() {
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.className = 'flex gap-4';
+        typingDiv.innerHTML = `
+            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                <span class="material-symbols-outlined text-sm">smart_toy</span>
+            </div>
+            <div class="bg-white border border-outline-variant/20 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-[80%] flex items-center">
+                <div class="typing-dots text-primary">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+            typingIndicator.remove();
+        }
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    
+    chatInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    quickActions.forEach(btn => {
+        btn.addEventListener('click', function() {
+            chatInput.value = this.dataset.message;
+            sendMessage();
+        });
+    });
+});
+</script>
+{% endblock %}

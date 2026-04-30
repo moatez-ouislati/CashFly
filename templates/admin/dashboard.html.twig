@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard — CashFly{% endblock %}
+
+{% block body %}
+<div class="p-6 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-black tracking-tight text-on-surface mb-2">Admin Dashboard</h1>
+        <p class="text-on-surface-variant">Gérez les utilisateurs, les rôles et l'activité globale de la plateforme.</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Users -->
+        <div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Total Utilisateurs</h3>
+                <div class="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined">groups</span>
+                </div>
+            </div>
+            <p class="text-4xl font-black text-on-surface">{{ stats.total }}</p>
+        </div>
+
+        <!-- Investisseurs -->
+        <div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Investisseurs</h3>
+                <div class="w-10 h-10 bg-tertiary/10 text-tertiary rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined">trending_up</span>
+                </div>
+            </div>
+            <p class="text-4xl font-black text-on-surface">{{ stats.investisseurs }}</p>
+        </div>
+
+        <!-- Proprietaires -->
+        <div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Propriétaires</h3>
+                <div class="w-10 h-10 bg-secondary/10 text-secondary rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined">real_estate_agent</span>
+                </div>
+            </div>
+            <p class="text-4xl font-black text-on-surface">{{ stats.proprietaires }}</p>
+        </div>
+
+        <!-- Admins -->
+        <div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col justify-between hover:shadow-md transition-all">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Admins</h3>
+                <div class="w-10 h-10 bg-error/10 text-error rounded-xl flex items-center justify-center">
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                </div>
+            </div>
+            <p class="text-4xl font-black text-on-surface">{{ stats.admins }}</p>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="bg-surface-container-lowest p-4 rounded-2xl border border-outline-variant/30 shadow-sm flex flex-col md:flex-row gap-4 items-center mb-6">
+        <div class="relative flex-1 w-full">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+            <input type="text" id="search" class="w-full pl-10 pr-4 py-2.5 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-on-surface" placeholder="Rechercher un utilisateur (Nom, Email...)">
+        </div>
+        
+        <select id="role" class="py-2.5 px-4 bg-surface-container-low border border-outline-variant/50 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-on-surface cursor-pointer">
+            <option value="">Tous les rôles</option>
+            <option value="ROLE_ADMIN">Admin</option>
+            <option value="ROLE_INVESTISSEUR">Investisseur</option>
+            <option value="ROLE_PROPRIETAIRE">Propriétaire</option>
+        </select>
+
+        <div class="flex items-center gap-3 ml-auto w-full md:w-auto">
+            <a href="{{ path('admin_export_pdf') }}" class="flex items-center gap-2 px-4 py-2.5 bg-secondary text-white rounded-xl text-sm font-semibold hover:bg-secondary/90 transition-all shadow-sm">
+                <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+                PDF
+            </a>
+            <a href="{{ path('app_entreprise_admin_index') }}" class="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-all shadow-sm shadow-primary/20">
+                <span class="material-symbols-outlined text-[20px]">business</span>
+                Entreprises
+            </a>
+            <a href="{{ path('app_document_admin_index') }}" class="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary-dark transition-all shadow-sm shadow-primary/20">
+                <span class="material-symbols-outlined text-[20px]">description</span>
+                Documents
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-2xl overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-surface-container-low/50 border-b border-outline-variant/30">
+                        <th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Utilisateur</th>
+                        <th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Contact</th>
+                        <th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Téléphone</th>
+                        <th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Statut</th>
+                        <th class="px-6 py-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table" class="divide-y divide-outline-variant/20">
+                    {% for user in users %}
+                    <tr class="hover:bg-surface-container-low/30 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                    {{ user.nom|first|upper }}{{ user.prenom|first|upper }}
+                                </div>
+                                <span class="font-bold text-on-surface">{{ user.fullName }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-on-surface-variant">{{ user.email }}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-on-surface">{{ user.tel }}</td>
+                        <td class="px-6 py-4">
+                            <span class="status-badge inline-flex items-center px-3 py-1 rounded-full text-xs font-bold {{ user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                {{ user.isActive ? 'Actif' : 'Inactif' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                <!-- Toggle Switch -->
+                                <label class="relative inline-flex items-center cursor-pointer mr-2">
+                                    <input type="checkbox" class="sr-only peer toggle" data-id="{{ user.id }}" {{ user.isActive ? 'checked' : '' }}>
+                                    <div class="w-11 h-6 bg-outline-variant rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                                
+                                <a href="{{ path('admin_edit_user',{id:user.id}) }}" class="p-2 bg-primary/10 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors" title="Modifier">
+                                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                                </a>
+                                
+                                <form method="post" action="{{ path('admin_delete_user',{id:user.id}) }}" class="inline-block" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                                    <button type="submit" class="p-2 bg-error/10 text-error hover:bg-error hover:text-white rounded-lg transition-colors" title="Supprimer">
+                                        <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Toggle Status Ajax
+document.addEventListener('change', function(e){
+    if(e.target.classList.contains('toggle')){
+        const id = e.target.dataset.id;
+        fetch(`/admin/user/${id}/toggle`, {
+            method: 'POST',
+            headers: {'X-Requested-With':'XMLHttpRequest'}
+        })
+        .then(res => res.json())
+        .then(data => {
+            const row = e.target.closest('tr');
+            const badge = row.querySelector('.status-badge');
+            if(data.active){
+                badge.textContent = 'Actif';
+                badge.className = 'status-badge status-active';
+            } else {
+                badge.textContent = 'Inactif';
+                badge.className = 'status-badge status-inactive';
+            }
+        });
+    }
+});
+
+// Basic Search Filter
+document.getElementById('search').addEventListener('keyup', function() {
+    let value = this.value.toLowerCase();
+    let rows = document.querySelectorAll('#table tr');
+    rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(value) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}
