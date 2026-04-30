@@ -11,7 +11,7 @@ CashFly is a comprehensive web platform designed to connect business owners (Pro
 - **Investisseur (Investor)**: Can explore companies and business owners, track their investments, monitor yield (Rendement), and view company locations on the interactive map. Must provide their investment budget and experience during profile setup.
 
 ---
-
+   
 ## 🚀 Full Feature List Per Module
 
 ### 1. 🏢 Gestion des Entreprises (Company Management)
