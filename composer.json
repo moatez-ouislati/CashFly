@@ -91,7 +91,8 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "test:static": "phpstan analyse"
     },
     "conflict": {
         "symfony/symfony": "*"
@@ -103,6 +104,8 @@
         }
     },
     "require-dev": {
+        "dama/doctrine-test-bundle": "^8.6",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.5",
         "symfony/browser-kit": "6.4.*",
         "symfony/css-selector": "6.4.*",

@@ -23,3 +23,5 @@
 
 ###< database >###
 /mycashflydb.sql
+/current_database_schema.sql
+

@@ -1,0 +1,415 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Binary operation "\." between array\|bool\|float\|int\|string\|UnitEnum\|null and ''/public'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTime constructor expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$description of method App\\Entity\\JourneePorteOuverte\:\:setDescription\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$idEvenement of method App\\Entity\\ParticipationJpo\:\:setIdEvenement\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$idUtilisateur of method App\\Entity\\ParticipationJpo\:\:setIdUtilisateur\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$lieu of method App\\Entity\\JourneePorteOuverte\:\:setLieu\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$statut of method App\\Entity\\ParticipationJpo\:\:setStatut\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#1 \$titre of method App\\Entity\\JourneePorteOuverte\:\:setTitre\(\) expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Parameter \#2 \$order of method Doctrine\\ORM\\QueryBuilder\:\:orderBy\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/AdminJpoController.php
+
+		-
+			message: '#^Call to an undefined method DateTimeInterface\:\:modify\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: src/Controller/ChatController.php
+
+		-
+			message: '#^Cannot call method getRoles\(\) on App\\Entity\\Utilisateur\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/Controller/ChatController.php
+
+		-
+			message: '#^Parameter \#1 \$idUtilisateur of method App\\Entity\\ChatMessage\:\:setIdUtilisateur\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ChatController.php
+
+		-
+			message: '#^Parameter \#1 \$idUtilisateur of method App\\Entity\\ChatPresence\:\:setIdUtilisateur\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ChatController.php
+
+		-
+			message: '#^Parameter \#1 \$userId of method App\\Repository\\JourneePorteOuverteRepository\:\:findUserRegistrationIds\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ChatController.php
+
+		-
+			message: '#^Parameter \#2 \$idUtilisateur of method App\\Repository\\ChatPresenceRepository\:\:findByRoomAndUser\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/ChatController.php
+
+		-
+			message: '#^Binary operation "\." between array\|bool\|float\|int\|string\|UnitEnum\|null and ''/''\|''\\\\'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Controller/ImageProxyController.php
+
+		-
+			message: '#^Binary operation "\." between array\|bool\|float\|int\|string\|UnitEnum\|null and ''/vendor/endroid/qr…'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Call to an undefined method DateTimeInterface\:\:modify\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Call to protected method getEntityManager\(\) of class Doctrine\\ORM\\EntityRepository\<App\\Entity\\JourneePorteOuverte\>\.$#'
+			identifier: method.protected
+			count: 2
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Expression on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.expr
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$content of class Symfony\\Component\\HttpFoundation\\Response constructor expects string\|null, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$datetime of class DateTime constructor expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$directory of function mkdir expects string, array\|bool\|float\|int\|string\|UnitEnum\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$filename of function is_dir expects string, array\|bool\|float\|int\|string\|UnitEnum\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$idEvenement of method App\\Entity\\ParticipationJpo\:\:setIdEvenement\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$idUtilisateur of method App\\Entity\\ParticipationJpo\:\:setIdUtilisateur\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$image of function imagedestroy expects GdImage, GdImage\|false given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$image of function imagesx expects GdImage, GdImage\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$image of function imagesy expects GdImage, GdImage\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$search of method App\\Repository\\JourneePorteOuverteRepository\:\:findFiltered\(\) expects string\|null, float\|int\<min, \-1\>\|int\<1, max\>\|string\|true\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$search of method App\\Repository\\JourneePorteOuverteRepository\:\:findFilteredQuery\(\) expects string\|null, float\|int\<min, \-1\>\|int\<1, max\>\|string\|true\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function mb_substr expects string, string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$string of function trim expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 7
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#1 \$userId of method App\\Repository\\JourneePorteOuverteRepository\:\:findUserRegistrationIds\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#2 \$data of function hash_hmac expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#2 \$sortBy of method App\\Repository\\JourneePorteOuverteRepository\:\:findFilteredQuery\(\) expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#2 \$src_image of function imagecopy expects GdImage, GdImage\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#2 \$src_image of function imagecopyresampled expects GdImage, GdImage\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#2 \$status of method App\\Repository\\JourneePorteOuverteRepository\:\:findFiltered\(\) expects string\|null, float\|int\<min, \-1\>\|int\<1, max\>\|string\|true\|null given\.$#'
+			identifier: argument.type
+			count: 2
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#3 \$sortBy of method App\\Repository\\JourneePorteOuverteRepository\:\:findFiltered\(\) expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#3 \$sortDir of method App\\Repository\\JourneePorteOuverteRepository\:\:findFilteredQuery\(\) expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#4 \$color of function imagefill expects int, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#4 \$sortDir of method App\\Repository\\JourneePorteOuverteRepository\:\:findFiltered\(\) expects string, bool\|float\|int\|string\|null given\.$#'
+			identifier: argument.type
+			count: 3
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#6 \$color of function imagefilledrectangle expects int, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#6 \$color of function imagerectangle expects int, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \#6 \$color of function imagettftext expects int, int\<0, max\>\|false given\.$#'
+			identifier: argument.type
+			count: 6
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Parameter \$data of class Endroid\\QrCode\\Builder\\Builder constructor expects string, string\|false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Controller/JpoController.php
+
+		-
+			message: '#^Property App\\Entity\\ChatMessage\:\:\$idMessage \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/ChatMessage.php
+
+		-
+			message: '#^Property App\\Entity\\ChatPresence\:\:\$idPresence \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/ChatPresence.php
+
+		-
+			message: '#^Property App\\Entity\\Entreprise\:\:\$capital \(string\|null\) is never assigned null so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Entreprise.php
+
+		-
+			message: '#^Property App\\Entity\\Entreprise\:\:\$idEntreprise \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Entreprise.php
+
+		-
+			message: '#^Property App\\Entity\\JourneePorteOuverte\:\:\$idEvenement \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/JourneePorteOuverte.php
+
+		-
+			message: '#^Property App\\Entity\\ListeAttente\:\:\$idAttente \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/ListeAttente.php
+
+		-
+			message: '#^Property App\\Entity\\ParticipationJpo\:\:\$idParticipation \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/ParticipationJpo.php
+
+		-
+			message: '#^Property App\\Entity\\Utilisateur\:\:\$id \(int\|null\) is never assigned int so it can be removed from the property type\.$#'
+			identifier: property.unusedType
+			count: 1
+			path: src/Entity/Utilisateur.php
+
+		-
+			message: '#^Method App\\Repository\\ChatMessageRepository\:\:findByRoom\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/ChatMessageRepository.php
+
+		-
+			message: '#^Method App\\Repository\\JourneePorteOuverteRepository\:\:findFiltered\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/JourneePorteOuverteRepository.php
+
+		-
+			message: '#^Method App\\Repository\\JourneePorteOuverteRepository\:\:findNearbyEvents\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/JourneePorteOuverteRepository.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:calculateDistance\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:calculateDistance\(\) has parameter \$lat1 with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:calculateDistance\(\) has parameter \$lat2 with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:calculateDistance\(\) has parameter \$lon1 with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:calculateDistance\(\) has parameter \$lon2 with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:findBestSubjectMatch\(\) has parameter \$candidates with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Method App\\Service\\DiscoveryService\:\:getNearbySuggestion\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Parameter \#6 \$excludeId of method App\\Repository\\JourneePorteOuverteRepository\:\:findNearbyEvents\(\) expects int, int\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Parameter \#7 \$referenceDate of method App\\Repository\\JourneePorteOuverteRepository\:\:findNearbyEvents\(\) expects DateTime\|null, DateTimeInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Property App\\Service\\DiscoveryService\:\:\$geminiApiKey is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Service/DiscoveryService.php
+
+		-
+			message: '#^Property App\\Service\\DiscoveryService\:\:\$httpClient is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Service/DiscoveryService.php
