@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event ? 'Modifier' : 'Créer' }} un Événement — CashFly{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
+<style>
+    .form-container {
+        max-width: 650px;
+        margin: 40px auto;
+        background: var(--bg-card);
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+    }
+
+    .form-title {
+        margin-bottom: 25px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--cyan);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dim);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        color: var(--text);
+        font-family: inherit;
+        font-size: 14px;
+        outline: none;
+        transition: border-color .2s;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        border-color: var(--cyan);
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-select option {
+        background: #0b1827;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page">
+    <header class="header header--transparent">
+        <div class="logo">
+            <img src="{{ path('cashfly_logo') }}" alt="CashFly Logo"
+                style="height: 48px; width: auto; margin-right: 12px;">
+            <div>
+                <div class="logo-text">CASHFLY</div>
+                <div class="logo-sub">ADMIN JPO</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="{{ path('jpo_admin_events_list') }}" class="back-link"><i class="ph ph-arrow-left"></i> RETOUR</a>
+            <a href="{{ path('app_logout') }}" class="logout-btn" title="Déconnexion">
+                <i class="ph ph-sign-out"></i>
+            </a>
+        </div>
+    </header>
+
+    <div class="form-container">
+        <div class="form-title">{{ event ? 'Modifier' : 'Nouveau' }} <span>Événement</span></div>
+
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label class="form-label">Titre</label>
+                <input type="text" name="titre" class="form-input" value="{{ event ? event.titre : '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Date de l'événement</label>
+                <input type="date" name="date_evenement" class="form-input"
+                    value="{{ event ? event.dateEvenement|date('Y-m-d') : '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Lieu</label>
+                <input type="text" name="lieu" class="form-input" value="{{ event ? event.lieu : '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-textarea">{{ event ? event.description : '' }}</textarea>
+            </div>
+
+            <div class="form-row" style="display: flex; gap: 20px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Max participants</label>
+                    <input type="number" name="max_participants" class="form-input"
+                        value="{{ event ? event.maxParticipants : 50 }}" required>
+                </div>
+
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Créateur (Propriétaire)</label>
+                    <select name="id_createur" class="form-select" required>
+                        {% for p in proprietaires %}
+                        <option value="{{ p.id }}" {{ (event and event.idCreateur==p.id) ? 'selected' : '' }}>{{
+                            p.nom ~ ' ' ~ p.prenom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Image {{ event and event.imagePath ? '(Laissez vide pour conserver
+                    l\'actuelle)' : '' }}</label>
+                <input type="file" name="image" class="form-input" accept="image/*">
+                {% if event and event.imagePath %}
+                <div style="margin-top: 10px;">
+                    <img src="{{ event.imagePath }}"
+                        style="height: 60px; border-radius: 8px; border: 1px solid var(--border);">
+                </div>
+                {% endif %}
+            </div>
+
+            <div style="margin-top: 30px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                    <i class="ph ph-check-circle"></i> {{ event ? 'Mettre à jour' : 'Créer l\'événement' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

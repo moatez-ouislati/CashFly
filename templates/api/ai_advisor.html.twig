@@ -1,0 +1,524 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Expert Investissement - CashFly{% endblock %}
+
+{% block header_title %}Expert Investissement{% endblock %}
+{% block header_subtitle %}Votre conseiller stratégique pour optimiser vos placements{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto space-y-6">
+    <!-- Chat Container -->
+    <div class="bg-surface-container-lowest rounded-3xl shadow-sm border border-outline-variant/10 overflow-hidden flex flex-col h-[600px]">
+        
+        <!-- Header -->
+        <div class="p-6 border-b border-outline-variant/10 bg-white flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-2xl">monitoring</span>
+            </div>
+            <div>
+                <h2 class="text-xl font-black text-on-surface">Expert Placements</h2>
+                <p class="text-on-surface-variant text-sm font-medium">Connecté via l'Intelligence Artificielle (z-ai/glm4.7)</p>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-6 bg-slate-50/50 space-y-6">
+            
+            <!-- Welcome Message -->
+            <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                    <span class="material-symbols-outlined text-sm">monitoring</span>
+                </div>
+                <div class="bg-white border border-outline-variant/20 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-[80%]">
+                    <p class="text-on-surface text-sm leading-relaxed mb-2 font-medium">
+                        Bonjour ! Je suis votre expert en investissement stratégique. Je peux vous aider à :
+                    </p>
+                    <ul class="space-y-1 text-sm text-on-surface-variant list-disc pl-5 mb-2">
+                        <li>Analyser la performance de votre portefeuille</li>
+                        <li>Évaluer les risques de vos futurs placements</li>
+                        <li>Optimiser la diversification de vos actifs</li>
+                        <li>Comparer les rendements sectoriels</li>
+                    </ul>
+                    <p class="text-on-surface font-bold text-sm">Comment puis-je vous aider aujourd'hui ?</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white border-t border-outline-variant/10">
+            <div class="relative flex items-center">
+                <input type="text" id="chatInput" placeholder="Posez votre question sur les investissements..." 
+                       class="w-full bg-surface-container-low border border-outline-variant/30 rounded-full py-4 pl-6 pr-16 text-sm text-on-surface focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all outline-none" 
+                       autocomplete="off">
+                <button type="button" id="sendBtn" class="absolute right-2 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-md hover:bg-primary-container hover:text-on-primary-container transition-all active:scale-95">
+                    <span class="material-symbols-outlined text-lg ml-1">send</span>
+                </button>
+            </div>
+            <p class="text-xs text-center text-on-surface-variant mt-3 font-medium flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-[14px]">info</span>
+                Je suis votre expert dédié aux stratégies d'investissement.
+            </p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-primary/40 hover:bg-primary/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Analyse mon portefeuille actuel et donne-moi mon rendement moyen">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-primary">analytics</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Analyse Portefeuille</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Performance et rendements</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-orange/40 hover:bg-orange/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Quels sont les risques majeurs de mon portefeuille ?">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-orange-600">shield</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Évaluation Risque</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Identifier les vulnérabilités</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-blue/40 hover:bg-blue/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Comment puis-je mieux diversifier mes placements ?">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-blue-600">grid_view</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Diversification</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Conseils sectoriels</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+
+        <button class="quick-action p-5 bg-white border border-outline-variant/20 rounded-2xl shadow-sm hover:shadow-md hover:border-emerald/40 hover:bg-emerald/5 transition-all text-left group flex flex-col justify-between h-full" data-message="Quelles sont les opportunités de rendement élevé actuellement ?">
+            <div>
+                <div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined text-emerald-600">trending_up</span>
+                </div>
+                <h3 class="text-sm font-bold text-on-surface mb-1">Opportunités</h3>
+                <p class="text-xs text-on-surface-variant leading-relaxed">Recherche de croissance</p>
+            </div>
+            <div class="mt-4 flex items-center text-[10px] font-bold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                Essayer <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span>
+            </div>
+        </button>
+    </div>
+
+    <!-- Old Style Sidebar -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+       
+        </div>
+
+        <!-- Example Questions -->
+        <div class="card bg-white border border-outline-variant/20 rounded-xl shadow-sm">
+            <div class="card-header p-4 border-b border-outline-variant/10 bg-surface-container-low">
+                <h5 class="mb-0 font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">help</span>Exemple de Questions
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <ul class="list-unstyled mb-0 text-sm space-y-2">
+                    <li>• <a href="#" class="text-primary hover:underline example-question" data-question="Devrais-je investir dans les actions tunisiennes?">Devrais-je investir dans les actions?</a></li>
+                    <li>• <a href="#" class="text-primary hover:underline example-question" data-question="Quelle est la différence entre un investissement à risque faible et élevé?">Différence risque faible vs élevé?</a></li>
+                    <li>• <a href="#" class="text-primary hover:underline example-question" data-question="Comment diversifier mon portefeuille en Tunisie?">Comment diversifier mon portefeuille?</a></li>
+                    <li>• <a href="#" class="text-primary hover:underline example-question" data-question="Quel est le meilleur placement en Tunisie en 2026?">Meilleur placement en 2026?</a></li>
+                    <li>• <a href="#" class="text-primary hover:underline example-question" data-question="Explique moi les stratégies d'investissement défensives">Stratégies défensives</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Compare Form -->
+        <div class="card bg-white border border-outline-variant/20 rounded-xl shadow-sm">
+            <div class="card-header p-4 border-b border-outline-variant/10 bg-surface-container-low">
+                <h5 class="mb-0 font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">compare_arrows</span>Comparer 2 Investissements
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form id="compareForm" class="space-y-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h6 class="mb-2 text-sm font-bold text-on-surface">Investissement 1</h6>
+                            <input type="text" id="inv1Name" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Nom" value="Entreprise A">
+                            <input type="number" id="inv1Amount" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Montant (TND)" value="10000">
+                            <input type="number" id="inv1Return" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Rendement (%)" value="8">
+                            <input type="number" id="inv1Duration" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Durée (mois)" value="12">
+                            <select id="inv1Status" class="form-select w-full px-3 py-2 border border-outline-variant/30 rounded-lg text-sm bg-white">
+                                <option value="EN_ATTENTE">EN_ATTENTE</option>
+                                <option value="ACTIF" selected>ACTIF</option>
+                                <option value="TERMINE">TERMINE</option>
+                            </select>
+                        </div>
+                        <div>
+                            <h6 class="mb-2 text-sm font-bold text-on-surface">Investissement 2</h6>
+                            <input type="text" id="inv2Name" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Nom" value="Entreprise B">
+                            <input type="number" id="inv2Amount" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Montant (TND)" value="5000">
+                            <input type="number" id="inv2Return" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Rendement (%)" value="12">
+                            <input type="number" id="inv2Duration" class="form-control w-full mb-2 px-3 py-2 border border-outline-variant/30 rounded-lg text-sm" placeholder="Durée (mois)" value="24">
+                            <select id="inv2Status" class="form-select w-full px-3 py-2 border border-outline-variant/30 rounded-lg text-sm bg-white">
+                                <option value="EN_ATTENTE">EN_ATTENTE</option>
+                                <option value="ACTIF" selected>ACTIF</option>
+                                <option value="TERMINE">TERMINE</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary w-full py-2 px-4 bg-primary text-white rounded-lg hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">compare_arrows</span>Comparer
+                        </button>
+                    </div>
+                </form>
+                <div id="compareResult" class="mt-4"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<style>
+.typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    background-color: currentColor;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out both;
+}
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+</style>
+
+<script>
+(function() {
+    let isSending = false;
+
+    function initChat() {
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const quickActions = document.querySelectorAll('.quick-action');
+
+        if (!sendBtn || !chatInput || sendBtn.dataset.chatInitialized) return;
+        
+        console.log('Initializing AI Advisor chat...');
+        sendBtn.dataset.chatInitialized = "true";
+
+        function sendMessage(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            const message = chatInput.value.trim();
+            if (!message || isSending) return;
+
+            isSending = true;
+            console.log('Sending message:', message);
+
+            // Disable input and button while sending
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            showTypingIndicator();
+
+            fetch('/ai-advisor/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                
+                // Re-enable input and button
+                isSending = false;
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                chatInput.focus();
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                hideTypingIndicator();
+                // Use chatbot format: success + message
+                if (data && data.success) {
+                    addMessage(data.message, 'bot', data.suggestions || [], data.is_automated || false);
+                } else if (data && data.message) {
+                    addMessage(data.message, 'bot', [], data.is_automated || true);
+                } else if (data && data.error) {
+                    addMessage(data.error, 'bot', [], true);
+                } else {
+                    addMessage('Désolé, je ne peux pas répondre pour le moment.', 'bot', [], true);
+                }
+            })
+            .catch(error => {
+                isSending = false;
+                console.error('Fetch error:', error);
+                hideTypingIndicator();
+                
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                chatInput.focus();
+
+                let errorMsg = 'Erreur de connexion.';
+                if (error.message.includes('403')) {
+                    errorMsg = 'Accès refusé. Vérifiez que vous avez le rôle investisseur.';
+                } else if (error.message.includes('500')) {
+                    errorMsg = 'Erreur serveur. Vérifiez que la clé API NVIDIA est configurée dans .env.local (INVESTMENT_NVIDIA_KEY).';
+                }
+                addMessage(errorMsg + ' (' + error.message + ')', 'bot', [], true);
+            });
+        }
+
+        function addMessage(text, sender, suggestions = [], isAutomated = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex gap-4 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+            
+            const avatar = sender === 'user' 
+                ? `<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface flex-shrink-0 shadow-sm"><span class="material-symbols-outlined text-sm">person</span></div>`
+                : `<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 shadow-md"><span class="material-symbols-outlined text-sm">monitoring</span></div>`;
+
+            const contentClasses = sender === 'user' 
+                ? 'bg-primary text-white rounded-2xl rounded-tr-sm p-4 shadow-md max-w-[80%]' 
+                : 'bg-white border border-outline-variant/20 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-[80%]';
+                
+            const textClasses = sender === 'user' ? 'text-white text-sm leading-relaxed' : 'text-on-surface text-sm leading-relaxed';
+
+            let suggestionsHtml = '';
+            if (suggestions.length > 0) {
+                suggestionsHtml = '<div class="mt-3 flex flex-wrap gap-2">';
+                suggestions.forEach(suggestion => {
+                    suggestionsHtml += `<button class="suggestion-chip px-3 py-1.5 bg-primary/10 text-primary text-xs font-bold rounded-full hover:bg-primary hover:text-white transition-colors">${escapeHtml(suggestion)}</button>`;
+                });
+                suggestionsHtml += '</div>';
+            }
+
+            const formattedText = escapeHtml(text)
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>')
+                .replace(/•/g, '<span class="text-primary font-bold mr-1">•</span>')
+                .replace(/### (.*?)($|<br>)/g, '<h3 class="text-primary font-black text-lg mt-4 mb-2">$1</h3>');
+
+            let sourceBadge = '';
+            if (sender === 'bot') {
+                if (isAutomated) {
+                    sourceBadge = '<div class="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-on-surface-variant flex items-center gap-1 font-medium"><span class="material-symbols-outlined text-[12px]">settings</span> Réponse automatique</div>';
+                } else {
+                    sourceBadge = '<div class="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-primary flex items-center gap-1 font-bold"><span class="material-symbols-outlined text-[12px]">auto_awesome</span> Généré par z-ai/glm4.7</div>';
+                }
+            }
+
+            messageDiv.innerHTML = `
+                ${avatar}
+                <div class="${contentClasses}">
+                    <p class="${textClasses}">${formattedText}</p>
+                    ${suggestionsHtml}
+                    ${sourceBadge}
+                </div>
+            `;
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            messageDiv.querySelectorAll('.suggestion-chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    chatInput.value = this.textContent;
+                    sendMessage();
+                });
+            });
+        }
+
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'flex gap-4';
+            typingDiv.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 shadow-md">
+                    <span class="material-symbols-outlined text-sm">monitoring</span>
+                </div>
+                <div class="bg-white border border-outline-variant/20 rounded-2xl rounded-tl-sm p-4 shadow-sm max-w-[80%] flex items-center">
+                    <div class="typing-dots text-primary">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Use event delegation or check if listener exists
+        sendBtn.onclick = sendMessage;
+        
+        chatInput.onkeypress = function(e) {
+            if (e.key === 'Enter') {
+                sendMessage(e);
+            }
+        };
+
+        quickActions.forEach(btn => {
+            btn.onclick = function(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                if (isSending) return;
+                
+                chatInput.value = this.dataset.message;
+                sendMessage();
+            };
+        });
+
+        // Example questions click handlers
+        document.querySelectorAll('.example-question').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isSending) return;
+                chatInput.value = this.dataset.question;
+                sendMessage();
+            });
+        });
+
+        // Compare form handler
+        const compareForm = document.getElementById('compareForm');
+        const compareResult = document.getElementById('compareResult');
+        let isComparing = false;
+
+        if (compareForm) {
+            compareForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (isComparing) return;
+                
+                isComparing = true;
+                const btn = compareForm.querySelector('button[type="submit"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Comparaison en cours...';
+                btn.disabled = true;
+
+                const inv1 = {
+                    name: document.getElementById('inv1Name').value,
+                    amount: document.getElementById('inv1Amount').value,
+                    return: document.getElementById('inv1Return').value,
+                    duration: document.getElementById('inv1Duration').value,
+                    status: document.getElementById('inv1Status').value
+                };
+                const inv2 = {
+                    name: document.getElementById('inv2Name').value,
+                    amount: document.getElementById('inv2Amount').value,
+                    return: document.getElementById('inv2Return').value,
+                    duration: document.getElementById('inv2Duration').value,
+                    status: document.getElementById('inv2Status').value
+                };
+
+                compareResult.innerHTML = `
+                    <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 animate-pulse text-center">
+                        <p class="text-sm text-on-surface-variant">L'IA analyse les deux options pour vous...</p>
+                    </div>
+                `;
+
+                fetch('/ai-advisor/compare', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ inv1: inv1, inv2: inv2, investment1: inv1, investment2: inv2 })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    isComparing = false;
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+
+                    let reasoningHtml = '';
+                    if (data.reasoning) {
+                        reasoningHtml = `
+                            <div class="mb-4 pb-4 border-b border-outline-variant/10 text-on-surface-variant italic text-xs">
+                                <p class="font-bold mb-1 flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[14px]">psychology</span>
+                                    Réflexion:
+                                </p>
+                                ${data.reasoning.replace(/\n/g, '<br>')}
+                            </div>
+                        `;
+                    }
+
+                    compareResult.innerHTML = `
+                        <div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/20">
+                            <h4 class="font-bold text-on-surface mb-3 flex items-center gap-2 text-sm">
+                                <span class="material-symbols-outlined text-primary">analytics</span>
+                                Analyse Comparative
+                            </h4>
+                            ${reasoningHtml}
+                            <div class="text-sm text-on-surface leading-relaxed">
+                                ${(data.response || data.message || 'Aucune réponse').replace(/\n/g, '<br>')}
+                            </div>
+                            <div class="mt-2 pt-2 border-t border-outline-variant/10 text-[10px] text-primary flex items-center gap-1 font-bold">
+                                <span class="material-symbols-outlined text-[12px]">auto_awesome</span> Généré par z-ai/glm4.7
+                            </div>
+                        </div>
+                    `;
+                })
+                .catch(error => {
+                    isComparing = false;
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    console.error('Error:', error);
+                    compareResult.innerHTML = `<p class="text-red-500 text-sm">Erreur lors de la comparaison: ${error.message}</p>`;
+                });
+            });
+        }
+    }
+
+    // Support both standard and Turbo loads
+    document.addEventListener('DOMContentLoaded', initChat);
+    document.addEventListener('turbo:load', initChat);
+})();
+</script>
+{% endblock %}

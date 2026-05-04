@@ -1,0 +1,324 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Investisseur — CashFly{% endblock %}
+
+{% block body %}
+<div class="p-6 max-w-7xl mx-auto">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight text-on-surface mb-2">
+                Bonjour, <span class="text-primary">{{ user.prenom }}</span> 👋
+            </h1>
+            <p class="text-on-surface-variant text-lg">Voici un résumé de votre activité d'investisseur.</p>
+        </div>
+        
+        <a href="{{ path('investisseur_explore') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-outline-variant/30 text-primary font-bold rounded-2xl shadow-sm hover:shadow-md hover:bg-primary hover:text-white transition-all transform hover:-translate-y-1">
+            <span class="material-symbols-outlined">explore</span>
+            Explorer les propriétaires
+        </a>
+    </div>
+
+    <!-- Key Metrics / Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- Investissement Total -->
+        <div class="bg-primary/5 p-6 rounded-3xl border border-primary/10 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-primary/10 text-primary rounded-2xl flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[28px]">payments</span>
+            </div>
+            <p class="text-2xl font-black text-on-surface mb-1">{{ stats.totalInvested|number_format(0, '.', ' ') }} TND</p>
+            <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">Total Investi</p>
+        </div>
+
+        <!-- Gains Cumulés -->
+        <div class="bg-green-50 p-6 rounded-3xl border border-green-100 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[28px]">trending_up</span>
+            </div>
+            <p class="text-2xl font-black text-green-600 mb-1">+{{ stats.totalGain|number_format(0, '.', ' ') }} TND</p>
+            <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">Gains Cumulés</p>
+        </div>
+
+        <!-- Portefeuille Actif -->
+        <div class="bg-blue-50 p-6 rounded-3xl border border-blue-100 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[28px]">inventory_2</span>
+            </div>
+            <p class="text-2xl font-black text-on-surface mb-1">{{ stats.count }} / {{ stats.totalCount }}</p>
+            <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">Placements Actifs</p>
+        </div>
+
+        <!-- Budget Disponible -->
+        <div class="bg-surface-container-lowest p-6 rounded-3xl border border-outline-variant/30 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-secondary/10 text-secondary rounded-2xl flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[28px]">account_balance_wallet</span>
+            </div>
+            <p class="text-2xl font-black text-on-surface mb-1">{{ user.budget ? user.budget ~ ' TND' : '—' }}</p>
+            <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">Budget Disponible</p>
+        </div>
+<!-- Expérience -->
+<div class="bg-purple-50 p-6 rounded-3xl border border-purple-100 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-[28px]">work_history</span>
+    </div>
+    <p class="text-2xl font-black text-purple-600 mb-1">
+        {{ user.yearsExperience ? user.yearsExperience ~ ' ans' : '—' }}
+    </p>
+    <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">
+        Expérience
+    </p>
+</div>
+
+<!-- Gain Maximal -->
+<div class="bg-yellow-50 p-6 rounded-3xl border border-yellow-100 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+    <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center mb-4">
+        <span class="material-symbols-outlined text-[28px]">military_tech</span>
+    </div>
+    <p class="text-2xl font-black text-yellow-600 mb-1">
+        {{ user.highestProfit ? user.highestProfit ~ ' TND' : '—' }}
+    </p>
+    <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">
+        Gain Maximal
+    </p>
+</div>
+        <!-- Score de Risque -->
+        <div class="bg-orange-50 p-6 rounded-3xl border border-orange-100 shadow-sm flex flex-col items-center text-center hover:shadow-md transition-all">
+            <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-[28px]">shield</span>
+            </div>
+            {% set riskScore = stats.totalInvested > 50000 ? 'Élevé' : (stats.totalInvested > 10000 ? 'Modéré' : 'Faible') %}
+            <p class="text-2xl font-black text-orange-600 mb-1">{{ riskScore }}</p>
+            <p class="text-on-surface-variant font-bold uppercase tracking-wider text-[10px]">Profil de Risque</p>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Monthly Evolution Chart -->
+        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-xl font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">analytics</span>
+                    Évolution du Portefeuille
+                </h3>
+            </div>
+            <div id="evolutionChart" style="min-height: 300px;"></div>
+        </div>
+
+        <!-- Sector Distribution Chart -->
+        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-xl font-bold text-on-surface flex items-center gap-2">
+                    <span class="material-symbols-outlined text-indigo-600">pie_chart</span>
+                    Répartition par Secteur
+                </h3>
+            </div>
+            <div id="sectorChart" style="min-height: 300px;"></div>
+        </div>
+    </div>
+
+    <!-- Advanced Yield Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
+            <p class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-1">Rendement Moyen</p>
+            <p class="text-3xl font-black text-indigo-700">+{{ stats.averageYield }}%</p>
+            <div class="mt-4 flex items-center gap-2 text-indigo-600/60 text-xs">
+                <span class="material-symbols-outlined text-sm">info</span>
+                <span>Moyenne sur vos placements actifs</span>
+            </div>
+        </div>
+
+        <div class="bg-emerald-50 p-6 rounded-3xl border border-emerald-100">
+            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest mb-1">Gains Prévisionnels</p>
+            <p class="text-3xl font-black text-emerald-700">{{ stats.expectedTotalGain|number_format(2, '.', ' ') }} TND</p>
+            <div class="mt-4 flex items-center gap-2 text-emerald-600/60 text-xs">
+                <span class="material-symbols-outlined text-sm">trending_up</span>
+                <span>Total des intérêts attendus</span>
+            </div>
+        </div>
+
+        <div class="bg-amber-50 p-6 rounded-3xl border border-amber-100">
+            <p class="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">Performance Réelle</p>
+            {% set perf = stats.totalInvested > 0 ? (stats.totalGain / stats.totalInvested * 100)|number_format(1) : 0 %}
+            <p class="text-3xl font-black text-amber-700">+{{ perf }}%</p>
+            <div class="mt-4 flex items-center gap-2 text-amber-600/60 text-xs">
+                <span class="material-symbols-outlined text-sm">stars</span>
+                <span>ROI total actuel</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Profile Card -->
+    <div class="bg-surface-container-lowest border border-outline-variant/30 rounded-3xl p-6 md:p-10 shadow-sm relative overflow-hidden">
+        <!-- Decorative background blur -->
+        <div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="flex flex-col md:flex-row items-center gap-6 mb-8 relative z-10">
+            <!-- Avatar -->
+            <div class="relative group">
+                <div class="absolute inset-0 bg-primary/20 blur-xl rounded-full group-hover:bg-primary/30 transition-all"></div>
+                <div class="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl border-4 border-white shadow-lg flex items-center justify-center text-4xl font-black text-primary overflow-hidden relative z-10">
+                    {% if user.faceImage %}
+                        <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}" alt="Avatar" class="w-full h-full object-cover">
+                    {% else %}
+                        {{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="text-center md:text-left">
+                <h2 class="text-3xl font-black text-on-surface mb-2">{{ user.fullName }}</h2>
+                <span class="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-xl text-xs font-bold tracking-widest uppercase border border-primary/20 shadow-sm">
+                    Investisseur
+                </span>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10 mb-8">
+            <!-- Email -->
+            <div class="bg-indigo-50/50 border border-indigo-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 text-indigo-600 mb-2">
+                    <span class="material-symbols-outlined text-[18px]">mail</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Email</span>
+                </div>
+                <p class="font-bold text-on-surface truncate" title="{{ user.email }}">{{ user.email }}</p>
+            </div>
+            
+            <!-- CIN -->
+            <div class="bg-emerald-50/50 border border-emerald-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 text-emerald-600 mb-2">
+                    <span class="material-symbols-outlined text-[18px]">badge</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">CIN</span>
+                </div>
+                <p class="font-bold text-on-surface">{{ user.cin }}</p>
+            </div>
+            
+            <!-- Phone -->
+            <div class="bg-amber-50/50 border border-amber-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 text-amber-600 mb-2">
+                    <span class="material-symbols-outlined text-[18px]">call</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Téléphone</span>
+                </div>
+                <p class="font-bold text-on-surface">{{ user.tel }}</p>
+            </div>
+            
+            <!-- Status -->
+            <div class="bg-rose-50/50 border border-rose-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 text-rose-600 mb-2">
+                    <span class="material-symbols-outlined text-[18px]">shield</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Statut</span>
+                </div>
+                <p class="font-bold flex items-center gap-2 {{ user.isActive ? 'text-emerald-600' : 'text-rose-600' }}">
+                    {{ user.isActive ? 'Actif' : 'Inactif' }}
+                    {% if user.isActive %}<span class="material-symbols-outlined text-[18px]">check_circle</span>{% endif %}
+                </p>
+            </div>
+
+            <!-- Experience -->
+            <div class="bg-slate-50/50 border border-slate-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 text-slate-600 mb-2">
+                    <span class="material-symbols-outlined text-[18px]">work_history</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Expérience</span>
+                </div>
+                <p class="font-bold text-on-surface">{{ user.yearsExperience ? user.yearsExperience ~ ' ans' : '—' }}</p>
+            </div>
+
+            <!-- Maximum Win -->
+            <div class="bg-purple-50/50 border border-purple-100 p-5 rounded-2xl">
+                <div class="flex items-center gap-2 text-purple-600 mb-2">
+                    <span class="material-symbols-outlined text-[18px]">military_tech</span>
+                    <span class="text-xs font-bold uppercase tracking-wider">Gain Maximal</span>
+                </div>
+                <p class="font-bold text-on-surface">{{ user.highestProfit ? user.highestProfit ~ ' TND' : '—' }}</p>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="relative z-10 flex flex-wrap gap-4">
+            <a href="{{ path('investisseur_profile') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-md shadow-primary/30 hover:bg-primary-dark transition-all transform hover:-translate-y-1">
+                <span class="material-symbols-outlined">settings</span>
+                Modifier mon profil
+            </a>
+            <a href="{{ path('investisseur_market_intel') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-outline-variant/30 text-primary font-bold rounded-xl shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
+                <span class="material-symbols-outlined">public</span>
+                Intelligence Marché
+            </a>
+            <a href="{{ path('investisseur_ai_advisor') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white border border-outline-variant/30 text-indigo-600 font-bold rounded-xl shadow-sm hover:shadow-md transition-all transform hover:-translate-y-1">
+                <span class="material-symbols-outlined">smart_toy</span>
+                Conseiller IA
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Portfolio Evolution Chart
+    const evolutionData = {{ stats.monthlyEvolution|json_encode|raw }};
+    const evolutionOptions = {
+        series: [{
+            name: 'Total Investi',
+            data: evolutionData.map(d => parseFloat(d.total))
+        }],
+        chart: {
+            type: 'area',
+            height: 300,
+            toolbar: { show: false },
+            zoom: { enabled: false }
+        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 3 },
+        colors: ['#2563eb'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.45,
+                opacityTo: 0.05,
+                stops: [20, 100]
+            }
+        },
+        xaxis: {
+            categories: evolutionData.map(d => d.month),
+            axisBorder: { show: false },
+            axisTicks: { show: false }
+        },
+        yaxis: { labels: { show: false } },
+        grid: { borderColor: '#f1f5f9' }
+    };
+    new ApexCharts(document.querySelector("#evolutionChart"), evolutionOptions).render();
+
+    // 2. Sector Distribution Chart
+    const sectorData = {{ stats.sectorDistribution|json_encode|raw }};
+    const sectorOptions = {
+        series: Object.values(sectorData),
+        labels: Object.keys(sectorData),
+        chart: {
+            type: 'donut',
+            height: 300
+        },
+        colors: ['#2563eb', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef'],
+        legend: { position: 'bottom' },
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '70%',
+                    labels: {
+                        show: true,
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            formatter: function (w) {
+                                return w.globals.seriesTotals.reduce((a, b) => a + b, 0).toLocaleString() + ' TND'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    new ApexCharts(document.querySelector("#sectorChart"), sectorOptions).render();
+});
+</script>
+{% endblock %}

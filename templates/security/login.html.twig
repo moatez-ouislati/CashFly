@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion — CashFly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
+</head>
+<body class="login-body">
+
+<div class="panel-left">
+    <div class="brand">Cash<span>Fly</span></div>
+    <p class="brand-tagline">Votre croissance, Notre Mission.</p>
+    <div class="dots">
+        <div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+</div>
+
+<div class="panel-right">
+    <div class="form-wrap">
+        <h1 class="form-title">Bon retour 👋</h1>
+        <p class="form-subtitle">Connectez-vous à votre compte</p>
+
+        <div id="error-container">
+            {% if error %}
+                <div class="error-box">{{ error.messageKey | trans(error.messageData, 'security') }}</div>
+            {% endif %}
+        </div>
+
+        <form method="post" action="{{ path('app_login') }}" id="login-form">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input class="form-control" type="email" name="email" id="email-field"
+                       value="{{ last_username }}" required autofocus autocomplete="email"
+                       placeholder="votre@email.com">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mot de passe</label>
+                <input class="form-control" type="password" name="password" id="password-field" required
+                       autocomplete="current-password" placeholder="••••••••">
+            </div>
+
+            <div id="captcha-section" class="form-group" style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+                <label class="form-label" style="color: var(--accent2);">Vérification de sécurité</label>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem;">
+                    <div style="background: var(--surface2); color: var(--green); padding: 12px 20px; font-size: 1.5rem; font-weight: 800; letter-spacing: 6px; border-radius: 10px; border: 1px dashed var(--border); user-select: none;">
+                        {{ captcha_code }}
+                    </div>
+                    <span style="color: var(--muted); font-size: 0.8rem;">Recopiez ce code</span>
+                </div>
+                <input type="text" name="_captcha" id="captcha-input" class="form-control" placeholder="Code..." autocomplete="off">
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button class="btn-login" type="submit" id="submit-btn">Se connecter</button>
+
+<div class="divider">ou</div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a href="{{ path('connect_google_start') }}" class="btn-login" style="background: transparent; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 12px; text-decoration: none; color: var(--text);">
+                <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/>
+                    <path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/>
+                    <path d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/>
+                    <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.443 2.041.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z" fill="#EA4335"/>
+                </svg>
+                Continuer avec Google
+            </a>
+        </div>
+
+        <p class="register-link">Pas encore de compte ? <a href="{{ path('app_register') }}">Créer un compte</a></p>
+    </div>
+</div>
+
+
+
+
+
+
+        </form>
+
+        
+</div>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        const email = document.getElementById('email-field').value;
+        const password = document.getElementById('password-field').value;
+        const captchaSection = document.getElementById('captcha-section');
+        const captchaInput = document.getElementById('captcha-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorContainer = document.getElementById('error-container');
+
+        // Step 2: Login avec captcha
+        if (captchaSection.style.display === 'block') {
+            if (captchaInput.value === '') {
+                e.preventDefault();
+                errorContainer.innerHTML = '<div class="error-box">Veuillez entrer le code de sécurité.</div>';
+                return;
+            }
+            return; // Khalli Symfony ythabbet fel captcha
+        }
+
+        // Step 1: Verification credentials bel AJAX
+        e.preventDefault(); 
+
+        try {
+            const response = await fetch('{{ path('app_verify_credentials') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email, password: password })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                errorContainer.innerHTML = ''; // Na7i el ghalta kenet mawjouda
+                if (data.needsCaptcha) {
+                    captchaSection.style.display = 'block';
+                    captchaInput.setAttribute('required', 'required');
+                    submitBtn.innerText = 'Vérifier et Se connecter';
+                    captchaInput.focus();
+                } else {
+                    this.submit(); // Admin t3adda
+                }
+            } else {
+                // Talla3 el error-box el mezyana f-blaset l'alert
+                errorContainer.innerHTML = `<div class="error-box">${data.message}</div>`;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+</script>
+
+</body>
+</html>

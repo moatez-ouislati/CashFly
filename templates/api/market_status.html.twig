@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statut des Marchés - CashFly{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@6.6.6/css/flag-icons.min.css">
+{% endblock %}
+
+{% block page_header %}
+    <h2 class="text-2xl font-black text-on-surface">Statut des <span class="text-primary">Marchés</span></h2>
+    <p class="text-sm text-on-surface-variant">État actuel des marchés financiers mondiaux</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="stat-card {% if marketData.market_status|lower == 'open' %}bg-tertiary/10 border-tertiary/20{% else %}bg-error/10 border-error/20{% endif %} items-center text-center">
+        <span class="material-symbols-outlined text-4xl {% if marketData.market_status|lower == 'open' %}text-tertiary{% else %}text-error{% endif %} mb-2">
+            {% if marketData.market_status|lower == 'open' %}check_circle{% else %}cancel{% endif %}
+        </span>
+        <h3 class="text-xl font-black text-on-surface">Marché {% if marketData.market_status|lower == 'open' %}Ouvert{% else %}Fermé{% endif %}</h3>
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Statut Global</p>
+    </div>
+    <div class="stat-card bg-primary/10 border-primary/20 items-center text-center">
+        <span class="material-symbols-outlined text-4xl text-primary mb-2">schedule</span>
+        <h3 class="text-xl font-black text-on-surface">{{ "now"|date("H:i") }}</h3>
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">Heure Actuelle</p>
+    </div>
+    <div class="stat-card bg-secondary/10 border-secondary/20 items-center text-center">
+        <span class="material-symbols-outlined text-4xl text-secondary mb-2">calendar_month</span>
+        <h3 class="text-xl font-black text-on-surface">{{ "now"|date("d/m/Y") }}</h3>
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mt-1">
+            {{ "now"|date("l")|replace({'Monday': 'Lundi', 'Tuesday': 'Mardi', 'Wednesday': 'Mercredi', 'Thursday': 'Jeudi', 'Friday': 'Vendredi', 'Saturday': 'Samedi', 'Sunday': 'Dimanche'}) }}
+        </p>
+    </div>
+</div>
+
+<div class="table-wrapper mb-10">
+    <table class="w-full text-left">
+        <thead>
+            <tr class="bg-surface-container-low">
+                <th>Marché</th>
+                <th>Acronyme</th>
+                <th>Pays</th>
+                <th>Type</th>
+                <th>Statut</th>
+                <th>Ouverture</th>
+                <th>Clôture</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for market in marketData.markets %}
+            <tr class="{% if market.flag == 'tn' %}bg-primary/5{% endif %}">
+                <td>
+                    <div class="flex items-center gap-3">
+                        <span class="fi fi-{{ market.flag|default('un') }} rounded-sm shadow-sm"></span>
+                        <span class="font-bold text-on-surface">{{ market.name }}</span>
+                    </div>
+                </td>
+                <td><span class="badge badge-primary">{{ market.acronym }}</span></td>
+                <td class="text-on-surface-variant text-sm">{{ market.country|default('N/A') }}</td>
+                <td><span class="badge badge-secondary">{{ market.type }}</span></td>
+                <td>
+                    {% if market.status|lower == 'open' %}
+                        <span class="badge badge-success">Ouvert</span>
+                    {% elseif market.status|lower == 'closed' %}
+                        <span class="badge badge-error">Fermé</span>
+                    {% elseif market.status|lower == 'pre' %}
+                        <span class="badge badge-warning">Pré-marché</span>
+                    {% elseif market.status|lower == 'after' %}
+                        <span class="badge badge-primary">Après-marché</span>
+                    {% else %}
+                        <span class="badge badge-secondary">{{ market.status }}</span>
+                    {% endif %}
+                </td>
+                <td class="font-bold text-on-surface text-sm">{{ market.open_time }}</td>
+                <td class="font-bold text-on-surface text-sm">{{ market.close_time }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="card">
+        <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">calendar_today</span>
+            Jours de Trading
+        </h3>
+        <div class="space-y-4">
+            <div class="flex justify-between items-center p-4 rounded-xl bg-surface-container-low">
+                <span class="font-medium text-on-surface">Lundi - Vendredi</span>
+                <span class="badge badge-success">Ouvert</span>
+            </div>
+            <div class="flex justify-between items-center p-4 rounded-xl bg-surface-container-low">
+                <span class="font-medium text-on-surface">Samedi</span>
+                <span class="badge badge-error">Fermé</span>
+            </div>
+            <div class="flex justify-between items-center p-4 rounded-xl bg-surface-container-low">
+                <span class="font-medium text-on-surface">Dimanche</span>
+                <span class="badge badge-error">Fermé</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">info</span>
+            À propos du Statut
+        </h3>
+        <div class="space-y-4 text-sm text-on-surface-variant">
+            <p>Le statut des marchés est fourni par l'API Alpha Vantage et est mis à jour régulièrement.</p>
+            <ul class="space-y-3">
+                <li class="flex gap-2">
+                    <strong class="text-on-surface min-w-[100px]">Ouvert:</strong>
+                    <span>Le marché accepte les ordres de trading en direct.</span>
+                </li>
+                <li class="flex gap-2">
+                    <strong class="text-on-surface min-w-[100px]">Fermé:</strong>
+                    <span>Le marché n'accepte pas de nouveaux ordres.</span>
+                </li>
+                <li class="flex gap-2">
+                    <strong class="text-on-surface min-w-[100px]">Pré-marché:</strong>
+                    <span>Phase de préparation avant l'ouverture officielle.</span>
+                </li>
+                <li class="flex gap-2">
+                    <strong class="text-on-surface min-w-[100px]">Après-marché:</strong>
+                    <span>Phase post-clôture avec volume d'échange réduit.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

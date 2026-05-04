@@ -1,0 +1,194 @@
+{# ── CALENDAR OVERLAY ── #}
+<div class="overlay" id="calOverlay">
+  <div class="cal-modal">
+    <div class="cal-header">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" id="prevBtn">‹</button>
+        <div class="cal-month-title" id="calTitle"></div>
+        <button class="cal-nav-btn" id="nextBtn">›</button>
+      </div>
+      <div class="cal-nav-center">
+        <button class="view-btn active" id="monthViewBtn">MOIS</button>
+        <button class="view-btn" id="weekViewBtn">SEMAINE</button>
+      </div>
+      <button class="cal-close" id="calClose">✕</button>
+    </div>
+    <div class="cal-body">
+      <div id="monthView">
+        <div class="cal-weekdays">
+          <div class="cal-wd">LUN</div><div class="cal-wd">MAR</div><div class="cal-wd">MER</div><div class="cal-wd">JEU</div><div class="cal-wd">VEN</div><div class="cal-wd">SAM</div><div class="cal-wd">DIM</div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="week-view" id="weekView" style="display: none;"></div>
+    </div>
+  </div>
+</div>
+
+{# ── DAY EVENTS POPUP ── #}
+<div class="popup-overlay" id="dayEventsPopup">
+  <div class="popup-modal">
+    <div class="popup-header">
+      <div class="popup-header-left">
+        <i class="ph ph-calendar-check"></i>
+        <div>
+          <div class="popup-title">Événements du jour</div>
+          <div class="popup-subtitle" id="dayPopupTitle"></div>
+        </div>
+      </div>
+      <button class="popup-close" id="dayPopupClose">✕</button>
+    </div>
+    <div class="popup-body">
+      <div id="dayEventsList" class="day-events-list"></div>
+    </div>
+    <div class="popup-footer">
+      <button class="btn btn-primary popup-create-btn" id="dayPopupCreateBtn">
+        <i class="ph ph-plus-circle"></i> Créer un événement ce jour
+      </button>
+    </div>
+  </div>
+</div>
+
+{# ── EVENT DETAILS POPUP ── #}
+<div class="popup-overlay" id="eventDetailsPopup">
+  <div class="popup-modal popup-modal--wide">
+    <div class="popup-header">
+      <div class="popup-header-left">
+        <button class="popup-back" id="detailsPopupBack"><i class="ph ph-arrow-left"></i></button>
+        <i class="ph ph-info"></i>
+        <div>
+          <div class="popup-title">Détails de l'événement</div>
+          <div class="popup-subtitle" id="detailsPopupDateLabel"></div>
+        </div>
+      </div>
+      <button class="popup-close" id="detailsPopupClose">✕</button>
+    </div>
+    <div class="popup-body">
+      <div class="event-details-content">
+        <div class="edc-image" id="detailsPopupImage"></div>
+        <div class="edc-info">
+          <h2 id="detailsPopupTitle" class="popup-title--large"></h2>
+          <div class="edc-meta meta-row--cyan-small">
+            <span><i class="ph ph-map-pin"></i> <span id="detailsPopupLieu"></span></span>
+            <span><i class="ph ph-users"></i> <span id="detailsPopupParticipants"></span></span>
+          </div>
+          <p class="edc-desc text-description--dim" id="detailsPopupDesc"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── CREATE EVENT POPUP ── #}
+<div class="popup-overlay" id="createEventPopup">
+  <div class="popup-modal popup-modal--wide">
+    <div class="popup-header">
+      <div class="popup-header-left">
+        <button class="popup-back" id="createPopupBack"><i class="ph ph-arrow-left"></i></button>
+        <i class="ph ph-plus-circle"></i>
+        <div>
+          <div class="popup-title">Créer un événement</div>
+          <div class="popup-subtitle" id="createPopupDateLabel"></div>
+        </div>
+      </div>
+      <button class="popup-close" id="createPopupClose">✕</button>
+    </div>
+    <div class="popup-body">
+      <form id="createEventForm" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="date_evenement" id="createEventDate">
+        <div class="form-group">
+          <label class="form-label">Titre <span class="required">*</span></label>
+          <input class="form-input" type="text" name="titre" placeholder="Nom de l'événement" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lieu <span class="required">*</span></label>
+          <input class="form-input" type="text" name="lieu" placeholder="Lieu de l'événement" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input form-textarea" name="description" rows="3" placeholder="Détails de l'événement…"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-group--half">
+            <label class="form-label">Max. Participants <span class="required">*</span></label>
+            <input class="form-input" type="number" name="max_participants" value="50" min="1" max="9999" required>
+          </div>
+          <div class="form-group form-group--half">
+            <label class="form-label">Image</label>
+            <label class="form-file-label" for="eventImage">
+              <i class="ph ph-image"></i>
+              <span id="fileNameDisplay">Choisir une image…</span>
+              <input class="form-file-input" type="file" id="eventImage" name="image" accept="image/*">
+            </label>
+          </div>
+        </div>
+        <div class="form-feedback form-feedback--error" id="createEventError"></div>
+        <div class="form-feedback form-feedback--success" id="createEventSuccess"></div>
+      </form>
+    </div>
+    <div class="popup-footer">
+      <button class="btn btn-primary btn--full" id="createEventSubmit">
+        <i class="ph ph-check-circle"></i> CRÉER L'ÉVÉNEMENT
+      </button>
+    </div>
+  </div>
+</div>
+
+{# ── EDIT EVENT POPUP ── #}
+<div class="popup-overlay" id="editEventPopup">
+  <div class="popup-modal popup-modal--wide">
+    <div class="popup-header">
+      <div class="popup-header-left">
+        <button class="popup-back" id="editPopupBack"><i class="ph ph-arrow-left"></i></button>
+        <i class="ph ph-pencil-simple"></i>
+        <div>
+          <div class="popup-title">Modifier l'événement</div>
+          <div class="popup-subtitle" id="editPopupDateLabel"></div>
+        </div>
+      </div>
+      <button class="popup-close" id="editPopupClose">✕</button>
+    </div>
+    <div class="popup-body">
+      <form id="editEventForm" enctype="multipart/form-data" novalidate>
+        <input type="hidden" name="event_id" id="editEventId">
+        <div class="form-group">
+          <label class="form-label">Titre <span class="required">*</span></label>
+          <input class="form-input" type="text" id="editTitreCal" name="titre" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lieu <span class="required">*</span></label>
+          <input class="form-input" type="text" id="editLieuCal" name="lieu" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date de l'événement <span class="required">*</span></label>
+          <input class="form-input" type="date" id="editDateCal" name="date_evenement" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-input form-textarea" id="editDescCal" name="description" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group form-group--half">
+            <label class="form-label">Max. Participants <span class="required">*</span></label>
+            <input class="form-input" type="number" id="editMaxCal" name="max_participants" min="1" max="9999" required>
+          </div>
+          <div class="form-group form-group--half">
+            <label class="form-label">Image (optionnel)</label>
+            <label class="form-file-label" for="editImageCal">
+              <i class="ph ph-image"></i>
+              <span id="editFileNameDisplayCal">Remplacer l'image…</span>
+              <input class="form-file-input" type="file" id="editImageCal" name="image" accept="image/*">
+            </label>
+          </div>
+        </div>
+        <div class="form-feedback form-feedback--error" id="editEventError"></div>
+        <div class="form-feedback form-feedback--success" id="editEventSuccess"></div>
+      </form>
+    </div>
+    <div class="popup-footer">
+      <button class="btn btn-primary btn--full" id="editEventSubmit">
+        <i class="ph ph-check-circle"></i> ENREGISTRER LES MODIFICATIONS
+      </button>
+    </div>
+  </div>
+</div>

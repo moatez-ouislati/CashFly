@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Marchés Boursiers - CashFly{% endblock %}
+
+{% block page_header %}
+    <h2 class="text-2xl font-black text-on-surface">Marchés <span class="text-primary">Boursiers</span></h2>
+    <p class="text-sm text-on-surface-variant">Cours des actions en temps réel via Alpha Vantage</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+        <div class="card">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">currency_exchange</span>
+                    <h3 class="text-xl font-black text-on-surface">{{ symbol }}</h3>
+                </div>
+                <form method="GET">
+                    <select name="symbol" class="input py-1 text-sm w-48" onchange="this.form.submit()">
+                        {% for stock in popularStocks %}
+                            <option value="{{ stock.symbol }}" {% if stock.symbol == symbol %}selected{% endif %}>
+                                {{ stock.symbol }} - {{ stock.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+
+            {% if quotes.price > 0 %}
+            <div class="text-center mb-10">
+                <h2 class="text-6xl font-black text-on-surface mb-2">{{ quotes.price|number_format(2) }}</h2>
+                <span class="badge {% if quotes.change >= 0 %}badge-success{% else %}badge-error{% endif %} text-sm py-2 px-4">
+                    <span class="material-symbols-outlined text-[16px] align-middle mr-1">
+                        {% if quotes.change >= 0 %}arrow_upward{% else %}arrow_downward{% endif %}
+                    </span>
+                    {{ quotes.change >= 0 ? '+' : '' }}{{ quotes.change|number_format(2) }}
+                    ({{ quotes.change_percent }})
+                </span>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="p-4 rounded-xl bg-surface-container-low">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Ouverture</p>
+                    <p class="font-bold text-on-surface">{{ quotes.open|number_format(2) }}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-container-low">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Clôture Préc.</p>
+                    <p class="font-bold text-on-surface">{{ quotes.previous_close|number_format(2) }}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-container-low">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Plus Haut</p>
+                    <p class="font-bold text-tertiary">{{ quotes.high|number_format(2) }}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-container-low">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Plus Bas</p>
+                    <p class="font-bold text-error">{{ quotes.low|number_format(2) }}</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-surface-container-low flex justify-between items-center">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Volume</p>
+                    <p class="font-bold text-on-surface">{{ quotes.volume|number_format(0, ',', ' ') }}</p>
+                </div>
+                <div class="p-4 rounded-xl bg-surface-container-low flex justify-between items-center">
+                    <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">Dernière Journée</p>
+                    <p class="font-bold text-on-surface">{{ quotes.latest_day }}</p>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <span class="material-symbols-outlined text-warning text-5xl mb-4">warning</span>
+                <p class="text-on-surface font-bold mb-2">Impossible de charger les données</p>
+                <p class="text-sm text-on-surface-variant">Les appels API sont limités à 25 par jour (version gratuite).</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        <div class="card">
+            <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">star</span>
+                Actions Populaires
+            </h3>
+            <div class="space-y-2">
+                {% for stock in popularStocks %}
+                <a href="?symbol={{ stock.symbol }}" class="flex justify-between items-center p-3 rounded-xl transition-all duration-300 {% if stock.symbol == symbol %}bg-primary/10 text-primary font-bold{% else %}text-on-surface-variant hover:bg-surface-container-low{% endif %}">
+                    <div>
+                        <p class="text-sm">{{ stock.symbol }}</p>
+                        <p class="text-[10px] opacity-70">{{ stock.name|length > 20 ? stock.name|slice(0, 20) ~ '...' : stock.name }}</p>
+                    </div>
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="text-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">search</span>
+                Rechercher
+            </h3>
+            <form method="GET" action="{{ path('app_api_stock_search') }}" class="flex gap-2">
+                <input type="text" name="keyword" class="input text-sm" placeholder="Nom de l'entreprise..." value="{{ keyword|default('') }}">
+                <button type="submit" class="btn-primary p-2 min-w-0">
+                    <span class="material-symbols-outlined">search</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

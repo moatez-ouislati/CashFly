@@ -1,0 +1,12 @@
+knpu_oauth2_client:
+    clients:
+        google:
+            # نوع الـ provider هو جوجل
+            type: google
+            # هوني سيمفوني باش يقرأ الـ ID من ملف الـ .env
+            client_id: '%env(GOOGLE_CLIENT_ID)%'
+            # وهوني يقرأ الـ Secret من ملف الـ .env
+            client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+            # هذا الـ Route اللي باش يرجعلو جوجل (Redirect URI)
+            redirect_route: connect_google_check
+            redirect_params: {}

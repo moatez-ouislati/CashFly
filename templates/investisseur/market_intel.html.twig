@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Intelligence Marché — CashFly{% endblock %}
+
+{% block page_header %}
+    <h1 class="text-3xl font-black text-on-surface">🌍 Intelligence Marché</h1>
+    <p class="text-on-surface-variant">Actualités, taux de change et indicateurs économiques mondiaux</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left Column: News Feed -->
+    <div class="lg:col-span-2 space-y-6">
+        <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xl font-bold text-on-surface flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">newspaper</span>
+                Dernières Actualités Financières
+            </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {% for article in news %}
+                <div class="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-md transition-all flex flex-col">
+                    {% if article.image %}
+                        <div class="h-40 overflow-hidden">
+                            <img src="{{ article.image }}" class="w-full h-full object-cover" alt="{{ article.title }}">
+                        </div>
+                    {% endif %}
+                    <div class="p-6 flex-1 flex flex-col">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-[10px] font-black text-primary uppercase tracking-widest">{{ article.source }}</span>
+                            <span class="text-[10px] text-slate-400">{{ article.publishedAt|date('d/m/Y') }}</span>
+                        </div>
+                        <h3 class="font-bold text-on-surface mb-3 line-clamp-2">{{ article.title }}</h3>
+                        <p class="text-xs text-on-surface-variant mb-6 line-clamp-3">{{ article.description }}</p>
+                        <a href="{{ article.url }}" target="_blank" class="mt-auto text-primary text-xs font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                            Lire l'article <span class="material-symbols-outlined text-sm">open_in_new</span>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full p-12 text-center bg-slate-50 rounded-3xl border border-dashed border-slate-200">
+                    <p class="text-slate-400">Aucune actualité disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Right Column: Rates & Trends -->
+    <div class="space-y-8">
+        <!-- Exchange Rates -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-emerald-600">currency_exchange</span>
+                Taux de Change (TND)
+            </h2>
+            <div class="space-y-4">
+                {% for currency, rate in rates %}
+                    <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-bold text-slate-600 shadow-sm">
+                                {{ currency }}
+                            </div>
+                            <span class="font-bold text-on-surface">1 {{ currency }}</span>
+                        </div>
+                        <span class="font-black text-primary">{{ rate|number_format(3, '.', ' ') }} TND</span>
+                    </div>
+                {% endfor %}
+            </div>
+            <p class="text-[10px] text-slate-400 mt-6 italic text-center">Données mises à jour en temps réel via ExchangeRate API</p>
+        </div>
+
+        <!-- Market Trends -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-amber-600">trending_up</span>
+                Tendances Marchés
+            </h2>
+            <div class="space-y-4">
+                {% for trend in trends %}
+                    <div class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl">
+                        <div>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase block">{{ trend.name }}</span>
+                            <span class="font-bold text-on-surface">{{ trend.value }}</span>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-black {{ trend.status == 'up' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                            {{ trend.change }}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Economic Indicators (World Bank) -->
+        <div class="bg-primary/5 rounded-3xl p-6 border border-primary/10">
+            <h2 class="text-lg font-bold text-primary mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined">public</span>
+                Indicateurs (Tunisie)
+            </h2>
+            <div class="space-y-3">
+                <div class="flex justify-between text-sm">
+                    <span class="text-primary/60">Croissance PIB</span>
+                    <span class="font-bold text-primary">+1.2%</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-primary/60">Inflation</span>
+                    <span class="font-bold text-primary">9.1%</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-primary/60">Taux Directeur</span>
+                    <span class="font-bold text-primary">8.0%</span>
+                </div>
+            </div>
+            <p class="text-[9px] text-primary/40 mt-4 italic">Source: World Bank Data 2026</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

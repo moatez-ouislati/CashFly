@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Investissements Reçus{% endblock %}
+
+{% block page_header %}
+    <h1 class="text-3xl font-black text-on-surface">💰 Investissements Reçus</h1>
+    <p class="text-on-surface-variant">Gérez les demandes de financement pour vos entreprises</p>
+{% endblock %}
+
+{% block body %}
+<div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-slate-100">
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Investisseur</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Entreprise Cible</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Montant</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Date</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Statut</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in investments %}
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                                    {{ inv.investisseur.prenom|slice(0,1) }}{{ inv.investisseur.nom|slice(0,1) }}
+                                </div>
+                                <span class="font-bold text-slate-800">{{ inv.investisseur.fullName }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-4 font-medium text-primary">{{ inv.entreprise.nom }}</td>
+                        <td class="px-4 py-4 font-black">{{ inv.montant|number_format(2, '.', ' ') }} TND</td>
+                        <td class="px-4 py-4 text-slate-500">{{ inv.dateInvestissement|date('d/m/Y') }}</td>
+                        <td class="px-4 py-4">
+                            {% if inv.statut == 'ACTIF' %}
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold text-center inline-block w-24">APPROUVÉ</span>
+                            {% elseif inv.statut == 'EN_ATTENTE' %}
+                                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold text-center inline-block w-24">EN ATTENTE</span>
+                            {% elseif inv.statut == 'ANNULE' %}
+                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold text-center inline-block w-24">REJETÉ</span>
+                            {% else %}
+                                <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold text-center inline-block w-24">{{ inv.statut }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-4 text-right">
+                            {% if inv.statut == 'EN_ATTENTE' %}
+                                <div class="flex justify-end gap-2">
+                                    <form action="{{ path('proprietaire_investment_approve', {id: inv.id}) }}" method="POST" onsubmit="return confirm('Approuver cet investissement ?');">
+                                        <button type="submit" class="bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition-colors" title="Approuver">
+                                            <span class="material-symbols-outlined text-sm">check</span>
+                                        </button>
+                                    </form>
+                                    <form action="{{ path('proprietaire_investment_reject', {id: inv.id}) }}" method="POST" onsubmit="return confirm('Rejeter cet investissement ?');">
+                                        <button type="submit" class="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700 transition-colors" title="Rejeter">
+                                            <span class="material-symbols-outlined text-sm">close</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">
+                            Aucune demande d'investissement reçue pour le moment.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

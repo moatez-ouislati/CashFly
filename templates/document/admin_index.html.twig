@@ -1,0 +1,139 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tous les Documents{% endblock %}
+
+{% block body %}
+    <!-- Header Section -->
+    <header class="flex justify-between items-end mb-8">
+        <div>
+            <h1 class="text-4xl font-black tracking-tight text-slate-800 mb-2">Tous les Documents</h1>
+            <p class="text-slate-500 font-medium">Vue d'ensemble de tous les documents uploadés sur la plateforme.</p>
+        </div>
+    </header>
+
+    <!-- Search & Filter Bar -->
+    <div class="mb-8 bg-white p-6 rounded-3xl shadow-sm border border-slate-200">
+        <form id="search-form" method="get" action="{{ path('app_document_admin_index') }}" class="flex flex-col md:flex-row gap-4 items-end">
+            
+            <!-- Search Input -->
+            <div class="flex-grow w-full">
+                <label for="q" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Recherche</label>
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                    <input type="text" id="q" name="q" value="{{ currentSearch|default('') }}" placeholder="Nom du document..." class="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white text-sm font-medium">
+                </div>
+            </div>
+
+            <!-- Type Filter -->
+            <div class="w-full md:w-64">
+                <label for="type" class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Type</label>
+                <div class="relative">
+                    <select id="type" name="type" class="w-full pl-4 pr-10 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-slate-700 bg-slate-50 focus:bg-white text-sm font-medium appearance-none cursor-pointer">
+                        <option value="">Tous les types</option>
+                        {% for t in types|default([]) %}
+                            <option value="{{ t }}" {% if currentType|default('') == t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_content</span>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-2 w-full md:w-auto">
+                <button type="submit" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-md shadow-blue-600/20 hover:bg-blue-700 transition-colors">
+                    <span class="material-symbols-outlined text-sm">filter_alt</span>
+                    Filtrer
+                </button>
+                
+                {% if currentSearch|default('') or currentType|default('') %}
+                    <a href="{{ path('app_document_admin_index') }}" class="flex items-center justify-center bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 px-4 py-3 rounded-xl transition-colors" title="Réinitialiser les filtres">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </a>
+                {% endif %}
+            </div>
+            
+        </form>
+    </div>
+
+    <!-- Cards Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        {% for document in documents %}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 flex flex-col group hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+                
+                <!-- Card Header -->
+                <div class="flex justify-between items-start mb-6">
+                    <div class="pr-4">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">#{{ document.id }}</span>
+                        <h2 class="text-xl font-black text-slate-800 leading-tight truncate">{{ document.nomDocument }}</h2>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="flex-grow space-y-4 mb-6">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-secondary font-medium">Entreprise liée</span>
+                        {% if document.entreprise %}
+                            <span class="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-100 max-w-[160px]" title="{{ document.entreprise.nom }}">
+                                <span class="material-symbols-outlined text-[14px]">domain</span>
+                                <span class="truncate text-xs font-bold">{{ document.entreprise.nom }}</span>
+                            </span>
+                        {% else %}
+                            <span class="font-semibold text-slate-400">-</span>
+                        {% endif %}
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-medium">Type</span>
+                        <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-xs font-bold">{{ document.typeDocument ?: 'Non défini' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="text-slate-500 font-medium">Statut</span>
+                        <span class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md text-xs font-bold">{{ document.statut ?: '-' }}</span>
+                    </div>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="mt-auto pt-4 border-t border-slate-100 flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[14px]">calendar_today</span>
+                        Upload le
+                    </span>
+                    <span class="text-sm font-semibold text-slate-700">{{ document.dateUpload ? document.dateUpload|date('d/m/Y H:i') : '-' }}</span>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full bg-white rounded-3xl p-12 shadow-sm border border-slate-200 text-center flex flex-col items-center justify-center">
+                <span class="material-symbols-outlined text-5xl mb-4 text-slate-300">description</span>
+                <h3 class="text-xl font-bold text-slate-800 mb-2">Aucun document trouvé</h3>
+                <p class="text-slate-500 font-medium">Réessayez avec d'autres critères de recherche.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- SCRIPT POUR LA RECHERCHE EN TEMPS RÉEL -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('search-form');
+        const searchInput = document.getElementById('q');
+        const typeSelect = document.getElementById('type');
+        
+        let typingTimer;
+        const doneTypingInterval = 400;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(function() {
+                form.submit();
+            }, doneTypingInterval);
+        });
+
+        typeSelect.addEventListener('change', function() {
+            form.submit();
+        });
+        
+        if (searchInput.value.length > 0) {
+            searchInput.focus();
+            searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
+        }
+    });
+</script>
+{% endblock %}

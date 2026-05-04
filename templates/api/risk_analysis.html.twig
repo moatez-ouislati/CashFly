@@ -1,0 +1,155 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analyse de Risque - CashFly{% endblock %}
+
+{% block page_header %}
+    <h2 class="text-2xl font-black text-on-surface">Analyse de <span class="text-primary">Risque</span></h2>
+    <p class="text-sm text-on-surface-variant">Évaluation du risque de vos investissements</p>
+{% endblock %}
+
+{% block body %}
+<div class="flex justify-end gap-3 mb-8">
+    <select id="riskFilter" class="input py-1 text-sm w-48">
+        <option value="">Tous les risques</option>
+        <option value="LOW">🟢 Faible (LOW)</option>
+        <option value="MEDIUM">🟡 Moyen (MEDIUM)</option>
+        <option value="HIGH">🔴 Élevé (HIGH)</option>
+    </select>
+    <div class="relative w-64">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+        <input type="text" id="searchInvest" class="input py-1 pl-10 text-sm" placeholder="Rechercher...">
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="stat-card bg-tertiary/10 border-tertiary/20 items-center text-center">
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Risque Faible</p>
+        <h3 class="text-2xl font-black text-tertiary">{{ distribution.LOW }}</h3>
+        <p class="text-[10px] text-on-surface-variant mt-1">Score: 0-30</p>
+    </div>
+    <div class="stat-card bg-warning/10 border-warning/20 items-center text-center">
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Risque Moyen</p>
+        <h3 class="text-2xl font-black text-warning">{{ distribution.MEDIUM }}</h3>
+        <p class="text-[10px] text-on-surface-variant mt-1">Score: 31-60</p>
+    </div>
+    <div class="stat-card bg-error/10 border-error/20 items-center text-center">
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Risque Élevé</p>
+        <h3 class="text-2xl font-black text-error">{{ distribution.HIGH }}</h3>
+        <p class="text-[10px] text-on-surface-variant mt-1">Score: 61-100</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+    <div class="card">
+        <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">pie_chart</span>
+            Distribution des Risques
+        </h3>
+        <div id="riskPieChart" style="height: 300px;"></div>
+    </div>
+    <div class="card">
+        <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">bar_chart</span>
+            Comparaison des Scores
+        </h3>
+        <div id="riskBarChart" style="height: 300px;"></div>
+    </div>
+</div>
+
+<div class="table-wrapper">
+    <table class="w-full text-left" id="riskTable">
+        <thead>
+            <tr class="bg-surface-container-low">
+                <th>Investissement</th>
+                <th>Montant</th>
+                <th>Rendement Prév.</th>
+                <th>Durée</th>
+                <th>Score</th>
+                <th>Niveau</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in risks %}
+            <tr data-risk-level="{{ item.riskLevel }}" data-search="{{ item.investment.nom|default(item.investment.entreprise.nom)|lower }}">
+                <td class="font-bold text-on-surface">{{ item.investment.nom|default(item.investment.entreprise.nom) }}</td>
+                <td class="text-on-surface-variant text-sm font-medium">{{ item.investment.montant|number_format(2, ',', ' ') }} TND</td>
+                <td class="text-on-surface-variant text-sm font-medium">{{ item.investment.tauxRendementPrevu ?: 'N/A' }}%</td>
+                <td class="text-on-surface-variant text-sm font-medium">{{ item.investment.dureeMois ?: 'N/A' }} mois</td>
+                <td>
+                    <div class="flex items-center gap-3">
+                        <div class="w-24 h-2 bg-surface-container-high rounded-full overflow-hidden">
+                            <div class="h-full {% if item.riskLevel == 'LOW' %}bg-tertiary{% elseif item.riskLevel == 'MEDIUM' %}bg-warning{% else %}bg-error{% endif %}" style="width: {{ item.riskScore }}%"></div>
+                        </div>
+                        <span class="text-xs font-black text-on-surface">{{ item.riskScore }}</span>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge {% if item.riskLevel == 'LOW' %}badge-success{% elseif item.riskLevel == 'MEDIUM' %}badge-warning{% else %}badge-error{% endif %}">
+                        {{ item.riskLevel }}
+                    </span>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-12">
+                    <span class="material-symbols-outlined text-on-surface-variant opacity-50 text-4xl mb-2">inventory_2</span>
+                    <p class="text-sm text-on-surface-variant">Aucun investissement trouvé</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pieData = [{{ distribution.LOW }}, {{ distribution.MEDIUM }}, {{ distribution.HIGH }}];
+    if (pieData.some(v => v > 0)) {
+        new ApexCharts(document.querySelector('#riskPieChart'), {
+            chart: { type: 'donut', height: 300 },
+            series: pieData,
+            labels: ['Risque Faible', 'Risque Moyen', 'Risque Élevé'],
+            colors: ['#00696a', '#b45309', '#dc2626'],
+            legend: { position: 'bottom' },
+            plotOptions: { pie: { donut: { size: '70%' } } }
+        }).render();
+    }
+    
+    const barData = [{% for item in risks %}{{ item.riskScore }}{% if not loop.last %},{% endif %}{% endfor %}];
+    const barLabels = [{% for item in risks %}"{{ (item.investment.nom|default(item.investment.entreprise.nom))|slice(0, 15) }}"{% if not loop.last %},{% endif %}{% endfor %}];
+    
+    if (barData.length > 0) {
+        new ApexCharts(document.querySelector('#riskBarChart'), {
+            chart: { type: 'bar', height: 300, toolbar: { show: false } },
+            series: [{ name: 'Score', data: barData }],
+            xaxis: { categories: barLabels },
+            colors: ['#2563eb'],
+            plotOptions: { bar: { borderRadius: 6, distributed: true } },
+            legend: { show: false }
+        }).render();
+    }
+    
+    const filterSelect = document.getElementById('riskFilter');
+    const searchInput = document.getElementById('searchInvest');
+    const rows = document.querySelectorAll('#riskTable tbody tr');
+    
+    function filterTable() {
+        const riskValue = filterSelect.value;
+        const searchValue = searchInput.value.toLowerCase();
+        
+        rows.forEach(row => {
+            if (row.cells.length === 1) return;
+            const matchesRisk = !riskValue || row.dataset.riskLevel === riskValue;
+            const matchesSearch = !searchValue || row.dataset.search.includes(searchValue);
+            row.style.display = matchesRisk && matchesSearch ? '' : 'none';
+        });
+    }
+    
+    filterSelect.addEventListener('change', filterTable);
+    searchInput.addEventListener('input', filterTable);
+});
+</script>
+{% endblock %}

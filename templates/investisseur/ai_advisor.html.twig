@@ -1,0 +1,297 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conseiller IA{% endblock %}
+
+{% block page_header %}
+    <h1 class="text-3xl font-black text-on-surface">🤖 Conseiller IA Strategique</h1>
+    <p class="text-on-surface-variant">Analyses personnalisées basées sur votre profil d'investisseur</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Profil de l'Investisseur -->
+    <div class="lg:col-span-1">
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 sticky top-8">
+            <h2 class="text-xl font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">person</span>
+                Votre Profil
+            </h2>
+            
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-widest block mb-1">Budget Initial</label>
+                    <p class="text-xl font-black text-on-surface">{{ user.budget|default(0) }} TND</p>
+                </div>
+                
+                <div>
+                    <label class="text-[10px] font-bold text-secondary uppercase tracking-widest block mb-1">Expérience</label>
+                    <p class="text-lg font-bold text-on-surface">{{ user.yearsExperience }}</p>
+                </div>
+                
+                <div class="pt-6 border-t border-slate-100 space-y-4">
+                    <a href="{{ path('investisseur_profile') }}" class="text-primary text-sm font-bold flex items-center gap-2 hover:gap-3 transition-all">
+                        Modifier le profil <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                    <button id="quickAnalysisBtn" class="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm shadow-md hover:bg-primary-dark transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">bolt</span>
+                        Analyse Rapide
+                    </button>
+                    <button id="compareCompaniesBtn" class="w-full py-3 bg-white border-2 border-primary text-primary rounded-xl font-bold text-sm shadow-sm hover:bg-primary/5 transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">compare_arrows</span>
+                        Comparer 2 Sociétés
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommandations IA & Chat -->
+    <div class="lg:col-span-2 space-y-8">
+        <!-- AI Recommendations Area -->
+        <div id="advisorSection" class="bg-primary/5 rounded-3xl p-8 border border-primary/10 shadow-sm relative overflow-hidden">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined text-white">smart_toy</span>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-primary">Analyse Stratégique</h2>
+                    <p class="text-sm text-primary/60 font-medium">Intelligence Artificielle NVIDIA</p>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="advisorLoading" class="py-12 text-center">
+                <div class="inline-block animate-spin w-10 h-10 border-4 border-primary border-t-transparent rounded-full mb-4"></div>
+                <p class="text-on-surface-variant font-bold text-sm">Génération de vos conseils personnalisés...</p>
+            </div>
+
+            <!-- AI Content -->
+            <div id="advisorContent" class="hidden prose prose-slate max-w-none text-on-surface leading-relaxed whitespace-pre-line bg-white/50 p-6 rounded-2xl border border-primary/5">
+                <!-- Will be filled via AJAX -->
+            </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[500px]">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary">chat_bubble</span>
+                <h3 class="font-bold text-on-surface text-sm">Discuter avec votre conseiller</h3>
+            </div>
+            
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30">
+                <!-- Welcome message -->
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 text-xs font-bold">AI</div>
+                    <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-sm p-3 shadow-sm max-w-[85%] text-sm text-on-surface">
+                        Bonjour ! Je suis votre conseiller dédié. Une fois mon analyse terminée, vous pourrez me poser toutes vos questions ici.
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-white border-t border-slate-100">
+                <div class="relative flex items-center">
+                    <input type="text" id="chatInput" placeholder="Posez une question sur votre analyse..." 
+                           class="w-full bg-slate-100 border-none rounded-2xl py-3 pl-5 pr-12 text-sm text-on-surface focus:ring-2 focus:ring-primary/20 outline-none" 
+                           autocomplete="off">
+                    <button type="button" id="sendBtn" class="absolute right-2 w-8 h-8 bg-primary text-white rounded-xl flex items-center justify-center hover:bg-primary-dark transition-all active:scale-95">
+                        <span class="material-symbols-outlined text-sm">send</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <a href="{{ path('investisseur_risk_analysis') }}" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-primary/40 hover:bg-primary/5 transition-all group shadow-sm">
+                <span class="material-symbols-outlined text-orange-500 mb-2 group-hover:scale-110 transition-transform">shield</span>
+                <h3 class="font-bold text-on-surface">Gestion du Risque</h3>
+                <p class="text-sm text-on-surface-variant">Analysez les risques spécifiques de vos futurs placements.</p>
+            </a>
+            <a href="{{ path('investisseur_explore') }}" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-primary/40 hover:bg-primary/5 transition-all group shadow-sm">
+                <span class="material-symbols-outlined text-blue-500 mb-2 group-hover:scale-110 transition-transform">bolt</span>
+                <h3 class="font-bold text-on-surface">Opportunités</h3>
+                <p class="text-sm text-on-surface-variant">Découvrez de nouveaux projets Tech et Fintech pour investir.</p>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+(function() {
+    let isSending = false;
+
+    function initAdvisor() {
+        const advisorLoading = document.getElementById('advisorLoading');
+        const advisorContent = document.getElementById('advisorContent');
+        const quickAnalysisBtn = document.getElementById('quickAnalysisBtn');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const chatMessages = document.getElementById('chatMessages');
+
+        if (!sendBtn || !chatInput || sendBtn.dataset.advisorInitialized) return;
+        
+        console.log('Initializing advisor chat events...');
+        sendBtn.dataset.advisorInitialized = "true";
+
+        // 1. Initial Load of AI Recommendations
+        function loadRecommendations(refresh = false) {
+            if (!advisorLoading || !advisorContent) return;
+            
+            advisorLoading.classList.remove('hidden');
+            advisorContent.classList.add('hidden');
+            
+            fetch(`{{ path('investisseur_ai_advisor_analyze') }}${refresh ? '?refresh=1' : ''}`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(data => {
+                advisorLoading.classList.add('hidden');
+                advisorContent.classList.remove('hidden');
+                if (data.success) {
+                    // Format Markdown-like text (Bold, Bullets, Line breaks)
+                    const formattedMessage = data.message
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\n/g, '<br>')
+                        .replace(/•/g, '<span class="text-primary font-bold mr-1">•</span>')
+                        .replace(/### (.*?)($|<br>)/g, '<h3 class="text-primary font-black text-lg mt-4 mb-2">$1</h3>');
+                    
+                    advisorContent.innerHTML = formattedMessage;
+                    addMessage("Mon analyse stratégique est prête ! Vous pouvez me poser des questions sur votre portefeuille ou me demander de comparer des secteurs d'investissement.", "bot");
+                } else {
+                    advisorContent.innerHTML = `<div class="text-red-500 font-bold">${data.message}</div>`;
+                }
+            })
+            .catch(err => {
+                advisorLoading.classList.add('hidden');
+                advisorContent.classList.remove('hidden');
+                advisorContent.innerHTML = `<div class="text-red-500 font-bold">Erreur de connexion au service IA.</div>`;
+            });
+        }
+
+        // Load on start
+        loadRecommendations(window.location.search.includes('refresh=1'));
+
+        // 2. Quick Analysis Button
+        if (quickAnalysisBtn) {
+            quickAnalysisBtn.onclick = function(e) {
+                if (e) e.preventDefault();
+                loadRecommendations(true);
+            };
+        }
+
+        // Comparison Button
+        const compareCompaniesBtn = document.getElementById('compareCompaniesBtn');
+        if (compareCompaniesBtn) {
+            compareCompaniesBtn.onclick = function(e) {
+                if (e) e.preventDefault();
+                chatInput.value = "Peux-tu comparer deux sociétés tunisiennes majeures pour un investissement aujourd'hui ? Par exemple, compare le secteur bancaire et le secteur de l'énergie.";
+                sendMessage();
+                
+                // Scroll to chat
+                document.getElementById('chatMessages').scrollIntoView({ behavior: 'smooth' });
+            };
+        }
+
+        // 3. Chat Logic
+        function sendMessage(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            const message = chatInput.value.trim();
+            if (!message || isSending) return;
+
+            isSending = true;
+            console.log('Sending advisor message:', message);
+
+            addMessage(message, 'user');
+            chatInput.value = '';
+            
+            // Disable UI
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+            sendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            fetch('/chatbot/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': '{{ csrf_token('chatbot') }}'
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(res => {
+                isSending = false;
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                chatInput.focus();
+
+                if (!res.ok) throw new Error('API Error');
+                return res.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    addMessage(data.message, 'bot');
+                } else {
+                    addMessage(data.message || "Désolé, je rencontre une difficulté technique.", 'bot');
+                }
+            })
+            .catch(() => {
+                isSending = false;
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                sendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                addMessage("Erreur de connexion.", 'bot');
+            });
+        }
+
+        function addMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `flex gap-3 ${sender === 'user' ? 'flex-row-reverse' : ''}`;
+            
+            const avatar = sender === 'user' 
+                ? `<div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 flex-shrink-0 text-xs font-bold shadow-sm"><span class="material-symbols-outlined text-[14px]">person</span></div>`
+                : `<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white flex-shrink-0 text-xs font-bold shadow-sm"><span class="material-symbols-outlined text-[14px]">smart_toy</span></div>`;
+
+            const bg = sender === 'user' ? 'bg-primary text-white shadow-md' : 'bg-white border border-slate-200 text-on-surface shadow-sm';
+            
+            // Format basic bold and line breaks
+            const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                 .replace(/\n/g, '<br>')
+                                 .replace(/•/g, '<span class="text-primary font-bold mr-1">•</span>');
+
+            div.innerHTML = `
+                ${avatar}
+                <div class="${bg} rounded-2xl ${sender === 'user' ? 'rounded-tr-sm' : 'rounded-tl-sm'} p-3 max-w-[85%] text-sm leading-relaxed">
+                    ${formatted}
+                </div>
+            `;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        if (sendBtn) {
+            sendBtn.onclick = sendMessage;
+        }
+        
+        if (chatInput) {
+            chatInput.onkeypress = function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage(e);
+                }
+            };
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initAdvisor);
+    document.addEventListener('turbo:load', initAdvisor);
+})();
+</script>
+{% endblock %}

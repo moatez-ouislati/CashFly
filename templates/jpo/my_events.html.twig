@@ -1,0 +1,235 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Événements — CashFly{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="flex items-center gap-4">
+        <a href="{{ path('jpo_dashboard_proprietaire') }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <div>
+            <h2 class="text-2xl font-black text-on-surface">Mes <span class="text-primary">Événements</span></h2>
+            <p class="text-xs text-on-surface-variant font-medium">Liste de vos JPO créées</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+<div data-controller="jpo-calendar" data-jpo-calendar-data-value="{{ calendarData|json_encode }}"
+  data-jpo-calendar-open-value="false" data-jpo-calendar-url-value="" data-jpo-calendar-is-proprietaire-value="true"
+  data-jpo-calendar-create-url-value="{{ path('jpo_create_event') }}"
+  data-jpo-calendar-day-events-url-value="{{ path('jpo_events_on_day') }}"
+  data-jpo-calendar-current-user-id-value="{{ currentUserId }}" data-jpo-calendar-edit-url-value="/jpo/edit-event/"
+  data-jpo-calendar-delete-url-value="/jpo/delete-event/">
+
+<div data-controller="jpo-my-events" data-jpo-my-events-edit-url-value="/jpo/edit-event/"
+  data-jpo-my-events-delete-url-value="/jpo/delete-event/">
+
+  <div class="page">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <div class="section-title">Gérer mes <span>Événements</span></div>
+        <div class="section-sub">Liste complète des Journées Portes Ouvertes que vous avez créées</div>
+      </div>
+      <button class="btn btn-primary" id="openCalBtn" style="height: fit-content; padding: 12px 24px; border-radius: 12px; font-weight: 700; letter-spacing: 0.5px;">
+        <i class="ph ph-calendar-blank" style="margin-right: 8px; font-size: 20px;"></i> CALENDRIER
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <form method="GET" style="display: flex; gap: 15px; flex: 1; min-width: 300px;">
+        <div class="search-wrap">
+          <input type="text" name="q" id="searchInput" class="search-input" placeholder="Rechercher par titre, lieu..."
+            value="{{ search }}" data-action="input->jpo-my-events#search">
+          <i class="ph ph-magnifying-glass search-icon"></i>
+        </div>
+
+        <button type="button" id="searchBtn" class="btn btn-primary search-btn-main" data-action="jpo-my-events#search">
+          CHERCHER
+        </button>
+
+        <select name="sortBy" class="filter-select select-standard" onchange="this.form.submit()">
+          <option value="dateEvenement" {{ sortBy=='dateEvenement' ? 'selected' : '' }}>Trier par Date</option>
+          <option value="titre" {{ sortBy=='titre' ? 'selected' : '' }}>Trier par Titre</option>
+          <option value="participants" {{ sortBy=='participants' ? 'selected' : '' }}>Trier par Participants</option>
+        </select>
+
+        <select name="limit" class="filter-select select-limit" onchange="this.form.submit()">
+          <option value="5" {{ limit==5 ? 'selected' : '' }}>5 / page</option>
+          <option value="10" {{ limit==10 ? 'selected' : '' }}>10 / page</option>
+          <option value="15" {{ limit==15 ? 'selected' : '' }}>15 / page</option>
+          <option value="20" {{ limit==20 ? 'selected' : '' }}>20 / page</option>
+        </select>
+
+        <input type="hidden" name="dir" value="{{ sortBy == 'dateEvenement' ? 'DESC' : 'ASC' }}">
+
+        <div class="tabs-wrap">
+          <a href="{{ path('jpo_my_events', app.request.query.all|merge({'history': '0', 'page': 1})) }}"
+            class="tab-btn {{ not history ? 'active' : '' }}">
+            À venir
+          </a>
+          <a href="{{ path('jpo_my_events', app.request.query.all|merge({'history': '1', 'page': 1})) }}"
+            class="tab-btn {{ history ? 'active' : '' }}">
+            Historique
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <div class="events-grid" id="myEventsGrid">
+      {% if events is empty %}
+      <div class="no-results">
+        <div class="no-results-icon"><i class="ph ph-calendar-blank"></i></div>
+        <h3>Aucun événement trouvé</h3>
+        <p>Aucun résultat ne correspond à votre recherche ou vous n'avez pas encore créé d'événements.</p>
+        <button class="btn btn-primary" onclick="document.getElementById('openCalBtn').click()">
+          <i class="ph ph-plus"></i> CRÉER UN ÉVÉNEMENT
+        </button>
+      </div>
+      {% else %}
+      {% for event in events %}
+      <div class="event-card" id="event-{{ event.idEvenement }}"
+        data-href="{{ path('jpo_event_details', {id: event.idEvenement}) }}" style="cursor: pointer;">
+        <div class="card-img">
+          {% if event.imagePath %}
+          <img src="{{ event.imagePath }}" alt="{{ event.titre }}">
+          {% else %}
+          <i class="ph ph-buildings"></i>
+          {% endif %}
+          <div class="card-badge card-badge--participants">
+            {{ event.currentParticipants }}/{{ event.maxParticipants }}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="card-date"><i class="ph ph-calendar-blank"></i> {{ event.dateEvenement|date('d/m/Y') }}</div>
+          <div class="card-title">{{ event.titre }}</div>
+          {% if event.lieu %}
+          <div class="card-location"><i class="ph ph-map-pin"></i> {{ event.lieu }}</div>
+          {% endif %}
+          {% if event.description %}
+          <div class="card-desc">{{ event.description }}</div>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          {% set interval = event.dateEvenement.timestamp - date().timestamp %}
+          {% set isLocked = (interval > 0 and interval < 86400) %} {% if not history %} <button
+            class="btn-icon btn-secondary btn-icon--sm" title="Modifier l'événement"
+            data-action="jpo-my-events#openEdit" data-event-id="{{ event.idEvenement }}"
+            data-event-titre="{{ event.titre|escape('html_attr') }}" data-event-lieu="{{ event.lieu|escape('html_attr') }}"
+            data-event-desc="{{ event.description|escape('html_attr') }}" data-event-max="{{ event.maxParticipants }}"
+            data-event-date="{{ event.dateEvenement|date('Y-m-d') }}"
+            data-event-locked="{{ isLocked ? 'true' : 'false' }}">
+            <i class="ph ph-pencil-simple" style="color: #2563eb; font-weight: 800;"></i>
+            </button>
+            <button class="btn-icon btn-danger btn-icon--sm" title="Supprimer l'événement"
+              data-action="jpo-my-events#delete" data-id="{{ event.idEvenement }}"
+              data-locked="{{ isLocked ? 'true' : 'false' }}">
+              <i class="ph ph-trash"></i>
+            </button>
+            {% else %}
+            <div class="read-only-badge">
+              <i class="ph ph-lock-simple"></i> Lecture seule
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+
+    {{ knp_pagination_render(events) }}
+
+  </div>
+
+  {# ── DELETE CONFIRM MODAL ── #}
+  <div class="popup-overlay" id="deleteConfirmModal" data-jpo-my-events-target="deleteModal">
+    <div class="popup-modal popup-modal--small">
+      <i class="ph ph-warning-circle confirm-icon"></i>
+      <div class="confirm-title">Supprimer l'événement ?</div>
+      <p class="confirm-text">Attention : Cette action est irréversible. Voulez-vous vraiment supprimer cet événement ?
+      </p>
+      <div class="confirm-actions">
+        <button class="btn btn-secondary" data-action="jpo-my-events#closeDelete">ANNULER</button>
+        <button class="btn btn-danger btn-danger--flat" id="confirmDeleteBtn"
+          data-action="jpo-my-events#confirmDelete">OUI, SUPPRIMER</button>
+      </div>
+    </div>
+  </div>
+
+  {# ── EDIT MODAL ── #}
+  <div class="popup-overlay" id="editModal" data-jpo-my-events-target="editModal">
+    <div class="popup-modal popup-modal--wide">
+      <div class="popup-header">
+        <i class="ph ph-pencil-simple"></i>
+        <div>
+          <div class="popup-title">Modifier l'événement</div>
+          <div class="popup-subtitle" id="editModalSubtitle"></div>
+        </div>
+        <button class="popup-close" data-action="jpo-my-events#closeEdit">✕</button>
+      </div>
+      <div class="popup-body">
+        <form id="editForm" enctype="multipart/form-data">
+          <input type="hidden" name="id" id="editId">
+          <div class="form-group">
+            <label class="form-label">Titre</label>
+            <input type="text" name="titre" id="editTitre" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lieu</label>
+            <input type="text" name="lieu" id="editLieu" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Date de l'événement</label>
+            <input type="date" name="date_evenement" id="editDate" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea name="description" id="editDesc" class="form-input form-textarea" rows="3"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group form-group--half">
+              <label class="form-label">Max. Participants</label>
+              <input type="number" name="max_participants" id="editMax" class="form-input" required min="1">
+            </div>
+            <div class="form-group form-group--half">
+              <label class="form-label">Image</label>
+              <label class="form-file-label">
+                <i class="ph ph-image"></i>
+                <span id="fileName">Remplacer l'image...</span>
+                <input type="file" name="image" class="form-file-input" accept="image/*"
+                  onchange="document.getElementById('fileName').textContent = this.files[0].name">
+              </label>
+            </div>
+          </div>
+          <div id="formError" class="form-feedback form-feedback--error"></div>
+          <div id="formSuccess" class="form-feedback form-feedback--success"></div>
+        </form>
+      </div>
+      <div class="popup-footer">
+        <button class="btn btn-primary btn--full" data-action="jpo-my-events#submitEdit">
+          <i class="ph ph-check-circle"></i> ENREGISTRER LES MODIFICATIONS
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ include('jpo/_calendar_popups.html.twig') }}
+
+
+<script>
+  document.querySelectorAll('.event-card[data-href]').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (!e.target.closest('button')) {
+        window.location.href = card.dataset.href;
+      }
+    });
+  });
+</script>
+
+{% endblock %}

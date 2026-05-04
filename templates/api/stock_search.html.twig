@@ -1,0 +1,135 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recherche d'Actions - CashFly{% endblock %}
+
+{% block page_header %}
+    <h2 class="text-2xl font-black text-on-surface">Recherche <span class="text-primary">d'Actions</span></h2>
+    <p class="text-sm text-on-surface-variant">Trouvez des symboles boursiers sur Alpha Vantage</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2">
+        <div class="card">
+            <form method="GET" class="mb-8">
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="flex-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2 block">Rechercher une entreprise ou un symbole</label>
+                        <div class="flex gap-2">
+                            <input type="text" name="keyword" class="input flex-1" placeholder="Ex: Apple, Tesla, IBM..." value="{{ keyword }}">
+                            <button type="submit" class="btn-primary min-w-0 p-3">
+                                <span class="material-symbols-outlined">search</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="md:w-48">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2 block">&nbsp;</label>
+                        <a href="{{ path('app_api_stocks') }}" class="btn-secondary w-full justify-center">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                            Retour
+                        </a>
+                    </div>
+                </div>
+            </form>
+
+            {% if keyword %}
+                <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">list</span>
+                    Résultats pour "{{ keyword }}"
+                </h3>
+                
+                {% if results|length > 0 %}
+                <div class="table-wrapper">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-surface-container-low">
+                                <th>Symbole</th>
+                                <th>Nom</th>
+                                <th>Type</th>
+                                <th>Région</th>
+                                <th>Devise</th>
+                                <th class="text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td><span class="badge badge-primary">{{ result.symbol }}</span></td>
+                                <td class="font-medium text-on-surface">{{ result.name }}</td>
+                                <td><span class="badge badge-secondary">{{ result.type }}</span></td>
+                                <td class="text-sm text-on-surface-variant">{{ result.region }}</td>
+                                <td class="text-sm text-on-surface-variant">{{ result.currency }}</td>
+                                <td class="text-right">
+                                    <a href="{{ path('app_api_stocks', {symbol: result.symbol}) }}" class="btn-primary py-1 px-3 text-xs min-w-0">
+                                        Voir Cours
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <span class="material-symbols-outlined text-on-surface-variant opacity-50 text-4xl mb-2">search_off</span>
+                    <p class="text-sm text-on-surface-variant">Aucun résultat trouvé pour "{{ keyword }}"</p>
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-12 opacity-50">
+                    <span class="material-symbols-outlined text-4xl mb-2">search</span>
+                    <p class="text-sm">Entrez un nom d'entreprise ou un symbole pour commencer</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="space-y-6">
+        <div class="card">
+            <h3 class="text-lg font-bold text-on-surface mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">bolt</span>
+                Recherche Rapide
+            </h3>
+            <div class="space-y-2">
+                {% set quickStocks = [
+                    {'symbol': 'AAPL', 'name': 'Apple'},
+                    {'symbol': 'GOOGL', 'name': 'Google'},
+                    {'symbol': 'MSFT', 'name': 'Microsoft'},
+                    {'symbol': 'TSLA', 'name': 'Tesla'},
+                    {'symbol': 'AMZN', 'name': 'Amazon'}
+                ] %}
+                {% for stock in quickStocks %}
+                <a href="{{ path('app_api_stocks', {symbol: stock.symbol}) }}" class="flex justify-between items-center p-3 rounded-xl text-on-surface-variant hover:bg-surface-container-low transition-all duration-300">
+                    <span class="text-sm font-medium">{{ stock.name }} ({{ stock.symbol }})</span>
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="card bg-surface-container-low border-none">
+            <h3 class="text-sm font-bold text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-lg">info</span>
+                À propos
+            </h3>
+            <p class="text-xs text-on-surface-variant leading-relaxed mb-4">
+                Cette page utilise l'API Alpha Vantage pour rechercher des informations sur les actions cotées en bourse.
+            </p>
+            <ul class="space-y-2">
+                <li class="flex items-center gap-2 text-[10px] text-on-surface-variant uppercase tracking-widest">
+                    <span class="w-1 h-1 rounded-full bg-primary"></span>
+                    Limite: 25 appels/jour
+                </li>
+                <li class="flex items-center gap-2 text-[10px] text-on-surface-variant uppercase tracking-widest">
+                    <span class="w-1 h-1 rounded-full bg-primary"></span>
+                    Données delayed de 15 min
+                </li>
+                <li class="flex items-center gap-2 text-[10px] text-on-surface-variant uppercase tracking-widest">
+                    <span class="w-1 h-1 rounded-full bg-primary"></span>
+                    Version gratuite
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

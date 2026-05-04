@@ -1,0 +1,302 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil — Investisseur{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+        --bg-body: #f1f5f9;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .page-wrapper {
+        padding: 2.5rem;
+        background-color: var(--bg-body);
+        min-height: 100vh;
+    }
+
+    .page-header h1 {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Layout Grid */
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+
+    .modern-card {
+        background: #ffffff;
+        border-radius: 30px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+        border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    /* Left Column: Summary Card */
+    .profile-card-summary {
+        text-align: center;
+    }
+
+    .avatar-container {
+        position: relative;
+        width: 130px;
+        height: 130px;
+        margin: 0 auto 1.5rem;
+    }
+
+    .avatar-glow {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--primary-gradient);
+        filter: blur(15px);
+        opacity: 0.2;
+        border-radius: 35px;
+    }
+
+    .avatar-frame {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: white;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #6366f1;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        overflow: hidden;
+        border: 4px solid white;
+    }
+
+    .avatar-frame img {
+        width: 100%; height: 100%; object-fit: cover;
+    }
+
+    .role-badge {
+        background: #f5f3ff;
+        color: #7c3aed;
+        padding: 6px 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Form Styling */
+    .form-section-title {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+        margin: 2rem 0 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .form-section-title::after {
+        content: "";
+        height: 1px;
+        flex: 1;
+        background: #e2e8f0;
+    }
+
+    .form-group { margin-bottom: 1.5rem; }
+
+    .form-label {
+        display: block;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1.2rem;
+        border-radius: 15px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #6366f1;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Buttons */
+    .btn-submit {
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 15px;
+        font-weight: 700;
+        width: 100%;
+        margin-top: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 25px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 600;
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        transition: color 0.3s;
+    }
+
+    .btn-back:hover { color: #6366f1; }
+
+    @media (max-width: 992px) {
+        .profile-grid { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <h1>Mon Profil</h1>
+        <p style="color: var(--text-muted);">Gérez vos informations personnelles et données d'investissement</p>
+    </div>
+
+    {% if mustCompleteProfile %}
+        <div style="margin-bottom: 1.5rem; padding: 1rem 1.25rem; border-radius: 16px; background: #fff7ed; color: #9a3412; border: 1px solid #fdba74; font-weight: 600;">
+            Complétez vos années d'expérience et votre budget pour accéder à votre espace investisseur.
+        </div>
+    {% endif %}
+
+    <div class="profile-grid">
+        <div class="modern-card profile-card-summary">
+            <div class="avatar-container">
+                <div class="avatar-glow"></div>
+                <div class="avatar-frame">
+                    {% if user.faceImage %}
+                        <img src="{{ asset('uploads/faces/' ~ user.faceImage) }}" alt="Profile">
+                    {% else %}
+                        {{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <h3 style="font-family:'Syne',sans-serif; font-weight:800; margin-bottom:0.5rem; font-size:1.4rem;">{{ user.fullName }}</h3>
+            <span class="role-badge">Investisseur</span>
+            
+            <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #f1f5f9;">
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    <span style="display:block; font-size: 0.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase;">Email</span>
+                    {{ user.email }}
+                </p>
+            </div>
+
+            <a href="{{ path('investisseur_dashboard') }}" class="btn-back">
+                <span>←</span> Retour au dashboard
+            </a>
+        </div>
+
+        <div class="modern-card">
+            <h2 style="font-family:'Syne',sans-serif; font-weight:800; font-size:1.3rem; margin-bottom:0.5rem;">Modifier les informations</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem;">Mettez à jour vos informations pour rester visible auprès des propriétaires.</p>
+
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
+                
+                <div class="form-section-title">Informations Personnelles</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form_label(form.nom, "Nom", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
+                        <span class="text-danger">{{ form_errors(form.nom) }}</span>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.prenom, "Prénom", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.prenom, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
+                        <span class="text-danger">{{ form_errors(form.prenom) }}</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form_label(form.cin, "CIN", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.cin, {'attr': {'class': 'form-control'}}) }}
+                        <span class="text-danger">{{ form_errors(form.cin) }}</span>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.tel, "Téléphone", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.tel, {'attr': {'class': 'form-control'}}) }}
+                        <span class="text-danger">{{ form_errors(form.tel) }}</span>
+                    </div>
+                </div>
+
+                <div class="form-section-title">Données d'investissement</div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        {{ form_label(form.yearsExperience, "Années d'expérience", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.yearsExperience, {'attr': {'class': 'form-control', 'placeholder': 'ex: 5'}}) }}
+                        <span class="text-danger">{{ form_errors(form.yearsExperience) }}</span>
+                    </div>
+                    <div class="form-group">
+                        {{ form_label(form.highestProfit, "Profit max réalisé (TND)", {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.highestProfit, {'attr': {'class': 'form-control', 'placeholder': 'Montant en TND'}}) }}
+                        <span class="text-danger">{{ form_errors(form.highestProfit) }}</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.budget, "Budget disponible (TND)", {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.budget, {'attr': {'class': 'form-control', 'placeholder': 'Ex: 50000'}}) }}
+                    <span class="text-danger">{{ form_errors(form.budget) }}</span>
+                </div>
+
+                <div class="form-group">
+                    {{ form_label(form.faceImageFile, "Photo de profil", {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.faceImageFile, {'attr': {'class': 'form-control'}}) }}
+                    <small style="color:var(--text-muted); font-size: 0.8rem;">Laissez vide pour conserver l'image actuelle.</small>
+                    <span class="text-danger">{{ form_errors(form.faceImageFile) }}</span>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    Enregistrer les modifications
+                </button>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

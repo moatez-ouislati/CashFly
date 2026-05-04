@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reçu d'Investissement - CashFly</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; color: #333; line-height: 1.6; }
+        .header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { color: #2563eb; font-size: 32px; font-weight: bold; }
+        .title { font-size: 24px; color: #1e293b; margin-top: 10px; }
+        .section { margin-bottom: 30px; }
+        .section-title { font-size: 16px; font-weight: bold; color: #2563eb; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; margin-bottom: 15px; text-transform: uppercase; }
+        .grid { width: 100%; border-collapse: collapse; }
+        .grid td { padding: 8px 0; vertical-align: top; }
+        .label { font-weight: bold; color: #64748b; width: 40%; }
+        .value { color: #1e293b; }
+        .total-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 10px; margin-top: 20px; }
+        .total-label { font-size: 14px; color: #64748b; }
+        .total-value { font-size: 24px; font-weight: bold; color: #2563eb; }
+        .footer { text-align: center; font-size: 10px; color: #94a3b8; margin-top: 50px; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">CashFly</div>
+        <div class="title">REÇU D'INVESTISSEMENT</div>
+        <div style="font-size: 12px; color: #64748b;">N° REF : INV-{{ inv.id }}-{{ "now"|date("Y") }}</div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Informations de l'Investisseur</div>
+        <table class="grid">
+            <tr>
+                <td class="label">Nom complet :</td>
+                <td class="value">{{ inv.investisseur.fullName }}</td>
+            </tr>
+            <tr>
+                <td class="label">Email :</td>
+                <td class="value">{{ inv.investisseur.email }}</td>
+            </tr>
+            <tr>
+                <td class="label">Date du placement :</td>
+                <td class="value">{{ inv.dateInvestissement|date('d/m/Y H:i') }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Détails de l'Entreprise</div>
+        <table class="grid">
+            <tr>
+                <td class="label">Nom de l'entreprise :</td>
+                <td class="value">{{ inv.entreprise.nom }}</td>
+            </tr>
+            <tr>
+                <td class="label">Secteur :</td>
+                <td class="value">{{ inv.entreprise.secteur }}</td>
+            </tr>
+            <tr>
+                <td class="label">Propriétaire :</td>
+                <td class="value">{{ inv.entreprise.proprietaire.fullName }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Conditions de l'Investissement</div>
+        <table class="grid">
+            <tr>
+                <td class="label">Taux de rendement prévu :</td>
+                <td class="value">{{ inv.tauxRendementPrevu }}%</td>
+            </tr>
+            <tr>
+                <td class="label">Durée du placement :</td>
+                <td class="value">{{ inv.dureeMois }} mois</td>
+            </tr>
+            <tr>
+                <td class="label">Statut actuel :</td>
+                <td class="value">{{ inv.statut }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="total-box">
+        <table width="100%">
+            <tr>
+                <td>
+                    <div class="total-label">MONTANT TOTAL INVESTI</div>
+                    <div class="total-value">{{ inv.montant|number_format(2, '.', ' ') }} TND</div>
+                </td>
+                <td align="right" style="vertical-align: bottom;">
+                    <div style="font-style: italic; font-size: 10px; color: #64748b;">Cachet de la plateforme CashFly</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        CashFly Platform — Connecter les Talents et les Capitaux<br>
+        Document généré automatiquement le {{ "now"|date("d/m/Y à H:i") }}<br>
+        Ceci est un document officiel valant preuve d'investissement sur la plateforme.
+    </div>
+</body>
+</html>

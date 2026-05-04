@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Analyse de Risque — CashFly{% endblock %}
+
+{% block page_header %}
+    <h1 class="text-3xl font-black text-on-surface">🛡️ Analyse de Risque</h1>
+    <p class="text-on-surface-variant">Évaluation détaillée de votre exposition et de la sécurité de votre portefeuille</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left: Risk Score Card -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 text-center">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6">Niveau de Risque Global</h3>
+            
+            <div class="relative inline-flex items-center justify-center mb-6">
+                <svg class="w-48 h-48 transform -rotate-90">
+                    <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="12" fill="transparent" class="text-slate-100" />
+                    <circle cx="96" cy="96" r="88" stroke="currentColor" stroke-width="12" fill="transparent" 
+                            stroke-dasharray="552.92" 
+                            stroke-dashoffset="{{ 552.92 - (riskMetrics.exposure_level.percent / 100 * 552.92) }}"
+                            class="text-{{ riskMetrics.exposure_level.color }}-500 transition-all duration-1000" />
+                </svg>
+                <div class="absolute flex flex-col items-center">
+                    <span class="text-4xl font-black text-on-surface">{{ riskMetrics.exposure_level.percent|round }}%</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Exposition</span>
+                </div>
+            </div>
+
+            <div class="bg-{{ riskMetrics.exposure_level.color }}-50 text-{{ riskMetrics.exposure_level.color }}-700 py-3 rounded-2xl font-black text-xl mb-4">
+                {{ riskMetrics.exposure_level.level }}
+            </div>
+            
+            <p class="text-xs text-on-surface-variant leading-relaxed">
+                Votre exposition est calculée en comparant votre capital investi par rapport à votre budget total déclaré de 
+                <span class="font-bold text-on-surface">{{ user.budget|number_format(0, '.', ' ') }} TND</span>.
+            </p>
+        </div>
+
+        <div class="bg-primary/5 rounded-3xl p-6 border border-primary/10">
+            <h4 class="font-bold text-primary mb-4 flex items-center gap-2 text-sm">
+                <span class="material-symbols-outlined text-lg">info</span>
+                Conseil de sécurité
+            </h4>
+            <p class="text-xs text-primary/70 leading-relaxed italic">
+                "Un portefeuille sain ne devrait idéalement pas dépasser 70% d'exposition directe sur des PME. Gardez toujours une réserve de liquidité."
+            </p>
+        </div>
+    </div>
+
+    <!-- Right: Detailed Metrics -->
+    <div class="lg:col-span-2 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Diversification -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined">grid_view</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-on-surface">Diversification</h4>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase">{{ riskMetrics.diversification_score.level }}</span>
+                    </div>
+                </div>
+                <div class="h-2 bg-slate-100 rounded-full overflow-hidden mb-4">
+                    <div class="h-full bg-blue-500 transition-all duration-1000" style="width: {{ riskMetrics.diversification_score.score }}%"></div>
+                </div>
+                <p class="text-xs text-on-surface-variant">
+                    Vous avez investi dans <span class="font-bold text-on-surface">{{ stats.sectorDistribution|length }} secteur(s)</span> différents.
+                </p>
+            </div>
+
+            <!-- Portfolio Health -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-{{ riskMetrics.portfolio_health.color }}-50 text-{{ riskMetrics.portfolio_health.color }}-600 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined">vital_signs</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-on-surface">Santé du Portefeuille</h4>
+                        <span class="text-[10px] text-slate-400 font-bold uppercase">{{ riskMetrics.portfolio_health.level }}</span>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-slate-500">Rendement moyen</span>
+                    <span class="font-black text-{{ riskMetrics.portfolio_health.color }}-600">+{{ stats.averageYield }}%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Factors List -->
+        <div class="bg-white rounded-3xl p-8 shadow-sm border border-slate-200">
+            <h3 class="text-lg font-bold text-on-surface mb-6">Facteurs de Vigilance</h3>
+            
+            <div class="space-y-4">
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span class="material-symbols-outlined text-{{ riskMetrics.exposure_level.percent > 70 ? 'red' : 'emerald' }}-500 mt-0.5">
+                        {{ riskMetrics.exposure_level.percent > 70 ? 'warning' : 'check_circle' }}
+                    </span>
+                    <div>
+                        <p class="font-bold text-sm text-on-surface">Concentration du Capital</p>
+                        <p class="text-xs text-on-surface-variant">
+                            {% if riskMetrics.exposure_level.percent > 70 %}
+                                Attention : Trop de capital est immobilisé. Votre risque de liquidité est élevé.
+                            {% else %}
+                                Votre allocation actuelle laisse une marge de sécurité confortable.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span class="material-symbols-outlined text-{{ stats.sectorDistribution|length < 2 ? 'orange' : 'emerald' }}-500 mt-0.5">
+                        {{ stats.sectorDistribution|length < 2 ? 'error' : 'check_circle' }}
+                    </span>
+                    <div>
+                        <p class="font-bold text-sm text-on-surface">Risque Sectoriel</p>
+                        <p class="text-xs text-on-surface-variant">
+                            {% if stats.sectorDistribution|length < 2 %}
+                                Risque élevé : Vous dépendez d'un seul secteur. En cas de crise sectorielle, tout votre portefeuille est impacté.
+                            {% else %}
+                                Bien : Vos investissements sont répartis, ce qui lisse le risque sectoriel.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                    <span class="material-symbols-outlined text-blue-500 mt-0.5">verified_user</span>
+                    <div>
+                        <p class="font-bold text-sm text-on-surface">Qualité des Contrats</p>
+                        <p class="text-xs text-on-surface-variant">Tous vos investissements actifs sont passés par le processus de vérification CashFly.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

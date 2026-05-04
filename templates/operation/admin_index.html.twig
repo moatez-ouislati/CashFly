@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Opérations | CashFly{% endblock %}
+
+{% block header_title %}Administration des Opérations{% endblock %}
+{% block header_subtitle %}Vue globale de toutes les opérations sur la plateforme.{% endblock %}
+
+{% block body %}
+<div class="mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+    <form id="filter-form" class="flex flex-wrap items-end gap-4 bg-surface-container-lowest p-6 rounded-2xl shadow-sm border border-outline-variant/10 w-full lg:w-auto">
+        <div class="flex flex-col gap-1.5 min-w-[200px]">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Recherche</label>
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
+                <input type="text" name="search" value="{{ search }}" placeholder="Référence, description..." class="w-full bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary/40 text-on-surface placeholder-outline/50">
+            </div>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Type</label>
+            <select name="type" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 min-w-[120px] {{ type ? 'text-primary ring-1 ring-primary/20' : 'text-on-surface' }}">
+                <option value="">Tous</option>
+                <option value="revenu" {{ type == 'revenu' ? 'selected' : '' }}>Revenu</option>
+                <option value="depense" {{ type == 'depense' ? 'selected' : '' }}>Dépense</option>
+            </select>
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Date</label>
+            <input type="date" name="date" value="{{ date }}" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 text-on-surface">
+        </div>
+        <div class="flex flex-col gap-1.5">
+            <label class="text-[10px] font-black uppercase tracking-widest text-outline ml-1">Catégorie</label>
+            <select name="categorie" onchange="this.form.submit()" class="bg-surface-container-low border-none rounded-xl text-xs font-bold py-2.5 px-4 focus:ring-2 focus:ring-primary/40 min-w-[150px] {{ categorie ? 'text-primary ring-1 ring-primary/20' : 'text-on-surface' }}">
+                <option value="">Toutes</option>
+                <option value="Salaire" {{ categorie == 'Salaire' ? 'selected' : '' }}>Salaire</option>
+                <option value="Fournisseur" {{ categorie == 'Fournisseur' ? 'selected' : '' }}>Fournisseur</option>
+                <option value="Loyer" {{ categorie == 'Loyer' ? 'selected' : '' }}>Loyer</option>
+                <option value="Électricité" {{ categorie == 'Électricité' ? 'selected' : '' }}>Électricité</option>
+                <option value="Téléphone" {{ categorie == 'Téléphone' ? 'selected' : '' }}>Téléphone</option>
+                <option value="Transport" {{ categorie == 'Transport' ? 'selected' : '' }}>Transport</option>
+                <option value="Publicité" {{ categorie == 'Publicité' ? 'selected' : '' }}>Publicité</option>
+                <option value="Virement Interne" {{ categorie == 'Virement Interne' ? 'selected' : '' }}>Virement Interne</option>
+                <option value="Autre Revenu" {{ categorie == 'Autre Revenu' ? 'selected' : '' }}>Autre Revenu</option>
+                <option value="Autre Dépense" {{ categorie == 'Autre Dépense' ? 'selected' : '' }}>Autre Dépense</option>
+            </select>
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="p-2.5 bg-primary text-white rounded-xl hover:bg-primary-dark transition-all shadow-md shadow-primary/10">
+                <span class="material-symbols-outlined text-lg">filter_alt</span>
+            </button>
+            <a href="{{ path('app_operation_admin_index') }}" class="p-2.5 bg-surface-container-high text-on-surface rounded-xl hover:bg-slate-200 transition-all border border-outline-variant/10">
+                <span class="material-symbols-outlined text-lg">restart_alt</span>
+            </a>
+        </div>
+    </form>
+    <a href="{{ path('app_operation_admin_export', app.request.query.all) }}" class="flex items-center gap-2 px-6 py-4 bg-tertiary text-white font-black rounded-xl shadow-xl shadow-tertiary/20 hover:bg-tertiary/90 transition-all active:scale-95 whitespace-nowrap">
+        <span class="material-symbols-outlined">download</span>
+        Exporter Excel
+    </a>
+</div>
+
+{# Stats Cards #}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    {% set totalRevenus = 0 %}
+    {% set totalDepenses = 0 %}
+    {% for op in operations %}
+        {% if op.type == 'revenu' %}
+            {% set totalRevenus = totalRevenus + op.montant %}
+        {% else %}
+            {% set totalDepenses = totalDepenses + op.montant %}
+        {% endif %}
+    {% endfor %}
+    
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">receipt_long</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Total Opérations</p>
+        </div>
+        <p class="text-2xl font-black text-on-surface">{{ operations|length }}</p>
+    </div>
+    
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+                <span class="material-symbols-outlined text-green-600">trending_up</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Total Revenus</p>
+        </div>
+        <p class="text-2xl font-black text-green-600">+{{ totalRevenus|number_format(2, ',', ' ') }} TND</p>
+    </div>
+    
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
+                <span class="material-symbols-outlined text-red-600">trending_down</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Total Dépenses</p>
+        </div>
+        <p class="text-2xl font-black text-red-600">-{{ totalDepenses|number_format(2, ',', ' ') }} TND</p>
+    </div>
+    
+    <div class="bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-tertiary">account_balance</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Solde Net</p>
+        </div>
+        <p class="text-2xl font-black {{ (totalRevenus - totalDepenses) >= 0 ? 'text-tertiary' : 'text-error' }}">
+            {{ (totalRevenus - totalDepenses)|number_format(2, ',', ' ') }} TND
+        </p>
+    </div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-3xl p-8 shadow-sm border border-outline-variant/10">
+    <div class="flex justify-between items-center mb-8">
+        <h3 class="text-sm font-black uppercase tracking-widest text-on-surface">Toutes les Opérations</h3>
+        <span class="text-xs font-bold text-secondary">{{ operations|length }} résultat(s)</span>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="text-[10px] font-black uppercase tracking-widest text-outline border-b border-outline-variant/10">
+                    <th class="px-4 py-4">Référence</th>
+                    <th class="px-4 py-4">Entreprise</th>
+                    <th class="px-4 py-4">Compte</th>
+                    <th class="px-4 py-4">Type</th>
+                    <th class="px-4 py-4">Montant</th>
+                    <th class="px-4 py-4">Catégorie</th>
+                    <th class="px-4 py-4">Date</th>
+                    <th class="px-4 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant/5">
+                {% for operation in operations %}
+                    <tr class="group hover:bg-surface-container-low transition-colors">
+                        <td class="px-4 py-5">
+                            <span class="font-bold text-sm text-on-surface">{{ operation.reference|default('N/A') }}</span>
+                            {% if operation.description %}
+                                <p class="text-xs text-secondary mt-0.5 truncate max-w-[150px]">{{ operation.description }}</p>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-sm font-bold text-on-surface">{{ operation.tresorerie.entreprise.nom }}</span>
+                            <p class="text-xs text-secondary">{{ operation.tresorerie.entreprise.proprietaire.fullName }}</p>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-sm text-secondary">{{ operation.tresorerie.nomCompte }}</span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest {{ operation.type == 'revenu' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                {{ operation.type == 'revenu' ? 'REVENU' : 'DÉPENSE' }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="font-black text-sm {{ operation.type == 'revenu' ? 'text-green-600' : 'text-red-600' }}">
+                                {{ operation.type == 'revenu' ? '+' : '-' }}{{ operation.montant|number_format(2, ',', ' ') }} TND
+                            </span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-xs font-bold text-outline">{{ operation.categorie|default('N/A') }}</span>
+                        </td>
+                        <td class="px-4 py-5">
+                            <span class="text-xs text-secondary">{{ operation.dateOperation ? operation.dateOperation|date('d M Y') : 'N/A' }}</span>
+                        </td>
+                        <td class="px-4 py-5 text-right flex items-center justify-end gap-2">
+                            <a href="{{ path('app_operation_pdf', {'id': operation.id}) }}" target="_blank" title="Facture" class="p-2 bg-surface-container-high rounded-lg text-secondary hover:text-primary hover:bg-primary/5 transition-all">
+                                <span class="material-symbols-outlined text-lg">picture_as_pdf</span>
+                            </a>
+                            <a href="{{ path('app_operation_show', {'id': operation.id}) }}" class="p-2 bg-surface-container-high rounded-lg text-secondary hover:text-primary hover:bg-primary/5 transition-all" title="Voir les détails">
+                                <span class="material-symbols-outlined text-lg">visibility</span>
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="px-4 py-20 text-center">
+                            <span class="material-symbols-outlined text-6xl text-outline mb-4">receipt_long</span>
+                            <p class="text-secondary font-medium">Aucune opération trouvée.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

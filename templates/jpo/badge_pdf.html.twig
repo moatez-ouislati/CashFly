@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Badge - {{ event.titre }}</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            background-color: #f1f5f9;
+            padding: 20px;
+        }
+
+        .badge-card {
+            background-color: white;
+            border: 2px solid #0f172a;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: #0f172a;
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .logo-sub {
+            font-size: 10px;
+            color: #00e5ff;
+        }
+
+        .event-title {
+            font-size: 18px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .event-details {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .user-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            font-size: 14px;
+            color: #ef4444;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+        }
+
+        .qr-code img {
+            width: 150px;
+            height: 150px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="badge-card">
+        <div class="header">
+            <div class="logo">CASHFLY</div>
+            <div class="logo-sub">ASSET MANAGEMENT</div>
+        </div>
+        <div class="event-title">{{ event.titre }}</div>
+        <div class="event-details">
+            {{ event.dateEvenement|date('d/m/Y') }}<br>
+            {{ event.lieu ?: 'Lieu à confirmer' }}
+        </div>
+
+        <div class="qr-code">
+            <img src="{{ qrCode }}" alt="QR Code">
+        </div>
+
+        <div class="user-name">{{ (user.nom ~ ' ' ~ user.prenom)|trim ?: user.email }}</div>
+        <div class="user-role">Pass Investisseur</div>
+    </div>
+</body>
+
+</html>

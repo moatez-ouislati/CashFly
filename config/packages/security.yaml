@@ -1,0 +1,44 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            id: App\Security\LegacyCompatiblePasswordHasher
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        # ... (خلي الـ dev كيف ما هي)
+
+        main:
+            lazy: true
+            provider: app_user_provider
+            user_checker: App\Security\UserChecker
+            
+            # هوني نزيدوا الـ Authenticator متاع جوجل
+            custom_authenticator: 
+                - App\Security\LoginFormAuthenticator
+                - App\Security\GoogleOAuthAuthenticator
+            
+            # لازم نحددوا أنا هو الـ Authenticator الأساسي للـ Login
+            entry_point: App\Security\LoginFormAuthenticator
+
+            logout:
+                path: app_logout
+                target: app_login
+            # ... (بقية الكود)
+
+    access_control:
+        - { path: ^/login,     roles: PUBLIC_ACCESS }
+        - { path: ^/register,  roles: PUBLIC_ACCESS }
+        - { path: ^/admin/previsions, roles: [ROLE_ADMIN, ROLE_PROPRIETAIRE] }
+        - { path: ^/admin,     roles: ROLE_ADMIN }
+        - { path: ^/investisseur, roles: ROLE_INVESTISSEUR }
+        - { path: ^/proprietaire, roles: ROLE_PROPRIETAIRE }
+
+    role_hierarchy:
+        ROLE_ADMIN:        [ROLE_PROPRIETAIRE, ROLE_INVESTISSEUR, ROLE_USER]
+        ROLE_PROPRIETAIRE: [ROLE_USER]
+        ROLE_INVESTISSEUR: [ROLE_USER]

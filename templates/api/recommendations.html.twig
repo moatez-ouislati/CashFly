@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Recommandations IA - CashFly{% endblock %}
+
+{% block page_header %}
+    <div class="flex justify-between items-center w-full">
+        <div>
+            <h2 class="text-2xl font-black text-on-surface">Recommandations <span class="text-primary">IA</span></h2>
+            <p class="text-sm text-on-surface-variant">Analyse intelligente de votre portfolio par OpenAI GPT-4</p>
+        </div>
+        <a href="{{ path('app_api_recommendations_pdf') }}" class="btn-primary bg-error shadow-error/20">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            Télécharger PDF
+        </a>
+    </div>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+    <div class="stat-card bg-primary/10 border-primary/20">
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Total Investi</p>
+        <h3 class="text-2xl font-black text-primary">{{ portfolioData.totalInvested|number_format(2, ',', ' ') }} TND</h3>
+    </div>
+    <div class="stat-card bg-tertiary/10 border-tertiary/20">
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Gains Totaux</p>
+        <h3 class="text-2xl font-black text-tertiary">{{ portfolioData.totalGain|number_format(2, ',', ' ') }} TND</h3>
+    </div>
+    <div class="stat-card bg-secondary/10 border-secondary/20">
+        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Investissements</p>
+        <h3 class="text-2xl font-black text-secondary">{{ portfolioData.investmentsCount }}</h3>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {% for rec in recommendations %}
+    <div class="card card-hover">
+        <div class="flex gap-4">
+            <div class="icon-box {% if rec.priority == 'high' %}bg-error/10 text-error{% elseif rec.priority == 'medium' %}bg-warning/10 text-warning{% else %}bg-secondary/10 text-secondary{% endif %}">
+                <span class="material-symbols-outlined">{% if rec.icon %}{{ rec.icon }}{% else %}lightbulb{% endif %}</span>
+            </div>
+            <div class="flex-1">
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-bold text-on-surface">{{ rec.title }}</h3>
+                    <span class="badge {% if rec.priority == 'high' %}badge-error{% elseif rec.priority == 'medium' %}badge-warning{% else %}badge-primary{% endif %}">
+                        {{ rec.priority == 'high' ? 'Haute' : (rec.priority == 'medium' ? 'Moyenne' : 'Basse') }} Priorité
+                    </span>
+                </div>
+                <p class="text-sm text-on-surface-variant">{{ rec.description }}</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

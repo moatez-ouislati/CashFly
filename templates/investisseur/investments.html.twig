@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Investissements{% endblock %}
+
+{% block page_header %}
+    <h1 class="text-3xl font-black text-on-surface">💼 Portefeuille d'Investissement</h1>
+    <p class="text-on-surface-variant">Suivi de vos placements et rendements</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-primary/10 p-6 rounded-3xl border border-primary/20">
+        <div class="flex items-center gap-4 mb-2">
+            <span class="material-symbols-outlined text-primary">payments</span>
+            <span class="text-sm font-bold text-primary uppercase tracking-widest">Total Investi</span>
+        </div>
+        <div class="text-3xl font-black text-primary">{{ stats.totalInvested|number_format(2, '.', ' ') }} TND</div>
+    </div>
+
+    <div class="bg-green-50 p-6 rounded-3xl border border-green-200">
+        <div class="flex items-center gap-4 mb-2">
+            <span class="material-symbols-outlined text-green-600">trending_up</span>
+            <span class="text-sm font-bold text-green-600 uppercase tracking-widest">Gains Cumulés</span>
+        </div>
+        <div class="text-3xl font-black text-green-600">+{{ stats.totalGain|number_format(2, '.', ' ') }} TND</div>
+    </div>
+
+    <div class="bg-blue-50 p-6 rounded-3xl border border-blue-200">
+        <div class="flex items-center gap-4 mb-2">
+            <span class="material-symbols-outlined text-blue-600">inventory_2</span>
+            <span class="text-sm font-bold text-blue-600 uppercase tracking-widest">Actifs</span>
+        </div>
+        <div class="text-3xl font-black text-blue-600">{{ stats.count }} / {{ stats.totalCount }}</div>
+    </div>
+</div>
+
+<div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-on-surface">Historique des placements</h2>
+        <a href="{{ path('investisseur_investment_new') }}" class="bg-primary text-white px-6 py-2 rounded-xl font-bold hover:bg-primary-dark transition-all">
+            Nouvel Investissement
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead>
+                <tr class="border-b border-slate-100">
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Entreprise</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Date</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Montant</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Rendement</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase">Statut</th>
+                    <th class="px-4 py-3 text-xs font-bold text-slate-500 uppercase text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for inv in user.getInvestissements() %}
+                    <tr class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-4 font-bold">{{ inv.entreprise.nom }}</td>
+                        <td class="px-4 py-4 text-slate-500">{{ inv.dateInvestissement|date('d/m/Y') }}</td>
+                        <td class="px-4 py-4 font-medium">{{ inv.montant|number_format(2, '.', ' ') }} TND</td>
+                        <td class="px-4 py-4">
+                            <span class="text-green-600 font-bold">+{{ inv.tauxRendementPrevu ?: '0' }}%</span>
+                        </td>
+                        <td class="px-4 py-4">
+                            {% if inv.statut == 'ACTIF' %}
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">ACTIF</span>
+                            {% elseif inv.statut == 'EN_ATTENTE' %}
+                                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold">EN ATTENTE</span>
+                            {% else %}
+                                <span class="bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold">{{ inv.statut }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-4 text-right flex justify-end gap-2">
+                            <a href="{{ path('investisseur_investment_pdf', {id: inv.id}) }}" class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all" title="Télécharger PDF">
+                                <span class="material-symbols-outlined text-sm">download</span>
+                            </a>
+                            
+                            {% if inv.statut == 'EN_ATTENTE' %}
+                                <a href="{{ path('investisseur_investment_edit', {id: inv.id}) }}" class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center hover:bg-amber-600 hover:text-white transition-all" title="Modifier">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
+                                </a>
+                                
+                                <form method="post" action="{{ path('investisseur_investment_delete', {id: inv.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet investissement ?');" style="display: inline-block;">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ inv.id) }}">
+                                    <button class="w-8 h-8 rounded-full bg-red-100 text-red-700 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all" title="Supprimer">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-10 text-center text-slate-400 italic">
+                            Vous n'avez pas encore d'investissements.
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

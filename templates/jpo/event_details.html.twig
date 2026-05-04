@@ -1,0 +1,475 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.titre }} - Détails de l'événement{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+{% endblock %}
+
+{% block page_header %}
+    <div class="flex items-center gap-4">
+        <a href="{{ isOwner ? path('jpo_dashboard_proprietaire') : path('jpo_dashboard_investisseur') }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high text-on-surface-variant hover:bg-primary/10 hover:text-primary transition-all">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <div>
+            <h2 class="text-2xl font-black text-on-surface">Détails de <span class="text-primary">l'Événement</span></h2>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body %}
+<div class="page">
+
+
+  {% for message in app.flashes('error') %}
+  <div class="alert-error-bar">
+    <i class="ph ph-warning-circle"></i> {{ message }}
+  </div>
+  {% endfor %}
+
+  <div class="event-details-hero">
+    <div class="details-main-card">
+      <div class="details-img-container">
+        {% if event.imagePath %}
+        <img src="{{ event.imagePath }}" alt="{{ event.titre }}" class="details-hero-img">
+        {% else %}
+        <div class="details-hero-placeholder">
+          <i class="ph ph-image"></i>
+        </div>
+        {% endif %}
+        <div
+          class="details-badge-overlay {{ event.dateEvenement < date() ? 'past' : (event.isFull ? 'full' : 'open') }}">
+          {{ event.dateEvenement < date() ? 'TERMINÉ' : (event.isFull ? 'COMPLET' : 'OUVERT' ) }} </div>
+        </div>
+
+        <div class="details-content-grid">
+          <div class="details-info-primary">
+            <div class="details-date-tag">
+              <i class="ph ph-calendar-blank"></i> {{ event.dateEvenement|date('d F Y') }}
+            </div>
+            <h1 class="details-title">{{ event.titre }}</h1>
+
+            <div class="details-meta-row">
+              <div class="details-meta-item">
+                <i class="ph ph-map-pin"></i>
+                <div style="display: flex; flex-direction: column;">
+                  <span>{{ event.lieu ?: 'Lieu à confirmer' }}</span>
+                  {% if event.lieu %}
+                  <a id="openMapBtn" class="map-link">
+                    <i class="ph ph-map-trifold"></i> Voir sur la carte
+                  </a>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="details-meta-item">
+                <i class="ph ph-users"></i>
+                <span>{{ event.currentParticipants }} / {{ event.maxParticipants }} Participants</span>
+              </div>
+              {% if waitlistCount > 0 %}
+              <div class="details-meta-item" title="Nombre de personnes sur la liste d'attente">
+                <i class="ph ph-hourglass-low" style="color: var(--warning);"></i>
+                <span><strong style="color: var(--warning);">{{ waitlistCount }}</strong> en attente</span>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="details-description">
+              <h3>À propos de cet événement</h3>
+              <p>{{ event.description ?: 'Aucune description détaillée n\'a été fournie pour cet événement.' }}</p>
+            </div>
+          </div>
+
+          <div class="details-sidebar">
+            <div class="action-card">
+              {% if isOwner %}
+              <div class="owner-notice">
+                <i class="ph ph-info"></i>
+                <p>Vous gérez cet événement</p>
+              </div>
+              <a href="{{ path('jpo_my_events') }}" class="btn btn-secondary btn--full mb-12">
+                <i class="ph ph-pencil"></i> Gérer mes événements
+              </a>
+              {% if event.currentParticipants > 0 %}
+              <a href="{{ path('jpo_export_excel', {id: event.idEvenement}) }}" class="btn btn-primary btn--full">
+                <i class="ph ph-file-xls"></i> Exporter la liste des inscrits
+              </a>
+              {% else %}
+              <button class="btn btn-primary btn--full disabled-btn" disabled title="Aucun inscrit pour le moment">
+                <i class="ph ph-file-xls"></i> Exporter la liste des inscrits
+              </button>
+              {% endif %}
+              {% else %}
+              {% if event.dateEvenement < date() %} <div class="status-notice past">
+                <i class="ph ph-clock-counter-clockwise"></i>
+                <p>Cet événement est terminé</p>
+            </div>
+            {% elseif isRegistered %}
+            <div class="status-notice registered">
+              <i class="ph ph-check-circle"></i>
+              <p>Vous êtes inscrit !</p>
+            </div>
+            {% if hasBadge %}
+            <a href="{{ path('jpo_generate_badge', {id: event.idEvenement}) }}"
+              class="btn btn-success btn-success--outline btn--full mb-12" download>
+              <i class="ph ph-download"></i> Télécharger le Badge
+            </a>
+            <button class="btn btn-danger btn--full disabled-btn" disabled
+              title="Badge déjà généré - désinscription impossible">
+              <i class="ph ph-x-circle"></i> Se désinscrire
+            </button>
+            {% else %}
+            <a href="{{ path('jpo_generate_badge', {id: event.idEvenement}) }}"
+              class="btn btn-secondary btn--full mb-12" id="btnBadge">
+              <i class="ph ph-identification-card"></i> Générer mon badge
+            </a>
+            {% if isWithin24h %}
+            <button class="btn btn-danger btn--full disabled-btn" disabled
+              title="Désinscription impossible : l'événement commence dans moins de 24h">
+              <i class="ph ph-x-circle"></i> Se désinscrire
+            </button>
+            {% else %}
+            <button class="btn btn-danger btn-danger--outline btn--full mb-12" id="btnUnregister">
+              <i class="ph ph-x-circle"></i> Se désinscrire
+            </button>
+            <div id="signout-countdown" class="countdown-mini" data-deadline="{{ deadlineTimestamp }}">
+              <i class="ph ph-timer countdown-icon"></i>
+              <span id="timer-val">Calcul en cours...</span>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% elseif event.isFull %}
+            <div class="status-notice full">
+              <i class="ph ph-users"></i>
+              <p>Événement complet</p>
+            </div>
+            {% if isOnWaitlist %}
+            <div class="status-notice registered" style="border-color: var(--warning);">
+                <i class="ph ph-clock"></i>
+                <p>Vous êtes sur la liste d'attente</p>
+            </div>
+            {% else %}
+            <button class="btn btn-secondary btn--full" id="btnJoinWaitlist">
+                <i class="ph ph-list-plus"></i> Rejoindre la liste d'attente
+            </button>
+            {% endif %}
+            {% else %}
+            <button class="btn btn-primary btn--full" id="btnRegister">
+              <i class="ph ph-paper-plane-tilt"></i> S'inscrire maintenant
+            </button>
+            {% endif %}
+            {% endif %}
+          </div>
+
+          <div class="share-card">
+            <h4>Partager</h4>
+            <div class="share-icons">
+              <button class="share-btn"><i class="ph ph-link"></i></button>
+              <button class="share-btn"><i class="ph ph-twitter-logo"></i></button>
+              <button class="share-btn"><i class="ph ph-facebook-logo"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {# --- EVENT CHAT SYSTEM --- #}
+  {% if isOwner or isRegistered or is_granted('ROLE_ADMIN') %}
+  <div class="chat-system" data-controller="jpo-chat" data-jpo-chat-event-id-value="{{ event.idEvenement }}"
+    data-jpo-chat-current-user-id-value="{{ app.user.id }}"
+    data-jpo-chat-load-url-value="{{ path('chat_load_messages', {eventId: event.idEvenement}) }}"
+    data-jpo-chat-send-url-value="{{ path('chat_send_message', {eventId: event.idEvenement}) }}"
+    data-jpo-chat-edit-url-value="/api/chat/edit/" data-jpo-chat-delete-url-value="/api/chat/delete/"
+    data-jpo-chat-presence-url-value="{{ path('chat_update_presence', {eventId: event.idEvenement}) }}"
+    data-jpo-chat-readonly-value="{{ chatReadOnly ? 'true' : 'false' }}">
+
+    <button class="chat-toggle-btn" data-action="jpo-chat#toggle" data-jpo-chat-target="toggleBtn">
+      <i class="ph ph-chat-centered-text"></i>
+    </button>
+
+    <div class="chat-container modal-overlay--hidden" data-jpo-chat-target="container" style="display: none;">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <i class="ph ph-chats-circle"></i>
+          <div>
+            <div class="chat-header-title">Chat de l'événement</div>
+            <div class="chat-header-status">
+              {% if chatReadOnly %}
+              <span class="badge badge-admin">ARCHIVE (LECTURE SEULE)</span>
+              {% else %}
+              <span class="online-indicator"></span> Direct
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <button class="chat-close" data-action="jpo-chat#toggle">✕</button>
+      </div>
+
+      <div class="chat-messages" data-jpo-chat-target="messages">
+        <div class="chat-loading">
+          <div class="spin"></div>
+          <p>Chargement des messages...</p>
+        </div>
+      </div>
+
+      {% if not chatReadOnly %}
+      <div class="chat-reply-preview modal-overlay--hidden" data-jpo-chat-target="replyPreview">
+        <div class="reply-info">
+          <i class="ph ph-arrow-bend-up-left"></i>
+          <span>En réponse à <strong data-jpo-chat-target="replyAuthor"></strong></span>
+        </div>
+        <div class="reply-snippet" data-jpo-chat-target="replySnippet"></div>
+        <button class="reply-cancel" data-action="jpo-chat#cancelReply">✕</button>
+      </div>
+
+      <div class="chat-input-area" data-jpo-chat-target="inputArea">
+        <textarea class="chat-input" placeholder="Tapez votre message..." data-jpo-chat-target="input"
+          data-action="keydown->jpo-chat#handleKeydown"></textarea>
+        <button type="button" class="chat-send-btn" data-action="click->jpo-chat#send">
+          <i class="ph ph-paper-plane-right"></i>
+        </button>
+      </div>
+
+      <div class="chat-input-area" data-jpo-chat-target="readonlyNotice"
+        style="display: none; justify-content: center; opacity: 0.6; font-size: 11px;">
+        <i class="ph ph-lock-key"></i> Chat archivé (lecture seule).
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+{# --- GOOGLE MAPS POPUP --- #}
+<div class="popup-overlay modal-overlay--hidden" id="mapModal">
+  <div class="map-modal-container">
+    <div class="map-modal-header">
+      <div class="map-modal-title">
+        <i class="ph ph-map-pin-line"></i>
+        <span>Localisation: {{ event.titre }}</span>
+      </div>
+      <button class="map-modal-close" id="closeMapBtn">✕</button>
+    </div>
+    <div class="map-iframe-container">
+      <iframe class="map-iframe" id="mapIframe" loading="lazy" allowfullscreen src=""></iframe>
+    </div>
+  </div>
+</div>
+
+{# --- JPO GLOBAL UI SUGGESTION MODAL --- #}
+<div class="popup-overlay modal-overlay--hidden" id="uiGlobalSuggestion" style="z-index: 20004;">
+    <div class="popup-modal modal--centered" style="max-width: 450px; padding: 0; overflow: hidden; border: 1px solid var(--cyan);">
+        <div style="background: linear-gradient(135deg, var(--cyan), #00d2ff); padding: 25px; color: #060e1a; text-align: center;">
+            <i class="ph ph-sparkle" style="font-size: 32px;"></i>
+            <div style="font-weight: 800; font-size: 18px; margin-top: 10px; letter-spacing: 1px;">DÉCOUVERTE INTELLIGENTE</div>
+        </div>
+        <div style="padding: 25px;">
+            <p id="suggestionHook" style="font-style: italic; color: var(--text-dim); font-size: 14px; line-height: 1.5; margin-bottom: 20px; text-align: center; border-left: 3px solid var(--cyan); padding-left: 15px;"></p>
+            <div style="background: rgba(0,0,0,0.03); border-radius: 12px; padding: 15px; border: 1px solid var(--border);">
+                <img id="suggestionImage" src="" alt="Event" style="width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; display: none;">
+                <div id="suggestionTitle" style="font-weight: 700; font-size: 16px; margin-bottom: 8px; color: var(--cyan);"></div>
+                <div style="display: flex; gap: 15px; font-size: 12px; color: var(--text-dim);">
+                    <span><i class="ph ph-calendar"></i> <span id="suggestionDate"></span></span>
+                    <span><i class="ph ph-map-pin"></i> <span id="suggestionLocation"></span></span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn btn-secondary" id="suggestionSkip" style="flex: 1;">PLUS TARD</button>
+                <button class="btn btn-primary" id="suggestionGo" style="flex: 1.5;">DÉCOUVRIR <i class="ph ph-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script data-event-id="{{ event.idEvenement }}">
+  (function () {
+    const eventId = parseInt(document.currentScript.dataset.eventId, 10);
+
+    window.uiSuggestion = function (suggestion) {
+        const overlay = document.getElementById('uiGlobalSuggestion');
+        if (!overlay) return;
+        document.getElementById('suggestionTitle').innerText = suggestion.titre;
+        document.getElementById('suggestionDate').innerText = suggestion.date;
+        document.getElementById('suggestionLocation').innerText = suggestion.lieu;
+        document.getElementById('suggestionHook').innerText = suggestion.hook;
+
+        const img = document.getElementById('suggestionImage');
+        if (suggestion.image) {
+            img.src = suggestion.image;
+            img.style.display = 'block';
+        } else {
+            img.style.display = 'none';
+        }
+
+        const btnGo = document.getElementById('suggestionGo');
+        const btnSkip = document.getElementById('suggestionSkip');
+
+        overlay.style.display = 'flex';
+
+        const handleClose = () => {
+            overlay.style.display = 'none';
+            btnGo.onclick = null;
+            btnSkip.onclick = null;
+        };
+
+        btnGo.onclick = () => {
+            handleClose();
+            window.location.href = suggestion.details_url || `/jpo/event/${suggestion.id}`;
+        };
+        btnSkip.onclick = () => {
+            handleClose();
+        };
+    };
+
+    const btnRegister = document.getElementById('btnRegister');
+    const btnUnregister = document.getElementById('btnUnregister');
+    const btnBadge = document.getElementById('btnBadge');
+
+    if (btnRegister) {
+      btnRegister.addEventListener('click', () => {
+        window.uiConfirm("Voulez-vous confirmer votre inscription ?", () => {
+          fetch("{{ path('jpo_register', {id: event.idEvenement}) }}", {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+            .then(res => res.json())
+            .then(res => {
+              if (res.success) {
+                if (res.suggestion) {
+                  // Pass the details_url to the suggestion object
+                  res.suggestion.details_url = "{{ path('jpo_event_details', {id: 'PLACEHOLDER'}) }}".replace('PLACEHOLDER', res.suggestion.id);
+                  window.uiSuggestion(res.suggestion);
+                } else {
+                  window.uiAlert("Inscription validée avec succès !", "Succès", true);
+                  setTimeout(() => window.location.reload(), 1500);
+                }
+              } else {
+                window.uiAlert(res.error || "Une erreur est survenue", "Erreur");
+              }
+            })
+            .catch(() => window.uiAlert("Erreur réseau", "Erreur"));
+        }, 'CONFIRMER');
+      });
+    }
+    if (btnUnregister) {
+      btnUnregister.addEventListener('click', () => {
+        window.uiConfirm("Voulez-vous vraiment vous désinscrire de cet événement ?", () => {
+          fetch("{{ path('jpo_unregister', {id: event.idEvenement}) }}", {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+          })
+            .then(res => res.json())
+            .then(res => {
+              if (res.success) {
+                window.uiAlert("Vous avez été désinscrit avec succès.", "Succès", true);
+                setTimeout(() => window.location.reload(), 1500);
+              } else {
+                window.uiAlert(res.error || "Une erreur est survenue", "Erreur");
+              }
+            })
+            .catch(() => window.uiAlert("Erreur réseau", "Erreur"));
+        }, 'DÉSINSCRIRE', 'ANNULER', 'Confirmation', true);
+      });
+    }
+    if (btnBadge) {
+      btnBadge.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.uiConfirm(
+          "Générer ce badge validera définitivement votre inscription. La désinscription sera impossible par la suite. Confirmer ?",
+          () => {
+            // Proceed through the anchor link behavior manually
+            window.location.href = btnBadge.href;
+            // After a brief delay, reload to show generated state
+            setTimeout(() => window.location.reload(), 2000);
+          },
+          'GÉNÉRER',
+          'ANNULER',
+          'Générer le Badge'
+        );
+      });
+    }
+
+    const btnJoinWaitlist = document.getElementById('btnJoinWaitlist');
+    if (btnJoinWaitlist) {
+        btnJoinWaitlist.addEventListener('click', () => {
+            window.uiConfirm("Voulez-vous rejoindre la liste d'attente pour cet événement ?", () => {
+                fetch("{{ path('jpo_join_waitlist', {id: event.idEvenement}) }}", {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    if (res.success) {
+                        window.uiAlert(res.message || "Vous avez rejoint la liste d'attente !", "Succès", true);
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        window.uiAlert(res.error || "Une erreur est survenue", "Erreur");
+                    }
+                })
+                .catch(() => window.uiAlert("Erreur réseau", "Erreur"));
+            }, 'REJOINDRE');
+        });
+    }
+
+    // --- COUNTDOWN TIMER ---
+    const countdownEl = document.getElementById('signout-countdown');
+    if (countdownEl) {
+      const deadline = parseInt(countdownEl.dataset.deadline) * 1000;
+      const timerVal = document.getElementById('timer-val');
+
+      function updateTimer() {
+        const now = new Date().getTime();
+        const diff = deadline - now;
+
+        if (diff <= 0) {
+          timerVal.innerText = "Délai expiré";
+          timerVal.style.color = "#ef4444";
+          setTimeout(() => window.location.reload(), 2000);
+          return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+        timerVal.innerHTML = `<strong style="color: #1e293b;">${hours}h ${mins}m ${secs}s</strong> avant verrouillage`;
+      }
+
+      const timerInterval = setInterval(updateTimer, 1000);
+      updateTimer();
+    }
+
+    // --- GOOGLE MAPS POPUP LOGIC ---
+    const openMapBtn = document.getElementById('openMapBtn');
+    const closeMapBtn = document.getElementById('closeMapBtn');
+    const mapModal = document.getElementById('mapModal');
+    const mapIframe = document.getElementById('mapIframe');
+    const eventLocation = "{{ event.lieu|escape('js') }}";
+
+    if (openMapBtn && mapModal && mapIframe) {
+      openMapBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const mapUrl = `https://maps.google.com/maps?q=${encodeURIComponent(eventLocation)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+        mapIframe.src = mapUrl;
+        mapModal.classList.remove('modal-overlay--hidden');
+        mapModal.style.display = 'flex';
+      });
+
+      const closeMap = () => {
+        mapModal.classList.add('modal-overlay--hidden');
+        mapModal.style.display = 'none';
+        mapIframe.src = "";
+      };
+
+      closeMapBtn.addEventListener('click', closeMap);
+      mapModal.addEventListener('click', (e) => {
+        if (e.target === mapModal) closeMap();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !mapModal.classList.contains('modal-overlay--hidden')) closeMap();
+      });
+    }
+  })();
+</script>
+{% endblock %}

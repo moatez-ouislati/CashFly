@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvel Investissement{% endblock %}
+
+{% block page_header %}
+    <div class="flex items-center gap-3">
+        <a href="{{ path('investisseur_investments') }}" class="text-primary hover:text-blue-700">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="text-3xl font-black text-on-surface">🚀 Nouvelle Opportunité</h1>
+    </div>
+{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-3xl p-10 shadow-sm border border-slate-200">
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+            <div class="space-y-1.5">
+                {{ form_label(form.entreprise, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.entreprise) }}
+                {{ form_errors(form.entreprise) }}
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div class="space-y-1.5">
+                    {{ form_label(form.montant, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                    {{ form_widget(form.montant) }}
+                    {{ form_errors(form.montant) }}
+                </div>
+                <div class="space-y-1.5">
+                    {{ form_label(form.tauxRendementPrevu, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                    {{ form_widget(form.tauxRendementPrevu) }}
+                    {{ form_errors(form.tauxRendementPrevu) }}
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.dureeMois, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.dureeMois) }}
+                {{ form_errors(form.dureeMois) }}
+            </div>
+
+            <div class="space-y-1.5">
+                {{ form_label(form.description, null, {'label_attr': {'class': 'block text-xs font-bold text-secondary uppercase tracking-widest ml-1'}}) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="pt-6">
+                <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-black text-lg hover:bg-primary-dark shadow-lg shadow-primary/20 transition-all">
+                    Envoyer la proposition
+                </button>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

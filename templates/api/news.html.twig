@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Actualités Financières - CashFly{% endblock %}
+
+{% block page_header %}
+    <h2 class="text-2xl font-black text-on-surface">Actualités <span class="text-primary">Financières</span></h2>
+    <p class="text-sm text-on-surface-variant">Dernières nouvelles du marché tunisien et maghrébin</p>
+{% endblock %}
+
+{% block body %}
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {% for article in news %}
+    <div class="card card-hover flex flex-col">
+        {% if article.image %}
+        <img src="{{ article.image }}" class="w-full h-48 object-cover rounded-t-xl mb-4" alt="{{ article.title }}">
+        {% endif %}
+        <div class="flex-1">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="badge badge-primary">{{ article.source }}</span>
+                <span class="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                    <span class="material-symbols-outlined text-[12px] align-middle">schedule</span> {{ article.publishedAt }}
+                </span>
+            </div>
+            <h3 class="text-lg font-bold text-on-surface mb-2">{{ article.title }}</h3>
+            <p class="text-sm text-on-surface-variant line-clamp-3 mb-4">{{ article.description }}</p>
+        </div>
+        <div class="mt-auto">
+            <a href="{{ article.url }}" target="_blank" class="btn-primary w-full justify-center">
+                <span class="material-symbols-outlined">open_in_new</span>
+                Lire l'article
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="mt-10 p-4 rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-start gap-3">
+    <span class="material-symbols-outlined text-primary">info</span>
+    <div class="text-sm text-on-surface-variant">
+        Ces actualités sont fournies par <strong>NewsAPI</strong> et concernent le marché financier tunisien et maghrébin.
+        Les sources incluent BCT, Smart Capital, et le Ministère des Finances.
+    </div>
+</div>
+{% endblock %}

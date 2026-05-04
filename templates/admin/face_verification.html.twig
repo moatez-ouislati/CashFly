@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container text-center mt-5">
+    <h2 class="text-white mb-4">🔐 Vérification d'Identité Admin</h2>
+    
+    <div style="position: relative; display: inline-block;">
+        <video id="video" width="600" height="450" autoplay muted style="border-radius: 15px; border: 3px solid #6366f1;"></video>
+        <canvas id="overlay" style="position: absolute; top: 0; left: 0;"></canvas>
+    </div>
+    
+    <div class="mt-4">
+        <button id="verify-btn" class="btn btn-primary btn-lg px-5" disabled style="min-width: 250px;">
+            <span id="btn-text">Chargement de l'IA...</span>
+        </button>
+    </div>
+
+    <div id="result-message" class="mt-4 h4" style="transition: all 0.3s ease;"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+<script>
+    const video = document.getElementById('video');
+    const verifyBtn = document.getElementById('verify-btn');
+    const btnText = document.getElementById('btn-text');
+    const resultMsg = document.getElementById('result-message');
+    
+    let faceMatcher = null;
+    // URL mta3 el models mel internet
+    const MODEL_URL = 'https://justadudewhohacks.github.io/face-api.js/models';
+
+    async function init() {
+        try {
+            // 1. Chargement des modèles IA
+            await faceapi.nets.ssdMobilenetv1.loadFromUri(MODEL_URL);
+            await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+            await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+
+            // 2. Start Camera
+            const stream = await navigator.mediaDevices.getUserMedia({ video: {} });
+            video.srcObject = stream;
+
+            // 3. Jeb el taswira mta3 el Admin mel base
+            const adminImgPath = "{{ asset('uploads/faces/' ~ app.user.faceImage) }}";
+            console.log("Tentative de chargement de l'image: ", adminImgPath);
+
+            const imgElement = new Image();
+            imgElement.crossOrigin = "anonymous";
+            imgElement.src = adminImgPath;
+
+            await new Promise((resolve, reject) => {
+                imgElement.onload = resolve;
+                imgElement.onerror = () => reject(new Error("L'image n'a pas pu être chargée via le navigateur."));
+            });
+
+            // Analysi el taswira el s7i7a
+            const refDetection = await faceapi.detectSingleFace(imgElement).withFaceLandmarks().withFaceDescriptor();
+            
+            if (!refDetection) {
+                console.error("Aucun visage détecté sur la photo de profil");
+                resultMsg.innerHTML = "<div class='alert alert-danger'>❌ Photo de profil illisible pour l'IA. Le visage n'est pas clair ou la photo est de mauvaise qualité.</div>";
+                return;
+            }
+
+            // HUNI EL TASLI7: Distance 0.4 ya3ni s3ib barcha w mriguel
+            faceMatcher = new faceapi.FaceMatcher(refDetection, 0.52);
+            
+            // Activate Button
+            verifyBtn.disabled = false;
+            btnText.innerText = "Vérifier mon visage";
+
+        } catch (err) {
+            console.error(err);
+            resultMsg.innerHTML = "<div class='alert alert-danger'>Erreur: " + err.message + "</div>";
+        }
+    }
+
+    // Ki el user y-enzel 3la el Button
+    verifyBtn.addEventListener('click', async () => {
+        resultMsg.innerHTML = "<div class='text-info animate-pulse'>🔍 Analyse de votre visage...</div>";
+        verifyBtn.disabled = true;
+
+        // Detection el wejh tawa mel camera
+        const detections = await faceapi.detectAllFaces(video).withFaceLandmarks().withFaceDescriptors();
+        
+        if (detections.length === 0) {
+            resultMsg.innerHTML = "<div class='alert alert-warning'>⚠️ Aucun visage détecté. Rapprochez-vous.</div>";
+            verifyBtn.disabled = false;
+            return;
+        }
+
+        // Mo9arna bin el wejh elli fel camera wel taswira el s7i7a
+        const match = faceMatcher.findBestMatch(detections[0].descriptor);
+        
+        if (match.label !== 'unknown') {
+            // WEJH S7I7 ✅
+            resultMsg.innerHTML = "<div class='alert alert-success'>✅ Bienvenue Admin ! Redirection...</div>";
+            
+            // Set session variable on server
+            await fetch('{{ path('app_admin_face_verify_success') }}', { method: 'POST' });
+            
+            setTimeout(() => {
+                window.location.href = "{{ path('admin_dashboard') }}";
+            }, 1200);
+        } else {
+            // WEJH GHALET ❌ (Kima wejh okhtek tawa ma yet3addach)
+            resultMsg.innerHTML = "<div class='alert alert-danger'>❌ Accès Refusé : Visage non reconnu.</div>";
+            verifyBtn.disabled = false;
+            
+            // Vibration sghira walla animation lel ghalta
+            resultMsg.classList.add('shake');
+            setTimeout(() => resultMsg.classList.remove('shake'), 500);
+        }
+    });
+
+    // Keyboard shortcut for testing (Press 'V' to bypass)
+    document.addEventListener('keydown', async (e) => {
+        if (e.key.toLowerCase() === 'v') {
+            console.log("Bypass keyboard shortcut triggered");
+            resultMsg.innerHTML = "<div class='alert alert-success'>✅ (TEST) Bypass activé ! Redirection...</div>";
+            
+            await fetch('{{ path('app_admin_face_verify_success') }}', { method: 'POST' });
+            
+            setTimeout(() => {
+                window.location.href = "{{ path('admin_dashboard') }}";
+            }, 1000);
+        }
+    });
+
+    window.onload = init;
+</script>
+
+<style>
+    .animate-pulse { animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    .shake { animation: shake 0.2s ease-in-out 0s 2; }
+    @keyframes shake { 0% { margin-left: 0rem; } 25% { margin-left: 0.5rem; } 75% { margin-left: -0.5rem; } 100% { margin-left: 0rem; } }
+</style>
+{% endblock %}

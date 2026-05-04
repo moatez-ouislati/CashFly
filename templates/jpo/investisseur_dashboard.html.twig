@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord Investisseur — CashFly{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('styles/jpo.css') }}">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+{% endblock %}
+
+{% block page_header %}
+    <h2 class="text-2xl font-black text-on-surface">Découvrir les <span class="text-primary">Événements</span></h2>
+    <p class="text-xs text-on-surface-variant font-medium">Journées Portes Ouvertes</p>
+{% endblock %}
+
+{% block body %}
+<div data-controller="jpo-events" data-jpo-events-url-value="{{ path('jpo_dashboard_investisseur') }}"
+  data-jpo-events-initial-query-value="{{ search }}" data-jpo-events-initial-status-value="{{ status }}"
+  data-jpo-events-initial-sort-by-value="{{ sortBy }}" data-jpo-events-initial-sort-dir-value="{{ sortDir }}"
+  data-jpo-events-initial-history-value="{{ history ? '1' : '0' }}"
+  data-jpo-events-initial-mine-value="{{ mine ? '1' : '0' }}">
+
+
+
+  <div class="page">
+    <div class="section-title">Tous les <span>Événements</span></div>
+    <div class="section-sub">Explorez les Journées Portes Ouvertes disponibles</div>
+
+    <div class="toolbar">
+      <div class="search-toolbar--flex">
+        <div class="search-box--glass">
+          <i class="ph ph-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input search-input--standard" id="searchInput"
+            placeholder="Rechercher un événement, lieu..." value="{{ search }}">
+        </div>
+        <button id="searchBtn" class="btn btn-primary search-btn-main">CHERCHER</button>
+      </div>
+      <div class="filter-toggle">
+        <button class="filter-btn toggle-history {{ history ? '' : 'active' }}" data-history="0">À venir</button>
+        <button class="filter-btn toggle-history {{ history ? 'active' : '' }}" data-history="1">Historique</button>
+        <button class="filter-btn toggle-mine {{ mine ? 'active' : '' }} ml-20" id="toggleMine">
+          <i class="ph ph-bookmark-simple"></i> Mes Inscriptions
+        </button>
+      </div>
+      <select class="filter-select" id="filterStatus">
+        <option value="">Tous les statuts</option>
+        <option value="open" {{ status=='open' ? 'selected' : '' }}>Places disponibles</option>
+        <option value="full" {{ status=='full' ? 'selected' : '' }}>Complet</option>
+      </select>
+      <button class="sort-btn {% if sortBy == 'dateEvenement' %}active{% endif %}" data-sort="dateEvenement">
+        <i class="ph ph-calendar-blank"></i> Date {% if sortBy == 'dateEvenement' %}{{ sortDir == 'ASC' ? '↑' : '↓' }}{%
+        endif %}
+      </button>
+      <button class="sort-btn {% if sortBy == 'participants' %}active{% endif %}" data-sort="participants">
+        <i class="ph ph-users"></i> Participants {% if sortBy == 'participants' %}{{ sortDir == 'ASC' ? '↑' : '↓' }}{%
+        endif %}
+      </button>
+    </div>
+
+    <div class="events-list" id="eventsGrid">
+      {% if events is empty %}
+      <div class="no-results"><span><i class="ph ph-magnifying-glass"></i></span>Aucun événement trouvé</div>
+      {% else %}
+      {% set fallbackIcons =
+      ['ph-graduation-cap','ph-buildings','ph-laptop','ph-flask','ph-bank','ph-palette','ph-first-aid','ph-triangle','ph-microscope','ph-rocket']
+      %}
+      {% for event in events %}
+      <a href="{{ path('jpo_event_details', {id: event.idEvenement}) }}"
+        class="event-list-item {{ event.idEvenement in registrationIds ? 'registered-highlight' : '' }}">
+        <div class="list-img">
+          {% if event.imagePath %}
+          <img src="{{ event.imagePath }}" alt="{{ event.titre }}"
+            onerror="this.onerror=null; this.outerHTML='<i class=\'ph {{ fallbackIcons[loop.index0 % fallbackIcons|length] }}\'></i>';">
+          {% else %}
+          <i class="ph {{ fallbackIcons[loop.index0 % fallbackIcons|length] }}"></i>
+          {% endif %}
+        </div>
+        <div class="list-content">
+          <div class="list-info-main">
+            <div class="list-date">{{ event.dateEvenement|date('d F Y') }}</div>
+            <div class="list-title">{{ event.titre }}</div>
+          </div>
+          <div class="list-info-meta">
+            {% if event.lieu %}
+            <div class="list-location">
+              <i class="ph ph-map-pin"></i>
+              {{ event.lieu }}
+            </div>
+            {% endif %}
+            {% if event.description %}
+            <div class="list-desc">{{ event.description }}</div>
+            {% endif %}
+          </div>
+          <div class="list-stats">
+            <div class="list-badge-wrap">
+              <div
+                class="{{ event.dateEvenement < date('today') ? 'past-badge' : (event.isFull() ? 'full-badge' : 'open-badge') }}">
+                {{ event.dateEvenement < date('today') ? 'TERMINÉ' : (event.isFull() ? 'COMPLET' : 'OUVERT' ) }} </div>
+              </div>
+              <div class="list-capacity">
+                Participants: <span>{{ event.currentParticipants }}/{{ event.maxParticipants }}</span>
+              </div>
+            </div>
+          </div>
+      </a>
+      {% endfor %}
+      {% endif %}
+      <div class="spinner" id="spinner">
+        <div class="spin"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
